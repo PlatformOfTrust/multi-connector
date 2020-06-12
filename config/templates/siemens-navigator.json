@@ -1,0 +1,33 @@
+{
+  "plugins": [
+    "basic",
+    "siemens-navigator"
+  ],
+  "protocol": "rest",
+  "authConfig": {
+    "url": "https://eadvantage.siemens.com",
+    "username": "${username}",
+    "password": "${password}",
+    "path": "/remote/release/meter/${id}/readings"
+  },
+  "dataObjects": [
+    "items"
+  ],
+  "dataPropertyMappings": {
+    "${type}": "value"
+  },
+  "generalConfig": {
+    "query": {
+      "properties": [],
+      "limit": { "limit": 1 },
+      "end": "utcEndTimestamp",
+      "start": "utcStartTimestamp"
+    },
+    "hardwareId": {
+      "pathIndex": 4
+    },
+    "timestamp": {
+      "dataObjectProperty": "utcRectime"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "template": "iot-ticket",
+  "static": {
+    "username": "<username>",
+    "password": "<password>"
+  },
+  "dynamic": {
+    "authConfig.path": "ids",
+    "dataPropertyMappings": "type"
+  },
+  "request": {
+    "ids": [
+      {
+        "deviceId": "<device-id>",
+        "path": "<path>"
+      }
+    ],
+    "type": "<type>"
+  }
+}

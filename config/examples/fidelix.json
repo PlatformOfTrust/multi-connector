@@ -1,0 +1,18 @@
+{
+  "template": "fidelix",
+  "static": {
+    "ipAddress": "<ip-address>",
+    "username": "<username>",
+    "password": "<password>"
+  },
+  "dynamic": {
+    "authConfig.path": "ids",
+    "dataPropertyMappings": "type"
+  },
+  "request": {
+    "ids": [
+      "<point-id>"
+    ],
+    "type": "<type>"
+  }
+}

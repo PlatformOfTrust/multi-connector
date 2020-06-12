@@ -1,0 +1,26 @@
+{
+  "plugins": [
+    "soap-ntlm"
+  ],
+  "protocol": "soap",
+  "authConfig": {
+    "url": "http://${ipAddress}/WebServices/Fidelix.asmx?WSDL",
+    "username": "${username}",
+    "password": "${password}",
+    "function": "Fidelix.FidelixSoap.getPointData",
+    "path": {
+      "point_id": "${id}"
+    }
+  },
+  "dataObjects": [
+    ""
+  ],
+  "dataPropertyMappings": {
+    "${type}": "getPointDataResult"
+  },
+  "generalConfig": {
+    "hardwareId": {
+      "dataObjectProperty": "hardwareId"
+    }
+  }
+}

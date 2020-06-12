@@ -1,0 +1,20 @@
+{
+  "template": "nuuka",
+  "static": {
+    "url": "https://<sub-domain>.nuuka.cloud",
+    "version": "<version>",
+    "category": "<category>",
+    "precision": "<precision>",
+    "reportingGroup": "<reporting-group>"
+  },
+  "dynamic": {
+    "authConfig.path": "ids",
+    "dataPropertyMappings": "type"
+  },
+  "request": {
+    "ids": [
+      "<location-name>"
+    ],
+    "type": "<type>"
+  }
+}

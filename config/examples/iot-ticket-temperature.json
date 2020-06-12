@@ -1,0 +1,19 @@
+{
+  "template": "iot-ticket",
+  "static": {
+    "username": "<username>",
+    "password": "<password>",
+    "type": "MeasureAirTemperatureCelciusDegree"
+  },
+  "dynamic": {
+    "authConfig.path": "ids"
+  },
+  "request": {
+    "ids": [
+      {
+        "deviceId": "<device-id>",
+        "path": "<path>"
+      }
+    ]
+  }
+}

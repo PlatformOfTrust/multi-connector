@@ -1,0 +1,31 @@
+{
+  "plugins": [
+    "nuuka"
+  ],
+  "protocol": "rest",
+  "authConfig": {
+    "url": "${url}",
+    "path": "/api/${version}/${category}/${precision}/ListByProperty?Record=LocationName&SearchString=${id}&ReportingGroup=${reportingGroup}"
+  },
+  "dataObjects": [
+    ""
+  ],
+  "dataPropertyMappings": {
+    "${type}": "value"
+  },
+  "generalConfig": {
+    "query": {
+      "end": "EndTime",
+      "start": "StartTime"
+    },
+    "sourceName": {
+      "dataObjectProperty": "reportingGroup"
+    },
+    "hardwareId": {
+      "dataObjectProperty": "locationName"
+    },
+    "timestamp": {
+      "dataObjectProperty": "timestamp"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "template": "sahkonumerot",
+  "static": {
+    "username": "<username>",
+    "password": "<password>",
+    "type": "productInfo"
+  },
+  "dynamic": {
+    "authConfig.path": "ids"
+  },
+  "request": {
+    "ids": [
+      {
+        "property": "<property>",
+        "value": "<value>"
+      }
+    ]
+  }
+}

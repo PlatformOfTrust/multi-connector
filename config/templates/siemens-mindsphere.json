@@ -1,0 +1,37 @@
+{
+  "plugins": [
+    "oauth2",
+    "siemens-mindsphere"
+  ],
+  "protocol": "rest",
+  "authConfig": {
+    "url": "https://${customer}.piam.eu1.mindsphere.io",
+    "authPath": "/oauth/token",
+    "clientId": "${clientId}",
+    "clientSecret": "${clientSecret}",
+    "path": "https://gateway.eu1.mindsphere.io/api/iottimeseries/v3/timeseries/${assetId}/${aspectId}"
+  },
+  "dataObjects": [
+    ""
+  ],
+  "dataPropertyMappings": {
+    "${type}": "value"
+  },
+  "generalConfig": {
+    "query": {
+      "properties": [],
+      "limit": { "limit": 1 },
+      "end": "to",
+      "start": "from"
+    },
+    "sourceName": {
+      "pathIndex": 8
+    },
+    "hardwareId": {
+      "pathIndex": 7
+    },
+    "timestamp": {
+      "dataObjectProperty": "_time"
+    }
+  }
+}

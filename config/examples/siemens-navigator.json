@@ -1,0 +1,17 @@
+{
+  "template": "siemens-navigator",
+  "static": {
+    "username": "<username>",
+    "password": "<password>"
+  },
+  "dynamic": {
+    "authConfig.path": "ids",
+    "dataPropertyMappings": "type"
+  },
+  "request": {
+    "ids": [
+      "<meter-id>"
+    ],
+    "type": "<type>"
+  }
+}

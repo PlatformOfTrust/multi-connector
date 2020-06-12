@@ -1,0 +1,17 @@
+{
+  "template": "haltian",
+  "static": {
+    "key": "<key-path>",
+    "cert": "<cert-path>",
+    "url": "<url>",
+    "topic": "<topic>"
+  },
+  "dynamic": {
+    "authConfig.path": "ids"
+  },
+  "request": {
+    "ids": [
+      "<id>"
+    ]
+  }
+}

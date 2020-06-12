@@ -1,0 +1,22 @@
+{
+  "template": "siemens-mindsphere",
+  "static": {
+    "customer": "<customer>",
+    "username": "<username>",
+    "password": "<password>",
+    "clientId": "<client-id>",
+    "clientSecret": "<client-secret>",
+    "type": "MeasureAirTemperatureCelciusDegree"
+  },
+  "dynamic": {
+    "authConfig.path": "ids"
+  },
+  "request": {
+    "ids": [
+      {
+        "assetId": "<asset-id>",
+        "aspectId": "<aspect-id>"
+      }
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "plugins": [
+    "oauth2",
+    "schneider"
+  ],
+  "protocol": "rest",
+  "authConfig": {
+    "url": "${url}",
+    "authPath": "/GetToken",
+    "username": "${username}",
+    "password": "${password}",
+    "path": "/Values/${id}"
+  },
+  "dataObjects": [
+    ""
+  ],
+  "dataPropertyMappings": {
+    "${type}": "Value"
+  },
+  "generalConfig": {
+    "sourceName": {
+      "dataObjectProperty": "Name"
+    },
+    "hardwareId": {
+      "dataObjectProperty": "Id"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "template": "schneider",
+  "static": {
+    "url": "<url>",
+    "username": "<username>",
+    "password": "<password>"
+  },
+  "dynamic": {
+    "authConfig.path": "ids",
+    "dataPropertyMappings": "type"
+  },
+  "request": {
+    "ids": [
+      "<path>"
+    ],
+    "type": "<type>"
+  }
+}

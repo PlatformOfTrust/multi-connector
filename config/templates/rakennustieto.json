@@ -1,0 +1,30 @@
+{
+  "plugins": [
+    "basic",
+    "rakennustieto"
+  ],
+  "protocol": "rest",
+  "authConfig": {
+    "url": "${url}",
+    "username": "${username}",
+    "password": "${password}",
+    "path": "/ws/rest/rakennustieto/api/tradeItems/${property}/${value}"
+  },
+  "dataObjects": [
+    "Items"
+  ],
+  "dataPropertyMappings": {
+    "${type}": ""
+  },
+  "generalConfig": {
+    "sourceName": {
+      "dataObjectProperty": "ItemTechnicalName"
+    },
+    "hardwareId": {
+      "dataObjectProperty": "${property}"
+    },
+    "timestamp": {
+      "dataObjectProperty": "ItemModifiedAt"
+    }
+  }
+}

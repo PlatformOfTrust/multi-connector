@@ -1,0 +1,19 @@
+{
+  "template": "nuuka",
+  "static": {
+    "url": "https://<sub-domain>.nuuka.cloud",
+    "version": "v1.0",
+    "category": "EnergyData",
+    "precision": "Hourly",
+    "reportingGroup": "Electricity",
+    "type": "MeasureEnergyConsumptionKilowattHour"
+  },
+  "dynamic": {
+    "authConfig.path": "ids"
+  },
+  "request": {
+    "ids": [
+      "<location-name>"
+    ]
+  }
+}

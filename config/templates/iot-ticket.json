@@ -1,0 +1,30 @@
+{
+  "plugins": [
+    "iot-ticket",
+    "basic"
+  ],
+  "protocol": "rest",
+  "authConfig": {
+    "url": "https://my.iot-ticket.com/api/v1",
+    "username": "${username}",
+    "password": "${password}",
+    "path": "/process/read/${deviceId}?datanodes=${path}"
+  },
+  "dataObjects": [
+    "datanodeReads"
+  ],
+  "dataPropertyMappings": {
+    "${type}": "values.0.v"
+  },
+  "generalConfig": {
+    "sourceName": {
+      "dataObjectProperty": "name"
+    },
+    "hardwareId": {
+      "dataObjectProperty": "path"
+    },
+    "timestamp": {
+      "dataObjectProperty": "values.0.ts"
+    }
+  }
+}

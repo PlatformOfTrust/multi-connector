@@ -1,0 +1,32 @@
+{
+  "plugins": [
+    "oauth2",
+    "sahkonumerot"
+  ],
+  "protocol": "rest",
+  "authConfig": {
+    "url": "https://www.sahkonumerot.fi/application/api/web",
+    "authPath": "/login/logins",
+    "authContentType": "application/json",
+    "username": "${username}",
+    "password": "${password}",
+    "path": "/package/basic-data?${property}=${value}"
+  },
+  "dataObjects": [
+    ""
+  ],
+  "dataPropertyMappings": {
+    "${type}": ""
+  },
+  "generalConfig": {
+    "sourceName": {
+      "dataObjectProperty": "TT200"
+    },
+    "hardwareId": {
+      "dataObjectProperty": "${property}"
+    },
+    "timestamp": {
+      "dataObjectProperty": ""
+    }
+  }
+}
