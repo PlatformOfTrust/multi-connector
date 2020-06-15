@@ -108,7 +108,7 @@ If the data source requires custom code, a plugin can be utilized to handle and 
 
 ### Step 3: Compose a config
 
-Pick an example and fill in fields which are encapsulated by symbols < and >. Data product specific values are included in an object named "static". Broker request includes parameters which define query contents. Allocation of these parameters in defined in "dynamic" property.
+Pick an example and fill in fields which are encapsulated by symbols < and >. Data product specific values are included in an object named "static". Broker request includes parameters which define query contents. Allocation of these parameters in defined in "dynamic" property. Place the config file to the root of config folder and rename it to match the product code of the data product at Platform of Trust e.g my-product-code.json. Every broker request with a matching product code will be handled by this config.
 
 Example config:
 ```
