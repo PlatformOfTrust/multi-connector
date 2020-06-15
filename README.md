@@ -73,11 +73,11 @@ Example template:
     "" // Empty string defines root.
   ],
   "dataPropertyMappings": { // Defines path to a type spesific data.
-    "${type}": "value" // Type is defined dynamic and controlled by config or broker request. Data would be taken with key name "value" from data object.
+    "${type}": "value" // Type is defined dynamicly and controlled by config or broker request. Data would be taken with key name "value" from data object.
   },
   "generalConfig": {
     "query": {
-      "properties": [], // Properties inlcluded to the resource request query.
+      "properties": [], // Properties included to the resource request query.
       "limit": { "limit": 1 }, // Used with data sources, which have same endpoint for latest and history data to include only latest value.
       "end": "to", // Defines end time query parameter name.
       "start": "from" // Defines start time query parameter name.
