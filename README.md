@@ -159,4 +159,5 @@ npm run docker:build
 Deploying from the official repo [polkuio/connector](https://hub.docker.com/r/polkuio/connector) is accomplished the following way.
 ```
 docker pull polkuio/connector
+docker run -p 8080:8080 -d polkuio/connector
 ```
