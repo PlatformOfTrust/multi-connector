@@ -1,10 +1,10 @@
 {
-  "name": "connector-dev",
+  "name": "multi-connector",
   "version": "1.0.0",
   "description": "HTTP server to handle Platform of Trust Broker API requests.",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "node server.js",
     "generate": "node generate.js",
     "test": "mocha",
     "docs": "jsdoc -r . -c ./conf.json",
@@ -12,14 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/polku-public/connector-dev.git"
+    "url": "git+https://github.com/PlatformOfTrust/multi-connector.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://gitlab.com/polku-public/connector-dev/issues"
+    "url": "https://github.com/PlatformOfTrust/multi-connector/issues"
   },
-  "homepage": "https://gitlab.com/polku-public/connector-dev#readme",
+  "homepage": "https://github.com/PlatformOfTrust/multi-connector#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
     "compression": "^1.7.4",
