@@ -1,0 +1,30 @@
+{
+  "plugins": [
+    "oauth2",
+    "talotohtori",
+    "logger"
+  ],
+  "protocol": "rest",
+  "authConfig": {
+    "url": "https://identity.talotohtori.fi",
+    "authPath": "/token",
+    "clientId": "${clientId}",
+    "clientSecret": "${clientSecret}",
+    "path": "https://betaapi.talotohtori.fi:8080/v2/iaq/sensors/latest/${id}"
+  },
+  "dataObjects": [
+    "data"
+  ],
+  "dataPropertyMappings": {
+    "MeasureAirTemperatureCelciusDegree": "Temperature_01",
+    "MeasureAirHumidityPercentage": "Humidity_01"
+  },
+  "generalConfig": {
+    "hardwareId": {
+      "dataObjectProperty": "id"
+    },
+    "timestamp": {
+      "dataObjectProperty": "timestamp"
+    }
+  }
+}
