@@ -15,6 +15,7 @@ Following data sources are supported out of the box. Example configs can be foun
 - Schneider EcoStruxure Cloud
 - Siemens Mindsphere
 - Siemens Navigator
+- Talotohtori API
 - Wapice IoT-Ticket
 
 ## Getting Started
