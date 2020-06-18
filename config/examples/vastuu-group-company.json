@@ -1,0 +1,16 @@
+{
+  "template": "vastuu-group-company",
+  "static": {
+    "clientId": "<client-id>",
+    "clientSecret": "<client-secret>",
+    "type": "Company"
+  },
+  "dynamic": {
+    "authConfig.headers": "ids"
+  },
+  "request": {
+    "ids": [
+      "<registration-number>"
+    ]
+  }
+}

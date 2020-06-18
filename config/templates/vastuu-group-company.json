@@ -1,0 +1,29 @@
+{
+  "plugins": [
+    "oauth2"
+  ],
+  "protocol": "rest",
+  "authConfig": {
+    "url": "https://companyapi.bet.tilaajavastuu.fi",
+    "authPath": "/token",
+    "clientId": "${clientId}",
+    "clientSecret": "${clientSecret}",
+    "path": "/api/v1/companies/contacts",
+    "headers": {
+      "org-id-type": "registration_number",
+      "org-id-country": "fi",
+      "org-id-value": "${id}"
+    }
+  },
+  "dataObjects": [
+    ""
+  ],
+  "dataPropertyMappings": {
+    "${type}": ""
+  },
+  "generalConfig": {
+    "hardwareId": {
+      "dataObjectProperty": "gov_org_ids.0.gov_org_id"
+    }
+  }
+}

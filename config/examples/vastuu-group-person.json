@@ -1,0 +1,16 @@
+{
+  "template": "vastuu-group-person",
+  "static": {
+    "clientId": "<client-id>",
+    "clientSecret": "<client-secret>",
+    "type": "Person"
+  },
+  "dynamic": {
+    "authConfig.headers": "ids"
+  },
+  "request": {
+    "ids": [
+      "<tax-number>"
+    ]
+  }
+}

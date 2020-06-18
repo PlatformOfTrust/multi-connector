@@ -1,0 +1,29 @@
+{
+  "plugins": [
+    "oauth2"
+  ],
+  "protocol": "rest",
+  "authConfig": {
+    "url": "https://personapi.beta.tilaajavastuu.fi",
+    "authPath": "/token",
+    "clientId": "${clientId}",
+    "clientSecret": "${clientSecret}",
+    "path": "/api/v1/persons/authority_report?country=FI",
+    "headers": {
+      "id-type": "tax_number",
+      "id-country": "fi",
+      "id-value": "${id}"
+    }
+  },
+  "dataObjects": [
+    ""
+  ],
+  "dataPropertyMappings": {
+    "${type}": ""
+  },
+  "generalConfig": {
+    "hardwareId": {
+      "dataObjectProperty": "gov_ids.0.gov_id"
+    }
+  }
+}
