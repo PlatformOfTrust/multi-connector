@@ -1,7 +1,6 @@
 {
   "plugins": [
-    "oauth2",
-    "talotohtori"
+    "oauth2"
   ],
   "protocol": "rest",
   "authConfig": {
@@ -20,7 +19,7 @@
   },
   "generalConfig": {
     "hardwareId": {
-      "dataObjectProperty": "id"
+      "pathIndex": 7
     },
     "timestamp": {
       "dataObjectProperty": "timestamp"
