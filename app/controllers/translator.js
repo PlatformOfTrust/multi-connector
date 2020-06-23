@@ -12,9 +12,6 @@ const connector = require('../lib/connector');
  * Handles fetching and returning of the data.
  */
 
-/** Import contextURL definitions. */
-const contextURLs = require('../../config/definitions/pot').contextURLs;
-
 /**
  * Returns the data to the PoT Broker API
  * based on the parameters sent.
@@ -26,15 +23,9 @@ const contextURLs = require('../../config/definitions/pot').contextURLs;
  */
 module.exports.fetch = async (req, res) => {
     let result;
-    const type = 'DataProduct';
     try {
-        result = {
-            "@context": contextURLs[type],
-            "data": []
-        };
-
         // Fetch data.
-        result.data = await connector.getData(req.body);
+        result = await connector.getData(req.body);
 
         // Initialize signature object.
         let signature = {

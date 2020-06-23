@@ -1,5 +1,5 @@
 {
-  "template": "talotohtori",
+  "template": "talotohtori-iaq",
   "static": {
     "clientId": "<client-id>",
     "clientSecret": "<client-secret>"

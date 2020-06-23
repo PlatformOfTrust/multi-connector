@@ -101,6 +101,14 @@ const handleData = async (config, path, index, data) => {
 
     let measurements = [];
 
+    const keys = {
+        id: _.get(config, 'pot.id') || ID || 'id',
+        data: _.get(config, 'pot.data') || DATA || 'data',
+        type: _.get(config, 'pot.type') || TYPE || 'type',
+        value: _.get(config, 'pot.value') || VALUE || 'value',
+        timestamp: _.get(config, 'pot.timestamp') || TIMESTAMP || 'timestamp',
+    };
+
     for (let i = 0; i < config.dataObjects.length; i++) {
 
         let dataObjects = [];
@@ -167,16 +175,16 @@ const handleData = async (config, path, index, data) => {
             if (Object.keys(measurement.data).length === 0) continue;
 
             const item = {
-                [ID || 'id']: hardwareId,
-                [DATA || 'data']: []
+                [keys.id]: hardwareId,
+                [keys.data]: []
             };
 
             // Format data
             for (let d = 0; d < Object.entries(measurement.data).length; d++ ) {
-                item[DATA || 'data'].push({
-                    [TYPE || 'type']: Object.entries(measurement.data)[d][0],
-                    [VALUE || 'value']: Object.entries(measurement.data)[d][1],
-                    [TIMESTAMP || 'timestamp']: measurement.timestamp,
+                item[keys.data].push({
+                    [keys.type]: Object.entries(measurement.data)[d][0],
+                    [keys.value]: Object.entries(measurement.data)[d][1],
+                    [keys.timestamp]: measurement.timestamp,
                 });
             }
             measurements.push(item);
@@ -189,25 +197,25 @@ const handleData = async (config, path, index, data) => {
     try {
         let merged = {};
         for (let i = 0; i < measurements.length; i++ ) {
-            if (!Object.hasOwnProperty.call(merged, measurements[i][ID || 'id'])) {
-                merged[measurements[i][ID || 'id']] =  measurements[i];
+            if (!Object.hasOwnProperty.call(merged, measurements[i][keys.id])) {
+                merged[measurements[i][keys.id]] =  measurements[i];
             } else {
-                merged[measurements[i][ID || 'id']][DATA || 'data']
-                    = [...measurements[i][DATA || 'data'], ...merged[measurements[i][ID || 'id']][DATA || 'data']]
+                merged[measurements[i][keys.id]][keys.data]
+                    = [...measurements[i][keys.data], ...merged[measurements[i][keys.id]][keys.data]]
             }
         }
         mergedData = Object.values(merged);
 
         // Sort data arrays.
         for (let j = 0; j < mergedData.length; j++ ) {
-            mergedData[j][DATA || 'data'] =
-                mergedData[j][DATA || 'data']
-                    .sort((a, b) => a[TIMESTAMP || 'timestamp'] - b[TIMESTAMP || 'timestamp']);
+            mergedData[j][keys.data] =
+                mergedData[j][keys.data]
+                    .sort((a, b) => a[keys.timestamp] - b[keys.timestamp]);
 
             // Execute id plugin function.
             for (let i = 0; i < config.plugins.length; i++) {
                 if (!!config.plugins[i].id) {
-                    mergedData[j][ID || 'id'] = await config.plugins[i].id({...config, index}, mergedData[j][ID || 'id']);
+                    mergedData[j][keys.id] = await config.plugins[i].id({...config, index}, mergedData[j][keys.id]);
                 }
             }
 
@@ -225,3 +233,4 @@ const handleData = async (config, path, index, data) => {
 module.exports = {
     handleData,
 };
+

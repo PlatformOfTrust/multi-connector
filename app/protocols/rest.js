@@ -62,10 +62,7 @@ const getDataByOptions = async (config, options, path) => {
             options.url += queryString;
         }
 
-        // Remove temporary query array.
-        delete options.query;
-
-        return rp(options).then(function (result) {
+        return rp({...options, query: undefined}).then(function (result) {
             return Promise.resolve(result);
         }).catch(function (err) {
             return Promise.reject(err);
@@ -203,15 +200,21 @@ const requestData = async (config, path, index) => {
         return handleError(config, err).then(function () {
             /** Second attempt */
             // If error handler recovers from the error, another attempt is initiated.
-            return getData(config, path);
+            return getDataByOptions(config.authConfig, options, path);
         }).then(function (result) {
             // Handle received data.
             if (result !== null) return response.handleData(config, path, index, parseResBody(result));
+            // Handle connection timed out.
             return promiseRejectWithError(522, 'Connection timed out.');
         }).then(function (result) {
             // Return received data.
             return Promise.resolve(result);
         }).catch(function (err) {
+            if (Object.hasOwnProperty.call(err, 'statusCode')) {
+                if (err.statusCode === 404 || err.statusCode === 400) {
+                    return Promise.resolve([]);
+                }
+            }
             return Promise.reject(err);
         });
     });

@@ -26,16 +26,10 @@ const publicKeyURLs = [
     }
 ];
 
-/** Context URLs. */
-const contextURLs = {
-    DataProduct: 'https://standards-ontotest.oftrust.net/v2/Schema/DataProductOutput/SensorDataProductOutput/'
-};
-
 /**
  * Expose definitions.
  */
 module.exports = {
     defaultKeySize,
-    publicKeyURLs,
-    contextURLs
+    publicKeyURLs
 };

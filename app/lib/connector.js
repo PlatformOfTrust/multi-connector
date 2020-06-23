@@ -17,7 +17,7 @@ const fs = require('fs');
  * Handles data fetching by product code specific configurations.
  */
 
-/** Import platform of trust definitions. */
+/** Import platform of trust request definitions. */
 const {
     PRODUCT_CODE,
     TIMESTAMP,
@@ -28,6 +28,12 @@ const {
     DATA_TYPES,
     supportedParameters
 } = require('../../config/definitions/request');
+
+/** Import platform of trust response definitions. */
+const {
+    CONTEXT,
+    defaultOutput
+} = require('../../config/definitions/response');
 
 // Initialize objects for protocols and plugins.
 const protocols = {};
@@ -185,18 +191,51 @@ function emit(collections) {
     /** Source selection for templates. */
     loadJSON('templates', process.env.TEMPLATES) :
     load(templatesDir, '.json', 'templates', readFile))
-    .then(() => {return (process.env.RESOURCES ?
-        /** Source selection for resources. */
-        loadJSON('resources', process.env.RESOURCES) :
-        load(resourcesDir, '.*', 'resources', readFile))})
-    .then(() => {return load(protocolsDir, '.js', 'protocols', readFile)})
-    .then(() => {return (process.env.CONFIGS ?
-        /** Source selection for configs. */
-        loadJSON('configs', process.env.CONFIGS) :
-        load(configsDir, '.json', 'configs', readFile))})
-    .then(() => {return load(pluginsDir, '.js', 'plugins', readFile)})
-    .then(() => {return emit(['templates', 'configs', 'resources'])})
+    .then(() => {
+        return (process.env.RESOURCES ?
+            /** Source selection for resources. */
+            loadJSON('resources', process.env.RESOURCES) :
+            load(resourcesDir, '.*', 'resources', readFile))
+    })
+    .then(() => {
+        return load(protocolsDir, '.js', 'protocols', readFile)
+    })
+    .then(() => {
+        return (process.env.CONFIGS ?
+            /** Source selection for configs. */
+            loadJSON('configs', process.env.CONFIGS) :
+            load(configsDir, '.json', 'configs', readFile))
+    })
+    .then(() => {
+        return load(pluginsDir, '.js', 'plugins', readFile)
+    })
+    .then(() => {
+        return emit(['templates', 'configs', 'resources'])
+    })
     .catch((err) => winston.log('error', err.message));
+
+/**
+ * Escapes special (meta) characters.
+ *
+ * @param {String} string
+ * @return {String}
+ */
+function escapeRegExp(string) {
+    // $& means the whole matched string.
+    return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * Replaces all occurrences with regular expression.
+ *
+ * @param {String} str
+ * @param {String} find
+ * @param {String} replace
+ * @return {String}
+ */
+function replaceAll(str, find, replace) {
+    return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+}
 
 /**
  * Replaces placeholder/s with given value/s.
@@ -215,16 +254,16 @@ function replacer(template, placeholder, value) {
     if (value instanceof Date) value = value.toISOString();
     if (_.isObject(value)) {
         Object.keys(value).forEach(function (key) {
-            r = r.replace('${' + key + '}', value[key])
+            r = replaceAll(r, '${' + key + '}', value[key]);
         });
         // In case id placeholder is left untouched.
         if (r === '"${id}"' && Object.keys(value).length > 0) {
             // Place object to the id placeholder.
-            r = r.replace('"${id}"', JSON.stringify(value))
+            r = replaceAll(r, '"${id}"', JSON.stringify(value));
         }
         return JSON.parse(r);
     } else {
-        return JSON.parse(r.replace('${' + placeholder + '}', value));
+        return JSON.parse(replaceAll(r, '${' + placeholder + '}', value));
     }
 }
 
@@ -480,7 +519,22 @@ const getData = async (reqBody) => {
         }
     }
 
-    return Promise.resolve(_.flatten(items));
+    // Compose output payload.
+    let output = {
+        [CONTEXT]: _.get(template, 'pot.context') || defaultOutput.context,
+        [_.get(template, 'pot.object') || defaultOutput.object]: {
+            [_.get(template, 'pot.array') || defaultOutput.array]: _.flatten(items)
+        }
+    };
+
+    // Execute output plugin function.
+    for (let i = 0; i < template.plugins.length; i++) {
+        if (!!template.plugins[i].output) {
+            output = await template.plugins[i].output(template, output);
+        }
+    }
+
+    return Promise.resolve(output);
 };
 
 /**

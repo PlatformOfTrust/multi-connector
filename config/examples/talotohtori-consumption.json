@@ -1,0 +1,16 @@
+{
+  "template": "talotohtori-consumption",
+  "static": {
+    "clientId": "<client-id>",
+    "clientSecret": "<client-secret>",
+    "interval": "hour"
+  },
+  "dynamic": {
+    "authConfig.path": "ids"
+  },
+  "request": {
+    "ids": [
+      "<device-id>"
+    ]
+  }
+}
