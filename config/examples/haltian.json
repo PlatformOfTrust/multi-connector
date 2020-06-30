@@ -9,6 +9,14 @@
   "dynamic": {
     "authConfig.path": "ids"
   },
+  "plugins": {
+    "azure-service-bus": {
+      "url": "<service-bus-inbound-endpoint>",
+      "pot": {
+        "data": "data"
+      }
+    }
+  },
   "request": {
     "ids": [
       "<id>"

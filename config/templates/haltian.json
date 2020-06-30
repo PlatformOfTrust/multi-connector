@@ -1,5 +1,7 @@
 {
-  "plugins": [],
+  "plugins": [
+    "azure-service-bus"
+  ],
   "protocol": "mqtt",
   "authConfig": {
     "cert": "${cert}",
