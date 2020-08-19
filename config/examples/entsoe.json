@@ -1,0 +1,14 @@
+{
+  "template": "entsoe",
+  "static": {
+    "securityToken": "<security-token>"
+  },
+  "dynamic": {
+    "authConfig.path": "targetObject",
+    "generalConfig.query.properties.0.timeInterval": "period"
+  },
+  "request": {
+    "period": "<startTime>/<endTime>",
+    "targetObject": "<domain>"
+  }
+}

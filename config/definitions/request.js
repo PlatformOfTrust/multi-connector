@@ -44,7 +44,7 @@ const supportedParameters = {
         required: true
     },
     [definitions.IDS]: {
-        required: true
+        required: false
     },
     [definitions.START]: {
         required: false

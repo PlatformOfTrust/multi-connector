@@ -1,0 +1,42 @@
+{
+  "plugins": [
+    "entsoe"
+  ],
+  "protocol": "rest",
+  "authConfig": {
+    "url": "https://transparency.entsoe.eu",
+    "path": "/api?securityToken=${securityToken}&documentType=A44&in_Domain=${targetObject}&out_Domain=${targetObject}"
+  },
+  "dataObjects": [
+    ""
+  ],
+  "dataPropertyMappings": {
+    "PricePlan": "Publication_MarketDocument"
+  },
+  "generalConfig": {
+    "query": {
+      "properties": [
+        {
+          "timeInterval": "${period}"
+        }
+      ]
+    },
+    "hardwareId": {
+      "dataObjectProperty": "Publication_MarketDocument.TimeSeries.in_DomainmRID"
+    },
+    "sourceName": {
+      "dataObjectProperty": ""
+    },
+    "timestamp": {
+      "dataObjectProperty": "Publication_MarketDocument.createdDateTime"
+    }
+  },
+  "pot": {
+    "context": "https://standards.oftrust.net/v2/Context/DataProductParameters/Forecast/Price/Electricity/",
+    "array": "forecasts",
+    "data": "pricePlans",
+    "id": "id",
+    "value": "rate",
+    "timestamp": "timestamp"
+  }
+}
