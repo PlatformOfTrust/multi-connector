@@ -7,8 +7,13 @@ const mqtt = require('mqtt');
 const response = require('../lib/response');
 const winston = require('../../logger.js');
 const cache = require('../cache');
+const _ = require('lodash');
 
 const clients = {};
+const plugins = {};
+
+/** Supported parallel plugins */
+const supportedPlugins = ['azure-service-bus'];
 
 /**
  * Queries measurements cache.
@@ -63,7 +68,7 @@ const getData = async (config, pathArray) => {
  * @param {Object} config
  * @param {String} productCode
  */
-const connect = function (config, productCode) {
+const connect = async (config, productCode) => {
     try {
         const url = config.static.url;
         const topic = config.static.topic;
@@ -83,11 +88,56 @@ const connect = function (config, productCode) {
         });
 
         // Store received measurements to cache on receive.
-        clients[productCode].on('message', (topic, message) => {
+        clients[productCode].on('message', async (topic, message) => {
             try {
                 const result = cache.getDoc('measurements', productCode) || {};
                 result[topic] = JSON.parse(message.toString());
                 cache.setDoc('measurements', productCode, result);
+            } catch (err) {
+                winston.log('error', err.message);
+            }
+
+            // Handle data and stream.
+            try {
+                const template = cache.getDoc('templates', config.template);
+                const streamPlugins = template.plugins.filter(p => supportedPlugins.includes(p));
+                if (streamPlugins.length > 0) {
+                    // Execute stream plugin function.
+                    for (let i = 0; i < streamPlugins.length; i++) {
+                        // Require plugin, if not yet available.
+                        if (!Object.keys(plugins).includes(streamPlugins[i])) {
+                            plugins[streamPlugins[i]] = require('../.' + './config/plugins/' + '/' + streamPlugins[i] + '.js');
+                        }
+                        // Check that plugin has stream method.
+                        if (!!plugins[streamPlugins[i]].stream) {
+                            try {
+                                // Resolve id.
+                                const path = template.generalConfig.hardwareId.dataObjectProperty;
+                                const id = JSON.parse(message.toString())[path];
+                                // Compose plugin config, which has plugin specific options.
+                                const pluginConfig = (config.plugins ? config.plugins[streamPlugins[i]] || {} : {});
+                                // Stream data.
+                                plugins[streamPlugins[i]].stream(
+                                    {
+                                        ...template,
+                                        ...pluginConfig
+                                    },
+                                    _.flatten(await getData(
+                                        {
+                                            ...template,
+                                            ...pluginConfig,
+                                            plugins: [],
+                                            productCode: productCode,
+                                        },
+                                        [id])
+                                    )
+                                );
+                            } catch (err) {
+                                winston.log('error', err.message);
+                            }
+                        }
+                    }
+                }
             } catch (err) {
                 winston.log('error', err.message);
             }
