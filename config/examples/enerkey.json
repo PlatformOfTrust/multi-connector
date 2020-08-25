@@ -1,0 +1,16 @@
+{
+  "template": "enerkey",
+  "static": {
+    "apikey": "<apikey>",
+    "interval": "hourly",
+    "type": "MeasureEnergyConsumptionKilowattHour"
+  },
+  "dynamic": {
+    "authConfig.path": "ids"
+  },
+  "request": {
+    "ids": [
+      "<meter-id>"
+    ]
+  }
+}

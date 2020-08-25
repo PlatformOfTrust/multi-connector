@@ -6,6 +6,7 @@
 
 Following data sources are supported out of the box. Example configs can be found at the repo.
 
+- EnerKey Data Api
 - ENTSO-E Transparency Platform
 - Fidelix Pilvivalvomo
 - Haltian Thingsee API

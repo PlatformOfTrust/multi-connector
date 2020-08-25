@@ -1,0 +1,29 @@
+{
+  "plugins": [],
+  "protocol": "rest",
+  "authConfig": {
+    "url": "https://api.enerkey.com",
+    "headers": {
+      "Authorization": "${apikey}"
+    },
+    "path": "/api/v1/Values/${interval}/${id}"
+  },
+  "dataObjects": [
+    "values"
+  ],
+  "dataPropertyMappings": {
+    "${type}": "value"
+  },
+  "generalConfig": {
+    "query": {
+      "start": "from",
+      "end": "to"
+    },
+    "hardwareId": {
+      "pathIndex": 7
+    },
+    "timestamp": {
+      "dataObjectProperty": "timestamp"
+    }
+  }
+}
