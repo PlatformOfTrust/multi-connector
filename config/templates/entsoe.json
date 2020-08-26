@@ -37,6 +37,7 @@
     "data": "pricePlans",
     "id": "id",
     "value": "rate",
-    "timestamp": "timestamp"
+    "timestamp": "timestamp",
+    "required": ["parameters.targetObject", "parameters.period"]
   }
 }

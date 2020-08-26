@@ -416,14 +416,55 @@ const interpretMode = function (config, parameters) {
  *   Data array.
  */
 const getData = async (reqBody) => {
-    /** Parameter validation */
-    const validation = validator.validate(reqBody, supportedParameters);
+    /** Default request validation */
+    let validation = validator.validate(reqBody, supportedParameters);
+    if (Object.hasOwnProperty.call(validation, 'error')) {
+        if (validation.error) return rest.promiseRejectWithError(422, validation.error);
+    }
+
+    // Pick requested product code.
+    const productCode = _.get(reqBody, PRODUCT_CODE) || 'default';
+
+    // Get data product config.
+    let config = cache.getDoc('configs', productCode);
+    if (!config) config = cache.getDoc('configs', 'default');
+    if (!config) return rest.promiseRejectWithError(404, 'Data product config not found.');
+    if (!Object.hasOwnProperty.call(config, 'template')) {
+        return rest.promiseRejectWithError(404, 'Data product config template not defined.');
+    }
+
+    // Get data product config template.
+    let template = cache.getDoc('templates', config.template);
+    if (!template) return rest.promiseRejectWithError(404, 'Data product config template not found.');
+
+    /* Custom requirements */
+    let requiredParameters;
+
+    // Check for required request parameters from template.
+    if (Object.hasOwnProperty.call(template, 'pot')) {
+        if (Object.hasOwnProperty.call(template.pot, 'required')) {
+            if (Array.isArray(template.pot.required)) {
+                requiredParameters = _.uniq(template.pot.required).map((path) => {
+                    return {[path.toString()]: {required: true}}
+                }).reduce(function (r, c) {
+                    return Object.assign(r, c);
+                }, {})
+            }
+        }
+    }
+
+    // If required parameters are not defined in template. Set IDS parameter required by default.
+    if (!requiredParameters) {
+        requiredParameters = {[IDS]: {required: true}}
+    }
+
+    /** Validation of data product specific parameters */
+    validation = validator.validate(reqBody, requiredParameters || {});
     if (Object.hasOwnProperty.call(validation, 'error')) {
         if (validation.error) return rest.promiseRejectWithError(422, validation.error);
     }
 
     // Pick supported parameters from reqBody.
-    const productCode = _.get(reqBody, PRODUCT_CODE) || 'default';
     const timestamp = parseTs(_.get(reqBody, TIMESTAMP) || moment.now());
     let parameters = {
         ids: _.uniq(_.get(reqBody, IDS) || []),
@@ -438,18 +479,6 @@ const getData = async (reqBody) => {
     _.unset(reqBody, END);
     _.unset(reqBody, DATA_TYPES);
     parameters = {...parameters, ..._.get(reqBody, PARAMETERS) || {}};
-
-    // Get data product config.
-    let config = cache.getDoc('configs', productCode);
-    if (!config) config = cache.getDoc('configs', 'default');
-    if (!config) return rest.promiseRejectWithError(404, 'Data product config not found.');
-    if (!Object.hasOwnProperty.call(config, 'template')) {
-        return rest.promiseRejectWithError(404, 'Data product config template not defined.');
-    }
-
-    // Get data product config template.
-    let template = cache.getDoc('templates', config.template);
-    if (!template) return rest.promiseRejectWithError(404, 'Data product config template not found.');
 
     // Template identifies connector settings for multiple configs.
     // ProductCode identifies requested data product.
