@@ -1,6 +1,7 @@
 {
   "template": "enerkey",
   "static": {
+    "url": "https://api.enerkey.com",
     "apikey": "<apikey>",
     "interval": "hourly",
     "type": "MeasureEnergyConsumptionKilowattHour"

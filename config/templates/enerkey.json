@@ -2,7 +2,7 @@
   "plugins": [],
   "protocol": "rest",
   "authConfig": {
-    "url": "https://api.enerkey.com",
+    "url": "${url}",
     "headers": {
       "Authorization": "${apikey}"
     },
