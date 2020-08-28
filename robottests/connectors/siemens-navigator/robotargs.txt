@@ -1,0 +1,3 @@
+--pythonpath lib
+--outputdir connectors/siemens-navigator/result
+connectors/siemens-navigator/connector_tests.robot

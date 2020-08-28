@@ -13,11 +13,16 @@
     ""
   ],
   "dataPropertyMappings": {
-    "${type}": ""
+    "CompanyData": ""
   },
   "generalConfig": {
     "hardwareId": {
       "dataObjectProperty": "companyId"
     }
+  },
+  "pot": {
+    "context": "https://standards.oftrust.net/v2/Context/DataProductParameters/Company/",
+    "array": "companies",
+    "data": "data"
   }
 }

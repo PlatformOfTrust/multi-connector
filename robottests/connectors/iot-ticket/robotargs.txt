@@ -1,0 +1,3 @@
+--pythonpath lib
+--outputdir connectors/iot-ticket/result
+connectors/iot-ticket/connector_tests.robot

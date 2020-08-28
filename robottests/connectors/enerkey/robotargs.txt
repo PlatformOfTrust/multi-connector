@@ -1,0 +1,3 @@
+--pythonpath lib
+--outputdir connectors/enerkey/result
+connectors/enerkey/connector_tests.robot

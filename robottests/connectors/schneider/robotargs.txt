@@ -1,0 +1,3 @@
+--pythonpath lib
+--outputdir connectors/schneider/result
+connectors/schneider/connector_tests.robot

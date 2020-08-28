@@ -1,12 +1,14 @@
 node_modules/
 greenlock.d/
+.idea/
 wsdl/
 temp/
 log/
 out/
 
+robottests/poetry.lock
 package-lock.json
+npm-debug.log
 .greenlockrc
 yarn.lock
-.idea
 .env

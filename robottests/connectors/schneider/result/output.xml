@@ -1,0 +1,1921 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 3.2.1 (Python 3.8.3 on win32)" generated="20200828 10:14:24.207" rpa="false">
+<suite id="s1" name="Connector Tests" source="C:\Users\artor\WebstormProjects\translator\robottests\tests\schneider\connector_tests.robot">
+<test id="s1-t1" name="fetch, 200">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20200828 10:14:24.455" level="INFO">${body} = {'productCode': 'default_schneider', 'parameters': {'ids': ['01/eValvomo/Demoasiakkuus/Demo site/Tasokuvat 2 kerros/Huoneet/Huone 202/Muuttujat/CO2-pitoisuus', 'INVALID'], 'startTime': '2020-04-06T06:...</msg>
+<status status="PASS" starttime="20200828 10:14:24.455" endtime="20200828 10:14:24.455"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20200828 10:14:24.455" level="INFO">${now} = 2020-08-28T07:14:24+00:00</msg>
+<status status="PASS" starttime="20200828 10:14:24.455" endtime="20200828 10:14:24.455"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:24.456" endtime="20200828 10:14:24.456"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:24.456" endtime="20200828 10:14:24.456"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20200828 10:14:24.456" level="INFO">${json_string} = {"productCode": "default_schneider", "parameters": {"ids": ["01/eValvomo/Demoasiakkuus/Demo site/Tasokuvat 2 kerros/Huoneet/Huone 202/Muuttujat/CO2-pitoisuus", "INVALID"], "startTime": "2020-04-06T06:...</msg>
+<status status="PASS" starttime="20200828 10:14:24.456" endtime="20200828 10:14:24.456"></status>
+</kw>
+<msg timestamp="20200828 10:14:24.456" level="INFO">${body} = {'productCode': 'default_schneider', 'parameters': {'ids': ['01/eValvomo/Demoasiakkuus/Demo site/Tasokuvat 2 kerros/Huoneet/Huone 202/Muuttujat/CO2-pitoisuus', 'INVALID'], 'startTime': '2020-04-06T06:...</msg>
+<status status="PASS" starttime="20200828 10:14:24.455" endtime="20200828 10:14:24.457"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20200828 10:14:24.457" level="INFO">${signature} = 0m8dUENY8a19BP1I8xf/jxiblfodJiRGa80DOIMOiAM=</msg>
+<status status="PASS" starttime="20200828 10:14:24.457" endtime="20200828 10:14:24.457"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:24.457" endtime="20200828 10:14:24.458"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:24.458" endtime="20200828 10:14:26.665"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20200828 10:14:26.667" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "@context": {
+            "type": "string",
+            "default": "https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/"
+        },
+        "data": {
+            "type": "object",
+            "properties": {
+                "sensors": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "measurements": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "@type": {
+                                            "type": "string"
+                                        },
+                                        "value": {
+                                            "type": "integer"
+                                        },
+                                        "timestamp": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "@type",
+                                        "timestamp",
+                                        "value"
+                                    ]
+                                }
+                            }
+                        },
+                        "required": [
+                            "id",
+                            "measurements"
+                        ]
+                    },
+                    "default": [
+                        {
+                            "id": "01/eValvomo/Demoasiakkuus/Demo site/Tasokuvat 2 kerros/Huoneet/Huone 202/Muuttujat/CO2-pitoisuus",
+                            "measurements": [
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 863,
+                                    "timestamp": "2020-04-06T06:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 551,
+                                    "timestamp": "2020-04-06T06:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 667,
+                                    "timestamp": "2020-04-06T06:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 623,
+                                    "timestamp": "2020-04-06T06:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 940,
+                                    "timestamp": "2020-04-06T07:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 709,
+                                    "timestamp": "2020-04-06T07:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 611,
+                                    "timestamp": "2020-04-06T07:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 963,
+                                    "timestamp": "2020-04-06T07:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 604,
+                                    "timestamp": "2020-04-06T07:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 946,
+                                    "timestamp": "2020-04-06T07:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 683,
+                                    "timestamp": "2020-04-06T08:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 546,
+                                    "timestamp": "2020-04-06T08:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 857,
+                                    "timestamp": "2020-04-06T08:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 764,
+                                    "timestamp": "2020-04-06T08:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 651,
+                                    "timestamp": "2020-04-06T08:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 655,
+                                    "timestamp": "2020-04-06T08:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 760,
+                                    "timestamp": "2020-04-06T09:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 554,
+                                    "timestamp": "2020-04-06T09:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 760,
+                                    "timestamp": "2020-04-06T09:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 985,
+                                    "timestamp": "2020-04-06T09:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 996,
+                                    "timestamp": "2020-04-06T09:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 863,
+                                    "timestamp": "2020-04-06T09:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 549,
+                                    "timestamp": "2020-04-06T10:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 695,
+                                    "timestamp": "2020-04-06T10:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 640,
+                                    "timestamp": "2020-04-06T10:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 842,
+                                    "timestamp": "2020-04-06T10:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 701,
+                                    "timestamp": "2020-04-06T10:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 638,
+                                    "timestamp": "2020-04-06T10:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 742,
+                                    "timestamp": "2020-04-06T11:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 575,
+                                    "timestamp": "2020-04-06T11:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 763,
+                                    "timestamp": "2020-04-06T11:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 525,
+                                    "timestamp": "2020-04-06T11:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 615,
+                                    "timestamp": "2020-04-06T11:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 922,
+                                    "timestamp": "2020-04-06T11:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 629,
+                                    "timestamp": "2020-04-06T12:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 625,
+                                    "timestamp": "2020-04-06T12:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 926,
+                                    "timestamp": "2020-04-06T12:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 726,
+                                    "timestamp": "2020-04-06T12:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 666,
+                                    "timestamp": "2020-04-06T12:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 559,
+                                    "timestamp": "2020-04-06T12:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 567,
+                                    "timestamp": "2020-04-06T13:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 990,
+                                    "timestamp": "2020-04-06T13:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 688,
+                                    "timestamp": "2020-04-06T13:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 776,
+                                    "timestamp": "2020-04-06T13:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 860,
+                                    "timestamp": "2020-04-06T13:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 849,
+                                    "timestamp": "2020-04-06T13:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 592,
+                                    "timestamp": "2020-04-06T14:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 796,
+                                    "timestamp": "2020-04-06T14:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 973,
+                                    "timestamp": "2020-04-06T14:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 793,
+                                    "timestamp": "2020-04-06T14:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 932,
+                                    "timestamp": "2020-04-06T14:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 605,
+                                    "timestamp": "2020-04-06T14:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 604,
+                                    "timestamp": "2020-04-06T15:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 669,
+                                    "timestamp": "2020-04-06T15:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 579,
+                                    "timestamp": "2020-04-06T15:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 851,
+                                    "timestamp": "2020-04-06T15:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 901,
+                                    "timestamp": "2020-04-06T15:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 667,
+                                    "timestamp": "2020-04-06T15:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 967,
+                                    "timestamp": "2020-04-06T16:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 609,
+                                    "timestamp": "2020-04-06T16:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 715,
+                                    "timestamp": "2020-04-06T16:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 739,
+                                    "timestamp": "2020-04-06T16:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 613,
+                                    "timestamp": "2020-04-06T16:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 661,
+                                    "timestamp": "2020-04-06T16:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 962,
+                                    "timestamp": "2020-04-06T17:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 716,
+                                    "timestamp": "2020-04-06T17:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 635,
+                                    "timestamp": "2020-04-06T17:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 531,
+                                    "timestamp": "2020-04-06T17:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 870,
+                                    "timestamp": "2020-04-06T17:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 829,
+                                    "timestamp": "2020-04-06T17:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 686,
+                                    "timestamp": "2020-04-06T18:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 920,
+                                    "timestamp": "2020-04-06T18:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 949,
+                                    "timestamp": "2020-04-06T18:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 508,
+                                    "timestamp": "2020-04-06T18:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 547,
+                                    "timestamp": "2020-04-06T18:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 655,
+                                    "timestamp": "2020-04-06T18:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 572,
+                                    "timestamp": "2020-04-06T19:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 625,
+                                    "timestamp": "2020-04-06T19:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 707,
+                                    "timestamp": "2020-04-06T19:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 804,
+                                    "timestamp": "2020-04-06T19:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 691,
+                                    "timestamp": "2020-04-06T19:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 881,
+                                    "timestamp": "2020-04-06T19:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 958,
+                                    "timestamp": "2020-04-06T20:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 726,
+                                    "timestamp": "2020-04-06T20:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 708,
+                                    "timestamp": "2020-04-06T20:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 997,
+                                    "timestamp": "2020-04-06T20:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 665,
+                                    "timestamp": "2020-04-06T20:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 599,
+                                    "timestamp": "2020-04-06T20:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 881,
+                                    "timestamp": "2020-04-06T21:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 530,
+                                    "timestamp": "2020-04-06T21:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 565,
+                                    "timestamp": "2020-04-06T21:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 591,
+                                    "timestamp": "2020-04-06T21:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 727,
+                                    "timestamp": "2020-04-06T21:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 866,
+                                    "timestamp": "2020-04-06T21:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 752,
+                                    "timestamp": "2020-04-06T22:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 869,
+                                    "timestamp": "2020-04-06T22:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 778,
+                                    "timestamp": "2020-04-06T22:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 509,
+                                    "timestamp": "2020-04-06T22:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 947,
+                                    "timestamp": "2020-04-06T22:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 784,
+                                    "timestamp": "2020-04-06T22:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 698,
+                                    "timestamp": "2020-04-06T23:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 756,
+                                    "timestamp": "2020-04-06T23:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 912,
+                                    "timestamp": "2020-04-06T23:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 971,
+                                    "timestamp": "2020-04-06T23:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 855,
+                                    "timestamp": "2020-04-06T23:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 676,
+                                    "timestamp": "2020-04-06T23:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 650,
+                                    "timestamp": "2020-04-07T00:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 836,
+                                    "timestamp": "2020-04-07T00:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 940,
+                                    "timestamp": "2020-04-07T00:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 900,
+                                    "timestamp": "2020-04-07T00:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 846,
+                                    "timestamp": "2020-04-07T00:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 896,
+                                    "timestamp": "2020-04-07T00:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 543,
+                                    "timestamp": "2020-04-07T01:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 835,
+                                    "timestamp": "2020-04-07T01:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 868,
+                                    "timestamp": "2020-04-07T01:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 694,
+                                    "timestamp": "2020-04-07T01:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 539,
+                                    "timestamp": "2020-04-07T01:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 945,
+                                    "timestamp": "2020-04-07T01:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 933,
+                                    "timestamp": "2020-04-07T02:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 985,
+                                    "timestamp": "2020-04-07T02:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 782,
+                                    "timestamp": "2020-04-07T02:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 633,
+                                    "timestamp": "2020-04-07T02:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 689,
+                                    "timestamp": "2020-04-07T02:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 981,
+                                    "timestamp": "2020-04-07T02:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 987,
+                                    "timestamp": "2020-04-07T03:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 915,
+                                    "timestamp": "2020-04-07T03:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 620,
+                                    "timestamp": "2020-04-07T03:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 939,
+                                    "timestamp": "2020-04-07T03:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 902,
+                                    "timestamp": "2020-04-07T03:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 760,
+                                    "timestamp": "2020-04-07T03:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 986,
+                                    "timestamp": "2020-04-07T04:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 858,
+                                    "timestamp": "2020-04-07T04:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 946,
+                                    "timestamp": "2020-04-07T04:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 503,
+                                    "timestamp": "2020-04-07T04:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 761,
+                                    "timestamp": "2020-04-07T04:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 696,
+                                    "timestamp": "2020-04-07T04:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 662,
+                                    "timestamp": "2020-04-07T05:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 939,
+                                    "timestamp": "2020-04-07T05:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 719,
+                                    "timestamp": "2020-04-07T05:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 907,
+                                    "timestamp": "2020-04-07T05:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 814,
+                                    "timestamp": "2020-04-07T05:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 889,
+                                    "timestamp": "2020-04-07T05:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 934,
+                                    "timestamp": "2020-04-07T06:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 856,
+                                    "timestamp": "2020-04-07T06:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 905,
+                                    "timestamp": "2020-04-07T06:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 990,
+                                    "timestamp": "2020-04-07T06:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 894,
+                                    "timestamp": "2020-04-07T06:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 717,
+                                    "timestamp": "2020-04-07T06:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 806,
+                                    "timestamp": "2020-04-07T07:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 997,
+                                    "timestamp": "2020-04-07T07:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 656,
+                                    "timestamp": "2020-04-07T07:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 919,
+                                    "timestamp": "2020-04-07T07:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 579,
+                                    "timestamp": "2020-04-07T07:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 933,
+                                    "timestamp": "2020-04-07T07:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 744,
+                                    "timestamp": "2020-04-07T08:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 524,
+                                    "timestamp": "2020-04-07T08:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 916,
+                                    "timestamp": "2020-04-07T08:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 848,
+                                    "timestamp": "2020-04-07T08:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 948,
+                                    "timestamp": "2020-04-07T08:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 852,
+                                    "timestamp": "2020-04-07T08:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 642,
+                                    "timestamp": "2020-04-07T09:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 536,
+                                    "timestamp": "2020-04-07T09:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 613,
+                                    "timestamp": "2020-04-07T09:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 887,
+                                    "timestamp": "2020-04-07T09:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 690,
+                                    "timestamp": "2020-04-07T09:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 542,
+                                    "timestamp": "2020-04-07T09:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirCO2LevelPPM",
+                                    "value": 714,
+                                    "timestamp": "2020-04-07T10:08:30.111Z"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "sensors"
+            ]
+        },
+        "signature": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "default": "RsaSignature2018"
+                },
+                "created": {
+                    "type": "string",
+                    "default": "2020-08-28T10:14:26+03:00"
+                },
+                "creator": {
+                    "type": "string",
+                    "default": "http://localhost:8080/translator/v1/public.key"
+                },
+                "signatureValue": {
+                    "type": "string",
+                    "default": "trNot5V/1u/wraH01Ge8B/mqP3U08K5yUnjIXfMrc22viHduUxupE2Jb+vqOjaYk4vR3IVG3IdQtRU/5hrNdVFKr4RJoxqkxHfioa01q3AoO29AEh8SBDRUOoT5gtiVTvRy7PJSoj95JX/Dz7jcQf227k8yjcMw28TgCtZToGi0WDc0KJ3Qb5hftkOs3Xe0CWe4tcngUdHk0AeIl/SOHjDaA3c3IsnUT1xXBKyX3A8DkRaiCsOstbGAzNQaFcSiuDbHdUpYIrBHZj/6RpDPtOKg8nNhCpL9ZGlzeG+cNSp3f5TowaytW+yjBDytHRfbU+71tkz2AsILnvioo29pOrZN+0IgZzyILZ74CAiexh8Rs5qvX8xTUoBKy/d+Q8xdpTV6EpvvMoEUL0+CTgIeqqJRW0UoImNvrMcZO9xpGrkMGn2Tipm6mLQeY7sTJZDepUxU3b5ZnbNwK1/D4Hnth24IzyK3+wcgxods8NydaH5xCJNEQDUcley+39XT03hRRvORRKrmG2ABmROapVuxE5vQknng4kzoqJ3Hdq4dsL58tYaTxG9UAxYqp+fPpKG8z82+67CNN7Xd40KwbqQGc8Sw7DDXNx1fMr3DAQ1qDKO+qqGewufnjluc4iwSyULCKREkbeMVUhmfUhPnX/sRYbIxTC95fYtXvLGYN8Vb5NcE="
+                }
+            },
+            "required": [
+                "created",
+                "creator",
+                "signatureValue",
+                "type"
+            ]
+        }
+    },
+    "required": [
+        "@context",
+        "data",
+        "signature"
+    ]
+}</msg>
+<status status="PASS" starttime="20200828 10:14:26.665" endtime="20200828 10:14:26.705"></status>
+</kw>
+<status status="PASS" starttime="20200828 10:14:24.457" endtime="20200828 10:14:26.705"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>200</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:26.706" endtime="20200828 10:14:26.706"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body @context</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:26.725" endtime="20200828 10:14:26.726"></status>
+</kw>
+<kw name="Object" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON object.*</doc>
+<arguments>
+<arg>response body data</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:26.726" endtime="20200828 10:14:26.732"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data sensors</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:26.733" endtime="20200828 10:14:26.737"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data sensors 0 measurements</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:26.738" endtime="20200828 10:14:26.743"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body data sensors 0 measurements 0 @type</arg>
+<arg>MeasureAirCO2LevelPPM</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:26.744" endtime="20200828 10:14:26.745"></status>
+</kw>
+<tags>
+<tag>bug-0001</tag>
+</tags>
+<status status="PASS" starttime="20200828 10:14:24.454" endtime="20200828 10:14:26.745" critical="yes"></status>
+</test>
+<test id="s1-t2" name="fetch, 422, Missing data for timestamp required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20200828 10:14:26.747" level="INFO">${body} = {'productCode': 'default_schneider', 'parameters': {'ids': ['01/eValvomo/Demoasiakkuus/Demo site/Tasokuvat 2 kerros/Huoneet/Huone 202/Muuttujat/CO2-pitoisuus', 'INVALID'], 'startTime': '2020-04-06T06:...</msg>
+<status status="PASS" starttime="20200828 10:14:26.747" endtime="20200828 10:14:26.747"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20200828 10:14:26.747" level="INFO">${now} = 2020-08-28T07:14:26+00:00</msg>
+<status status="PASS" starttime="20200828 10:14:26.747" endtime="20200828 10:14:26.747"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:26.747" endtime="20200828 10:14:26.747"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:26.748" endtime="20200828 10:14:26.748"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20200828 10:14:26.748" level="INFO">${json_string} = {"productCode": "default_schneider", "parameters": {"ids": ["01/eValvomo/Demoasiakkuus/Demo site/Tasokuvat 2 kerros/Huoneet/Huone 202/Muuttujat/CO2-pitoisuus", "INVALID"], "startTime": "2020-04-06T06:...</msg>
+<status status="PASS" starttime="20200828 10:14:26.748" endtime="20200828 10:14:26.748"></status>
+</kw>
+<msg timestamp="20200828 10:14:26.748" level="INFO">${body} = {'productCode': 'default_schneider', 'parameters': {'ids': ['01/eValvomo/Demoasiakkuus/Demo site/Tasokuvat 2 kerros/Huoneet/Huone 202/Muuttujat/CO2-pitoisuus', 'INVALID'], 'startTime': '2020-04-06T06:...</msg>
+<status status="PASS" starttime="20200828 10:14:26.746" endtime="20200828 10:14:26.748"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:26.748" endtime="20200828 10:14:26.749"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20200828 10:14:26.750" level="INFO">${signature} = lEC8OQEguqDD+I+0SkgOfKkL529jGlnp5gJnl3zpxDA=</msg>
+<status status="PASS" starttime="20200828 10:14:26.749" endtime="20200828 10:14:26.750"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:26.750" endtime="20200828 10:14:26.750"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:26.751" endtime="20200828 10:14:28.759"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20200828 10:14:28.759" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "timestamp": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "timestamp"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20200828 10:14:28.759" endtime="20200828 10:14:28.760"></status>
+</kw>
+<status status="PASS" starttime="20200828 10:14:26.749" endtime="20200828 10:14:28.760"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:28.761" endtime="20200828 10:14:28.761"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:28.762" endtime="20200828 10:14:28.762"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message timestamp 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:28.762" endtime="20200828 10:14:28.763"></status>
+</kw>
+<tags>
+<tag>bug-0001</tag>
+</tags>
+<status status="PASS" starttime="20200828 10:14:26.746" endtime="20200828 10:14:28.763" critical="yes"></status>
+</test>
+<test id="s1-t3" name="fetch, 422, Missing data for parameters required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20200828 10:14:28.765" level="INFO">${body} = {'productCode': 'default_schneider', 'parameters': {'ids': ['01/eValvomo/Demoasiakkuus/Demo site/Tasokuvat 2 kerros/Huoneet/Huone 202/Muuttujat/CO2-pitoisuus', 'INVALID'], 'startTime': '2020-04-06T06:...</msg>
+<status status="PASS" starttime="20200828 10:14:28.765" endtime="20200828 10:14:28.765"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20200828 10:14:28.765" level="INFO">${now} = 2020-08-28T07:14:28+00:00</msg>
+<status status="PASS" starttime="20200828 10:14:28.765" endtime="20200828 10:14:28.765"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:28.765" endtime="20200828 10:14:28.766"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:28.766" endtime="20200828 10:14:28.766"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20200828 10:14:28.766" level="INFO">${json_string} = {"productCode": "default_schneider", "parameters": {"ids": ["01/eValvomo/Demoasiakkuus/Demo site/Tasokuvat 2 kerros/Huoneet/Huone 202/Muuttujat/CO2-pitoisuus", "INVALID"], "startTime": "2020-04-06T06:...</msg>
+<status status="PASS" starttime="20200828 10:14:28.766" endtime="20200828 10:14:28.766"></status>
+</kw>
+<msg timestamp="20200828 10:14:28.766" level="INFO">${body} = {'productCode': 'default_schneider', 'parameters': {'ids': ['01/eValvomo/Demoasiakkuus/Demo site/Tasokuvat 2 kerros/Huoneet/Huone 202/Muuttujat/CO2-pitoisuus', 'INVALID'], 'startTime': '2020-04-06T06:...</msg>
+<status status="PASS" starttime="20200828 10:14:28.765" endtime="20200828 10:14:28.766"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>parameters</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:28.767" endtime="20200828 10:14:28.767"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20200828 10:14:28.768" level="INFO">${signature} = S844OCD1MoxvWAO7/4GL9E4MBLl61VkQwpDh5EA/qvo=</msg>
+<status status="PASS" starttime="20200828 10:14:28.768" endtime="20200828 10:14:28.769"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:28.769" endtime="20200828 10:14:28.769"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:28.769" endtime="20200828 10:14:30.774"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20200828 10:14:30.775" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "parameters": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "parameters"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20200828 10:14:30.774" endtime="20200828 10:14:30.776"></status>
+</kw>
+<status status="PASS" starttime="20200828 10:14:28.767" endtime="20200828 10:14:30.776"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:30.776" endtime="20200828 10:14:30.777"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:30.777" endtime="20200828 10:14:30.778"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message parameters 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:30.778" endtime="20200828 10:14:30.779"></status>
+</kw>
+<tags>
+<tag>bug-0002</tag>
+</tags>
+<status status="PASS" starttime="20200828 10:14:28.764" endtime="20200828 10:14:30.779" critical="yes"></status>
+</test>
+<test id="s1-t4" name="fetch, 422, Missing data for ids required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20200828 10:14:30.782" level="INFO">${body} = {'productCode': 'default_schneider', 'parameters': {'ids': ['01/eValvomo/Demoasiakkuus/Demo site/Tasokuvat 2 kerros/Huoneet/Huone 202/Muuttujat/CO2-pitoisuus', 'INVALID'], 'startTime': '2020-04-06T06:...</msg>
+<status status="PASS" starttime="20200828 10:14:30.781" endtime="20200828 10:14:30.782"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20200828 10:14:30.782" level="INFO">${now} = 2020-08-28T07:14:30+00:00</msg>
+<status status="PASS" starttime="20200828 10:14:30.782" endtime="20200828 10:14:30.782"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:30.782" endtime="20200828 10:14:30.782"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:30.782" endtime="20200828 10:14:30.782"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20200828 10:14:30.783" level="INFO">${json_string} = {"productCode": "default_schneider", "parameters": {"ids": ["01/eValvomo/Demoasiakkuus/Demo site/Tasokuvat 2 kerros/Huoneet/Huone 202/Muuttujat/CO2-pitoisuus", "INVALID"], "startTime": "2020-04-06T06:...</msg>
+<status status="PASS" starttime="20200828 10:14:30.782" endtime="20200828 10:14:30.783"></status>
+</kw>
+<msg timestamp="20200828 10:14:30.783" level="INFO">${body} = {'productCode': 'default_schneider', 'parameters': {'ids': ['01/eValvomo/Demoasiakkuus/Demo site/Tasokuvat 2 kerros/Huoneet/Huone 202/Muuttujat/CO2-pitoisuus', 'INVALID'], 'startTime': '2020-04-06T06:...</msg>
+<status status="PASS" starttime="20200828 10:14:30.781" endtime="20200828 10:14:30.783"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body["parameters"]}</arg>
+<arg>ids</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:30.783" endtime="20200828 10:14:30.784"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20200828 10:14:30.785" level="INFO">${signature} = eNpe0sPnkaV6WS08ngm+EiXSwB6wOqPkazOV10PEUB4=</msg>
+<status status="PASS" starttime="20200828 10:14:30.785" endtime="20200828 10:14:30.785"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:30.785" endtime="20200828 10:14:30.786"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:30.786" endtime="20200828 10:14:32.803"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20200828 10:14:32.803" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "parameters.ids": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "parameters.ids"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20200828 10:14:32.803" endtime="20200828 10:14:32.804"></status>
+</kw>
+<status status="PASS" starttime="20200828 10:14:30.785" endtime="20200828 10:14:32.805"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:32.805" endtime="20200828 10:14:32.806"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:32.806" endtime="20200828 10:14:32.806"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message parameters.ids 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:32.807" endtime="20200828 10:14:32.807"></status>
+</kw>
+<tags>
+<tag>bug-0003</tag>
+</tags>
+<status status="PASS" starttime="20200828 10:14:30.781" endtime="20200828 10:14:32.808" critical="yes"></status>
+</test>
+<test id="s1-t5" name="fetch, 200, Empty ids">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20200828 10:14:32.810" level="INFO">${body} = {'productCode': 'default_schneider', 'parameters': {'ids': ['01/eValvomo/Demoasiakkuus/Demo site/Tasokuvat 2 kerros/Huoneet/Huone 202/Muuttujat/CO2-pitoisuus', 'INVALID'], 'startTime': '2020-04-06T06:...</msg>
+<status status="PASS" starttime="20200828 10:14:32.809" endtime="20200828 10:14:32.810"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20200828 10:14:32.810" level="INFO">${now} = 2020-08-28T07:14:32+00:00</msg>
+<status status="PASS" starttime="20200828 10:14:32.810" endtime="20200828 10:14:32.810"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:32.810" endtime="20200828 10:14:32.810"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:32.810" endtime="20200828 10:14:32.811"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20200828 10:14:32.811" level="INFO">${json_string} = {"productCode": "default_schneider", "parameters": {"ids": ["01/eValvomo/Demoasiakkuus/Demo site/Tasokuvat 2 kerros/Huoneet/Huone 202/Muuttujat/CO2-pitoisuus", "INVALID"], "startTime": "2020-04-06T06:...</msg>
+<status status="PASS" starttime="20200828 10:14:32.811" endtime="20200828 10:14:32.811"></status>
+</kw>
+<msg timestamp="20200828 10:14:32.811" level="INFO">${body} = {'productCode': 'default_schneider', 'parameters': {'ids': ['01/eValvomo/Demoasiakkuus/Demo site/Tasokuvat 2 kerros/Huoneet/Huone 202/Muuttujat/CO2-pitoisuus', 'INVALID'], 'startTime': '2020-04-06T06:...</msg>
+<status status="PASS" starttime="20200828 10:14:32.809" endtime="20200828 10:14:32.811"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body["parameters"]}</arg>
+<arg>ids=@{EMPTY}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:32.812" endtime="20200828 10:14:32.812"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20200828 10:14:32.813" level="INFO">${signature} = wgu00GRPZ1fvYycl+Ypki1MMJAEe+LVEQXgCuN6CMmE=</msg>
+<status status="PASS" starttime="20200828 10:14:32.813" endtime="20200828 10:14:32.813"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:32.813" endtime="20200828 10:14:32.813"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:32.813" endtime="20200828 10:14:34.829"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20200828 10:14:34.830" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "@context": {
+            "type": "string",
+            "default": "https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/"
+        },
+        "data": {
+            "type": "object",
+            "properties": {
+                "sensors": {
+                    "type": "array",
+                    "default": []
+                }
+            },
+            "required": [
+                "sensors"
+            ]
+        },
+        "signature": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "default": "RsaSignature2018"
+                },
+                "created": {
+                    "type": "string",
+                    "default": "2020-08-28T10:14:34+03:00"
+                },
+                "creator": {
+                    "type": "string",
+                    "default": "http://localhost:8080/translator/v1/public.key"
+                },
+                "signatureValue": {
+                    "type": "string",
+                    "default": "tfO3oIjl2RfFjdTcgMX+831nhPOVPFhccguvddAWlrGEABn0uROiy0gMBeuoo+fhI6gYJ8KtTq/6kcRWsNt0pb/1foUw1suRzC//0vHMT/AjPYpLpofPkupBdOSmsacFUB43V0tijpa55BSXXNSjlLRQeisBzfo3+Jhkyj8xrLWL0xz1q8rSz6d9OzaYTJKPPZ+cfHEr4L3eUUM2XelFNUl4w/setgCoLAS/8j6rMNrR6D4pBW8n3jNN33DR2ITJo1WibgSAM+A1xxAyWjeCKcl3Cxrfop+xnlL7xN5WfVHRPhNQQnFEpWbp6+c54o1o0AygIgCvqJbJP4qbEM6ZDQYsQiIA+1RKko/7Ib53kqSvBc361J65XN7KGGTwrsVW6LPQ3W5LQ+P+52TsE6UH4FWLMNYKIcSlyPYnBNDh71LzsfB0uFW/0LEGxWf/8tNmpb8vEE5q3jxeTuAvBLqrfwgnOjv3F3k9MOjICco/c5IpeVi3b9GNAOol2HdCyodjijyh+TxHDi69lig8mboy5EjPXcwGTlggqXJ4cwl/BVzjd5hWmbQSM7rSKnNbX5LPhxJxFl/q/1S5TQFNUJH8a8UZkmZIOpAEzTLmvll2TKJrhSBXzZpotJ+lNyF1iHkD0MG5yk+phO549RDV7l4hDAPoWHAahjeUmY08su2n8m4="
+                }
+            },
+            "required": [
+                "created",
+                "creator",
+                "signatureValue",
+                "type"
+            ]
+        }
+    },
+    "required": [
+        "@context",
+        "data",
+        "signature"
+    ]
+}</msg>
+<status status="PASS" starttime="20200828 10:14:34.829" endtime="20200828 10:14:34.832"></status>
+</kw>
+<status status="PASS" starttime="20200828 10:14:32.812" endtime="20200828 10:14:34.832"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>200</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:34.832" endtime="20200828 10:14:34.833"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body @context</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:34.833" endtime="20200828 10:14:34.833"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data sensors</arg>
+<arg>maxItems=0</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:14:34.834" endtime="20200828 10:14:34.834"></status>
+</kw>
+<tags>
+<tag>bug-0004</tag>
+</tags>
+<status status="PASS" starttime="20200828 10:14:32.809" endtime="20200828 10:14:34.835" critical="yes"></status>
+</test>
+<doc>Schneider EcoStruxure Cloud Tests</doc>
+<status status="PASS" starttime="20200828 10:14:24.208" endtime="20200828 10:14:34.836"></status>
+</suite>
+<statistics>
+<total>
+<stat pass="5" fail="0">Critical Tests</stat>
+<stat pass="5" fail="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="2" fail="0">bug-0001</stat>
+<stat pass="1" fail="0">bug-0002</stat>
+<stat pass="1" fail="0">bug-0003</stat>
+<stat pass="1" fail="0">bug-0004</stat>
+</tag>
+<suite>
+<stat pass="5" fail="0" id="s1" name="Connector Tests">Connector Tests</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

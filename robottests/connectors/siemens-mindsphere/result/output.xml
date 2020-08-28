@@ -1,0 +1,1357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 3.2.1 (Python 3.8.3 on win32)" generated="20200828 10:57:13.587" rpa="false">
+<suite id="s1" name="Connector Tests" source="C:\Users\artor\WebstormProjects\translator\robottests\tests\siemens-mindsphere\connector_tests.robot">
+<test id="s1-t1" name="fetch, 200">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20200828 10:57:13.834" level="INFO">${body} = {'productCode': 'default_siemens-mindsphere', 'parameters': {'ids': [{'assetId': 'e424925968ee477188bbadba5ce0a6f9', 'aspectId': 'TEHuoneilmanLampotila'}, {'assetId': 'a486c6f5c014473fba831eba3ae24a7b...</msg>
+<status status="PASS" starttime="20200828 10:57:13.834" endtime="20200828 10:57:13.834"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20200828 10:57:13.834" level="INFO">${now} = 2020-08-28T07:57:13+00:00</msg>
+<status status="PASS" starttime="20200828 10:57:13.834" endtime="20200828 10:57:13.835"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:13.835" endtime="20200828 10:57:13.835"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:13.835" endtime="20200828 10:57:13.835"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20200828 10:57:13.835" level="INFO">${json_string} = {"productCode": "default_siemens-mindsphere", "parameters": {"ids": [{"assetId": "e424925968ee477188bbadba5ce0a6f9", "aspectId": "TEHuoneilmanLampotila"}, {"assetId": "a486c6f5c014473fba831eba3ae24a7b...</msg>
+<status status="PASS" starttime="20200828 10:57:13.835" endtime="20200828 10:57:13.835"></status>
+</kw>
+<msg timestamp="20200828 10:57:13.836" level="INFO">${body} = {'productCode': 'default_siemens-mindsphere', 'parameters': {'ids': [{'assetId': 'e424925968ee477188bbadba5ce0a6f9', 'aspectId': 'TEHuoneilmanLampotila'}, {'assetId': 'a486c6f5c014473fba831eba3ae24a7b...</msg>
+<status status="PASS" starttime="20200828 10:57:13.834" endtime="20200828 10:57:13.836"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20200828 10:57:13.837" level="INFO">${signature} = dT0aIm1yTxI4MRmfqc0MED22JXQrAQgcT0bBmtObXDA=</msg>
+<status status="PASS" starttime="20200828 10:57:13.836" endtime="20200828 10:57:13.837"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:13.837" endtime="20200828 10:57:13.837"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:13.837" endtime="20200828 10:57:15.970"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20200828 10:57:15.971" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "@context": {
+            "type": "string",
+            "default": "https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/"
+        },
+        "data": {
+            "type": "object",
+            "properties": {
+                "sensors": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "object",
+                                "properties": {
+                                    "assetId": {
+                                        "type": "string"
+                                    },
+                                    "aspectId": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "aspectId",
+                                    "assetId"
+                                ]
+                            },
+                            "measurements": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "@type": {
+                                            "type": "string"
+                                        },
+                                        "value": {
+                                            "type": "number"
+                                        },
+                                        "timestamp": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "@type",
+                                        "timestamp",
+                                        "value"
+                                    ]
+                                }
+                            }
+                        },
+                        "required": [
+                            "id",
+                            "measurements"
+                        ]
+                    },
+                    "default": [
+                        {
+                            "id": {
+                                "assetId": "e424925968ee477188bbadba5ce0a6f9",
+                                "aspectId": "TEHuoneilmanLampotila"
+                            },
+                            "measurements": [
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.51,
+                                    "timestamp": "2020-06-02T23:53:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.64,
+                                    "timestamp": "2020-06-03T00:03:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.39,
+                                    "timestamp": "2020-06-03T00:13:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.37,
+                                    "timestamp": "2020-06-03T00:23:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.33,
+                                    "timestamp": "2020-06-03T00:33:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.93,
+                                    "timestamp": "2020-06-03T00:43:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.3,
+                                    "timestamp": "2020-06-03T00:53:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.34,
+                                    "timestamp": "2020-06-03T01:03:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.81,
+                                    "timestamp": "2020-06-03T01:13:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.16,
+                                    "timestamp": "2020-06-03T01:23:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.83,
+                                    "timestamp": "2020-06-03T01:33:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.19,
+                                    "timestamp": "2020-06-03T01:43:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22,
+                                    "timestamp": "2020-06-03T01:53:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.67,
+                                    "timestamp": "2020-06-03T02:03:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.48,
+                                    "timestamp": "2020-06-03T02:13:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.18,
+                                    "timestamp": "2020-06-03T02:23:13.852Z"
+                                }
+                            ]
+                        },
+                        {
+                            "id": {
+                                "assetId": "a486c6f5c014473fba831eba3ae24a7b",
+                                "aspectId": "1TEHuoneilmanLampotila"
+                            },
+                            "measurements": [
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.07,
+                                    "timestamp": "2020-06-02T23:53:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.06,
+                                    "timestamp": "2020-06-03T00:03:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.38,
+                                    "timestamp": "2020-06-03T00:13:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.24,
+                                    "timestamp": "2020-06-03T00:23:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.71,
+                                    "timestamp": "2020-06-03T00:33:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.84,
+                                    "timestamp": "2020-06-03T00:43:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.75,
+                                    "timestamp": "2020-06-03T00:53:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.8,
+                                    "timestamp": "2020-06-03T01:03:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.02,
+                                    "timestamp": "2020-06-03T01:13:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.43,
+                                    "timestamp": "2020-06-03T01:23:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.47,
+                                    "timestamp": "2020-06-03T01:33:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.05,
+                                    "timestamp": "2020-06-03T01:43:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.71,
+                                    "timestamp": "2020-06-03T01:53:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.93,
+                                    "timestamp": "2020-06-03T02:03:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.69,
+                                    "timestamp": "2020-06-03T02:13:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.65,
+                                    "timestamp": "2020-06-03T02:23:13.852Z"
+                                }
+                            ]
+                        },
+                        {
+                            "id": {
+                                "assetId": "a486c6f5c014473fba831eba3ae24a7b",
+                                "aspectId": "2TEHuoneilmanLampotila"
+                            },
+                            "measurements": [
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.74,
+                                    "timestamp": "2020-06-02T23:53:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.11,
+                                    "timestamp": "2020-06-03T00:03:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.74,
+                                    "timestamp": "2020-06-03T00:13:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.64,
+                                    "timestamp": "2020-06-03T00:23:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.59,
+                                    "timestamp": "2020-06-03T00:33:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.31,
+                                    "timestamp": "2020-06-03T00:43:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.6,
+                                    "timestamp": "2020-06-03T00:53:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.79,
+                                    "timestamp": "2020-06-03T01:03:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.35,
+                                    "timestamp": "2020-06-03T01:13:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.16,
+                                    "timestamp": "2020-06-03T01:23:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.13,
+                                    "timestamp": "2020-06-03T01:33:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.51,
+                                    "timestamp": "2020-06-03T01:43:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.57,
+                                    "timestamp": "2020-06-03T01:53:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.96,
+                                    "timestamp": "2020-06-03T02:03:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.43,
+                                    "timestamp": "2020-06-03T02:13:13.852Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.92,
+                                    "timestamp": "2020-06-03T02:23:13.852Z"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "sensors"
+            ]
+        },
+        "signature": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "default": "RsaSignature2018"
+                },
+                "created": {
+                    "type": "string",
+                    "default": "2020-08-28T10:57:15+03:00"
+                },
+                "creator": {
+                    "type": "string",
+                    "default": "http://localhost:8080/translator/v1/public.key"
+                },
+                "signatureValue": {
+                    "type": "string",
+                    "default": "SZnmUfKtvTpT3QPjva4yUVfJrS1WSN/clDjpmkgh9x4CcdazwO+tgrpJAE8RWpo5yoDbLsJY9qOAMuGFbx84Uwqpnf9iGbFIu/F2J11fPkVVAC/p6lY/yCp5uGOZ9anTy7gmaNUyxoSQ3XAvyfuZvOliyyerS3KW+zD8QG2p8PWnxlv9kl+1kw84rYL8P1ATvmxCyPYj4Grq5sHjvPv0pWGbaB1Bax6ZECudHcyfMP1Wxoku3Wk7Qzi7s5KOoIA+l5ndYO/0++ko7YJ+GygnZPqfHpOXBX/ezu5FzxWN2mEp2AybknLVhOGuTcAlAmJ85JIqOXe5DacbZmdAsJ961Gbb9Elg4FMQ6XUtRshHi8meN+kyT/5hIYdY9QY6xoUSTNxXPWz+TLzFZxIfzZapoa7OwzT/2aor5Egnx/9a6UcWGCpIXx5YCf8G9cNfnKJdytQHTUVqinLk/gQmR3UgZePcbv2XZeFaSLP+8pwwo7JsD+1pIMCgoC5Kj1gvx66/GSBinht5GE4peuS0Ng3Qj2y9uSUnIKQKN/nXo9zN0QOG3UnsylSpoOJDULn48XWgzQIEYqcq+e96Gvo5WdVvqKRuNHX/xyWCirO/ou5ONlJ2BvYp4rEIEDT7rPzInA+N89vO4tX3bkU5jQn49MnK+JYdP/xz3Eu42XkUrr8C1ak="
+                }
+            },
+            "required": [
+                "created",
+                "creator",
+                "signatureValue",
+                "type"
+            ]
+        }
+    },
+    "required": [
+        "@context",
+        "data",
+        "signature"
+    ]
+}</msg>
+<status status="PASS" starttime="20200828 10:57:15.970" endtime="20200828 10:57:15.989"></status>
+</kw>
+<status status="PASS" starttime="20200828 10:57:13.836" endtime="20200828 10:57:15.989"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>200</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:15.990" endtime="20200828 10:57:15.990"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body @context</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:15.997" endtime="20200828 10:57:15.998"></status>
+</kw>
+<kw name="Object" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON object.*</doc>
+<arguments>
+<arg>response body data</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:15.998" endtime="20200828 10:57:16.000"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data sensors</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:16.000" endtime="20200828 10:57:16.002"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data sensors 0 measurements</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:16.002" endtime="20200828 10:57:16.003"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body data sensors 0 measurements 0 @type</arg>
+<arg>MeasureAirTemperatureCelciusDegree</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:16.003" endtime="20200828 10:57:16.004"></status>
+</kw>
+<tags>
+<tag>bug-0001</tag>
+</tags>
+<status status="PASS" starttime="20200828 10:57:13.833" endtime="20200828 10:57:16.005" critical="yes"></status>
+</test>
+<test id="s1-t2" name="fetch, 422, Missing data for timestamp required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20200828 10:57:16.007" level="INFO">${body} = {'productCode': 'default_siemens-mindsphere', 'parameters': {'ids': [{'assetId': 'e424925968ee477188bbadba5ce0a6f9', 'aspectId': 'TEHuoneilmanLampotila'}, {'assetId': 'a486c6f5c014473fba831eba3ae24a7b...</msg>
+<status status="PASS" starttime="20200828 10:57:16.006" endtime="20200828 10:57:16.007"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20200828 10:57:16.007" level="INFO">${now} = 2020-08-28T07:57:16+00:00</msg>
+<status status="PASS" starttime="20200828 10:57:16.007" endtime="20200828 10:57:16.007"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:16.007" endtime="20200828 10:57:16.007"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:16.007" endtime="20200828 10:57:16.008"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20200828 10:57:16.008" level="INFO">${json_string} = {"productCode": "default_siemens-mindsphere", "parameters": {"ids": [{"assetId": "e424925968ee477188bbadba5ce0a6f9", "aspectId": "TEHuoneilmanLampotila"}, {"assetId": "a486c6f5c014473fba831eba3ae24a7b...</msg>
+<status status="PASS" starttime="20200828 10:57:16.008" endtime="20200828 10:57:16.008"></status>
+</kw>
+<msg timestamp="20200828 10:57:16.008" level="INFO">${body} = {'productCode': 'default_siemens-mindsphere', 'parameters': {'ids': [{'assetId': 'e424925968ee477188bbadba5ce0a6f9', 'aspectId': 'TEHuoneilmanLampotila'}, {'assetId': 'a486c6f5c014473fba831eba3ae24a7b...</msg>
+<status status="PASS" starttime="20200828 10:57:16.006" endtime="20200828 10:57:16.008"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:16.008" endtime="20200828 10:57:16.009"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20200828 10:57:16.009" level="INFO">${signature} = JM3KhD7X4UePl0XSHLi43+LvRsxaoLLFFLOrkHQO25M=</msg>
+<status status="PASS" starttime="20200828 10:57:16.009" endtime="20200828 10:57:16.009"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:16.009" endtime="20200828 10:57:16.010"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:16.010" endtime="20200828 10:57:18.017"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20200828 10:57:18.017" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "timestamp": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "timestamp"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20200828 10:57:18.017" endtime="20200828 10:57:18.019"></status>
+</kw>
+<status status="PASS" starttime="20200828 10:57:16.009" endtime="20200828 10:57:18.019"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:18.019" endtime="20200828 10:57:18.020"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:18.020" endtime="20200828 10:57:18.021"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message timestamp 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:18.021" endtime="20200828 10:57:18.021"></status>
+</kw>
+<tags>
+<tag>bug-0001</tag>
+</tags>
+<status status="PASS" starttime="20200828 10:57:16.006" endtime="20200828 10:57:18.022" critical="yes"></status>
+</test>
+<test id="s1-t3" name="fetch, 422, Missing data for parameters required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20200828 10:57:18.024" level="INFO">${body} = {'productCode': 'default_siemens-mindsphere', 'parameters': {'ids': [{'assetId': 'e424925968ee477188bbadba5ce0a6f9', 'aspectId': 'TEHuoneilmanLampotila'}, {'assetId': 'a486c6f5c014473fba831eba3ae24a7b...</msg>
+<status status="PASS" starttime="20200828 10:57:18.023" endtime="20200828 10:57:18.024"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20200828 10:57:18.024" level="INFO">${now} = 2020-08-28T07:57:18+00:00</msg>
+<status status="PASS" starttime="20200828 10:57:18.024" endtime="20200828 10:57:18.024"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:18.024" endtime="20200828 10:57:18.024"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:18.024" endtime="20200828 10:57:18.025"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20200828 10:57:18.025" level="INFO">${json_string} = {"productCode": "default_siemens-mindsphere", "parameters": {"ids": [{"assetId": "e424925968ee477188bbadba5ce0a6f9", "aspectId": "TEHuoneilmanLampotila"}, {"assetId": "a486c6f5c014473fba831eba3ae24a7b...</msg>
+<status status="PASS" starttime="20200828 10:57:18.025" endtime="20200828 10:57:18.025"></status>
+</kw>
+<msg timestamp="20200828 10:57:18.025" level="INFO">${body} = {'productCode': 'default_siemens-mindsphere', 'parameters': {'ids': [{'assetId': 'e424925968ee477188bbadba5ce0a6f9', 'aspectId': 'TEHuoneilmanLampotila'}, {'assetId': 'a486c6f5c014473fba831eba3ae24a7b...</msg>
+<status status="PASS" starttime="20200828 10:57:18.023" endtime="20200828 10:57:18.025"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>parameters</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:18.025" endtime="20200828 10:57:18.026"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20200828 10:57:18.026" level="INFO">${signature} = 4sWXKsRtgfa6z7CpFekHSPkGuqcwbsoZ6+nFZdZ0C3E=</msg>
+<status status="PASS" starttime="20200828 10:57:18.026" endtime="20200828 10:57:18.026"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:18.027" endtime="20200828 10:57:18.027"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:18.027" endtime="20200828 10:57:20.034"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20200828 10:57:20.035" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "parameters": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "parameters"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20200828 10:57:20.035" endtime="20200828 10:57:20.037"></status>
+</kw>
+<status status="PASS" starttime="20200828 10:57:18.026" endtime="20200828 10:57:20.037"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:20.038" endtime="20200828 10:57:20.038"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:20.038" endtime="20200828 10:57:20.038"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message parameters 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:20.039" endtime="20200828 10:57:20.039"></status>
+</kw>
+<tags>
+<tag>bug-0002</tag>
+</tags>
+<status status="PASS" starttime="20200828 10:57:18.023" endtime="20200828 10:57:20.039" critical="yes"></status>
+</test>
+<test id="s1-t4" name="fetch, 422, Missing data for ids required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20200828 10:57:20.041" level="INFO">${body} = {'productCode': 'default_siemens-mindsphere', 'parameters': {'ids': [{'assetId': 'e424925968ee477188bbadba5ce0a6f9', 'aspectId': 'TEHuoneilmanLampotila'}, {'assetId': 'a486c6f5c014473fba831eba3ae24a7b...</msg>
+<status status="PASS" starttime="20200828 10:57:20.041" endtime="20200828 10:57:20.042"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20200828 10:57:20.042" level="INFO">${now} = 2020-08-28T07:57:20+00:00</msg>
+<status status="PASS" starttime="20200828 10:57:20.042" endtime="20200828 10:57:20.042"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:20.042" endtime="20200828 10:57:20.042"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:20.042" endtime="20200828 10:57:20.042"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20200828 10:57:20.043" level="INFO">${json_string} = {"productCode": "default_siemens-mindsphere", "parameters": {"ids": [{"assetId": "e424925968ee477188bbadba5ce0a6f9", "aspectId": "TEHuoneilmanLampotila"}, {"assetId": "a486c6f5c014473fba831eba3ae24a7b...</msg>
+<status status="PASS" starttime="20200828 10:57:20.042" endtime="20200828 10:57:20.043"></status>
+</kw>
+<msg timestamp="20200828 10:57:20.043" level="INFO">${body} = {'productCode': 'default_siemens-mindsphere', 'parameters': {'ids': [{'assetId': 'e424925968ee477188bbadba5ce0a6f9', 'aspectId': 'TEHuoneilmanLampotila'}, {'assetId': 'a486c6f5c014473fba831eba3ae24a7b...</msg>
+<status status="PASS" starttime="20200828 10:57:20.041" endtime="20200828 10:57:20.043"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body["parameters"]}</arg>
+<arg>ids</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:20.043" endtime="20200828 10:57:20.043"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20200828 10:57:20.044" level="INFO">${signature} = x1hps5wIgO3w3pCFl8hwxWtpzA8kt80VF4Xeu0rdj1M=</msg>
+<status status="PASS" starttime="20200828 10:57:20.044" endtime="20200828 10:57:20.044"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:20.044" endtime="20200828 10:57:20.044"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:20.044" endtime="20200828 10:57:22.062"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20200828 10:57:22.063" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "parameters.ids": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "parameters.ids"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20200828 10:57:22.062" endtime="20200828 10:57:22.064"></status>
+</kw>
+<status status="PASS" starttime="20200828 10:57:20.044" endtime="20200828 10:57:22.064"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:22.065" endtime="20200828 10:57:22.065"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:22.066" endtime="20200828 10:57:22.066"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message parameters.ids 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:22.066" endtime="20200828 10:57:22.067"></status>
+</kw>
+<tags>
+<tag>bug-0003</tag>
+</tags>
+<status status="PASS" starttime="20200828 10:57:20.041" endtime="20200828 10:57:22.068" critical="yes"></status>
+</test>
+<test id="s1-t5" name="fetch, 200, Empty ids">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20200828 10:57:22.070" level="INFO">${body} = {'productCode': 'default_siemens-mindsphere', 'parameters': {'ids': [{'assetId': 'e424925968ee477188bbadba5ce0a6f9', 'aspectId': 'TEHuoneilmanLampotila'}, {'assetId': 'a486c6f5c014473fba831eba3ae24a7b...</msg>
+<status status="PASS" starttime="20200828 10:57:22.070" endtime="20200828 10:57:22.070"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20200828 10:57:22.070" level="INFO">${now} = 2020-08-28T07:57:22+00:00</msg>
+<status status="PASS" starttime="20200828 10:57:22.070" endtime="20200828 10:57:22.070"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:22.070" endtime="20200828 10:57:22.071"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:22.071" endtime="20200828 10:57:22.071"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20200828 10:57:22.071" level="INFO">${json_string} = {"productCode": "default_siemens-mindsphere", "parameters": {"ids": [{"assetId": "e424925968ee477188bbadba5ce0a6f9", "aspectId": "TEHuoneilmanLampotila"}, {"assetId": "a486c6f5c014473fba831eba3ae24a7b...</msg>
+<status status="PASS" starttime="20200828 10:57:22.071" endtime="20200828 10:57:22.071"></status>
+</kw>
+<msg timestamp="20200828 10:57:22.072" level="INFO">${body} = {'productCode': 'default_siemens-mindsphere', 'parameters': {'ids': [{'assetId': 'e424925968ee477188bbadba5ce0a6f9', 'aspectId': 'TEHuoneilmanLampotila'}, {'assetId': 'a486c6f5c014473fba831eba3ae24a7b...</msg>
+<status status="PASS" starttime="20200828 10:57:22.070" endtime="20200828 10:57:22.072"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body["parameters"]}</arg>
+<arg>ids=@{EMPTY}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:22.072" endtime="20200828 10:57:22.072"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20200828 10:57:22.073" level="INFO">${signature} = rmVbUHxkwVroJJEiEgoO2T6ht/1uuazO+Ad76Lorwm8=</msg>
+<status status="PASS" starttime="20200828 10:57:22.072" endtime="20200828 10:57:22.073"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:22.073" endtime="20200828 10:57:22.073"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:22.073" endtime="20200828 10:57:24.089"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20200828 10:57:24.089" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "@context": {
+            "type": "string",
+            "default": "https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/"
+        },
+        "data": {
+            "type": "object",
+            "properties": {
+                "sensors": {
+                    "type": "array",
+                    "default": []
+                }
+            },
+            "required": [
+                "sensors"
+            ]
+        },
+        "signature": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "default": "RsaSignature2018"
+                },
+                "created": {
+                    "type": "string",
+                    "default": "2020-08-28T10:57:24+03:00"
+                },
+                "creator": {
+                    "type": "string",
+                    "default": "http://localhost:8080/translator/v1/public.key"
+                },
+                "signatureValue": {
+                    "type": "string",
+                    "default": "Sj3lkZwz+erKq6IGyqs/IdZvYHDI2Lg3oqngqemUKDacgCKzR4MWUu1xknez3yu/WXLFEgkJo4crz76vGMiq59C5WWA5r+v3LN2NrfG6GI6Z910FZ5o4A6yLB4lvVJaxxa09i/d3LCNto7nGwtl1HjnRP1pEfZQsH6/wW9vniv6hYr4KHXBajNf5db1MK3qUo7UFFR4eqIeUGnyakj2iriiPT+Rh1FNhqXd+WUTMhqnxGW7NOPxVCXFUubuNi3FgdyqL58i1J4jNJUzB+XySNfw4GBmSUsyh5wX6BN4XqHkQAjya1kSZ44KwQ/rU4rR3XnCgJWa7RQVqJUjBRHwtYhJ9BjEiOFetEWNqJdreUGNcofZh4iilquWTckUnh6f0VKZDF5jrbamYkJGttT25ZYJYkq2yRh4C3ZHQDmqCFBXx1ek9xSUphFPek+AlgAjgM9gwQkuTm5eXFjaDzHNxTWVwy4trlVXb/nQQurCTWTnI0CgJaeTTUOHlljIbEWEy4jW/3rFNHEbj60LHjWAUeToriS1qfmvlc2D8eufjJ36dxqn39CctxkJXTiWb5WXuNta8B1GszckuNj37fk9q84RTDdgnsucDC0veWaabFiCtvFrGlYeKjVW86KF/CVyOXKxFfY12wtzQhhITGL3Bnn4Y/+y5dP/HEHrY1TkfwcQ="
+                }
+            },
+            "required": [
+                "created",
+                "creator",
+                "signatureValue",
+                "type"
+            ]
+        }
+    },
+    "required": [
+        "@context",
+        "data",
+        "signature"
+    ]
+}</msg>
+<status status="PASS" starttime="20200828 10:57:24.089" endtime="20200828 10:57:24.091"></status>
+</kw>
+<status status="PASS" starttime="20200828 10:57:22.072" endtime="20200828 10:57:24.091"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>200</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:24.092" endtime="20200828 10:57:24.093"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body @context</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:24.093" endtime="20200828 10:57:24.093"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data sensors</arg>
+<arg>maxItems=0</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:57:24.094" endtime="20200828 10:57:24.094"></status>
+</kw>
+<tags>
+<tag>bug-0004</tag>
+</tags>
+<status status="PASS" starttime="20200828 10:57:22.069" endtime="20200828 10:57:24.095" critical="yes"></status>
+</test>
+<doc>Siemens Mindsphere Tests</doc>
+<status status="PASS" starttime="20200828 10:57:13.588" endtime="20200828 10:57:24.096"></status>
+</suite>
+<statistics>
+<total>
+<stat pass="5" fail="0">Critical Tests</stat>
+<stat pass="5" fail="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="2" fail="0">bug-0001</stat>
+<stat pass="1" fail="0">bug-0002</stat>
+<stat pass="1" fail="0">bug-0003</stat>
+<stat pass="1" fail="0">bug-0004</stat>
+</tag>
+<suite>
+<stat pass="5" fail="0" id="s1" name="Connector Tests">Connector Tests</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

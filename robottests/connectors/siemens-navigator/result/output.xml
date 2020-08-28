@@ -1,0 +1,2761 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 3.2.1 (Python 3.8.3 on win32)" generated="20200828 10:02:33.620" rpa="false">
+<suite id="s1" name="Connector Tests" source="C:\Users\artor\WebstormProjects\translator\robottests\tests\siemens-navigator\connector_tests.robot">
+<test id="s1-t1" name="fetch, 200">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20200828 10:02:33.864" level="INFO">${body} = {'productCode': 'default_siemens-navigator', 'parameters': {'ids': ['1897206', '1897215', 'INVALID'], 'startTime': '2020-04-06T06:28:30.111Z', 'endTime': '2020-04-07T10:18:30.111Z'}}</msg>
+<status status="PASS" starttime="20200828 10:02:33.863" endtime="20200828 10:02:33.864"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20200828 10:02:33.864" level="INFO">${now} = 2020-08-28T07:02:33+00:00</msg>
+<status status="PASS" starttime="20200828 10:02:33.864" endtime="20200828 10:02:33.864"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:33.864" endtime="20200828 10:02:33.864"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:33.864" endtime="20200828 10:02:33.864"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20200828 10:02:33.865" level="INFO">${json_string} = {"productCode": "default_siemens-navigator", "parameters": {"ids": ["1897206", "1897215", "INVALID"], "startTime": "2020-04-06T06:28:30.111Z", "endTime": "2020-04-07T10:18:30.111Z"}, "timestamp": "202...</msg>
+<status status="PASS" starttime="20200828 10:02:33.865" endtime="20200828 10:02:33.865"></status>
+</kw>
+<msg timestamp="20200828 10:02:33.865" level="INFO">${body} = {'productCode': 'default_siemens-navigator', 'parameters': {'ids': ['1897206', '1897215', 'INVALID'], 'startTime': '2020-04-06T06:28:30.111Z', 'endTime': '2020-04-07T10:18:30.111Z'}, 'timestamp': '202...</msg>
+<status status="PASS" starttime="20200828 10:02:33.863" endtime="20200828 10:02:33.865"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20200828 10:02:33.866" level="INFO">${signature} = nLLrE+8KFfpSxwRe1+MTBj+38PNT2piOPL2Myfo5rk4=</msg>
+<status status="PASS" starttime="20200828 10:02:33.866" endtime="20200828 10:02:33.866"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:33.866" endtime="20200828 10:02:33.866"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:33.866" endtime="20200828 10:02:36.139"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20200828 10:02:36.142" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "@context": {
+            "type": "string",
+            "default": "https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/"
+        },
+        "data": {
+            "type": "object",
+            "properties": {
+                "sensors": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "measurements": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "@type": {
+                                            "type": "string"
+                                        },
+                                        "value": {
+                                            "type": "number"
+                                        },
+                                        "timestamp": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "@type",
+                                        "timestamp",
+                                        "value"
+                                    ]
+                                }
+                            }
+                        },
+                        "required": [
+                            "id",
+                            "measurements"
+                        ]
+                    },
+                    "default": [
+                        {
+                            "id": "1897206",
+                            "measurements": [
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.25,
+                                    "timestamp": "2020-04-06T06:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.75,
+                                    "timestamp": "2020-04-06T06:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.39,
+                                    "timestamp": "2020-04-06T06:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.83,
+                                    "timestamp": "2020-04-06T06:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.12,
+                                    "timestamp": "2020-04-06T07:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.91,
+                                    "timestamp": "2020-04-06T07:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.35,
+                                    "timestamp": "2020-04-06T07:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.64,
+                                    "timestamp": "2020-04-06T07:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.08,
+                                    "timestamp": "2020-04-06T07:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.07,
+                                    "timestamp": "2020-04-06T07:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.68,
+                                    "timestamp": "2020-04-06T08:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.91,
+                                    "timestamp": "2020-04-06T08:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.61,
+                                    "timestamp": "2020-04-06T08:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.26,
+                                    "timestamp": "2020-04-06T08:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.87,
+                                    "timestamp": "2020-04-06T08:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.72,
+                                    "timestamp": "2020-04-06T08:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.55,
+                                    "timestamp": "2020-04-06T09:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.55,
+                                    "timestamp": "2020-04-06T09:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.84,
+                                    "timestamp": "2020-04-06T09:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.89,
+                                    "timestamp": "2020-04-06T09:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.14,
+                                    "timestamp": "2020-04-06T09:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.59,
+                                    "timestamp": "2020-04-06T09:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.61,
+                                    "timestamp": "2020-04-06T10:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.87,
+                                    "timestamp": "2020-04-06T10:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.52,
+                                    "timestamp": "2020-04-06T10:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.15,
+                                    "timestamp": "2020-04-06T10:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.72,
+                                    "timestamp": "2020-04-06T10:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.91,
+                                    "timestamp": "2020-04-06T10:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.46,
+                                    "timestamp": "2020-04-06T11:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.53,
+                                    "timestamp": "2020-04-06T11:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.55,
+                                    "timestamp": "2020-04-06T11:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.52,
+                                    "timestamp": "2020-04-06T11:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.01,
+                                    "timestamp": "2020-04-06T11:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.12,
+                                    "timestamp": "2020-04-06T11:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.98,
+                                    "timestamp": "2020-04-06T12:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.94,
+                                    "timestamp": "2020-04-06T12:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.46,
+                                    "timestamp": "2020-04-06T12:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.76,
+                                    "timestamp": "2020-04-06T12:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.23,
+                                    "timestamp": "2020-04-06T12:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.92,
+                                    "timestamp": "2020-04-06T12:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.3,
+                                    "timestamp": "2020-04-06T13:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.47,
+                                    "timestamp": "2020-04-06T13:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.29,
+                                    "timestamp": "2020-04-06T13:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.73,
+                                    "timestamp": "2020-04-06T13:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.2,
+                                    "timestamp": "2020-04-06T13:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.12,
+                                    "timestamp": "2020-04-06T13:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.13,
+                                    "timestamp": "2020-04-06T14:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.01,
+                                    "timestamp": "2020-04-06T14:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.28,
+                                    "timestamp": "2020-04-06T14:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.42,
+                                    "timestamp": "2020-04-06T14:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.56,
+                                    "timestamp": "2020-04-06T14:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.41,
+                                    "timestamp": "2020-04-06T14:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.67,
+                                    "timestamp": "2020-04-06T15:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.39,
+                                    "timestamp": "2020-04-06T15:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.61,
+                                    "timestamp": "2020-04-06T15:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.14,
+                                    "timestamp": "2020-04-06T15:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.11,
+                                    "timestamp": "2020-04-06T15:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.84,
+                                    "timestamp": "2020-04-06T15:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.49,
+                                    "timestamp": "2020-04-06T16:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.78,
+                                    "timestamp": "2020-04-06T16:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.83,
+                                    "timestamp": "2020-04-06T16:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.23,
+                                    "timestamp": "2020-04-06T16:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.65,
+                                    "timestamp": "2020-04-06T16:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.17,
+                                    "timestamp": "2020-04-06T16:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.44,
+                                    "timestamp": "2020-04-06T17:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.6,
+                                    "timestamp": "2020-04-06T17:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.61,
+                                    "timestamp": "2020-04-06T17:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.17,
+                                    "timestamp": "2020-04-06T17:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.85,
+                                    "timestamp": "2020-04-06T17:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.1,
+                                    "timestamp": "2020-04-06T17:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.99,
+                                    "timestamp": "2020-04-06T18:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.55,
+                                    "timestamp": "2020-04-06T18:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.98,
+                                    "timestamp": "2020-04-06T18:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.01,
+                                    "timestamp": "2020-04-06T18:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.42,
+                                    "timestamp": "2020-04-06T18:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.39,
+                                    "timestamp": "2020-04-06T18:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.61,
+                                    "timestamp": "2020-04-06T19:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.43,
+                                    "timestamp": "2020-04-06T19:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.75,
+                                    "timestamp": "2020-04-06T19:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.16,
+                                    "timestamp": "2020-04-06T19:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.52,
+                                    "timestamp": "2020-04-06T19:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.99,
+                                    "timestamp": "2020-04-06T19:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.71,
+                                    "timestamp": "2020-04-06T20:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.73,
+                                    "timestamp": "2020-04-06T20:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.98,
+                                    "timestamp": "2020-04-06T20:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.74,
+                                    "timestamp": "2020-04-06T20:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.25,
+                                    "timestamp": "2020-04-06T20:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.39,
+                                    "timestamp": "2020-04-06T20:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.79,
+                                    "timestamp": "2020-04-06T21:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.95,
+                                    "timestamp": "2020-04-06T21:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.95,
+                                    "timestamp": "2020-04-06T21:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.72,
+                                    "timestamp": "2020-04-06T21:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.44,
+                                    "timestamp": "2020-04-06T21:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.4,
+                                    "timestamp": "2020-04-06T21:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.62,
+                                    "timestamp": "2020-04-06T22:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.37,
+                                    "timestamp": "2020-04-06T22:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.31,
+                                    "timestamp": "2020-04-06T22:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.9,
+                                    "timestamp": "2020-04-06T22:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.32,
+                                    "timestamp": "2020-04-06T22:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.3,
+                                    "timestamp": "2020-04-06T22:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.78,
+                                    "timestamp": "2020-04-06T23:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.52,
+                                    "timestamp": "2020-04-06T23:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.03,
+                                    "timestamp": "2020-04-06T23:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.06,
+                                    "timestamp": "2020-04-06T23:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.73,
+                                    "timestamp": "2020-04-06T23:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.26,
+                                    "timestamp": "2020-04-06T23:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.47,
+                                    "timestamp": "2020-04-07T00:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.23,
+                                    "timestamp": "2020-04-07T00:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.34,
+                                    "timestamp": "2020-04-07T00:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.68,
+                                    "timestamp": "2020-04-07T00:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.29,
+                                    "timestamp": "2020-04-07T00:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.79,
+                                    "timestamp": "2020-04-07T00:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.41,
+                                    "timestamp": "2020-04-07T01:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.92,
+                                    "timestamp": "2020-04-07T01:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.96,
+                                    "timestamp": "2020-04-07T01:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.78,
+                                    "timestamp": "2020-04-07T01:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20,
+                                    "timestamp": "2020-04-07T01:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.45,
+                                    "timestamp": "2020-04-07T01:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.62,
+                                    "timestamp": "2020-04-07T02:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.96,
+                                    "timestamp": "2020-04-07T02:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.69,
+                                    "timestamp": "2020-04-07T02:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.29,
+                                    "timestamp": "2020-04-07T02:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.64,
+                                    "timestamp": "2020-04-07T02:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.89,
+                                    "timestamp": "2020-04-07T02:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.92,
+                                    "timestamp": "2020-04-07T03:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.28,
+                                    "timestamp": "2020-04-07T03:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.74,
+                                    "timestamp": "2020-04-07T03:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19,
+                                    "timestamp": "2020-04-07T03:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.14,
+                                    "timestamp": "2020-04-07T03:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.24,
+                                    "timestamp": "2020-04-07T03:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.82,
+                                    "timestamp": "2020-04-07T04:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.75,
+                                    "timestamp": "2020-04-07T04:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.79,
+                                    "timestamp": "2020-04-07T04:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.5,
+                                    "timestamp": "2020-04-07T04:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.94,
+                                    "timestamp": "2020-04-07T04:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.07,
+                                    "timestamp": "2020-04-07T04:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.08,
+                                    "timestamp": "2020-04-07T05:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.34,
+                                    "timestamp": "2020-04-07T05:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.71,
+                                    "timestamp": "2020-04-07T05:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.39,
+                                    "timestamp": "2020-04-07T05:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.92,
+                                    "timestamp": "2020-04-07T05:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.6,
+                                    "timestamp": "2020-04-07T05:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.65,
+                                    "timestamp": "2020-04-07T06:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.66,
+                                    "timestamp": "2020-04-07T06:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.3,
+                                    "timestamp": "2020-04-07T06:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.5,
+                                    "timestamp": "2020-04-07T06:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.85,
+                                    "timestamp": "2020-04-07T06:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.9,
+                                    "timestamp": "2020-04-07T06:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.62,
+                                    "timestamp": "2020-04-07T07:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.3,
+                                    "timestamp": "2020-04-07T07:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.55,
+                                    "timestamp": "2020-04-07T07:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.89,
+                                    "timestamp": "2020-04-07T07:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.71,
+                                    "timestamp": "2020-04-07T07:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.48,
+                                    "timestamp": "2020-04-07T07:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.56,
+                                    "timestamp": "2020-04-07T08:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.66,
+                                    "timestamp": "2020-04-07T08:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.49,
+                                    "timestamp": "2020-04-07T08:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.22,
+                                    "timestamp": "2020-04-07T08:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.19,
+                                    "timestamp": "2020-04-07T08:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.52,
+                                    "timestamp": "2020-04-07T08:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.39,
+                                    "timestamp": "2020-04-07T09:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.82,
+                                    "timestamp": "2020-04-07T09:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.62,
+                                    "timestamp": "2020-04-07T09:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.26,
+                                    "timestamp": "2020-04-07T09:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.31,
+                                    "timestamp": "2020-04-07T09:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.56,
+                                    "timestamp": "2020-04-07T09:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.94,
+                                    "timestamp": "2020-04-07T10:08:30.111Z"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "1897215",
+                            "measurements": [
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.84,
+                                    "timestamp": "2020-04-06T06:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.07,
+                                    "timestamp": "2020-04-06T06:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.1,
+                                    "timestamp": "2020-04-06T06:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.59,
+                                    "timestamp": "2020-04-06T06:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.17,
+                                    "timestamp": "2020-04-06T07:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.37,
+                                    "timestamp": "2020-04-06T07:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.32,
+                                    "timestamp": "2020-04-06T07:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.24,
+                                    "timestamp": "2020-04-06T07:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.76,
+                                    "timestamp": "2020-04-06T07:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.8,
+                                    "timestamp": "2020-04-06T07:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.63,
+                                    "timestamp": "2020-04-06T08:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.94,
+                                    "timestamp": "2020-04-06T08:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.73,
+                                    "timestamp": "2020-04-06T08:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.6,
+                                    "timestamp": "2020-04-06T08:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.92,
+                                    "timestamp": "2020-04-06T08:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.28,
+                                    "timestamp": "2020-04-06T08:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.84,
+                                    "timestamp": "2020-04-06T09:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.09,
+                                    "timestamp": "2020-04-06T09:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.84,
+                                    "timestamp": "2020-04-06T09:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.94,
+                                    "timestamp": "2020-04-06T09:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.42,
+                                    "timestamp": "2020-04-06T09:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.03,
+                                    "timestamp": "2020-04-06T09:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.27,
+                                    "timestamp": "2020-04-06T10:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.75,
+                                    "timestamp": "2020-04-06T10:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.2,
+                                    "timestamp": "2020-04-06T10:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.74,
+                                    "timestamp": "2020-04-06T10:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.44,
+                                    "timestamp": "2020-04-06T10:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.53,
+                                    "timestamp": "2020-04-06T10:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.52,
+                                    "timestamp": "2020-04-06T11:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.68,
+                                    "timestamp": "2020-04-06T11:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.09,
+                                    "timestamp": "2020-04-06T11:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.08,
+                                    "timestamp": "2020-04-06T11:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.5,
+                                    "timestamp": "2020-04-06T11:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.14,
+                                    "timestamp": "2020-04-06T11:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.03,
+                                    "timestamp": "2020-04-06T12:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.06,
+                                    "timestamp": "2020-04-06T12:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.8,
+                                    "timestamp": "2020-04-06T12:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.07,
+                                    "timestamp": "2020-04-06T12:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.34,
+                                    "timestamp": "2020-04-06T12:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.79,
+                                    "timestamp": "2020-04-06T12:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.16,
+                                    "timestamp": "2020-04-06T13:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.81,
+                                    "timestamp": "2020-04-06T13:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.16,
+                                    "timestamp": "2020-04-06T13:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.41,
+                                    "timestamp": "2020-04-06T13:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.3,
+                                    "timestamp": "2020-04-06T13:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.75,
+                                    "timestamp": "2020-04-06T13:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.82,
+                                    "timestamp": "2020-04-06T14:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.24,
+                                    "timestamp": "2020-04-06T14:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.47,
+                                    "timestamp": "2020-04-06T14:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.89,
+                                    "timestamp": "2020-04-06T14:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.22,
+                                    "timestamp": "2020-04-06T14:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.94,
+                                    "timestamp": "2020-04-06T14:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.45,
+                                    "timestamp": "2020-04-06T15:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.82,
+                                    "timestamp": "2020-04-06T15:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.64,
+                                    "timestamp": "2020-04-06T15:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.67,
+                                    "timestamp": "2020-04-06T15:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.24,
+                                    "timestamp": "2020-04-06T15:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.16,
+                                    "timestamp": "2020-04-06T15:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.01,
+                                    "timestamp": "2020-04-06T16:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.64,
+                                    "timestamp": "2020-04-06T16:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.21,
+                                    "timestamp": "2020-04-06T16:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.54,
+                                    "timestamp": "2020-04-06T16:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.21,
+                                    "timestamp": "2020-04-06T16:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.86,
+                                    "timestamp": "2020-04-06T16:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.34,
+                                    "timestamp": "2020-04-06T17:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.39,
+                                    "timestamp": "2020-04-06T17:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.57,
+                                    "timestamp": "2020-04-06T17:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.83,
+                                    "timestamp": "2020-04-06T17:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.8,
+                                    "timestamp": "2020-04-06T17:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.27,
+                                    "timestamp": "2020-04-06T17:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.08,
+                                    "timestamp": "2020-04-06T18:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.09,
+                                    "timestamp": "2020-04-06T18:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.13,
+                                    "timestamp": "2020-04-06T18:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.8,
+                                    "timestamp": "2020-04-06T18:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.32,
+                                    "timestamp": "2020-04-06T18:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.07,
+                                    "timestamp": "2020-04-06T18:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.34,
+                                    "timestamp": "2020-04-06T19:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.06,
+                                    "timestamp": "2020-04-06T19:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.36,
+                                    "timestamp": "2020-04-06T19:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.81,
+                                    "timestamp": "2020-04-06T19:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.73,
+                                    "timestamp": "2020-04-06T19:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.55,
+                                    "timestamp": "2020-04-06T19:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.58,
+                                    "timestamp": "2020-04-06T20:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.21,
+                                    "timestamp": "2020-04-06T20:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.63,
+                                    "timestamp": "2020-04-06T20:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.93,
+                                    "timestamp": "2020-04-06T20:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.32,
+                                    "timestamp": "2020-04-06T20:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.8,
+                                    "timestamp": "2020-04-06T20:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.06,
+                                    "timestamp": "2020-04-06T21:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.77,
+                                    "timestamp": "2020-04-06T21:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.34,
+                                    "timestamp": "2020-04-06T21:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.48,
+                                    "timestamp": "2020-04-06T21:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.3,
+                                    "timestamp": "2020-04-06T21:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.26,
+                                    "timestamp": "2020-04-06T21:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.56,
+                                    "timestamp": "2020-04-06T22:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.04,
+                                    "timestamp": "2020-04-06T22:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.49,
+                                    "timestamp": "2020-04-06T22:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.26,
+                                    "timestamp": "2020-04-06T22:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.07,
+                                    "timestamp": "2020-04-06T22:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.77,
+                                    "timestamp": "2020-04-06T22:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.36,
+                                    "timestamp": "2020-04-06T23:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20,
+                                    "timestamp": "2020-04-06T23:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.67,
+                                    "timestamp": "2020-04-06T23:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.41,
+                                    "timestamp": "2020-04-06T23:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.11,
+                                    "timestamp": "2020-04-06T23:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.75,
+                                    "timestamp": "2020-04-06T23:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.13,
+                                    "timestamp": "2020-04-07T00:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.7,
+                                    "timestamp": "2020-04-07T00:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.58,
+                                    "timestamp": "2020-04-07T00:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.58,
+                                    "timestamp": "2020-04-07T00:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.16,
+                                    "timestamp": "2020-04-07T00:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.1,
+                                    "timestamp": "2020-04-07T00:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.59,
+                                    "timestamp": "2020-04-07T01:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.88,
+                                    "timestamp": "2020-04-07T01:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.02,
+                                    "timestamp": "2020-04-07T01:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.19,
+                                    "timestamp": "2020-04-07T01:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25,
+                                    "timestamp": "2020-04-07T01:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.6,
+                                    "timestamp": "2020-04-07T01:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.84,
+                                    "timestamp": "2020-04-07T02:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.42,
+                                    "timestamp": "2020-04-07T02:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.52,
+                                    "timestamp": "2020-04-07T02:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.93,
+                                    "timestamp": "2020-04-07T02:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.5,
+                                    "timestamp": "2020-04-07T02:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.08,
+                                    "timestamp": "2020-04-07T02:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.89,
+                                    "timestamp": "2020-04-07T03:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.48,
+                                    "timestamp": "2020-04-07T03:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.24,
+                                    "timestamp": "2020-04-07T03:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.93,
+                                    "timestamp": "2020-04-07T03:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.75,
+                                    "timestamp": "2020-04-07T03:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.87,
+                                    "timestamp": "2020-04-07T03:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.7,
+                                    "timestamp": "2020-04-07T04:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.91,
+                                    "timestamp": "2020-04-07T04:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.34,
+                                    "timestamp": "2020-04-07T04:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.42,
+                                    "timestamp": "2020-04-07T04:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.54,
+                                    "timestamp": "2020-04-07T04:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.49,
+                                    "timestamp": "2020-04-07T04:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.66,
+                                    "timestamp": "2020-04-07T05:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.46,
+                                    "timestamp": "2020-04-07T05:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.39,
+                                    "timestamp": "2020-04-07T05:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.32,
+                                    "timestamp": "2020-04-07T05:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.7,
+                                    "timestamp": "2020-04-07T05:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25,
+                                    "timestamp": "2020-04-07T05:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.58,
+                                    "timestamp": "2020-04-07T06:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.72,
+                                    "timestamp": "2020-04-07T06:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.31,
+                                    "timestamp": "2020-04-07T06:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.81,
+                                    "timestamp": "2020-04-07T06:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.43,
+                                    "timestamp": "2020-04-07T06:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.56,
+                                    "timestamp": "2020-04-07T06:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.74,
+                                    "timestamp": "2020-04-07T07:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.31,
+                                    "timestamp": "2020-04-07T07:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.84,
+                                    "timestamp": "2020-04-07T07:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.36,
+                                    "timestamp": "2020-04-07T07:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.43,
+                                    "timestamp": "2020-04-07T07:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.49,
+                                    "timestamp": "2020-04-07T07:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.72,
+                                    "timestamp": "2020-04-07T08:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 23.41,
+                                    "timestamp": "2020-04-07T08:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.82,
+                                    "timestamp": "2020-04-07T08:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 22.29,
+                                    "timestamp": "2020-04-07T08:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.32,
+                                    "timestamp": "2020-04-07T08:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.48,
+                                    "timestamp": "2020-04-07T08:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 25.03,
+                                    "timestamp": "2020-04-07T09:08:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 20.87,
+                                    "timestamp": "2020-04-07T09:18:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.47,
+                                    "timestamp": "2020-04-07T09:28:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.94,
+                                    "timestamp": "2020-04-07T09:38:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.69,
+                                    "timestamp": "2020-04-07T09:48:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 24.73,
+                                    "timestamp": "2020-04-07T09:58:30.111Z"
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 19.06,
+                                    "timestamp": "2020-04-07T10:08:30.111Z"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "sensors"
+            ]
+        },
+        "signature": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "default": "RsaSignature2018"
+                },
+                "created": {
+                    "type": "string",
+                    "default": "2020-08-28T10:02:36+03:00"
+                },
+                "creator": {
+                    "type": "string",
+                    "default": "http://localhost:8080/translator/v1/public.key"
+                },
+                "signatureValue": {
+                    "type": "string",
+                    "default": "NT3adLDEZqPFegaCzUQUFuhMsJVQ4V6eZCJ8oMrQfTlgxss3wD9KoNn71ptscT1EnDDrPNnKNvXCvKMj5HuDDtU72RFjbYNCdJ3IvfKE6mZSVmU0ThDlbHAbTu+9pw8+w/i5s2zMTPuYc7qoQp3yKAYSmUwJJNHQiXSpSXLTD7f/8pRpBWnbsyudmlzInS+w4DplkMlIqRtHxjkq3+GJfOCdZY+hI9WGtmQDiP3rYHBwk+LAcs2+Ytc8DF+snZyIGDrpvDNh25kKlX8/xQDKgifhjVQAGC2LEPfyxg+rl8BlI7eXvQyCljr/KB5N6ycmgUubnxt98uNo2nVVPt5Xd7w9o3NVgLELgq/PfnPjkpMlzcPDe+0ps5M7bXLRwjatbgOWEA8IwX4J5NEGutE1s7p2sI7jzqg/oXbzH0wgE5v7VeRe1k068RQh2siEs1DqXwKMdlq0imNqRmZYnEq118rQ3SDM+LrWcoRLy6fppSzi9LB3zWlY+ca5wUl3M75ej0uR7T0imn6NN23UsC5BDw9qiPYkzc+F+URDdk4YknVRYgMmOu0Ha2CGx8he1F01V5uU48Kjzm1oEtCNLVGPLBbLzP6a7Zxdrj4pfMf/SBOh/374NKyioKGIFMdnRa3+YZPOT1D2y/7hS7XUnkS5Wf5iWZiqDv8an0GsvBXxHno="
+                }
+            },
+            "required": [
+                "created",
+                "creator",
+                "signatureValue",
+                "type"
+            ]
+        }
+    },
+    "required": [
+        "@context",
+        "data",
+        "signature"
+    ]
+}</msg>
+<status status="PASS" starttime="20200828 10:02:36.139" endtime="20200828 10:02:36.219"></status>
+</kw>
+<status status="PASS" starttime="20200828 10:02:33.865" endtime="20200828 10:02:36.219"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>200</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:36.219" endtime="20200828 10:02:36.219"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body @context</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:36.220" endtime="20200828 10:02:36.220"></status>
+</kw>
+<kw name="Object" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON object.*</doc>
+<arguments>
+<arg>response body data</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:36.220" endtime="20200828 10:02:36.225"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data sensors</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:36.239" endtime="20200828 10:02:36.246"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data sensors 0 measurements</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:36.246" endtime="20200828 10:02:36.250"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body data sensors 0 measurements 0 @type</arg>
+<arg>MeasureAirTemperatureCelciusDegree</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:36.250" endtime="20200828 10:02:36.251"></status>
+</kw>
+<tags>
+<tag>bug-0001</tag>
+</tags>
+<status status="PASS" starttime="20200828 10:02:33.863" endtime="20200828 10:02:36.251" critical="yes"></status>
+</test>
+<test id="s1-t2" name="fetch, 422, Missing data for timestamp required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20200828 10:02:36.254" level="INFO">${body} = {'productCode': 'default_siemens-navigator', 'parameters': {'ids': ['1897206', '1897215', 'INVALID'], 'startTime': '2020-04-06T06:28:30.111Z', 'endTime': '2020-04-07T10:18:30.111Z'}}</msg>
+<status status="PASS" starttime="20200828 10:02:36.253" endtime="20200828 10:02:36.254"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20200828 10:02:36.254" level="INFO">${now} = 2020-08-28T07:02:36+00:00</msg>
+<status status="PASS" starttime="20200828 10:02:36.254" endtime="20200828 10:02:36.254"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:36.254" endtime="20200828 10:02:36.254"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:36.254" endtime="20200828 10:02:36.255"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20200828 10:02:36.255" level="INFO">${json_string} = {"productCode": "default_siemens-navigator", "parameters": {"ids": ["1897206", "1897215", "INVALID"], "startTime": "2020-04-06T06:28:30.111Z", "endTime": "2020-04-07T10:18:30.111Z"}, "timestamp": "202...</msg>
+<status status="PASS" starttime="20200828 10:02:36.255" endtime="20200828 10:02:36.255"></status>
+</kw>
+<msg timestamp="20200828 10:02:36.255" level="INFO">${body} = {'productCode': 'default_siemens-navigator', 'parameters': {'ids': ['1897206', '1897215', 'INVALID'], 'startTime': '2020-04-06T06:28:30.111Z', 'endTime': '2020-04-07T10:18:30.111Z'}, 'timestamp': '202...</msg>
+<status status="PASS" starttime="20200828 10:02:36.253" endtime="20200828 10:02:36.255"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:36.255" endtime="20200828 10:02:36.256"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20200828 10:02:36.256" level="INFO">${signature} = Z4eOAcBi1QaqDXYGM4jImXW6yQLKKiF5ZeMuq0hKDUU=</msg>
+<status status="PASS" starttime="20200828 10:02:36.256" endtime="20200828 10:02:36.256"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:36.256" endtime="20200828 10:02:36.257"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:36.257" endtime="20200828 10:02:38.264"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20200828 10:02:38.265" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "timestamp": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "timestamp"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20200828 10:02:38.264" endtime="20200828 10:02:38.266"></status>
+</kw>
+<status status="PASS" starttime="20200828 10:02:36.256" endtime="20200828 10:02:38.266"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:38.267" endtime="20200828 10:02:38.267"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:38.268" endtime="20200828 10:02:38.268"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message timestamp 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:38.269" endtime="20200828 10:02:38.269"></status>
+</kw>
+<tags>
+<tag>bug-0001</tag>
+</tags>
+<status status="PASS" starttime="20200828 10:02:36.253" endtime="20200828 10:02:38.269" critical="yes"></status>
+</test>
+<test id="s1-t3" name="fetch, 422, Missing data for parameters required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20200828 10:02:38.271" level="INFO">${body} = {'productCode': 'default_siemens-navigator', 'parameters': {'ids': ['1897206', '1897215', 'INVALID'], 'startTime': '2020-04-06T06:28:30.111Z', 'endTime': '2020-04-07T10:18:30.111Z'}}</msg>
+<status status="PASS" starttime="20200828 10:02:38.271" endtime="20200828 10:02:38.271"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20200828 10:02:38.271" level="INFO">${now} = 2020-08-28T07:02:38+00:00</msg>
+<status status="PASS" starttime="20200828 10:02:38.271" endtime="20200828 10:02:38.271"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:38.271" endtime="20200828 10:02:38.272"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:38.272" endtime="20200828 10:02:38.272"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20200828 10:02:38.273" level="INFO">${json_string} = {"productCode": "default_siemens-navigator", "parameters": {"ids": ["1897206", "1897215", "INVALID"], "startTime": "2020-04-06T06:28:30.111Z", "endTime": "2020-04-07T10:18:30.111Z"}, "timestamp": "202...</msg>
+<status status="PASS" starttime="20200828 10:02:38.273" endtime="20200828 10:02:38.273"></status>
+</kw>
+<msg timestamp="20200828 10:02:38.273" level="INFO">${body} = {'productCode': 'default_siemens-navigator', 'parameters': {'ids': ['1897206', '1897215', 'INVALID'], 'startTime': '2020-04-06T06:28:30.111Z', 'endTime': '2020-04-07T10:18:30.111Z'}, 'timestamp': '202...</msg>
+<status status="PASS" starttime="20200828 10:02:38.270" endtime="20200828 10:02:38.273"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>parameters</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:38.273" endtime="20200828 10:02:38.274"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20200828 10:02:38.274" level="INFO">${signature} = qTbuRsvOWAddUeRQ9P785ZRDp16rCIXVFk3kTUlNXzo=</msg>
+<status status="PASS" starttime="20200828 10:02:38.274" endtime="20200828 10:02:38.274"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:38.275" endtime="20200828 10:02:38.275"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:38.275" endtime="20200828 10:02:40.281"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20200828 10:02:40.282" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "parameters": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "parameters"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20200828 10:02:40.281" endtime="20200828 10:02:40.283"></status>
+</kw>
+<status status="PASS" starttime="20200828 10:02:38.274" endtime="20200828 10:02:40.283"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:40.284" endtime="20200828 10:02:40.284"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:40.285" endtime="20200828 10:02:40.285"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message parameters 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:40.285" endtime="20200828 10:02:40.286"></status>
+</kw>
+<tags>
+<tag>bug-0002</tag>
+</tags>
+<status status="PASS" starttime="20200828 10:02:38.270" endtime="20200828 10:02:40.286" critical="yes"></status>
+</test>
+<test id="s1-t4" name="fetch, 422, Missing data for ids required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20200828 10:02:40.288" level="INFO">${body} = {'productCode': 'default_siemens-navigator', 'parameters': {'ids': ['1897206', '1897215', 'INVALID'], 'startTime': '2020-04-06T06:28:30.111Z', 'endTime': '2020-04-07T10:18:30.111Z'}}</msg>
+<status status="PASS" starttime="20200828 10:02:40.288" endtime="20200828 10:02:40.288"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20200828 10:02:40.288" level="INFO">${now} = 2020-08-28T07:02:40+00:00</msg>
+<status status="PASS" starttime="20200828 10:02:40.288" endtime="20200828 10:02:40.288"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:40.289" endtime="20200828 10:02:40.289"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:40.289" endtime="20200828 10:02:40.289"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20200828 10:02:40.289" level="INFO">${json_string} = {"productCode": "default_siemens-navigator", "parameters": {"ids": ["1897206", "1897215", "INVALID"], "startTime": "2020-04-06T06:28:30.111Z", "endTime": "2020-04-07T10:18:30.111Z"}, "timestamp": "202...</msg>
+<status status="PASS" starttime="20200828 10:02:40.289" endtime="20200828 10:02:40.289"></status>
+</kw>
+<msg timestamp="20200828 10:02:40.289" level="INFO">${body} = {'productCode': 'default_siemens-navigator', 'parameters': {'ids': ['1897206', '1897215', 'INVALID'], 'startTime': '2020-04-06T06:28:30.111Z', 'endTime': '2020-04-07T10:18:30.111Z'}, 'timestamp': '202...</msg>
+<status status="PASS" starttime="20200828 10:02:40.288" endtime="20200828 10:02:40.290"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body["parameters"]}</arg>
+<arg>ids</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:40.290" endtime="20200828 10:02:40.290"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20200828 10:02:40.298" level="INFO">${signature} = jz1faCfb2DOk4DefjTbZ6052GmXo07XjiINyyUX3t34=</msg>
+<status status="PASS" starttime="20200828 10:02:40.298" endtime="20200828 10:02:40.298"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:40.298" endtime="20200828 10:02:40.298"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:40.299" endtime="20200828 10:02:42.306"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20200828 10:02:42.307" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "parameters.ids": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "parameters.ids"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20200828 10:02:42.306" endtime="20200828 10:02:42.308"></status>
+</kw>
+<status status="PASS" starttime="20200828 10:02:40.290" endtime="20200828 10:02:42.308"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:42.308" endtime="20200828 10:02:42.309"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:42.309" endtime="20200828 10:02:42.309"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message parameters.ids 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:42.310" endtime="20200828 10:02:42.310"></status>
+</kw>
+<tags>
+<tag>bug-0003</tag>
+</tags>
+<status status="PASS" starttime="20200828 10:02:40.287" endtime="20200828 10:02:42.311" critical="yes"></status>
+</test>
+<test id="s1-t5" name="fetch, 200, Empty ids">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20200828 10:02:42.313" level="INFO">${body} = {'productCode': 'default_siemens-navigator', 'parameters': {'ids': ['1897206', '1897215', 'INVALID'], 'startTime': '2020-04-06T06:28:30.111Z', 'endTime': '2020-04-07T10:18:30.111Z'}}</msg>
+<status status="PASS" starttime="20200828 10:02:42.313" endtime="20200828 10:02:42.313"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20200828 10:02:42.314" level="INFO">${now} = 2020-08-28T07:02:42+00:00</msg>
+<status status="PASS" starttime="20200828 10:02:42.313" endtime="20200828 10:02:42.314"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:42.314" endtime="20200828 10:02:42.314"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:42.314" endtime="20200828 10:02:42.314"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20200828 10:02:42.314" level="INFO">${json_string} = {"productCode": "default_siemens-navigator", "parameters": {"ids": ["1897206", "1897215", "INVALID"], "startTime": "2020-04-06T06:28:30.111Z", "endTime": "2020-04-07T10:18:30.111Z"}, "timestamp": "202...</msg>
+<status status="PASS" starttime="20200828 10:02:42.314" endtime="20200828 10:02:42.315"></status>
+</kw>
+<msg timestamp="20200828 10:02:42.315" level="INFO">${body} = {'productCode': 'default_siemens-navigator', 'parameters': {'ids': ['1897206', '1897215', 'INVALID'], 'startTime': '2020-04-06T06:28:30.111Z', 'endTime': '2020-04-07T10:18:30.111Z'}, 'timestamp': '202...</msg>
+<status status="PASS" starttime="20200828 10:02:42.313" endtime="20200828 10:02:42.315"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body["parameters"]}</arg>
+<arg>ids=@{EMPTY}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:42.315" endtime="20200828 10:02:42.315"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20200828 10:02:42.316" level="INFO">${signature} = uskPUnqnZpSGJNsZqSQNPXS/FWKEjEIcXkvYQ/iiZUA=</msg>
+<status status="PASS" starttime="20200828 10:02:42.316" endtime="20200828 10:02:42.316"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:42.316" endtime="20200828 10:02:42.316"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:42.316" endtime="20200828 10:02:44.334"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20200828 10:02:44.334" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "@context": {
+            "type": "string",
+            "default": "https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/"
+        },
+        "data": {
+            "type": "object",
+            "properties": {
+                "sensors": {
+                    "type": "array",
+                    "default": []
+                }
+            },
+            "required": [
+                "sensors"
+            ]
+        },
+        "signature": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "default": "RsaSignature2018"
+                },
+                "created": {
+                    "type": "string",
+                    "default": "2020-08-28T10:02:44+03:00"
+                },
+                "creator": {
+                    "type": "string",
+                    "default": "http://localhost:8080/translator/v1/public.key"
+                },
+                "signatureValue": {
+                    "type": "string",
+                    "default": "PA2K8I0vPbTYtbQ7hTfiKX/KWDa3oBpVkFZtB9mzIkvkVDXoOHL762+S7sdz3e3QNCWabgDJc6E1va+tUyzIlIdfj11K4wkXuPlpGRiX3vOp9y5IymSZhqYyK6Vi05w4/k7NahPkdjPXB88umrmIFMLfwS5Mg397RyG2iH0MSasD9KR0j33TckI0KBsk8Jf/nDwVxtw0oGp2VGOs8ewTjIOuZ+V42b6Ne8bh0aBU2hw5l37Q2FmVxurywYcTp6sba6EaQzq9ylz6xv0PaIFndNGUOR1vjdbo61r+K6rtw6/eklv2/ssn+PAKS4gUccGMAJFLCB9OB6iZG3gsN4QvyhL9bLlnbe6cwaRco0bUiA5MXUJhJsX8zkxvBuAl3zfOkfnb9xPwe4nfLGCvkMLt5myY1lQYGoxI8/UZ6YfuMnZsaSIY2mShtwkCiPh1f8nQmZ2ZyoCP+dbDSD7BF6QjXQZDE2JfBwIrYi+Hf+viH6DtK2ru0wVWxAeBmLYNOHFGdd28mImCM+qb7sQoLluFas9xkzvRlbIrKpwba+XMzuTYNCjAfAj4HCMQQTR9aRVdT0gpiN/zxV/cMZdMQhbcua5KLIMkQ1amaxREqRfbmOfmDzya1Aey4sGHBuOl/V3VgRo7v9GA4sVbbv3S+EZnifwHcfyKLrlz1cAM8CalyN8="
+                }
+            },
+            "required": [
+                "created",
+                "creator",
+                "signatureValue",
+                "type"
+            ]
+        }
+    },
+    "required": [
+        "@context",
+        "data",
+        "signature"
+    ]
+}</msg>
+<status status="PASS" starttime="20200828 10:02:44.334" endtime="20200828 10:02:44.336"></status>
+</kw>
+<status status="PASS" starttime="20200828 10:02:42.316" endtime="20200828 10:02:44.336"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>200</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:44.337" endtime="20200828 10:02:44.337"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body @context</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:44.337" endtime="20200828 10:02:44.338"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data sensors</arg>
+<arg>maxItems=0</arg>
+</arguments>
+<status status="PASS" starttime="20200828 10:02:44.338" endtime="20200828 10:02:44.339"></status>
+</kw>
+<tags>
+<tag>bug-0004</tag>
+</tags>
+<status status="PASS" starttime="20200828 10:02:42.312" endtime="20200828 10:02:44.339" critical="yes"></status>
+</test>
+<doc>Siemens Navigator Tests</doc>
+<status status="PASS" starttime="20200828 10:02:33.621" endtime="20200828 10:02:44.341"></status>
+</suite>
+<statistics>
+<total>
+<stat pass="5" fail="0">Critical Tests</stat>
+<stat pass="5" fail="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="2" fail="0">bug-0001</stat>
+<stat pass="1" fail="0">bug-0002</stat>
+<stat pass="1" fail="0">bug-0003</stat>
+<stat pass="1" fail="0">bug-0004</stat>
+</tag>
+<suite>
+<stat pass="5" fail="0" id="s1" name="Connector Tests">Connector Tests</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

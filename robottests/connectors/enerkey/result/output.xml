@@ -1,0 +1,1449 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 3.2.1 (Python 3.8.3 on win32)" generated="20200828 11:44:35.307" rpa="false">
+<suite id="s1" name="Connector Tests" source="C:\Users\artor\WebstormProjects\translator\robottests\connectors\enerkey\connector_tests.robot">
+<test id="s1-t1" name="fetch, 200">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20200828 11:44:35.553" level="INFO">${body} = {'productCode': 'default_enerkey', 'parameters': {'ids': ['15794', '35378', '45410'], 'startTime': '2014-04-05T06:28:30.000Z', 'endTime': '2014-04-06T06:28:30.000Z'}}</msg>
+<status status="PASS" starttime="20200828 11:44:35.552" endtime="20200828 11:44:35.553"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20200828 11:44:35.553" level="INFO">${now} = 2020-08-28T08:44:35+00:00</msg>
+<status status="PASS" starttime="20200828 11:44:35.553" endtime="20200828 11:44:35.553"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:35.553" endtime="20200828 11:44:35.553"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:35.553" endtime="20200828 11:44:35.553"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20200828 11:44:35.554" level="INFO">${json_string} = {"productCode": "default_enerkey", "parameters": {"ids": ["15794", "35378", "45410"], "startTime": "2014-04-05T06:28:30.000Z", "endTime": "2014-04-06T06:28:30.000Z"}, "timestamp": "2020-08-28T08:44:35...</msg>
+<status status="PASS" starttime="20200828 11:44:35.554" endtime="20200828 11:44:35.554"></status>
+</kw>
+<msg timestamp="20200828 11:44:35.554" level="INFO">${body} = {'productCode': 'default_enerkey', 'parameters': {'ids': ['15794', '35378', '45410'], 'startTime': '2014-04-05T06:28:30.000Z', 'endTime': '2014-04-06T06:28:30.000Z'}, 'timestamp': '2020-08-28T08:44:35...</msg>
+<status status="PASS" starttime="20200828 11:44:35.552" endtime="20200828 11:44:35.554"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20200828 11:44:35.555" level="INFO">${signature} = twkMcCqjaUfyvx62DAI27BYlx0MBgmJ0u/DtXlXVDLM=</msg>
+<status status="PASS" starttime="20200828 11:44:35.554" endtime="20200828 11:44:35.555"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:35.555" endtime="20200828 11:44:35.555"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:35.555" endtime="20200828 11:44:39.167"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20200828 11:44:39.168" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "@context": {
+            "type": "string",
+            "default": "https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/"
+        },
+        "data": {
+            "type": "object",
+            "properties": {
+                "sensors": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "measurements": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "@type": {
+                                            "type": "string"
+                                        },
+                                        "value": {
+                                            "type": "number"
+                                        },
+                                        "timestamp": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "@type",
+                                        "timestamp",
+                                        "value"
+                                    ]
+                                }
+                            }
+                        },
+                        "required": [
+                            "measurements"
+                        ]
+                    },
+                    "default": [
+                        {
+                            "measurements": [
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 180,
+                                    "timestamp": "2014-04-05T07:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 184,
+                                    "timestamp": "2014-04-05T08:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 181,
+                                    "timestamp": "2014-04-05T09:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 189,
+                                    "timestamp": "2014-04-05T10:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 209,
+                                    "timestamp": "2014-04-05T11:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 233,
+                                    "timestamp": "2014-04-05T12:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 216,
+                                    "timestamp": "2014-04-05T13:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 201,
+                                    "timestamp": "2014-04-05T14:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 212,
+                                    "timestamp": "2014-04-05T15:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 213,
+                                    "timestamp": "2014-04-05T16:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 215,
+                                    "timestamp": "2014-04-05T17:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 218,
+                                    "timestamp": "2014-04-05T18:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 220,
+                                    "timestamp": "2014-04-05T19:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 218,
+                                    "timestamp": "2014-04-05T20:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 207,
+                                    "timestamp": "2014-04-05T21:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 202,
+                                    "timestamp": "2014-04-05T22:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 189,
+                                    "timestamp": "2014-04-05T23:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 195,
+                                    "timestamp": "2014-04-06T00:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 189,
+                                    "timestamp": "2014-04-06T01:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 187,
+                                    "timestamp": "2014-04-06T02:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 189,
+                                    "timestamp": "2014-04-06T03:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 182,
+                                    "timestamp": "2014-04-06T04:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 184,
+                                    "timestamp": "2014-04-06T05:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 186,
+                                    "timestamp": "2014-04-06T06:00:00.000Z"
+                                }
+                            ]
+                        },
+                        {
+                            "measurements": [
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 11.41552,
+                                    "timestamp": "2014-04-05T07:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 11.41552,
+                                    "timestamp": "2014-04-05T08:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 11.41552,
+                                    "timestamp": "2014-04-05T09:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 11.41552,
+                                    "timestamp": "2014-04-05T10:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 11.41552,
+                                    "timestamp": "2014-04-05T11:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 11.41552,
+                                    "timestamp": "2014-04-05T12:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 11.41552,
+                                    "timestamp": "2014-04-05T13:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 11.41552,
+                                    "timestamp": "2014-04-05T14:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 11.41552,
+                                    "timestamp": "2014-04-05T15:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 11.41552,
+                                    "timestamp": "2014-04-05T16:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 11.41552,
+                                    "timestamp": "2014-04-05T17:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 11.41552,
+                                    "timestamp": "2014-04-05T18:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 11.41552,
+                                    "timestamp": "2014-04-05T19:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 11.41552,
+                                    "timestamp": "2014-04-05T20:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 11.41552,
+                                    "timestamp": "2014-04-05T21:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 11.41552,
+                                    "timestamp": "2014-04-05T22:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 11.41552,
+                                    "timestamp": "2014-04-05T23:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 11.41552,
+                                    "timestamp": "2014-04-06T00:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 11.41552,
+                                    "timestamp": "2014-04-06T01:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 11.41552,
+                                    "timestamp": "2014-04-06T02:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 11.41552,
+                                    "timestamp": "2014-04-06T03:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 11.41552,
+                                    "timestamp": "2014-04-06T04:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 11.41552,
+                                    "timestamp": "2014-04-06T05:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 11.41552,
+                                    "timestamp": "2014-04-06T06:00:00.000Z"
+                                }
+                            ]
+                        },
+                        {
+                            "measurements": [
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 0.125,
+                                    "timestamp": "2014-04-05T07:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 0.125,
+                                    "timestamp": "2014-04-05T08:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 0.125,
+                                    "timestamp": "2014-04-05T09:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 0.125,
+                                    "timestamp": "2014-04-05T10:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 0.125,
+                                    "timestamp": "2014-04-05T11:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 0.125,
+                                    "timestamp": "2014-04-05T12:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 0.125,
+                                    "timestamp": "2014-04-05T13:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 0.125,
+                                    "timestamp": "2014-04-05T14:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 0.125,
+                                    "timestamp": "2014-04-05T15:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 0.125,
+                                    "timestamp": "2014-04-05T16:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 0.125,
+                                    "timestamp": "2014-04-05T17:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 0.125,
+                                    "timestamp": "2014-04-05T18:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 0.125,
+                                    "timestamp": "2014-04-05T19:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 0.125,
+                                    "timestamp": "2014-04-05T20:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 0.125,
+                                    "timestamp": "2014-04-05T21:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 0.125,
+                                    "timestamp": "2014-04-05T22:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 0.125,
+                                    "timestamp": "2014-04-05T23:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 0.125,
+                                    "timestamp": "2014-04-06T00:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 0.125,
+                                    "timestamp": "2014-04-06T01:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 0.125,
+                                    "timestamp": "2014-04-06T02:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 0.125,
+                                    "timestamp": "2014-04-06T03:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 0.125,
+                                    "timestamp": "2014-04-06T04:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 0.125,
+                                    "timestamp": "2014-04-06T05:00:00.000Z"
+                                },
+                                {
+                                    "@type": "MeasureEnergyConsumptionKilowattHour",
+                                    "value": 0.125,
+                                    "timestamp": "2014-04-06T06:00:00.000Z"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "sensors"
+            ]
+        },
+        "signature": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "default": "RsaSignature2018"
+                },
+                "created": {
+                    "type": "string",
+                    "default": "2020-08-28T11:44:39+03:00"
+                },
+                "creator": {
+                    "type": "string",
+                    "default": "http://localhost:8080/translator/v1/public.key"
+                },
+                "signatureValue": {
+                    "type": "string",
+                    "default": "LumLyfYmcMSBTsD4Tynr3Aybb9EOp4+Nzvkk/+vB/OdM2IMjHQAbnK3ZZW9q5BQSErkEluM0W7mtAVa3NAb1EEw8+xmM8r+iOvR5k4lXl16CC88H8FjNjeL8FvrshNwES5dtBJcj6SyzPCai8VxL2vtlJ6DTOq9zRxsYYkUdJegYF40833dULMXQbDlJlj2u2q4S+TBiCn9G8oN0qgW4yokwc/7adSpl2TiyaU5RtXpUAqflMKvarIgrcKX2JCctob0FSKi+OWyqCXR4i94zW2anCmbVsm9aVy1Oq+k9s51J02Q0RITcT7lk7Ozs+dbV4zonqrAhYnsIasPQcgPefLjDn6jT3ACRrzMg9NUF+FQ82IA4eDodLYbHk7rTeOV2e9Wo2kUA8RvGO8QwphrzwRfmoJf9y2SWNs2uthKd/VKESPnwgmO8HOUDRZ9HrvJx5HzGKZ1Uy6zbIP8ghHy585c5kPf2PgAvAi0/zmzmrI/wY/JD++4MRXaQ4ztfyh3tvverT6ZZvS7DNwszm17fjZ4wxqXRIYxYC1eoJfT2OPUozmZk1bUCWqmeNnHBPekud5sU6jX3OYJABeagP2tmL8xwF+VKfoYi1GUQTEAIvi7pqDxY1FpKWaFh7Vdyr7WTKsm+CpVcA8UJiHh4Qj+eypZrVEzPuH1zs/TBGMeXtvg="
+                }
+            },
+            "required": [
+                "created",
+                "creator",
+                "signatureValue",
+                "type"
+            ]
+        }
+    },
+    "required": [
+        "@context",
+        "data",
+        "signature"
+    ]
+}</msg>
+<status status="PASS" starttime="20200828 11:44:39.167" endtime="20200828 11:44:39.191"></status>
+</kw>
+<status status="PASS" starttime="20200828 11:44:35.554" endtime="20200828 11:44:39.192"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>200</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:39.192" endtime="20200828 11:44:39.192"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body @context</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:39.202" endtime="20200828 11:44:39.202"></status>
+</kw>
+<kw name="Object" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON object.*</doc>
+<arguments>
+<arg>response body data</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:39.203" endtime="20200828 11:44:39.204"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data sensors</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:39.205" endtime="20200828 11:44:39.206"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data sensors 0 measurements</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:39.207" endtime="20200828 11:44:39.208"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body data sensors 0 measurements 0 @type</arg>
+<arg>MeasureEnergyConsumptionKilowattHour</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:39.208" endtime="20200828 11:44:39.208"></status>
+</kw>
+<tags>
+<tag>bug-0001</tag>
+</tags>
+<status status="PASS" starttime="20200828 11:44:35.552" endtime="20200828 11:44:39.209" critical="yes"></status>
+</test>
+<test id="s1-t2" name="fetch, 422, Missing data for timestamp required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20200828 11:44:39.211" level="INFO">${body} = {'productCode': 'default_enerkey', 'parameters': {'ids': ['15794', '35378', '45410'], 'startTime': '2014-04-05T06:28:30.000Z', 'endTime': '2014-04-06T06:28:30.000Z'}}</msg>
+<status status="PASS" starttime="20200828 11:44:39.211" endtime="20200828 11:44:39.211"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20200828 11:44:39.212" level="INFO">${now} = 2020-08-28T08:44:39+00:00</msg>
+<status status="PASS" starttime="20200828 11:44:39.211" endtime="20200828 11:44:39.212"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:39.212" endtime="20200828 11:44:39.212"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:39.212" endtime="20200828 11:44:39.212"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20200828 11:44:39.212" level="INFO">${json_string} = {"productCode": "default_enerkey", "parameters": {"ids": ["15794", "35378", "45410"], "startTime": "2014-04-05T06:28:30.000Z", "endTime": "2014-04-06T06:28:30.000Z"}, "timestamp": "2020-08-28T08:44:39...</msg>
+<status status="PASS" starttime="20200828 11:44:39.212" endtime="20200828 11:44:39.212"></status>
+</kw>
+<msg timestamp="20200828 11:44:39.213" level="INFO">${body} = {'productCode': 'default_enerkey', 'parameters': {'ids': ['15794', '35378', '45410'], 'startTime': '2014-04-05T06:28:30.000Z', 'endTime': '2014-04-06T06:28:30.000Z'}, 'timestamp': '2020-08-28T08:44:39...</msg>
+<status status="PASS" starttime="20200828 11:44:39.211" endtime="20200828 11:44:39.213"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:39.213" endtime="20200828 11:44:39.213"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20200828 11:44:39.214" level="INFO">${signature} = 3DN1CPbR13P2hlUvpYsqGUxpbbxelDhLwCjljUGESRw=</msg>
+<status status="PASS" starttime="20200828 11:44:39.214" endtime="20200828 11:44:39.214"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:39.214" endtime="20200828 11:44:39.214"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:39.214" endtime="20200828 11:44:41.222"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20200828 11:44:41.223" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "timestamp": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "timestamp"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20200828 11:44:41.222" endtime="20200828 11:44:41.224"></status>
+</kw>
+<status status="PASS" starttime="20200828 11:44:39.213" endtime="20200828 11:44:41.224"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:41.225" endtime="20200828 11:44:41.225"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:41.226" endtime="20200828 11:44:41.226"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message timestamp 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:41.226" endtime="20200828 11:44:41.227"></status>
+</kw>
+<tags>
+<tag>bug-0001</tag>
+</tags>
+<status status="PASS" starttime="20200828 11:44:39.210" endtime="20200828 11:44:41.227" critical="yes"></status>
+</test>
+<test id="s1-t3" name="fetch, 422, Missing data for parameters required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20200828 11:44:41.229" level="INFO">${body} = {'productCode': 'default_enerkey', 'parameters': {'ids': ['15794', '35378', '45410'], 'startTime': '2014-04-05T06:28:30.000Z', 'endTime': '2014-04-06T06:28:30.000Z'}}</msg>
+<status status="PASS" starttime="20200828 11:44:41.229" endtime="20200828 11:44:41.229"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20200828 11:44:41.229" level="INFO">${now} = 2020-08-28T08:44:41+00:00</msg>
+<status status="PASS" starttime="20200828 11:44:41.229" endtime="20200828 11:44:41.229"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:41.229" endtime="20200828 11:44:41.230"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:41.230" endtime="20200828 11:44:41.230"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20200828 11:44:41.230" level="INFO">${json_string} = {"productCode": "default_enerkey", "parameters": {"ids": ["15794", "35378", "45410"], "startTime": "2014-04-05T06:28:30.000Z", "endTime": "2014-04-06T06:28:30.000Z"}, "timestamp": "2020-08-28T08:44:41...</msg>
+<status status="PASS" starttime="20200828 11:44:41.230" endtime="20200828 11:44:41.230"></status>
+</kw>
+<msg timestamp="20200828 11:44:41.230" level="INFO">${body} = {'productCode': 'default_enerkey', 'parameters': {'ids': ['15794', '35378', '45410'], 'startTime': '2014-04-05T06:28:30.000Z', 'endTime': '2014-04-06T06:28:30.000Z'}, 'timestamp': '2020-08-28T08:44:41...</msg>
+<status status="PASS" starttime="20200828 11:44:41.228" endtime="20200828 11:44:41.230"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>parameters</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:41.231" endtime="20200828 11:44:41.231"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20200828 11:44:41.231" level="INFO">${signature} = y9BrVPp81omSKu5T79LvJeu2qlvZaZuGFi1s3+/jS58=</msg>
+<status status="PASS" starttime="20200828 11:44:41.231" endtime="20200828 11:44:41.231"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:41.232" endtime="20200828 11:44:41.232"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:41.232" endtime="20200828 11:44:43.239"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20200828 11:44:43.239" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "parameters": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "parameters"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20200828 11:44:43.239" endtime="20200828 11:44:43.241"></status>
+</kw>
+<status status="PASS" starttime="20200828 11:44:41.231" endtime="20200828 11:44:43.241"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:43.241" endtime="20200828 11:44:43.241"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:43.241" endtime="20200828 11:44:43.241"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message parameters 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:43.243" endtime="20200828 11:44:43.243"></status>
+</kw>
+<tags>
+<tag>bug-0002</tag>
+</tags>
+<status status="PASS" starttime="20200828 11:44:41.228" endtime="20200828 11:44:43.243" critical="yes"></status>
+</test>
+<test id="s1-t4" name="fetch, 422, Missing data for ids required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20200828 11:44:43.245" level="INFO">${body} = {'productCode': 'default_enerkey', 'parameters': {'ids': ['15794', '35378', '45410'], 'startTime': '2014-04-05T06:28:30.000Z', 'endTime': '2014-04-06T06:28:30.000Z'}}</msg>
+<status status="PASS" starttime="20200828 11:44:43.245" endtime="20200828 11:44:43.245"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20200828 11:44:43.246" level="INFO">${now} = 2020-08-28T08:44:43+00:00</msg>
+<status status="PASS" starttime="20200828 11:44:43.245" endtime="20200828 11:44:43.246"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:43.246" endtime="20200828 11:44:43.246"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:43.246" endtime="20200828 11:44:43.246"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20200828 11:44:43.246" level="INFO">${json_string} = {"productCode": "default_enerkey", "parameters": {"ids": ["15794", "35378", "45410"], "startTime": "2014-04-05T06:28:30.000Z", "endTime": "2014-04-06T06:28:30.000Z"}, "timestamp": "2020-08-28T08:44:43...</msg>
+<status status="PASS" starttime="20200828 11:44:43.246" endtime="20200828 11:44:43.247"></status>
+</kw>
+<msg timestamp="20200828 11:44:43.247" level="INFO">${body} = {'productCode': 'default_enerkey', 'parameters': {'ids': ['15794', '35378', '45410'], 'startTime': '2014-04-05T06:28:30.000Z', 'endTime': '2014-04-06T06:28:30.000Z'}, 'timestamp': '2020-08-28T08:44:43...</msg>
+<status status="PASS" starttime="20200828 11:44:43.245" endtime="20200828 11:44:43.247"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body["parameters"]}</arg>
+<arg>ids</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:43.247" endtime="20200828 11:44:43.247"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20200828 11:44:43.248" level="INFO">${signature} = drOgo8lOo1YrLPJKU/Wjt51LQhe4dI40U/4ey+psEXI=</msg>
+<status status="PASS" starttime="20200828 11:44:43.248" endtime="20200828 11:44:43.248"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:43.248" endtime="20200828 11:44:43.248"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:43.248" endtime="20200828 11:44:45.262"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20200828 11:44:45.262" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "parameters.ids": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "parameters.ids"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20200828 11:44:45.262" endtime="20200828 11:44:45.264"></status>
+</kw>
+<status status="PASS" starttime="20200828 11:44:43.247" endtime="20200828 11:44:45.264"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:45.264" endtime="20200828 11:44:45.265"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:45.265" endtime="20200828 11:44:45.265"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message parameters.ids 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:45.266" endtime="20200828 11:44:45.266"></status>
+</kw>
+<tags>
+<tag>bug-0003</tag>
+</tags>
+<status status="PASS" starttime="20200828 11:44:43.244" endtime="20200828 11:44:45.267" critical="yes"></status>
+</test>
+<test id="s1-t5" name="fetch, 200, Empty ids">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20200828 11:44:45.271" level="INFO">${body} = {'productCode': 'default_enerkey', 'parameters': {'ids': ['15794', '35378', '45410'], 'startTime': '2014-04-05T06:28:30.000Z', 'endTime': '2014-04-06T06:28:30.000Z'}}</msg>
+<status status="PASS" starttime="20200828 11:44:45.271" endtime="20200828 11:44:45.271"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20200828 11:44:45.271" level="INFO">${now} = 2020-08-28T08:44:45+00:00</msg>
+<status status="PASS" starttime="20200828 11:44:45.271" endtime="20200828 11:44:45.271"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:45.271" endtime="20200828 11:44:45.271"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:45.271" endtime="20200828 11:44:45.272"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20200828 11:44:45.272" level="INFO">${json_string} = {"productCode": "default_enerkey", "parameters": {"ids": ["15794", "35378", "45410"], "startTime": "2014-04-05T06:28:30.000Z", "endTime": "2014-04-06T06:28:30.000Z"}, "timestamp": "2020-08-28T08:44:45...</msg>
+<status status="PASS" starttime="20200828 11:44:45.272" endtime="20200828 11:44:45.272"></status>
+</kw>
+<msg timestamp="20200828 11:44:45.272" level="INFO">${body} = {'productCode': 'default_enerkey', 'parameters': {'ids': ['15794', '35378', '45410'], 'startTime': '2014-04-05T06:28:30.000Z', 'endTime': '2014-04-06T06:28:30.000Z'}, 'timestamp': '2020-08-28T08:44:45...</msg>
+<status status="PASS" starttime="20200828 11:44:45.270" endtime="20200828 11:44:45.272"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body["parameters"]}</arg>
+<arg>ids=@{EMPTY}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:45.273" endtime="20200828 11:44:45.273"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20200828 11:44:45.274" level="INFO">${signature} = L+Sfti6T0CunUp0n5On5VHnBi7jUsnvdeE0HMTZDeDs=</msg>
+<status status="PASS" starttime="20200828 11:44:45.274" endtime="20200828 11:44:45.274"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:45.274" endtime="20200828 11:44:45.274"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:45.274" endtime="20200828 11:44:47.287"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20200828 11:44:47.288" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "@context": {
+            "type": "string",
+            "default": "https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/"
+        },
+        "data": {
+            "type": "object",
+            "properties": {
+                "sensors": {
+                    "type": "array",
+                    "default": []
+                }
+            },
+            "required": [
+                "sensors"
+            ]
+        },
+        "signature": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "default": "RsaSignature2018"
+                },
+                "created": {
+                    "type": "string",
+                    "default": "2020-08-28T11:44:47+03:00"
+                },
+                "creator": {
+                    "type": "string",
+                    "default": "http://localhost:8080/translator/v1/public.key"
+                },
+                "signatureValue": {
+                    "type": "string",
+                    "default": "aKNgwdwGXHQAlFTHP8ZnFRw4MD4t2AgudxFOGq+Y+SoOvbt201LefUlgmr03A3kj9toLT9LMgfgU6adTFW9Y0+hQzTP9f3E7nUMPfub0ssZm/eT+2sThBhBvGwzeZyuSDPSgjSCyIXz0otqQlJJTXLFcOwX+Xm6n5Gsy/reOeXFE8QphsryuK9eeB3H6JZ5l2jHJvZuxpLmeNb0y9AfiVUcKrn50RsCMMHujnCDqfOhZYvPrhipLKKU1lALOS0oC9i8tn7IdTNUcInp59KlnzwV2ATcLUP7igu21nYmDMXXj/komrYnpSRMuLIKrmYNA08yO7uhXsVHgcr5VzT4/JPlZygy88xDrSYX7bdbVt3oh9e0juUqylyM4lgj0k+drLFUN+kk4W1Dlh3GHsEq6so954QxiVLYv87lz/DNXQF71fdeIoWqP9NZGRn82qORrdhSJuecfhBNZphkbFK01mFjOCyQvvckCM+ejkM3SDiexcXcKuEH1e4x0YKNEzk6EaKZu+CfqTUtPO2hrVH4Cj3PnORjl45rsNHKnChn/mzMHHSu7igYTYWImR7Vns8E+EhRl+yrC9B9Fpl6GF/8owDzOYKpjy1n+lJlSxNC/SU43MBhG79eEuDiKJNIZjYvQoum/rSS0IQMq00xO5bJXEQWJOYs6vqKqTy3jqWam8H0="
+                }
+            },
+            "required": [
+                "created",
+                "creator",
+                "signatureValue",
+                "type"
+            ]
+        }
+    },
+    "required": [
+        "@context",
+        "data",
+        "signature"
+    ]
+}</msg>
+<status status="PASS" starttime="20200828 11:44:47.288" endtime="20200828 11:44:47.290"></status>
+</kw>
+<status status="PASS" starttime="20200828 11:44:45.273" endtime="20200828 11:44:47.290"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>200</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:47.291" endtime="20200828 11:44:47.291"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body @context</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:47.292" endtime="20200828 11:44:47.292"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data sensors</arg>
+<arg>maxItems=0</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:44:47.292" endtime="20200828 11:44:47.293"></status>
+</kw>
+<tags>
+<tag>bug-0004</tag>
+</tags>
+<status status="PASS" starttime="20200828 11:44:45.268" endtime="20200828 11:44:47.293" critical="yes"></status>
+</test>
+<doc>EnerKey Data Api Tests</doc>
+<status status="PASS" starttime="20200828 11:44:35.308" endtime="20200828 11:44:47.295"></status>
+</suite>
+<statistics>
+<total>
+<stat pass="5" fail="0">Critical Tests</stat>
+<stat pass="5" fail="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="2" fail="0">bug-0001</stat>
+<stat pass="1" fail="0">bug-0002</stat>
+<stat pass="1" fail="0">bug-0003</stat>
+<stat pass="1" fail="0">bug-0004</stat>
+</tag>
+<suite>
+<stat pass="5" fail="0" id="s1" name="Connector Tests">Connector Tests</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

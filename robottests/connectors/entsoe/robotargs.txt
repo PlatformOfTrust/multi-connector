@@ -1,0 +1,3 @@
+--pythonpath lib
+--outputdir connectors/entsoe/result
+connectors/entsoe/connector_tests.robot

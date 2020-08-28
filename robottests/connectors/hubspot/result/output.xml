@@ -1,0 +1,1276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 3.2.1 (Python 3.8.3 on win32)" generated="20200828 11:26:08.988" rpa="false">
+<suite id="s1" name="Connector Tests" source="C:\Users\artor\WebstormProjects\translator\robottests\tests\hubspot\connector_tests.robot">
+<test id="s1-t1" name="fetch, 200">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20200828 11:26:09.235" level="INFO">${body} = {'productCode': 'default_hubspot-company', 'parameters': {'ids': ['184896670']}}</msg>
+<status status="PASS" starttime="20200828 11:26:09.234" endtime="20200828 11:26:09.235"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20200828 11:26:09.235" level="INFO">${now} = 2020-08-28T08:26:09+00:00</msg>
+<status status="PASS" starttime="20200828 11:26:09.235" endtime="20200828 11:26:09.235"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:09.235" endtime="20200828 11:26:09.235"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:09.235" endtime="20200828 11:26:09.235"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20200828 11:26:09.236" level="INFO">${json_string} = {"productCode": "default_hubspot-company", "parameters": {"ids": ["184896670"]}, "timestamp": "2020-08-28T08:26:09+00:00"}</msg>
+<status status="PASS" starttime="20200828 11:26:09.235" endtime="20200828 11:26:09.236"></status>
+</kw>
+<msg timestamp="20200828 11:26:09.236" level="INFO">${body} = {'productCode': 'default_hubspot-company', 'parameters': {'ids': ['184896670']}, 'timestamp': '2020-08-28T08:26:09+00:00'}</msg>
+<status status="PASS" starttime="20200828 11:26:09.234" endtime="20200828 11:26:09.236"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20200828 11:26:09.237" level="INFO">${signature} = PQyFkmr/8dvaMddoEPdipOeXysDS2/yfyKA8NABkJJI=</msg>
+<status status="PASS" starttime="20200828 11:26:09.236" endtime="20200828 11:26:09.237"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:09.237" endtime="20200828 11:26:09.237"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:09.238" endtime="20200828 11:26:11.337"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20200828 11:26:11.338" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "@context": {
+            "type": "string",
+            "default": "https://standards.oftrust.net/v2/Context/DataProductParameters/Company/"
+        },
+        "data": {
+            "type": "object",
+            "properties": {
+                "companies": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer"
+                            },
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "@type": {
+                                            "type": "string"
+                                        },
+                                        "value": {
+                                            "type": "object",
+                                            "properties": {
+                                                "portalId": {
+                                                    "type": "integer"
+                                                },
+                                                "companyId": {
+                                                    "type": "integer"
+                                                },
+                                                "isDeleted": {
+                                                    "type": "boolean"
+                                                },
+                                                "properties": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "country": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "value": {
+                                                                    "type": "string"
+                                                                },
+                                                                "timestamp": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "source": {
+                                                                    "type": "string"
+                                                                },
+                                                                "sourceId": {
+                                                                    "type": "string"
+                                                                },
+                                                                "versions": {
+                                                                    "type": "array",
+                                                                    "items": {
+                                                                        "type": "object",
+                                                                        "properties": {
+                                                                            "name": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "value": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "timestamp": {
+                                                                                "type": "integer"
+                                                                            },
+                                                                            "source": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "sourceId": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "sourceVid": {
+                                                                                "type": "array"
+                                                                            }
+                                                                        },
+                                                                        "required": [
+                                                                            "name",
+                                                                            "source",
+                                                                            "sourceId",
+                                                                            "sourceVid",
+                                                                            "timestamp",
+                                                                            "value"
+                                                                        ]
+                                                                    }
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "source",
+                                                                "sourceId",
+                                                                "timestamp",
+                                                                "value",
+                                                                "versions"
+                                                            ]
+                                                        },
+                                                        "city": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "value": {
+                                                                    "type": "string"
+                                                                },
+                                                                "timestamp": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "source": {
+                                                                    "type": "string"
+                                                                },
+                                                                "sourceId": {
+                                                                    "type": "string"
+                                                                },
+                                                                "versions": {
+                                                                    "type": "array",
+                                                                    "items": {
+                                                                        "type": "object",
+                                                                        "properties": {
+                                                                            "name": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "value": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "timestamp": {
+                                                                                "type": "integer"
+                                                                            },
+                                                                            "sourceId": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "source": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "sourceVid": {
+                                                                                "type": "array"
+                                                                            }
+                                                                        },
+                                                                        "required": [
+                                                                            "name",
+                                                                            "source",
+                                                                            "sourceId",
+                                                                            "sourceVid",
+                                                                            "timestamp",
+                                                                            "value"
+                                                                        ]
+                                                                    }
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "source",
+                                                                "sourceId",
+                                                                "timestamp",
+                                                                "value",
+                                                                "versions"
+                                                            ]
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "city",
+                                                        "country"
+                                                    ]
+                                                },
+                                                "additionalDomains": {
+                                                    "type": "array"
+                                                }
+                                            },
+                                            "required": [
+                                                "additionalDomains",
+                                                "companyId",
+                                                "isDeleted",
+                                                "portalId",
+                                                "properties"
+                                            ]
+                                        },
+                                        "timestamp": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "@type",
+                                        "timestamp",
+                                        "value"
+                                    ]
+                                }
+                            }
+                        },
+                        "required": [
+                            "data",
+                            "id"
+                        ]
+                    },
+                    "default": [
+                        {
+                            "id": 184896670,
+                            "data": [
+                                {
+                                    "@type": "CompanyData",
+                                    "value": {
+                                        "portalId": 62515,
+                                        "companyId": 184896670,
+                                        "isDeleted": false,
+                                        "properties": {
+                                            "country": {
+                                                "value": "United States",
+                                                "timestamp": 1457708103906,
+                                                "source": "BIDEN",
+                                                "sourceId": "country",
+                                                "versions": [
+                                                    {
+                                                        "name": "country",
+                                                        "value": "United States",
+                                                        "timestamp": 1457708103906,
+                                                        "source": "BIDEN",
+                                                        "sourceId": "country",
+                                                        "sourceVid": []
+                                                    }
+                                                ]
+                                            },
+                                            "city": {
+                                                "value": "Cambridge",
+                                                "timestamp": 1457708103906,
+                                                "source": "BIDEN",
+                                                "sourceId": "city",
+                                                "versions": [
+                                                    {
+                                                        "name": "city",
+                                                        "value": "Cambridge",
+                                                        "timestamp": 1457708103906,
+                                                        "sourceId": "city",
+                                                        "source": "BIDEN",
+                                                        "sourceVid": []
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        "additionalDomains": []
+                                    },
+                                    "timestamp": "2020-08-28T08:26:11.261Z"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "companies"
+            ]
+        },
+        "signature": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "default": "RsaSignature2018"
+                },
+                "created": {
+                    "type": "string",
+                    "default": "2020-08-28T11:26:11+03:00"
+                },
+                "creator": {
+                    "type": "string",
+                    "default": "http://localhost:8080/translator/v1/public.key"
+                },
+                "signatureValue": {
+                    "type": "string",
+                    "default": "egS4ht1nC+DiTJ1gGnVAQ4ZDuLg0dA5b8lMNoMMoxIibCdx7pfL3NkHLd8ZMvDsL4WlsNUPJaMOX/ihfnh0XKS3FwJnEwMQ3BNkLDQeeLWzeEa2qvMW5FFXnKMd2IVWvAv1O8i3Vfp2PDZJTvxnJ03D/p+7ziMw/7+aCDIlZEz+zCD2LhYlG6FTZiRxnHZur5fPw4c9ra+yyBmXIECBVPTLgwi9z8iZWlT+AE8fTJqi7PH0WBHEfbKb/ktYgK9NOvbm5YLc/zMQ++q7xp/bxio1GK319cH+XBZg7htl05289d/3qPZYCnN3w8Y9AqPb+kfBqNsicOTVWAkGTNZ7DccAmhT83h0ZwB5K1asQbcK8yNHD4IOyhgxAf3Xt67qVxOX4awYV1ekyCAr/rpLg1jarRrcqo+fzCvI0W4GsC0tW6NoWdBYCWkBk8WxLtAg/bSFuVD36erAVHL4alvXS/ifw3CRUTzv6lN4YTcLbWw6vAMRTIfZUrmYFd20q/jtg15D8CsAESHpdTb+EREg92bLsHWwm/+lM6pDwkl3piJW8hyFrK+mQJ7+wZo2U8KIFOKTcd/DClvh2Ov2twbjUp8BcoMLuBBj5jJbN7imWHg7JisscEqPHFO+zdosyeb9/uMyws5WQz/XvoWZhIeXY8pkmiDaWDgJSva254E44J7Pw="
+                }
+            },
+            "required": [
+                "created",
+                "creator",
+                "signatureValue",
+                "type"
+            ]
+        }
+    },
+    "required": [
+        "@context",
+        "data",
+        "signature"
+    ]
+}</msg>
+<status status="PASS" starttime="20200828 11:26:11.337" endtime="20200828 11:26:11.353"></status>
+</kw>
+<status status="PASS" starttime="20200828 11:26:09.236" endtime="20200828 11:26:11.353"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>200</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:11.353" endtime="20200828 11:26:11.354"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body @context</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductParameters/Company/</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:11.354" endtime="20200828 11:26:11.354"></status>
+</kw>
+<kw name="Object" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON object.*</doc>
+<arguments>
+<arg>response body data</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:11.355" endtime="20200828 11:26:11.356"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data companies</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:11.357" endtime="20200828 11:26:11.358"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data companies 0 data</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:11.358" endtime="20200828 11:26:11.360"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body data companies 0 data 0 @type</arg>
+<arg>CompanyData</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:11.360" endtime="20200828 11:26:11.361"></status>
+</kw>
+<tags>
+<tag>bug-0001</tag>
+</tags>
+<status status="PASS" starttime="20200828 11:26:09.234" endtime="20200828 11:26:11.362" critical="yes"></status>
+</test>
+<test id="s1-t2" name="fetch, 422, Missing data for timestamp required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20200828 11:26:11.364" level="INFO">${body} = {'productCode': 'default_hubspot-company', 'parameters': {'ids': ['184896670']}}</msg>
+<status status="PASS" starttime="20200828 11:26:11.364" endtime="20200828 11:26:11.364"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20200828 11:26:11.364" level="INFO">${now} = 2020-08-28T08:26:11+00:00</msg>
+<status status="PASS" starttime="20200828 11:26:11.364" endtime="20200828 11:26:11.364"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:11.364" endtime="20200828 11:26:11.365"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:11.365" endtime="20200828 11:26:11.365"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20200828 11:26:11.365" level="INFO">${json_string} = {"productCode": "default_hubspot-company", "parameters": {"ids": ["184896670"]}, "timestamp": "2020-08-28T08:26:11+00:00"}</msg>
+<status status="PASS" starttime="20200828 11:26:11.365" endtime="20200828 11:26:11.365"></status>
+</kw>
+<msg timestamp="20200828 11:26:11.365" level="INFO">${body} = {'productCode': 'default_hubspot-company', 'parameters': {'ids': ['184896670']}, 'timestamp': '2020-08-28T08:26:11+00:00'}</msg>
+<status status="PASS" starttime="20200828 11:26:11.364" endtime="20200828 11:26:11.365"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:11.366" endtime="20200828 11:26:11.366"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20200828 11:26:11.367" level="INFO">${signature} = HudIB6okWVTXjiDU/5ktfXXvtxb7IyXMh7pZE5lLYsY=</msg>
+<status status="PASS" starttime="20200828 11:26:11.367" endtime="20200828 11:26:11.367"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:11.367" endtime="20200828 11:26:11.367"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:11.367" endtime="20200828 11:26:13.375"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20200828 11:26:13.375" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "timestamp": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "timestamp"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20200828 11:26:13.375" endtime="20200828 11:26:13.377"></status>
+</kw>
+<status status="PASS" starttime="20200828 11:26:11.366" endtime="20200828 11:26:13.377"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:13.377" endtime="20200828 11:26:13.377"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:13.378" endtime="20200828 11:26:13.379"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message timestamp 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:13.380" endtime="20200828 11:26:13.380"></status>
+</kw>
+<tags>
+<tag>bug-0001</tag>
+</tags>
+<status status="PASS" starttime="20200828 11:26:11.363" endtime="20200828 11:26:13.380" critical="yes"></status>
+</test>
+<test id="s1-t3" name="fetch, 422, Missing data for parameters required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20200828 11:26:13.382" level="INFO">${body} = {'productCode': 'default_hubspot-company', 'parameters': {'ids': ['184896670']}}</msg>
+<status status="PASS" starttime="20200828 11:26:13.382" endtime="20200828 11:26:13.382"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20200828 11:26:13.383" level="INFO">${now} = 2020-08-28T08:26:13+00:00</msg>
+<status status="PASS" starttime="20200828 11:26:13.383" endtime="20200828 11:26:13.383"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:13.383" endtime="20200828 11:26:13.383"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:13.383" endtime="20200828 11:26:13.383"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20200828 11:26:13.384" level="INFO">${json_string} = {"productCode": "default_hubspot-company", "parameters": {"ids": ["184896670"]}, "timestamp": "2020-08-28T08:26:13+00:00"}</msg>
+<status status="PASS" starttime="20200828 11:26:13.383" endtime="20200828 11:26:13.384"></status>
+</kw>
+<msg timestamp="20200828 11:26:13.384" level="INFO">${body} = {'productCode': 'default_hubspot-company', 'parameters': {'ids': ['184896670']}, 'timestamp': '2020-08-28T08:26:13+00:00'}</msg>
+<status status="PASS" starttime="20200828 11:26:13.382" endtime="20200828 11:26:13.384"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>parameters</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:13.384" endtime="20200828 11:26:13.384"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20200828 11:26:13.385" level="INFO">${signature} = N9LrPDLv8cpdzJw42zGZH1m/qg1Fh8WLRBfXd3BEey0=</msg>
+<status status="PASS" starttime="20200828 11:26:13.385" endtime="20200828 11:26:13.385"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:13.385" endtime="20200828 11:26:13.385"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:13.386" endtime="20200828 11:26:15.394"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20200828 11:26:15.394" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "parameters": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "parameters"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20200828 11:26:15.394" endtime="20200828 11:26:15.395"></status>
+</kw>
+<status status="PASS" starttime="20200828 11:26:13.385" endtime="20200828 11:26:15.395"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:15.396" endtime="20200828 11:26:15.396"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:15.396" endtime="20200828 11:26:15.397"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message parameters 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:15.397" endtime="20200828 11:26:15.397"></status>
+</kw>
+<tags>
+<tag>bug-0002</tag>
+</tags>
+<status status="PASS" starttime="20200828 11:26:13.382" endtime="20200828 11:26:15.398" critical="yes"></status>
+</test>
+<test id="s1-t4" name="fetch, 422, Missing data for ids required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20200828 11:26:15.407" level="INFO">${body} = {'productCode': 'default_hubspot-company', 'parameters': {'ids': ['184896670']}}</msg>
+<status status="PASS" starttime="20200828 11:26:15.406" endtime="20200828 11:26:15.407"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20200828 11:26:15.407" level="INFO">${now} = 2020-08-28T08:26:15+00:00</msg>
+<status status="PASS" starttime="20200828 11:26:15.407" endtime="20200828 11:26:15.407"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:15.407" endtime="20200828 11:26:15.407"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:15.407" endtime="20200828 11:26:15.408"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20200828 11:26:15.408" level="INFO">${json_string} = {"productCode": "default_hubspot-company", "parameters": {"ids": ["184896670"]}, "timestamp": "2020-08-28T08:26:15+00:00"}</msg>
+<status status="PASS" starttime="20200828 11:26:15.408" endtime="20200828 11:26:15.408"></status>
+</kw>
+<msg timestamp="20200828 11:26:15.408" level="INFO">${body} = {'productCode': 'default_hubspot-company', 'parameters': {'ids': ['184896670']}, 'timestamp': '2020-08-28T08:26:15+00:00'}</msg>
+<status status="PASS" starttime="20200828 11:26:15.399" endtime="20200828 11:26:15.408"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body["parameters"]}</arg>
+<arg>ids</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:15.409" endtime="20200828 11:26:15.409"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20200828 11:26:15.410" level="INFO">${signature} = 6NW2etGcEA5PObh3QS37GqiFl4+33KRruW/yAaaUbv4=</msg>
+<status status="PASS" starttime="20200828 11:26:15.409" endtime="20200828 11:26:15.410"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:15.410" endtime="20200828 11:26:15.410"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:15.410" endtime="20200828 11:26:17.416"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20200828 11:26:17.416" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "parameters.ids": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "parameters.ids"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20200828 11:26:17.416" endtime="20200828 11:26:17.417"></status>
+</kw>
+<status status="PASS" starttime="20200828 11:26:15.409" endtime="20200828 11:26:17.417"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:17.418" endtime="20200828 11:26:17.418"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:17.419" endtime="20200828 11:26:17.419"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message parameters.ids 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:17.419" endtime="20200828 11:26:17.420"></status>
+</kw>
+<tags>
+<tag>bug-0003</tag>
+</tags>
+<status status="PASS" starttime="20200828 11:26:15.399" endtime="20200828 11:26:17.420" critical="yes"></status>
+</test>
+<test id="s1-t5" name="fetch, 200, Empty ids">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20200828 11:26:17.422" level="INFO">${body} = {'productCode': 'default_hubspot-company', 'parameters': {'ids': ['184896670']}}</msg>
+<status status="PASS" starttime="20200828 11:26:17.421" endtime="20200828 11:26:17.422"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20200828 11:26:17.422" level="INFO">${now} = 2020-08-28T08:26:17+00:00</msg>
+<status status="PASS" starttime="20200828 11:26:17.422" endtime="20200828 11:26:17.422"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:17.422" endtime="20200828 11:26:17.422"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:17.422" endtime="20200828 11:26:17.422"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20200828 11:26:17.423" level="INFO">${json_string} = {"productCode": "default_hubspot-company", "parameters": {"ids": ["184896670"]}, "timestamp": "2020-08-28T08:26:17+00:00"}</msg>
+<status status="PASS" starttime="20200828 11:26:17.422" endtime="20200828 11:26:17.423"></status>
+</kw>
+<msg timestamp="20200828 11:26:17.423" level="INFO">${body} = {'productCode': 'default_hubspot-company', 'parameters': {'ids': ['184896670']}, 'timestamp': '2020-08-28T08:26:17+00:00'}</msg>
+<status status="PASS" starttime="20200828 11:26:17.421" endtime="20200828 11:26:17.423"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body["parameters"]}</arg>
+<arg>ids=@{EMPTY}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:17.423" endtime="20200828 11:26:17.424"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20200828 11:26:17.425" level="INFO">${signature} = JfZcZnR0JkkbM7Mqc90zCQsdU+SuvjDOx1mmDzhPqYU=</msg>
+<status status="PASS" starttime="20200828 11:26:17.424" endtime="20200828 11:26:17.425"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:17.425" endtime="20200828 11:26:17.425"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:17.425" endtime="20200828 11:26:19.438"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20200828 11:26:19.438" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "@context": {
+            "type": "string",
+            "default": "https://standards.oftrust.net/v2/Context/DataProductParameters/Company/"
+        },
+        "data": {
+            "type": "object",
+            "properties": {
+                "companies": {
+                    "type": "array",
+                    "default": []
+                }
+            },
+            "required": [
+                "companies"
+            ]
+        },
+        "signature": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "default": "RsaSignature2018"
+                },
+                "created": {
+                    "type": "string",
+                    "default": "2020-08-28T11:26:19+03:00"
+                },
+                "creator": {
+                    "type": "string",
+                    "default": "http://localhost:8080/translator/v1/public.key"
+                },
+                "signatureValue": {
+                    "type": "string",
+                    "default": "TarSd2Q3N8yo8cQChO7XbfM9CtVvF0/Odn9qelgAo594M2oTBlD5q4JvmkhTcRJuv79YXt88EoYxrsL28Zb+RA41deErGkyhf17wsoE8Wdxyl+jPTgZ0tkab1ZbI1unMQMomiNNW63dqE2m93kT8dYcYEmqutkONlDBkIO+/iIeEXLIP61j/tE+YyAwQe+sbycI18sDYs7xQfitfJGwd/RYYL1WGy+6yFTBQ2lOKIER9ynCj1gGxLyQBWGzT8I6LJIjPFhXLOgydNLJExnjOA0gy+T1ZdZgAlJWLksXtfKLYgv16dI2vQ4K5ELkMzKaDuVSpgfbPbCdfWeQS+TpBG/31Zykw9dlEINAOodrImmngAW5aUnmuyYCh/+HWXwqqFqUk5e5E0uq3EsYrBbNyENQegX9B4dEM9K7+lWPD5Qhm9ec7CPgKANzkHO7pMgPqPB43i0vPFZPvWMKpykVsy/CNc4cfqkrdL2bT8XDuTNQPrLg2t9RXec+xdctNv/vakIBy14C9ysQ0zou4mK2vXGrZkX1ejzWXLRh+9TeyP5w6+OxjmDNx2FnD2v5VQmnkcOPtw6QM8N7YJEIIeom5xzwp7v3mz2wbSRPiniP/zT9MxIkkFPfREyDPDKtUvyA+3ZT8IdOeb1XqlJZYbH1zV4TWCWiTVmZmAvaKwpWQXv0="
+                }
+            },
+            "required": [
+                "created",
+                "creator",
+                "signatureValue",
+                "type"
+            ]
+        }
+    },
+    "required": [
+        "@context",
+        "data",
+        "signature"
+    ]
+}</msg>
+<status status="PASS" starttime="20200828 11:26:19.438" endtime="20200828 11:26:19.440"></status>
+</kw>
+<status status="PASS" starttime="20200828 11:26:17.424" endtime="20200828 11:26:19.440"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>200</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:19.441" endtime="20200828 11:26:19.441"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body @context</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductParameters/Company/</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:19.441" endtime="20200828 11:26:19.442"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data companies</arg>
+<arg>maxItems=0</arg>
+</arguments>
+<status status="PASS" starttime="20200828 11:26:19.442" endtime="20200828 11:26:19.442"></status>
+</kw>
+<tags>
+<tag>bug-0004</tag>
+</tags>
+<status status="PASS" starttime="20200828 11:26:17.421" endtime="20200828 11:26:19.443" critical="yes"></status>
+</test>
+<doc>HubSpot API Tests</doc>
+<status status="PASS" starttime="20200828 11:26:08.989" endtime="20200828 11:26:19.444"></status>
+</suite>
+<statistics>
+<total>
+<stat pass="5" fail="0">Critical Tests</stat>
+<stat pass="5" fail="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="2" fail="0">bug-0001</stat>
+<stat pass="1" fail="0">bug-0002</stat>
+<stat pass="1" fail="0">bug-0003</stat>
+<stat pass="1" fail="0">bug-0004</stat>
+</tag>
+<suite>
+<stat pass="5" fail="0" id="s1" name="Connector Tests">Connector Tests</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

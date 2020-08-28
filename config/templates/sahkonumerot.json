@@ -28,5 +28,10 @@
     "timestamp": {
       "dataObjectProperty": ""
     }
+  },
+  "pot": {
+    "context": "https://standards.oftrust.net/v2/Context/DataProductParameters/Product/",
+    "array": "products",
+    "data": "data"
   }
 }

@@ -1,0 +1,1126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 3.2.1 (Python 3.8.3 on win32)" generated="20200828 09:24:28.269" rpa="false">
+<suite id="s1" name="Connector Tests" source="C:\Users\artor\WebstormProjects\translator\robottests\tests\haltian\connector_tests.robot">
+<test id="s1-t1" name="fetch, 200">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20200828 09:24:28.518" level="INFO">${body} = {'productCode': 'default_haltian', 'parameters': {'ids': ['TSPD04ESY93100802', 'TSTF02E2E90600416', 'TSTF02E2E90601664']}}</msg>
+<status status="PASS" starttime="20200828 09:24:28.518" endtime="20200828 09:24:28.518"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20200828 09:24:28.519" level="INFO">${now} = 2020-08-28T06:24:28+00:00</msg>
+<status status="PASS" starttime="20200828 09:24:28.518" endtime="20200828 09:24:28.519"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:28.519" endtime="20200828 09:24:28.519"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:28.519" endtime="20200828 09:24:28.519"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20200828 09:24:28.519" level="INFO">${json_string} = {"productCode": "default_haltian", "parameters": {"ids": ["TSPD04ESY93100802", "TSTF02E2E90600416", "TSTF02E2E90601664"]}, "timestamp": "2020-08-28T06:24:28+00:00"}</msg>
+<status status="PASS" starttime="20200828 09:24:28.519" endtime="20200828 09:24:28.520"></status>
+</kw>
+<msg timestamp="20200828 09:24:28.520" level="INFO">${body} = {'productCode': 'default_haltian', 'parameters': {'ids': ['TSPD04ESY93100802', 'TSTF02E2E90600416', 'TSTF02E2E90601664']}, 'timestamp': '2020-08-28T06:24:28+00:00'}</msg>
+<status status="PASS" starttime="20200828 09:24:28.518" endtime="20200828 09:24:28.520"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20200828 09:24:28.520" level="INFO">${signature} = BEZIhc/e3tTUu5a2xTCknaiAgonLhiVhwWJaD8VdoSs=</msg>
+<status status="PASS" starttime="20200828 09:24:28.520" endtime="20200828 09:24:28.520"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:28.521" endtime="20200828 09:24:28.521"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:28.521" endtime="20200828 09:24:30.600"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20200828 09:24:30.601" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "@context": {
+            "type": "string",
+            "default": "https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/"
+        },
+        "data": {
+            "type": "object",
+            "properties": {
+                "sensors": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "measurements": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "@type": {
+                                            "type": "string"
+                                        },
+                                        "value": {
+                                            "type": "number"
+                                        },
+                                        "timestamp": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "@type",
+                                        "timestamp",
+                                        "value"
+                                    ]
+                                }
+                            }
+                        },
+                        "required": [
+                            "id",
+                            "measurements"
+                        ]
+                    },
+                    "default": [
+                        {
+                            "id": "TSPD04ESY93100802",
+                            "measurements": [
+                                {
+                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "value": 21.5,
+                                    "timestamp": "2020-08-28T06:18:30.000Z"
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "value": 34.1,
+                                    "timestamp": "2020-08-28T06:18:30.000Z"
+                                },
+                                {
+                                    "@type": "MeasureAirPressureMillibar",
+                                    "value": 100902.381,
+                                    "timestamp": "2020-08-28T06:18:30.000Z"
+                                },
+                                {
+                                    "@type": "MeasureLightLevelLux",
+                                    "value": 0,
+                                    "timestamp": "2020-08-28T06:18:30.000Z"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "TSTF02E2E90600416",
+                            "measurements": [
+                                {
+                                    "@type": "MeasureDistanceMilliMeter",
+                                    "value": 23,
+                                    "timestamp": "2020-08-28T06:24:27.000Z"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "TSTF02E2E90601664",
+                            "measurements": [
+                                {
+                                    "@type": "MeasureDistanceMilliMeter",
+                                    "value": 7,
+                                    "timestamp": "2020-08-28T06:23:31.000Z"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "sensors"
+            ]
+        },
+        "signature": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "default": "RsaSignature2018"
+                },
+                "created": {
+                    "type": "string",
+                    "default": "2020-08-28T09:24:30+03:00"
+                },
+                "creator": {
+                    "type": "string",
+                    "default": "http://localhost:8080/translator/v1/public.key"
+                },
+                "signatureValue": {
+                    "type": "string",
+                    "default": "czo7GECm0TWB4Ru+E/JuJ1g52u0CtAVsVY80h9yoT8/gDHytSvl4eEpYUHWyN8Fvlxb3b4xCYfcPrKEbRgCsdBGEES5hvcyj4V+NcOgiDxv2P/LLc3K7R9laqU6+Z68lGmL07itUYZLVJE0gk1bfZ3QLOyVqV3XDLbUnAE8SyecXLdHsfjbd3aQS/1xZwlI+zbVMwrj6NRNM6JIESh2d0z/8ZVb4CTjs6zRn/AOBgoQTlyPOkgGjPc/IBQRKHgEX09vehfhrTjOZWbcaB1tr59EE1HNMm5tduTjG/42ZPPLUinz3pMWMuAa2dgGi2WjLkLT3oWztPYq0gVH4p3GxYlKq41lAEE3C3XoPJL5fDnjxCzt3ia9k3ScEirnIyKgU/PNcJRXbcSJux5JRF0HdwjhkMlE2k41nJIo6OQjW0mZ48+ngZpy6acmKymEaYLAIzXA3VokufOheEFDLeL0x8NR+NVmL1gRQwsQiz/LPGv/fOysTbO8m31ByhwFiU+C8x70Ca/jxM/kICQ1EMBC4SX1/iFpr/kI974aPl4JV7qI4djyFO0uZCaSuSgfA5Vd8zYY1J4XYL+e3LMBr7DHFEqOnTjvcodqKEhKa/TSt4yFog5QFMpfHVq/dcI9p/Rg/VM3D8M3mKNPQV9aaSuuHRaIrqSWJMsDjpSNTHg1R0SU="
+                }
+            },
+            "required": [
+                "created",
+                "creator",
+                "signatureValue",
+                "type"
+            ]
+        }
+    },
+    "required": [
+        "@context",
+        "data",
+        "signature"
+    ]
+}</msg>
+<status status="PASS" starttime="20200828 09:24:30.600" endtime="20200828 09:24:30.611"></status>
+</kw>
+<status status="PASS" starttime="20200828 09:24:28.520" endtime="20200828 09:24:30.611"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>200</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:30.611" endtime="20200828 09:24:30.611"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body @context</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:30.611" endtime="20200828 09:24:30.611"></status>
+</kw>
+<kw name="Object" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON object.*</doc>
+<arguments>
+<arg>response body data</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:30.612" endtime="20200828 09:24:30.613"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data sensors</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:30.613" endtime="20200828 09:24:30.614"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data sensors 0 measurements</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:30.614" endtime="20200828 09:24:30.615"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body data sensors 0 measurements 0 @type</arg>
+<arg>MeasureAirTemperatureCelciusDegree</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:30.615" endtime="20200828 09:24:30.616"></status>
+</kw>
+<tags>
+<tag>bug-0001</tag>
+</tags>
+<status status="PASS" starttime="20200828 09:24:28.517" endtime="20200828 09:24:30.616" critical="yes"></status>
+</test>
+<test id="s1-t2" name="fetch, 422, Missing data for timestamp required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20200828 09:24:30.618" level="INFO">${body} = {'productCode': 'default_haltian', 'parameters': {'ids': ['TSPD04ESY93100802', 'TSTF02E2E90600416', 'TSTF02E2E90601664']}}</msg>
+<status status="PASS" starttime="20200828 09:24:30.618" endtime="20200828 09:24:30.618"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20200828 09:24:30.618" level="INFO">${now} = 2020-08-28T06:24:30+00:00</msg>
+<status status="PASS" starttime="20200828 09:24:30.618" endtime="20200828 09:24:30.618"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:30.618" endtime="20200828 09:24:30.618"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:30.618" endtime="20200828 09:24:30.619"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20200828 09:24:30.619" level="INFO">${json_string} = {"productCode": "default_haltian", "parameters": {"ids": ["TSPD04ESY93100802", "TSTF02E2E90600416", "TSTF02E2E90601664"]}, "timestamp": "2020-08-28T06:24:30+00:00"}</msg>
+<status status="PASS" starttime="20200828 09:24:30.619" endtime="20200828 09:24:30.619"></status>
+</kw>
+<msg timestamp="20200828 09:24:30.619" level="INFO">${body} = {'productCode': 'default_haltian', 'parameters': {'ids': ['TSPD04ESY93100802', 'TSTF02E2E90600416', 'TSTF02E2E90601664']}, 'timestamp': '2020-08-28T06:24:30+00:00'}</msg>
+<status status="PASS" starttime="20200828 09:24:30.617" endtime="20200828 09:24:30.619"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:30.619" endtime="20200828 09:24:30.620"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20200828 09:24:30.620" level="INFO">${signature} = KGl670RpozjO5Y3f6FHtcwdNb/0ZxUABqt618jmAyQE=</msg>
+<status status="PASS" starttime="20200828 09:24:30.620" endtime="20200828 09:24:30.620"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:30.620" endtime="20200828 09:24:30.621"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:30.621" endtime="20200828 09:24:32.629"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20200828 09:24:32.629" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "timestamp": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "timestamp"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20200828 09:24:32.629" endtime="20200828 09:24:32.630"></status>
+</kw>
+<status status="PASS" starttime="20200828 09:24:30.620" endtime="20200828 09:24:32.630"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:32.631" endtime="20200828 09:24:32.631"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:32.632" endtime="20200828 09:24:32.632"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message timestamp 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:32.633" endtime="20200828 09:24:32.633"></status>
+</kw>
+<tags>
+<tag>bug-0001</tag>
+</tags>
+<status status="PASS" starttime="20200828 09:24:30.617" endtime="20200828 09:24:32.633" critical="yes"></status>
+</test>
+<test id="s1-t3" name="fetch, 422, Missing data for parameters required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20200828 09:24:32.636" level="INFO">${body} = {'productCode': 'default_haltian', 'parameters': {'ids': ['TSPD04ESY93100802', 'TSTF02E2E90600416', 'TSTF02E2E90601664']}}</msg>
+<status status="PASS" starttime="20200828 09:24:32.635" endtime="20200828 09:24:32.636"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20200828 09:24:32.636" level="INFO">${now} = 2020-08-28T06:24:32+00:00</msg>
+<status status="PASS" starttime="20200828 09:24:32.636" endtime="20200828 09:24:32.636"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:32.636" endtime="20200828 09:24:32.636"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:32.636" endtime="20200828 09:24:32.637"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20200828 09:24:32.637" level="INFO">${json_string} = {"productCode": "default_haltian", "parameters": {"ids": ["TSPD04ESY93100802", "TSTF02E2E90600416", "TSTF02E2E90601664"]}, "timestamp": "2020-08-28T06:24:32+00:00"}</msg>
+<status status="PASS" starttime="20200828 09:24:32.637" endtime="20200828 09:24:32.637"></status>
+</kw>
+<msg timestamp="20200828 09:24:32.637" level="INFO">${body} = {'productCode': 'default_haltian', 'parameters': {'ids': ['TSPD04ESY93100802', 'TSTF02E2E90600416', 'TSTF02E2E90601664']}, 'timestamp': '2020-08-28T06:24:32+00:00'}</msg>
+<status status="PASS" starttime="20200828 09:24:32.635" endtime="20200828 09:24:32.637"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>parameters</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:32.638" endtime="20200828 09:24:32.638"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20200828 09:24:32.638" level="INFO">${signature} = UnnZMKHFdyc4UO/HnWZRPl5dsK57lZ26ut1m9/s9hqY=</msg>
+<status status="PASS" starttime="20200828 09:24:32.638" endtime="20200828 09:24:32.638"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:32.639" endtime="20200828 09:24:32.639"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:32.639" endtime="20200828 09:24:34.647"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20200828 09:24:34.648" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "parameters": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "parameters"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20200828 09:24:34.647" endtime="20200828 09:24:34.649"></status>
+</kw>
+<status status="PASS" starttime="20200828 09:24:32.638" endtime="20200828 09:24:34.649"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:34.650" endtime="20200828 09:24:34.650"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:34.650" endtime="20200828 09:24:34.651"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message parameters 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:34.651" endtime="20200828 09:24:34.651"></status>
+</kw>
+<tags>
+<tag>bug-0002</tag>
+</tags>
+<status status="PASS" starttime="20200828 09:24:32.634" endtime="20200828 09:24:34.652" critical="yes"></status>
+</test>
+<test id="s1-t4" name="fetch, 422, Missing data for ids required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20200828 09:24:34.654" level="INFO">${body} = {'productCode': 'default_haltian', 'parameters': {'ids': ['TSPD04ESY93100802', 'TSTF02E2E90600416', 'TSTF02E2E90601664']}}</msg>
+<status status="PASS" starttime="20200828 09:24:34.654" endtime="20200828 09:24:34.654"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20200828 09:24:34.654" level="INFO">${now} = 2020-08-28T06:24:34+00:00</msg>
+<status status="PASS" starttime="20200828 09:24:34.654" endtime="20200828 09:24:34.654"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:34.654" endtime="20200828 09:24:34.655"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:34.655" endtime="20200828 09:24:34.655"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20200828 09:24:34.655" level="INFO">${json_string} = {"productCode": "default_haltian", "parameters": {"ids": ["TSPD04ESY93100802", "TSTF02E2E90600416", "TSTF02E2E90601664"]}, "timestamp": "2020-08-28T06:24:34+00:00"}</msg>
+<status status="PASS" starttime="20200828 09:24:34.655" endtime="20200828 09:24:34.655"></status>
+</kw>
+<msg timestamp="20200828 09:24:34.655" level="INFO">${body} = {'productCode': 'default_haltian', 'parameters': {'ids': ['TSPD04ESY93100802', 'TSTF02E2E90600416', 'TSTF02E2E90601664']}, 'timestamp': '2020-08-28T06:24:34+00:00'}</msg>
+<status status="PASS" starttime="20200828 09:24:34.653" endtime="20200828 09:24:34.655"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body["parameters"]}</arg>
+<arg>ids</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:34.656" endtime="20200828 09:24:34.656"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20200828 09:24:34.657" level="INFO">${signature} = kWwA93dzDMLB3okCQSjjQiExodwuEpStOAgYgPEnLxE=</msg>
+<status status="PASS" starttime="20200828 09:24:34.656" endtime="20200828 09:24:34.657"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:34.657" endtime="20200828 09:24:34.657"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:34.657" endtime="20200828 09:24:36.673"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20200828 09:24:36.673" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "parameters.ids": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "parameters.ids"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20200828 09:24:36.673" endtime="20200828 09:24:36.674"></status>
+</kw>
+<status status="PASS" starttime="20200828 09:24:34.656" endtime="20200828 09:24:36.674"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:36.674" endtime="20200828 09:24:36.674"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:36.675" endtime="20200828 09:24:36.675"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message parameters.ids 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:36.675" endtime="20200828 09:24:36.677"></status>
+</kw>
+<tags>
+<tag>bug-0003</tag>
+</tags>
+<status status="PASS" starttime="20200828 09:24:34.653" endtime="20200828 09:24:36.677" critical="yes"></status>
+</test>
+<test id="s1-t5" name="fetch, 200, Empty ids">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20200828 09:24:36.678" level="INFO">${body} = {'productCode': 'default_haltian', 'parameters': {'ids': ['TSPD04ESY93100802', 'TSTF02E2E90600416', 'TSTF02E2E90601664']}}</msg>
+<status status="PASS" starttime="20200828 09:24:36.678" endtime="20200828 09:24:36.678"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20200828 09:24:36.678" level="INFO">${now} = 2020-08-28T06:24:36+00:00</msg>
+<status status="PASS" starttime="20200828 09:24:36.678" endtime="20200828 09:24:36.678"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:36.678" endtime="20200828 09:24:36.678"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:36.679" endtime="20200828 09:24:36.679"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20200828 09:24:36.679" level="INFO">${json_string} = {"productCode": "default_haltian", "parameters": {"ids": ["TSPD04ESY93100802", "TSTF02E2E90600416", "TSTF02E2E90601664"]}, "timestamp": "2020-08-28T06:24:36+00:00"}</msg>
+<status status="PASS" starttime="20200828 09:24:36.679" endtime="20200828 09:24:36.679"></status>
+</kw>
+<msg timestamp="20200828 09:24:36.679" level="INFO">${body} = {'productCode': 'default_haltian', 'parameters': {'ids': ['TSPD04ESY93100802', 'TSTF02E2E90600416', 'TSTF02E2E90601664']}, 'timestamp': '2020-08-28T06:24:36+00:00'}</msg>
+<status status="PASS" starttime="20200828 09:24:36.677" endtime="20200828 09:24:36.679"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body["parameters"]}</arg>
+<arg>ids=@{EMPTY}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:36.680" endtime="20200828 09:24:36.680"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20200828 09:24:36.681" level="INFO">${signature} = sFfQjAaNDrub+HpsjWDLUnTlUA1wQ2/J0Sgvutvr+ss=</msg>
+<status status="PASS" starttime="20200828 09:24:36.681" endtime="20200828 09:24:36.681"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:36.681" endtime="20200828 09:24:36.681"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:36.681" endtime="20200828 09:24:38.694"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20200828 09:24:38.694" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "@context": {
+            "type": "string",
+            "default": "https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/"
+        },
+        "data": {
+            "type": "object",
+            "properties": {
+                "sensors": {
+                    "type": "array",
+                    "default": []
+                }
+            },
+            "required": [
+                "sensors"
+            ]
+        },
+        "signature": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "default": "RsaSignature2018"
+                },
+                "created": {
+                    "type": "string",
+                    "default": "2020-08-28T09:24:38+03:00"
+                },
+                "creator": {
+                    "type": "string",
+                    "default": "http://localhost:8080/translator/v1/public.key"
+                },
+                "signatureValue": {
+                    "type": "string",
+                    "default": "bNSZ/bQTl5eRWhnz1yu13FUODIvsAkgcl/VV/pb1NXu6lIMzipLLL/PwkQ9QQc3JUgPOORWD2++Q7QNRw7lFsdS2ALwpw2P/NUfZ18WAUpoch8CChxaF9rmzqXFVWtWp7fq6whRKyg8LTRz9c9yN1Ef6dXQNxQiY7VrLXmTHch7iONnql3BgTkcswQKjUNkQ4h+fxbF0oO2EMRoXgOrRjfEqp2dQASahWpGNT9n+IeViZZFfoGt4i+YZ83rnbWFSPiH/ewFfUyJKgJbkPOvba4n3dkCKUgU9HyRQwj98QiLGQucFrRb3ad/UQyzD36pH+zFsNs7efupddmZdRcVWHqPKh6IAAjKN4EnpltRSP3C22fvFWWQFATfAv5RrcJLrleuw26nPLAgZ4YUpz9PXz3KBawV3wbEymlXWosPMGAEXoQaHPodNI3rPUx/Hh6caJNRjJ/Lin3F+FRhFqHRbNgvPw1Du/oNplrVNFJtyH3ZzKv54JF1PBnW3ssCYKHBZQ4HjeGT1/oVwqf4O+EiV7mbcmC9afHvpJHbKO+XHN0WfQQUVmjHW6/MiWRNlUbrZj5ceuUuGSsJYV5NU+sUfcFkyL+cofZ8ql3l/wpGmkwmasbZBssRfedp+w277qRmUIF9pp6WsXs3rX/4YCjj/GtTt6l1t0chfLBqBupJelu0="
+                }
+            },
+            "required": [
+                "created",
+                "creator",
+                "signatureValue",
+                "type"
+            ]
+        }
+    },
+    "required": [
+        "@context",
+        "data",
+        "signature"
+    ]
+}</msg>
+<status status="PASS" starttime="20200828 09:24:38.694" endtime="20200828 09:24:38.696"></status>
+</kw>
+<status status="PASS" starttime="20200828 09:24:36.680" endtime="20200828 09:24:38.696"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>200</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:38.697" endtime="20200828 09:24:38.697"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body @context</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:38.698" endtime="20200828 09:24:38.698"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data sensors</arg>
+<arg>maxItems=0</arg>
+</arguments>
+<status status="PASS" starttime="20200828 09:24:38.698" endtime="20200828 09:24:38.699"></status>
+</kw>
+<tags>
+<tag>bug-0004</tag>
+</tags>
+<status status="PASS" starttime="20200828 09:24:36.677" endtime="20200828 09:24:38.699" critical="yes"></status>
+</test>
+<doc>Haltian Thingsee API Tests</doc>
+<status status="PASS" starttime="20200828 09:24:28.270" endtime="20200828 09:24:38.701"></status>
+</suite>
+<statistics>
+<total>
+<stat pass="5" fail="0">Critical Tests</stat>
+<stat pass="5" fail="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="2" fail="0">bug-0001</stat>
+<stat pass="1" fail="0">bug-0002</stat>
+<stat pass="1" fail="0">bug-0003</stat>
+<stat pass="1" fail="0">bug-0004</stat>
+</tag>
+<suite>
+<stat pass="5" fail="0" id="s1" name="Connector Tests">Connector Tests</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

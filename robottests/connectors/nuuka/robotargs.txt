@@ -1,0 +1,3 @@
+--pythonpath lib
+--outputdir connectors/nuuka/result
+connectors/nuuka/connector_tests.robot

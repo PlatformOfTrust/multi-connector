@@ -1,0 +1,3 @@
+--pythonpath lib
+--outputdir connectors/talotohtori/result
+connectors/talotohtori/connector_tests.robot

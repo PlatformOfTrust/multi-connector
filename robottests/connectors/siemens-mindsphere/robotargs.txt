@@ -1,0 +1,3 @@
+--pythonpath lib
+--outputdir connectors/siemens-mindsphere/result
+connectors/siemens-mindsphere/connector_tests.robot
