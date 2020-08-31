@@ -48,7 +48,7 @@ fetch, 200
     ${body}                 Get Body
     Fetch Data Product      ${body}
     Integer                 response status                                         200
-    String                  response body @context                                  https://standards.oftrust.net/v2/Context/DataProductParameters/Forecast/Price/Electricity/
+    String                  response body @context                                  https://standards.oftrust.net/v2/Context/DataProductOutput/Forecast/Price/Electricity/
     Object                  response body data
     Array                   response body data forecasts
     String                  response body data forecasts 0 @type                    ForecastElectricityPriceMWH
@@ -94,7 +94,7 @@ fetch, 200, period's first time parameter is bigger than second
     ${body}=             evaluate        json.dumps(${body})                        json
     Fetch Data Product     ${body}
     Integer                 response status                                         200
-    String                  response body @context                                  https://standards.oftrust.net/v2/Context/DataProductParameters/Forecast/Price/Electricity/
+    String                  response body @context                                  https://standards.oftrust.net/v2/Context/DataProductOutput/Forecast/Price/Electricity/
     Object                  response body data
     Array                   response body data forecasts
     String                  response body data forecasts 0 @type                    ForecastElectricityPriceMWH

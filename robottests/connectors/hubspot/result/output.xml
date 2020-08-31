@@ -112,7 +112,7 @@
     "properties": {
         "@context": {
             "type": "string",
-            "default": "https://standards.oftrust.net/v2/Context/DataProductParameters/Company/"
+            "default": "https://standards.oftrust.net/v2/Context/DataProductOutput/Company/"
         },
         "data": {
             "type": "object",
@@ -412,7 +412,7 @@
 <doc>*Asserts the field as JSON string.*</doc>
 <arguments>
 <arg>response body @context</arg>
-<arg>https://standards.oftrust.net/v2/Context/DataProductParameters/Company/</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductOutput/Company/</arg>
 </arguments>
 <status status="PASS" starttime="20200828 11:26:11.354" endtime="20200828 11:26:11.354"></status>
 </kw>
@@ -1163,7 +1163,7 @@
     "properties": {
         "@context": {
             "type": "string",
-            "default": "https://standards.oftrust.net/v2/Context/DataProductParameters/Company/"
+            "default": "https://standards.oftrust.net/v2/Context/DataProductOutput/Company/"
         },
         "data": {
             "type": "object",
@@ -1233,7 +1233,7 @@
 <doc>*Asserts the field as JSON string.*</doc>
 <arguments>
 <arg>response body @context</arg>
-<arg>https://standards.oftrust.net/v2/Context/DataProductParameters/Company/</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductOutput/Company/</arg>
 </arguments>
 <status status="PASS" starttime="20200828 11:26:19.441" endtime="20200828 11:26:19.442"></status>
 </kw>

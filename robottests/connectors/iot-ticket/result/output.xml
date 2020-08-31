@@ -112,7 +112,7 @@
     "properties": {
         "@context": {
             "type": "string",
-            "default": "https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/"
+            "default": "https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/"
         },
         "data": {
             "type": "object",
@@ -173,7 +173,7 @@
                             },
                             "measurements": [
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": "21.96",
                                     "timestamp": "2020-02-07T08:37:58.006Z"
                                 }
@@ -186,7 +186,7 @@
                             },
                             "measurements": [
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": "24.54",
                                     "timestamp": "2019-10-03T11:32:55.597Z"
                                 }
@@ -255,7 +255,7 @@
 <doc>*Asserts the field as JSON string.*</doc>
 <arguments>
 <arg>response body @context</arg>
-<arg>https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/</arg>
 </arguments>
 <status status="PASS" starttime="20200828 10:52:10.645" endtime="20200828 10:52:10.646"></status>
 </kw>
@@ -296,7 +296,7 @@
 <doc>*Asserts the field as JSON string.*</doc>
 <arguments>
 <arg>response body data sensors 0 measurements 0 @type</arg>
-<arg>MeasureAirTemperatureCelciusDegree</arg>
+<arg>MeasureAirTemperatureCelsiusDegree</arg>
 </arguments>
 <status status="PASS" starttime="20200828 10:52:10.649" endtime="20200828 10:52:10.649"></status>
 </kw>
@@ -1006,7 +1006,7 @@
     "properties": {
         "@context": {
             "type": "string",
-            "default": "https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/"
+            "default": "https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/"
         },
         "data": {
             "type": "object",
@@ -1076,7 +1076,7 @@
 <doc>*Asserts the field as JSON string.*</doc>
 <arguments>
 <arg>response body @context</arg>
-<arg>https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/</arg>
 </arguments>
 <status status="PASS" starttime="20200828 10:52:18.735" endtime="20200828 10:52:18.735"></status>
 </kw>

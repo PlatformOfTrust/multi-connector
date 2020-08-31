@@ -6,7 +6,7 @@
     "password": "<password>",
     "clientId": "<client-id>",
     "clientSecret": "<client-secret>",
-    "type": "MeasureAirTemperatureCelciusDegree"
+    "type": "MeasureAirTemperatureCelsiusDegree"
   },
   "dynamic": {
     "authConfig.path": "ids"

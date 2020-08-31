@@ -112,7 +112,7 @@
     "properties": {
         "@context": {
             "type": "string",
-            "default": "https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/"
+            "default": "https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/"
         },
         "data": {
             "type": "object",
@@ -173,82 +173,82 @@
                             },
                             "measurements": [
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 22.51,
                                     "timestamp": "2020-06-02T23:53:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 23.64,
                                     "timestamp": "2020-06-03T00:03:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 25.39,
                                     "timestamp": "2020-06-03T00:13:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 22.37,
                                     "timestamp": "2020-06-03T00:23:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 20.33,
                                     "timestamp": "2020-06-03T00:33:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 22.93,
                                     "timestamp": "2020-06-03T00:43:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 24.3,
                                     "timestamp": "2020-06-03T00:53:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 22.34,
                                     "timestamp": "2020-06-03T01:03:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 22.81,
                                     "timestamp": "2020-06-03T01:13:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 21.16,
                                     "timestamp": "2020-06-03T01:23:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 20.83,
                                     "timestamp": "2020-06-03T01:33:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 19.19,
                                     "timestamp": "2020-06-03T01:43:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 22,
                                     "timestamp": "2020-06-03T01:53:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 24.67,
                                     "timestamp": "2020-06-03T02:03:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 23.48,
                                     "timestamp": "2020-06-03T02:13:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 20.18,
                                     "timestamp": "2020-06-03T02:23:13.852Z"
                                 }
@@ -261,82 +261,82 @@
                             },
                             "measurements": [
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 20.07,
                                     "timestamp": "2020-06-02T23:53:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 23.06,
                                     "timestamp": "2020-06-03T00:03:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 23.38,
                                     "timestamp": "2020-06-03T00:13:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 19.24,
                                     "timestamp": "2020-06-03T00:23:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 22.71,
                                     "timestamp": "2020-06-03T00:33:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 23.84,
                                     "timestamp": "2020-06-03T00:43:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 22.75,
                                     "timestamp": "2020-06-03T00:53:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 20.8,
                                     "timestamp": "2020-06-03T01:03:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 25.02,
                                     "timestamp": "2020-06-03T01:13:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 22.43,
                                     "timestamp": "2020-06-03T01:23:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 25.47,
                                     "timestamp": "2020-06-03T01:33:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 19.05,
                                     "timestamp": "2020-06-03T01:43:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 25.71,
                                     "timestamp": "2020-06-03T01:53:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 25.93,
                                     "timestamp": "2020-06-03T02:03:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 19.69,
                                     "timestamp": "2020-06-03T02:13:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 20.65,
                                     "timestamp": "2020-06-03T02:23:13.852Z"
                                 }
@@ -349,82 +349,82 @@
                             },
                             "measurements": [
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 20.74,
                                     "timestamp": "2020-06-02T23:53:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 22.11,
                                     "timestamp": "2020-06-03T00:03:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 25.74,
                                     "timestamp": "2020-06-03T00:13:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 25.64,
                                     "timestamp": "2020-06-03T00:23:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 23.59,
                                     "timestamp": "2020-06-03T00:33:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 20.31,
                                     "timestamp": "2020-06-03T00:43:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 20.6,
                                     "timestamp": "2020-06-03T00:53:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 20.79,
                                     "timestamp": "2020-06-03T01:03:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 21.35,
                                     "timestamp": "2020-06-03T01:13:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 25.16,
                                     "timestamp": "2020-06-03T01:23:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 21.13,
                                     "timestamp": "2020-06-03T01:33:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 20.51,
                                     "timestamp": "2020-06-03T01:43:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 25.57,
                                     "timestamp": "2020-06-03T01:53:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 21.96,
                                     "timestamp": "2020-06-03T02:03:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 23.43,
                                     "timestamp": "2020-06-03T02:13:13.852Z"
                                 },
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 19.92,
                                     "timestamp": "2020-06-03T02:23:13.852Z"
                                 }
@@ -493,7 +493,7 @@
 <doc>*Asserts the field as JSON string.*</doc>
 <arguments>
 <arg>response body @context</arg>
-<arg>https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/</arg>
 </arguments>
 <status status="PASS" starttime="20200828 10:57:15.997" endtime="20200828 10:57:15.998"></status>
 </kw>
@@ -534,7 +534,7 @@
 <doc>*Asserts the field as JSON string.*</doc>
 <arguments>
 <arg>response body data sensors 0 measurements 0 @type</arg>
-<arg>MeasureAirTemperatureCelciusDegree</arg>
+<arg>MeasureAirTemperatureCelsiusDegree</arg>
 </arguments>
 <status status="PASS" starttime="20200828 10:57:16.003" endtime="20200828 10:57:16.004"></status>
 </kw>
@@ -1244,7 +1244,7 @@
     "properties": {
         "@context": {
             "type": "string",
-            "default": "https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/"
+            "default": "https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/"
         },
         "data": {
             "type": "object",
@@ -1314,7 +1314,7 @@
 <doc>*Asserts the field as JSON string.*</doc>
 <arguments>
 <arg>response body @context</arg>
-<arg>https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/</arg>
 </arguments>
 <status status="PASS" starttime="20200828 10:57:24.093" endtime="20200828 10:57:24.093"></status>
 </kw>

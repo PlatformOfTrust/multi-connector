@@ -21,7 +21,7 @@
     }
   },
   "pot": {
-    "context": "https://standards.oftrust.net/v2/Context/DataProductParameters/Company/",
+    "context": "https://standards.oftrust.net/v2/Context/DataProductOutput/Company/",
     "array": "companies",
     "data": "data"
   }

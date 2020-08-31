@@ -112,7 +112,7 @@
     "properties": {
         "@context": {
             "type": "string",
-            "default": "https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/"
+            "default": "https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/"
         },
         "data": {
             "type": "object",
@@ -158,7 +158,7 @@
                             "id": "VAK02.01_TK06_TE31_M",
                             "measurements": [
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 19.25,
                                     "timestamp": "2020-08-28T08:33:21.918Z"
                                 }
@@ -168,7 +168,7 @@
                             "id": "VAK01.01_TK06_TE23_M",
                             "measurements": [
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 19.25,
                                     "timestamp": "2020-08-28T08:33:21.919Z"
                                 }
@@ -178,7 +178,7 @@
                             "id": "VAK02.01_TK06_TE23_M",
                             "measurements": [
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 20.39,
                                     "timestamp": "2020-08-28T08:33:21.922Z"
                                 }
@@ -188,7 +188,7 @@
                             "id": "VAK01.01_1128_TE20_M",
                             "measurements": [
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 23.71,
                                     "timestamp": "2020-08-28T08:33:21.923Z"
                                 }
@@ -198,7 +198,7 @@
                             "id": "VAK01.01_1131_TE20_M",
                             "measurements": [
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 23.04,
                                     "timestamp": "2020-08-28T08:33:21.925Z"
                                 }
@@ -208,7 +208,7 @@
                             "id": "INVALID",
                             "measurements": [
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 21.75,
                                     "timestamp": "2020-08-28T08:33:21.927Z"
                                 }
@@ -277,7 +277,7 @@
 <doc>*Asserts the field as JSON string.*</doc>
 <arguments>
 <arg>response body @context</arg>
-<arg>https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/</arg>
 </arguments>
 <status status="PASS" starttime="20200828 11:33:22.018" endtime="20200828 11:33:22.018"></status>
 </kw>
@@ -318,7 +318,7 @@
 <doc>*Asserts the field as JSON string.*</doc>
 <arguments>
 <arg>response body data sensors 0 measurements 0 @type</arg>
-<arg>MeasureAirTemperatureCelciusDegree</arg>
+<arg>MeasureAirTemperatureCelsiusDegree</arg>
 </arguments>
 <status status="PASS" starttime="20200828 11:33:22.025" endtime="20200828 11:33:22.026"></status>
 </kw>
@@ -1028,7 +1028,7 @@
     "properties": {
         "@context": {
             "type": "string",
-            "default": "https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/"
+            "default": "https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/"
         },
         "data": {
             "type": "object",
@@ -1098,7 +1098,7 @@
 <doc>*Asserts the field as JSON string.*</doc>
 <arguments>
 <arg>response body @context</arg>
-<arg>https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/</arg>
 </arguments>
 <status status="PASS" starttime="20200828 11:33:30.106" endtime="20200828 11:33:30.106"></status>
 </kw>

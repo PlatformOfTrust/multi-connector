@@ -14,7 +14,7 @@
     ""
   ],
   "dataPropertyMappings": {
-    "MeasureAirTemperatureCelciusDegree": "temp",
+    "MeasureAirTemperatureCelsiusDegree": "temp",
     "MeasureAirHumidityPercentage": "humd",
     "MeasureAirPressureMillibar": "airp",
     "MeasureLightLevelLux": "lght",

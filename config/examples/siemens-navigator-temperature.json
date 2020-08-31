@@ -3,7 +3,7 @@
   "static": {
     "username": "<username>",
     "password": "<password>",
-    "type": "MeasureAirTemperatureCelciusDegree"
+    "type": "MeasureAirTemperatureCelsiusDegree"
   },
   "dynamic": {
     "authConfig.path": "ids"

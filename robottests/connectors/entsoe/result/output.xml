@@ -112,7 +112,7 @@
     "properties": {
         "@context": {
             "type": "string",
-            "default": "https://standards.oftrust.net/v2/Context/DataProductParameters/Forecast/Price/Electricity/"
+            "default": "https://standards.oftrust.net/v2/Context/DataProductOutput/Forecast/Price/Electricity/"
         },
         "data": {
             "type": "object",
@@ -519,7 +519,7 @@
 <doc>*Asserts the field as JSON string.*</doc>
 <arguments>
 <arg>response body @context</arg>
-<arg>https://standards.oftrust.net/v2/Context/DataProductParameters/Forecast/Price/Electricity/</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductOutput/Forecast/Price/Electricity/</arg>
 </arguments>
 <status status="PASS" starttime="20200828 09:18:53.197" endtime="20200828 09:18:53.197"></status>
 </kw>
@@ -1384,7 +1384,7 @@
     "properties": {
         "@context": {
             "type": "string",
-            "default": "https://standards.oftrust.net/v2/Context/DataProductParameters/Forecast/Price/Electricity/"
+            "default": "https://standards.oftrust.net/v2/Context/DataProductOutput/Forecast/Price/Electricity/"
         },
         "data": {
             "type": "object",
@@ -1791,7 +1791,7 @@
 <doc>*Asserts the field as JSON string.*</doc>
 <arguments>
 <arg>response body @context</arg>
-<arg>https://standards.oftrust.net/v2/Context/DataProductParameters/Forecast/Price/Electricity/</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductOutput/Forecast/Price/Electricity/</arg>
 </arguments>
 <status status="PASS" starttime="20200828 09:19:01.551" endtime="20200828 09:19:01.551"></status>
 </kw>

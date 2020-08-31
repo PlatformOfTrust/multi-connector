@@ -32,7 +32,7 @@
     }
   },
   "pot": {
-    "context": "https://standards.oftrust.net/v2/Context/DataProductParameters/Forecast/Price/Electricity/",
+    "context": "https://standards.oftrust.net/v2/Context/DataProductOutput/Forecast/Price/Electricity/",
     "array": "forecasts",
     "data": "pricePlans",
     "id": "id",

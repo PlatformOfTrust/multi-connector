@@ -112,7 +112,7 @@
     "properties": {
         "@context": {
             "type": "string",
-            "default": "https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/"
+            "default": "https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/"
         },
         "data": {
             "type": "object",
@@ -158,7 +158,7 @@
                             "id": "TSPD04ESY93100802",
                             "measurements": [
                                 {
-                                    "@type": "MeasureAirTemperatureCelciusDegree",
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
                                     "value": 21.5,
                                     "timestamp": "2020-08-28T06:18:30.000Z"
                                 },
@@ -262,7 +262,7 @@
 <doc>*Asserts the field as JSON string.*</doc>
 <arguments>
 <arg>response body @context</arg>
-<arg>https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/</arg>
 </arguments>
 <status status="PASS" starttime="20200828 09:24:30.611" endtime="20200828 09:24:30.611"></status>
 </kw>
@@ -303,7 +303,7 @@
 <doc>*Asserts the field as JSON string.*</doc>
 <arguments>
 <arg>response body data sensors 0 measurements 0 @type</arg>
-<arg>MeasureAirTemperatureCelciusDegree</arg>
+<arg>MeasureAirTemperatureCelsiusDegree</arg>
 </arguments>
 <status status="PASS" starttime="20200828 09:24:30.615" endtime="20200828 09:24:30.616"></status>
 </kw>
@@ -1013,7 +1013,7 @@
     "properties": {
         "@context": {
             "type": "string",
-            "default": "https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/"
+            "default": "https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/"
         },
         "data": {
             "type": "object",
@@ -1083,7 +1083,7 @@
 <doc>*Asserts the field as JSON string.*</doc>
 <arguments>
 <arg>response body @context</arg>
-<arg>https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/</arg>
 </arguments>
 <status status="PASS" starttime="20200828 09:24:38.698" endtime="20200828 09:24:38.698"></status>
 </kw>

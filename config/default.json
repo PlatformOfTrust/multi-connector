@@ -1,7 +1,7 @@
 {
   "template": "test",
   "static": {
-    "type": "MeasureAirTemperatureCelciusDegree"
+    "type": "MeasureAirTemperatureCelsiusDegree"
   },
   "dynamic": {
     "authConfig.path": "ids",

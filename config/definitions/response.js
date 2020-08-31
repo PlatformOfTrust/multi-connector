@@ -13,7 +13,7 @@ const definitions = {
 
 /** Default output definitions. */
 const defaultOutput = {
-    context: 'https://standards-ontotest.oftrust.net/v2/Context/DataProductParameters/Sensor/',
+    context: 'https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/',
     object: 'data',
     array: 'sensors'
 };

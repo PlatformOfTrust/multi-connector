@@ -112,7 +112,7 @@
     "properties": {
         "@context": {
             "type": "string",
-            "default": "https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/"
+            "default": "https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/"
         },
         "data": {
             "type": "object",
@@ -13372,7 +13372,7 @@
 <doc>*Asserts the field as JSON string.*</doc>
 <arguments>
 <arg>response body @context</arg>
-<arg>https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/</arg>
 </arguments>
 <status status="PASS" starttime="20200828 10:18:45.207" endtime="20200828 10:18:45.208"></status>
 </kw>
@@ -14123,7 +14123,7 @@
     "properties": {
         "@context": {
             "type": "string",
-            "default": "https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/"
+            "default": "https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/"
         },
         "data": {
             "type": "object",
@@ -14193,7 +14193,7 @@
 <doc>*Asserts the field as JSON string.*</doc>
 <arguments>
 <arg>response body @context</arg>
-<arg>https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/</arg>
 </arguments>
 <status status="PASS" starttime="20200828 10:18:53.417" endtime="20200828 10:18:53.417"></status>
 </kw>

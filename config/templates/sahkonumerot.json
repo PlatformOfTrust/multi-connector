@@ -30,7 +30,7 @@
     }
   },
   "pot": {
-    "context": "https://standards.oftrust.net/v2/Context/DataProductParameters/Product/",
+    "context": "https://standards.oftrust.net/v2/Context/DataProductOutput/Product/",
     "array": "products",
     "data": "data"
   }

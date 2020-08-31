@@ -122,7 +122,7 @@ Example config:
     "customer": "customerName", // Replaces e.g ${customer}-placeholder in template.
     "clientId": "abc",
     "clientSecret": "xyz",
-    "type": "MeasureAirTemperatureCelciusDegree"
+    "type": "MeasureAirTemperatureCelsiusDegree"
   },
   "dynamic": {
     "authConfig.path": "ids" // Broker request parameter "ids" is included to the template path per entry.

@@ -68,11 +68,11 @@ fetch, 200
     ${body}               Get Body
     Fetch Data Product    ${body}
     Integer               response status                                         200
-    String                response body @context                                  https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/
+    String                response body @context                                  https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/
     Object                response body data
     Array                 response body data sensors
     Array                 response body data sensors 0 measurements
-    String                response body data sensors 0 measurements 0 @type       MeasureAirTemperatureCelciusDegree
+    String                response body data sensors 0 measurements 0 @type       MeasureAirTemperatureCelsiusDegree
 
 fetch, 422, Missing data for timestamp required field
     [Tags]                 bug-0001
@@ -107,5 +107,5 @@ fetch, 200, Empty ids
     Set To Dictionary      ${body["parameters"]}                ids=@{EMPTY}
     Fetch Data Product     ${body}
     Integer    response status                200
-    String     response body @context         https://standards.oftrust.net/v2/Context/DataProductParameters/Sensor/
+    String     response body @context         https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/
     Array      response body data sensors     maxItems=0

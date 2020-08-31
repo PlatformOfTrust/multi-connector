@@ -66,7 +66,7 @@ fetch, 200
     ${body}               Get Body
     Fetch Data Product    ${body}
     Integer               response status                                         200
-    String                response body @context                                  https://standards.oftrust.net/v2/Context/DataProductParameters/Company/
+    String                response body @context                                  https://standards.oftrust.net/v2/Context/DataProductOutput/Company/
     Object                response body data
     Array                 response body data companies
     Array                 response body data companies 0 data
@@ -105,5 +105,5 @@ fetch, 200, Empty ids
     Set To Dictionary      ${body["parameters"]}                ids=@{EMPTY}
     Fetch Data Product     ${body}
     Integer    response status                200
-    String     response body @context         https://standards.oftrust.net/v2/Context/DataProductParameters/Company/
+    String     response body @context         https://standards.oftrust.net/v2/Context/DataProductOutput/Company/
     Array      response body data companies    maxItems=0

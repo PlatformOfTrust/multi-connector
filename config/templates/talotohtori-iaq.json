@@ -14,7 +14,7 @@
     "data"
   ],
   "dataPropertyMappings": {
-    "MeasureAirTemperatureCelciusDegree": "Temperature_01",
+    "MeasureAirTemperatureCelsiusDegree": "Temperature_01",
     "MeasureAirHumidityPercentage": "Humidity_01"
   },
   "generalConfig": {
