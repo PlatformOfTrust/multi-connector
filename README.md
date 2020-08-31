@@ -12,6 +12,7 @@ Following data sources are supported out of the box. Example configs can be foun
 - Haltian Thingsee API
 - HubSpot API
 - Nuuka Solutions Platform
+- Nysse GTFS RT public API
 - Rakennustieto API
 - Sähkönumerot.fi API
 - Schneider EcoStruxure Cloud

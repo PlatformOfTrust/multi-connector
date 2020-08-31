@@ -1,0 +1,15 @@
+{
+  "template": "nysse",
+  "static": {
+    "username": "<client-id>",
+    "password": "<client-secret>"
+  },
+  "dynamic": {
+    "authConfig.path": "ids"
+  },
+  "request": {
+    "ids": [
+      "<vehicle-id>"
+    ]
+  }
+}

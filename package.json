@@ -29,6 +29,7 @@
     "fast-xml-parser": "^3.17.4",
     "fs": "0.0.1-security",
     "greenlock-express": "^4.0.3",
+    "gtfs-realtime-bindings": "0.0.5",
     "helmet": "^3.21.3",
     "httpntlm": "^1.7.6",
     "hubspot": "^2.3.12",

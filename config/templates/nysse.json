@@ -1,0 +1,35 @@
+{
+  "plugins": [
+    "basic",
+    "gtfs-realtime"
+  ],
+  "protocol": "rest",
+  "authConfig": {
+    "url": "https://data.waltti.fi/tampere/api",
+    "username": "${clientId}",
+    "password": "${clientSecret}",
+    "path": "/gtfsrealtime/v1.0/feed/vehicleposition"
+  },
+  "dataObjects": [
+    ""
+  ],
+  "dataPropertyMappings": {
+    "Position": "vehicle.position"
+  },
+  "generalConfig": {
+    "hardwareId": {
+      "dataObjectProperty": "id"
+    },
+    "timestamp": {
+      "dataObjectProperty": "vehicle.timestamp.low"
+    }
+  },
+  "pot": {
+    "context": "https://standards.oftrust.net/v2/Context/DataProductOutput/Position/",
+    "array": "vehicles",
+    "data": "positions",
+    "id": "id",
+    "value": "coordinates",
+    "timestamp": "timestamp"
+  }
+}

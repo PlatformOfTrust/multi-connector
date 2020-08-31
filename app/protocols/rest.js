@@ -151,7 +151,8 @@ const requestData = async (config, path, index) => {
         url: path.includes('://') ? path : config.authConfig.url + path,
         headers: config.authConfig.headers || {},
         resolveWithFullResponse: true,
-        query: []
+        query: [],
+        encoding: null
     };
 
     // Define start and end query properties
