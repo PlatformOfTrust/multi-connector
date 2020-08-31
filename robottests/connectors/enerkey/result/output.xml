@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot generator="Robot 3.2.1 (Python 3.8.3 on win32)" generated="20200828 11:44:35.307" rpa="false">
-<suite id="s1" name="Connector Tests" source="C:\Users\artor\WebstormProjects\translator\robottests\connectors\enerkey\connector_tests.robot">
+<robot generator="Robot 3.2.1 (Python 3.8.3 on win32)" generated="20200831 08:38:38.805" rpa="false">
+<suite id="s1" name="Connector Tests" source="C:\Users\artor\WebstormProjects\multi-connector\robottests\connectors\enerkey\connector_tests.robot">
 <test id="s1-t1" name="fetch, 200">
 <kw name="Get Body">
 <assign>
@@ -15,8 +15,8 @@
 <assign>
 <var>${body}</var>
 </assign>
-<msg timestamp="20200828 11:44:35.553" level="INFO">${body} = {'productCode': 'default_enerkey', 'parameters': {'ids': ['15794', '35378', '45410'], 'startTime': '2014-04-05T06:28:30.000Z', 'endTime': '2014-04-06T06:28:30.000Z'}}</msg>
-<status status="PASS" starttime="20200828 11:44:35.552" endtime="20200828 11:44:35.553"></status>
+<msg timestamp="20200831 08:38:39.048" level="INFO">${body} = {'productCode': 'polku-connector', 'parameters': {'ids': ['15794', '35378', '45410'], 'startTime': '2014-04-05T06:28:30.000Z', 'endTime': '2014-04-06T06:28:30.000Z'}}</msg>
+<status status="PASS" starttime="20200831 08:38:39.047" endtime="20200831 08:38:39.048"></status>
 </kw>
 <kw name="Get Current Date" library="DateTime">
 <doc>Returns current local or UTC time with an optional increment.</doc>
@@ -27,8 +27,8 @@
 <assign>
 <var>${now}</var>
 </assign>
-<msg timestamp="20200828 11:44:35.553" level="INFO">${now} = 2020-08-28T08:44:35+00:00</msg>
-<status status="PASS" starttime="20200828 11:44:35.553" endtime="20200828 11:44:35.553"></status>
+<msg timestamp="20200831 08:38:39.048" level="INFO">${now} = 2020-08-31T05:38:39+00:00</msg>
+<status status="PASS" starttime="20200831 08:38:39.048" endtime="20200831 08:38:39.048"></status>
 </kw>
 <kw name="Set To Dictionary" library="Collections">
 <doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
@@ -37,7 +37,7 @@
 <arg>timestamp</arg>
 <arg>${now}</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:35.553" endtime="20200828 11:44:35.553"></status>
+<status status="PASS" starttime="20200831 08:38:39.048" endtime="20200831 08:38:39.048"></status>
 </kw>
 <kw name="Set To Dictionary" library="Collections">
 <doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
@@ -45,7 +45,7 @@
 <arg>${body}</arg>
 <arg>&amp;{kwargs}</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:35.553" endtime="20200828 11:44:35.553"></status>
+<status status="PASS" starttime="20200831 08:38:39.048" endtime="20200831 08:38:39.048"></status>
 </kw>
 <kw name="Evaluate" library="BuiltIn">
 <doc>Evaluates the given expression in Python and returns the result.</doc>
@@ -56,11 +56,11 @@
 <assign>
 <var>${json_string}</var>
 </assign>
-<msg timestamp="20200828 11:44:35.554" level="INFO">${json_string} = {"productCode": "default_enerkey", "parameters": {"ids": ["15794", "35378", "45410"], "startTime": "2014-04-05T06:28:30.000Z", "endTime": "2014-04-06T06:28:30.000Z"}, "timestamp": "2020-08-28T08:44:35...</msg>
-<status status="PASS" starttime="20200828 11:44:35.554" endtime="20200828 11:44:35.554"></status>
+<msg timestamp="20200831 08:38:39.049" level="INFO">${json_string} = {"productCode": "polku-connector", "parameters": {"ids": ["15794", "35378", "45410"], "startTime": "2014-04-05T06:28:30.000Z", "endTime": "2014-04-06T06:28:30.000Z"}, "timestamp": "2020-08-31T05:38:39...</msg>
+<status status="PASS" starttime="20200831 08:38:39.048" endtime="20200831 08:38:39.049"></status>
 </kw>
-<msg timestamp="20200828 11:44:35.554" level="INFO">${body} = {'productCode': 'default_enerkey', 'parameters': {'ids': ['15794', '35378', '45410'], 'startTime': '2014-04-05T06:28:30.000Z', 'endTime': '2014-04-06T06:28:30.000Z'}, 'timestamp': '2020-08-28T08:44:35...</msg>
-<status status="PASS" starttime="20200828 11:44:35.552" endtime="20200828 11:44:35.554"></status>
+<msg timestamp="20200831 08:38:39.049" level="INFO">${body} = {'productCode': 'polku-connector', 'parameters': {'ids': ['15794', '35378', '45410'], 'startTime': '2014-04-05T06:28:30.000Z', 'endTime': '2014-04-06T06:28:30.000Z'}, 'timestamp': '2020-08-31T05:38:39...</msg>
+<status status="PASS" starttime="20200831 08:38:39.047" endtime="20200831 08:38:39.049"></status>
 </kw>
 <kw name="Fetch Data Product">
 <arguments>
@@ -74,8 +74,8 @@
 <assign>
 <var>${signature}</var>
 </assign>
-<msg timestamp="20200828 11:44:35.555" level="INFO">${signature} = twkMcCqjaUfyvx62DAI27BYlx0MBgmJ0u/DtXlXVDLM=</msg>
-<status status="PASS" starttime="20200828 11:44:35.554" endtime="20200828 11:44:35.555"></status>
+<msg timestamp="20200831 08:38:39.051" level="INFO">${signature} = lRuFbkXs+NjOHbAtiM+bq+3vl5kjFpp2b2on0efS62s=</msg>
+<status status="PASS" starttime="20200831 08:38:39.050" endtime="20200831 08:38:39.051"></status>
 </kw>
 <kw name="Set Headers" library="REST">
 <tags>
@@ -85,7 +85,7 @@
 <arguments>
 <arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:35.555" endtime="20200828 11:44:35.555"></status>
+<status status="PASS" starttime="20200831 08:38:39.051" endtime="20200831 08:38:39.051"></status>
 </kw>
 <kw name="Post" library="REST">
 <tags>
@@ -96,7 +96,7 @@
 <arg>${CONNECTOR_PATH}</arg>
 <arg>${body}</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:35.555" endtime="20200828 11:44:39.167"></status>
+<status status="PASS" starttime="20200831 08:38:39.051" endtime="20200831 08:38:40.000"></status>
 </kw>
 <kw name="Output Schema" library="REST">
 <tags>
@@ -106,7 +106,7 @@
 <arguments>
 <arg>response body</arg>
 </arguments>
-<msg timestamp="20200828 11:44:39.168" level="INFO">
+<msg timestamp="20200831 08:38:40.001" level="INFO">
 {
     "type": "object",
     "properties": {
@@ -538,15 +538,15 @@
                 },
                 "created": {
                     "type": "string",
-                    "default": "2020-08-28T11:44:39+03:00"
+                    "default": "2020-08-31T05:38:39+00:00"
                 },
                 "creator": {
                     "type": "string",
-                    "default": "http://localhost:8080/translator/v1/public.key"
+                    "default": "http://connector.oftrust.dev/translator/v1/public.key"
                 },
                 "signatureValue": {
                     "type": "string",
-                    "default": "LumLyfYmcMSBTsD4Tynr3Aybb9EOp4+Nzvkk/+vB/OdM2IMjHQAbnK3ZZW9q5BQSErkEluM0W7mtAVa3NAb1EEw8+xmM8r+iOvR5k4lXl16CC88H8FjNjeL8FvrshNwES5dtBJcj6SyzPCai8VxL2vtlJ6DTOq9zRxsYYkUdJegYF40833dULMXQbDlJlj2u2q4S+TBiCn9G8oN0qgW4yokwc/7adSpl2TiyaU5RtXpUAqflMKvarIgrcKX2JCctob0FSKi+OWyqCXR4i94zW2anCmbVsm9aVy1Oq+k9s51J02Q0RITcT7lk7Ozs+dbV4zonqrAhYnsIasPQcgPefLjDn6jT3ACRrzMg9NUF+FQ82IA4eDodLYbHk7rTeOV2e9Wo2kUA8RvGO8QwphrzwRfmoJf9y2SWNs2uthKd/VKESPnwgmO8HOUDRZ9HrvJx5HzGKZ1Uy6zbIP8ghHy585c5kPf2PgAvAi0/zmzmrI/wY/JD++4MRXaQ4ztfyh3tvverT6ZZvS7DNwszm17fjZ4wxqXRIYxYC1eoJfT2OPUozmZk1bUCWqmeNnHBPekud5sU6jX3OYJABeagP2tmL8xwF+VKfoYi1GUQTEAIvi7pqDxY1FpKWaFh7Vdyr7WTKsm+CpVcA8UJiHh4Qj+eypZrVEzPuH1zs/TBGMeXtvg="
+                    "default": "aDTqRiL3hJn+D+6gF67wl8RG96Pj1Ba25inAwtS3a+ESvc/se/bkwhKqgyEhYzFuUpznohkMofgpdJufAinkzKV0Qo7nG67OAQ1yxU2z2AhYynmGE7Ej/yaNE/Zva//M3Vrx2NtKw5TZo4ekh3N+vpGvnAUmAD7xG6rb7bIO73KoA9jQ2WOuwylYwwlT2jXSQ5GyPCpa8feWph2JuXb93MHiPVaVbDXr33DUepBkj3wGeH8DVzWMZvsL3ABXZJEZRv4rwQf8C+Bkai2IupRv9sEW0z1sXEKmvk63dfxySbNKG/ZUU4r54xzcV/zwy02xz1YPf8U7NRGKQnF8KyjLOtyLxaymUv+iZtFC4MYpDZc0VBhJGCZc30iSInAFYpyhL+0IT6wKSukeD0+b826nSeR+COK/VV7bUdyCTHsU2RIJXlWbd985hexV6xhjr2PC6JWsQJcxEq7DQ2cvDyFw3Hb187rtdQcDsT3/x5vO9ZLVurbskLIHv4yMUAhUAbZEe5mxyM4NsZNmyL+VtaO652IRs2Jlau6+IK3vAiMLxU/PPUJASxDXgXxdIAFWozPJp0Da+AsOEAK4nRNXi7ohLXPgfczStQDdUX5vNjRtVYfdyw46tFUE5z7sZXuYcPk53TwizpGfxcD10N0H0wtPw6bTt+03ema8WSPNF2yVIXE="
                 }
             },
             "required": [
@@ -563,9 +563,9 @@
         "signature"
     ]
 }</msg>
-<status status="PASS" starttime="20200828 11:44:39.167" endtime="20200828 11:44:39.191"></status>
+<status status="PASS" starttime="20200831 08:38:40.000" endtime="20200831 08:38:40.024"></status>
 </kw>
-<status status="PASS" starttime="20200828 11:44:35.554" endtime="20200828 11:44:39.192"></status>
+<status status="PASS" starttime="20200831 08:38:39.050" endtime="20200831 08:38:40.024"></status>
 </kw>
 <kw name="Integer" library="REST">
 <tags>
@@ -576,7 +576,7 @@
 <arg>response status</arg>
 <arg>200</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:39.192" endtime="20200828 11:44:39.192"></status>
+<status status="PASS" starttime="20200831 08:38:40.032" endtime="20200831 08:38:40.032"></status>
 </kw>
 <kw name="String" library="REST">
 <tags>
@@ -587,7 +587,7 @@
 <arg>response body @context</arg>
 <arg>https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:39.202" endtime="20200828 11:44:39.202"></status>
+<status status="PASS" starttime="20200831 08:38:40.033" endtime="20200831 08:38:40.033"></status>
 </kw>
 <kw name="Object" library="REST">
 <tags>
@@ -597,7 +597,7 @@
 <arguments>
 <arg>response body data</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:39.203" endtime="20200828 11:44:39.204"></status>
+<status status="PASS" starttime="20200831 08:38:40.033" endtime="20200831 08:38:40.036"></status>
 </kw>
 <kw name="Array" library="REST">
 <tags>
@@ -607,7 +607,7 @@
 <arguments>
 <arg>response body data sensors</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:39.205" endtime="20200828 11:44:39.206"></status>
+<status status="PASS" starttime="20200831 08:38:40.036" endtime="20200831 08:38:40.038"></status>
 </kw>
 <kw name="Array" library="REST">
 <tags>
@@ -617,7 +617,7 @@
 <arguments>
 <arg>response body data sensors 0 measurements</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:39.207" endtime="20200828 11:44:39.208"></status>
+<status status="PASS" starttime="20200831 08:38:40.039" endtime="20200831 08:38:40.040"></status>
 </kw>
 <kw name="String" library="REST">
 <tags>
@@ -628,12 +628,12 @@
 <arg>response body data sensors 0 measurements 0 @type</arg>
 <arg>MeasureEnergyConsumptionKilowattHour</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:39.208" endtime="20200828 11:44:39.208"></status>
+<status status="PASS" starttime="20200831 08:38:40.040" endtime="20200831 08:38:40.040"></status>
 </kw>
 <tags>
 <tag>bug-0001</tag>
 </tags>
-<status status="PASS" starttime="20200828 11:44:35.552" endtime="20200828 11:44:39.209" critical="yes"></status>
+<status status="PASS" starttime="20200831 08:38:39.047" endtime="20200831 08:38:40.041" critical="yes"></status>
 </test>
 <test id="s1-t2" name="fetch, 422, Missing data for timestamp required field">
 <kw name="Get Body">
@@ -649,8 +649,8 @@
 <assign>
 <var>${body}</var>
 </assign>
-<msg timestamp="20200828 11:44:39.211" level="INFO">${body} = {'productCode': 'default_enerkey', 'parameters': {'ids': ['15794', '35378', '45410'], 'startTime': '2014-04-05T06:28:30.000Z', 'endTime': '2014-04-06T06:28:30.000Z'}}</msg>
-<status status="PASS" starttime="20200828 11:44:39.211" endtime="20200828 11:44:39.211"></status>
+<msg timestamp="20200831 08:38:40.043" level="INFO">${body} = {'productCode': 'polku-connector', 'parameters': {'ids': ['15794', '35378', '45410'], 'startTime': '2014-04-05T06:28:30.000Z', 'endTime': '2014-04-06T06:28:30.000Z'}}</msg>
+<status status="PASS" starttime="20200831 08:38:40.043" endtime="20200831 08:38:40.043"></status>
 </kw>
 <kw name="Get Current Date" library="DateTime">
 <doc>Returns current local or UTC time with an optional increment.</doc>
@@ -661,8 +661,8 @@
 <assign>
 <var>${now}</var>
 </assign>
-<msg timestamp="20200828 11:44:39.212" level="INFO">${now} = 2020-08-28T08:44:39+00:00</msg>
-<status status="PASS" starttime="20200828 11:44:39.211" endtime="20200828 11:44:39.212"></status>
+<msg timestamp="20200831 08:38:40.044" level="INFO">${now} = 2020-08-31T05:38:40+00:00</msg>
+<status status="PASS" starttime="20200831 08:38:40.043" endtime="20200831 08:38:40.044"></status>
 </kw>
 <kw name="Set To Dictionary" library="Collections">
 <doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
@@ -671,7 +671,7 @@
 <arg>timestamp</arg>
 <arg>${now}</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:39.212" endtime="20200828 11:44:39.212"></status>
+<status status="PASS" starttime="20200831 08:38:40.044" endtime="20200831 08:38:40.044"></status>
 </kw>
 <kw name="Set To Dictionary" library="Collections">
 <doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
@@ -679,7 +679,7 @@
 <arg>${body}</arg>
 <arg>&amp;{kwargs}</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:39.212" endtime="20200828 11:44:39.212"></status>
+<status status="PASS" starttime="20200831 08:38:40.044" endtime="20200831 08:38:40.044"></status>
 </kw>
 <kw name="Evaluate" library="BuiltIn">
 <doc>Evaluates the given expression in Python and returns the result.</doc>
@@ -690,11 +690,11 @@
 <assign>
 <var>${json_string}</var>
 </assign>
-<msg timestamp="20200828 11:44:39.212" level="INFO">${json_string} = {"productCode": "default_enerkey", "parameters": {"ids": ["15794", "35378", "45410"], "startTime": "2014-04-05T06:28:30.000Z", "endTime": "2014-04-06T06:28:30.000Z"}, "timestamp": "2020-08-28T08:44:39...</msg>
-<status status="PASS" starttime="20200828 11:44:39.212" endtime="20200828 11:44:39.212"></status>
+<msg timestamp="20200831 08:38:40.044" level="INFO">${json_string} = {"productCode": "polku-connector", "parameters": {"ids": ["15794", "35378", "45410"], "startTime": "2014-04-05T06:28:30.000Z", "endTime": "2014-04-06T06:28:30.000Z"}, "timestamp": "2020-08-31T05:38:40...</msg>
+<status status="PASS" starttime="20200831 08:38:40.044" endtime="20200831 08:38:40.044"></status>
 </kw>
-<msg timestamp="20200828 11:44:39.213" level="INFO">${body} = {'productCode': 'default_enerkey', 'parameters': {'ids': ['15794', '35378', '45410'], 'startTime': '2014-04-05T06:28:30.000Z', 'endTime': '2014-04-06T06:28:30.000Z'}, 'timestamp': '2020-08-28T08:44:39...</msg>
-<status status="PASS" starttime="20200828 11:44:39.211" endtime="20200828 11:44:39.213"></status>
+<msg timestamp="20200831 08:38:40.045" level="INFO">${body} = {'productCode': 'polku-connector', 'parameters': {'ids': ['15794', '35378', '45410'], 'startTime': '2014-04-05T06:28:30.000Z', 'endTime': '2014-04-06T06:28:30.000Z'}, 'timestamp': '2020-08-31T05:38:40...</msg>
+<status status="PASS" starttime="20200831 08:38:40.043" endtime="20200831 08:38:40.045"></status>
 </kw>
 <kw name="Pop From Dictionary" library="Collections">
 <doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
@@ -702,7 +702,7 @@
 <arg>${body}</arg>
 <arg>timestamp</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:39.213" endtime="20200828 11:44:39.213"></status>
+<status status="PASS" starttime="20200831 08:38:40.045" endtime="20200831 08:38:40.045"></status>
 </kw>
 <kw name="Fetch Data Product">
 <arguments>
@@ -716,8 +716,8 @@
 <assign>
 <var>${signature}</var>
 </assign>
-<msg timestamp="20200828 11:44:39.214" level="INFO">${signature} = 3DN1CPbR13P2hlUvpYsqGUxpbbxelDhLwCjljUGESRw=</msg>
-<status status="PASS" starttime="20200828 11:44:39.214" endtime="20200828 11:44:39.214"></status>
+<msg timestamp="20200831 08:38:40.046" level="INFO">${signature} = uBE8RDYZy0aXHeUhud+EIJE0tXr1SrlYP4ia3y31AGs=</msg>
+<status status="PASS" starttime="20200831 08:38:40.046" endtime="20200831 08:38:40.046"></status>
 </kw>
 <kw name="Set Headers" library="REST">
 <tags>
@@ -727,7 +727,7 @@
 <arguments>
 <arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:39.214" endtime="20200828 11:44:39.214"></status>
+<status status="PASS" starttime="20200831 08:38:40.046" endtime="20200831 08:38:40.046"></status>
 </kw>
 <kw name="Post" library="REST">
 <tags>
@@ -738,7 +738,7 @@
 <arg>${CONNECTOR_PATH}</arg>
 <arg>${body}</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:39.214" endtime="20200828 11:44:41.222"></status>
+<status status="PASS" starttime="20200831 08:38:40.046" endtime="20200831 08:38:40.079"></status>
 </kw>
 <kw name="Output Schema" library="REST">
 <tags>
@@ -748,7 +748,7 @@
 <arguments>
 <arg>response body</arg>
 </arguments>
-<msg timestamp="20200828 11:44:41.223" level="INFO">
+<msg timestamp="20200831 08:38:40.080" level="INFO">
 {
     "type": "object",
     "properties": {
@@ -787,9 +787,9 @@
         "error"
     ]
 }</msg>
-<status status="PASS" starttime="20200828 11:44:41.222" endtime="20200828 11:44:41.224"></status>
+<status status="PASS" starttime="20200831 08:38:40.079" endtime="20200831 08:38:40.081"></status>
 </kw>
-<status status="PASS" starttime="20200828 11:44:39.213" endtime="20200828 11:44:41.224"></status>
+<status status="PASS" starttime="20200831 08:38:40.045" endtime="20200831 08:38:40.081"></status>
 </kw>
 <kw name="Integer" library="REST">
 <tags>
@@ -800,7 +800,7 @@
 <arg>response status</arg>
 <arg>422</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:41.225" endtime="20200828 11:44:41.225"></status>
+<status status="PASS" starttime="20200831 08:38:40.082" endtime="20200831 08:38:40.082"></status>
 </kw>
 <kw name="Integer" library="REST">
 <tags>
@@ -811,7 +811,7 @@
 <arg>response body error status</arg>
 <arg>422</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:41.226" endtime="20200828 11:44:41.226"></status>
+<status status="PASS" starttime="20200831 08:38:40.082" endtime="20200831 08:38:40.083"></status>
 </kw>
 <kw name="String" library="REST">
 <tags>
@@ -822,12 +822,12 @@
 <arg>response body error message timestamp 0</arg>
 <arg>Missing data for required field.</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:41.226" endtime="20200828 11:44:41.227"></status>
+<status status="PASS" starttime="20200831 08:38:40.083" endtime="20200831 08:38:40.083"></status>
 </kw>
 <tags>
 <tag>bug-0001</tag>
 </tags>
-<status status="PASS" starttime="20200828 11:44:39.210" endtime="20200828 11:44:41.227" critical="yes"></status>
+<status status="PASS" starttime="20200831 08:38:40.042" endtime="20200831 08:38:40.084" critical="yes"></status>
 </test>
 <test id="s1-t3" name="fetch, 422, Missing data for parameters required field">
 <kw name="Get Body">
@@ -843,8 +843,8 @@
 <assign>
 <var>${body}</var>
 </assign>
-<msg timestamp="20200828 11:44:41.229" level="INFO">${body} = {'productCode': 'default_enerkey', 'parameters': {'ids': ['15794', '35378', '45410'], 'startTime': '2014-04-05T06:28:30.000Z', 'endTime': '2014-04-06T06:28:30.000Z'}}</msg>
-<status status="PASS" starttime="20200828 11:44:41.229" endtime="20200828 11:44:41.229"></status>
+<msg timestamp="20200831 08:38:40.086" level="INFO">${body} = {'productCode': 'polku-connector', 'parameters': {'ids': ['15794', '35378', '45410'], 'startTime': '2014-04-05T06:28:30.000Z', 'endTime': '2014-04-06T06:28:30.000Z'}}</msg>
+<status status="PASS" starttime="20200831 08:38:40.085" endtime="20200831 08:38:40.086"></status>
 </kw>
 <kw name="Get Current Date" library="DateTime">
 <doc>Returns current local or UTC time with an optional increment.</doc>
@@ -855,8 +855,8 @@
 <assign>
 <var>${now}</var>
 </assign>
-<msg timestamp="20200828 11:44:41.229" level="INFO">${now} = 2020-08-28T08:44:41+00:00</msg>
-<status status="PASS" starttime="20200828 11:44:41.229" endtime="20200828 11:44:41.229"></status>
+<msg timestamp="20200831 08:38:40.086" level="INFO">${now} = 2020-08-31T05:38:40+00:00</msg>
+<status status="PASS" starttime="20200831 08:38:40.086" endtime="20200831 08:38:40.086"></status>
 </kw>
 <kw name="Set To Dictionary" library="Collections">
 <doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
@@ -865,7 +865,7 @@
 <arg>timestamp</arg>
 <arg>${now}</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:41.229" endtime="20200828 11:44:41.230"></status>
+<status status="PASS" starttime="20200831 08:38:40.086" endtime="20200831 08:38:40.086"></status>
 </kw>
 <kw name="Set To Dictionary" library="Collections">
 <doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
@@ -873,7 +873,7 @@
 <arg>${body}</arg>
 <arg>&amp;{kwargs}</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:41.230" endtime="20200828 11:44:41.230"></status>
+<status status="PASS" starttime="20200831 08:38:40.086" endtime="20200831 08:38:40.086"></status>
 </kw>
 <kw name="Evaluate" library="BuiltIn">
 <doc>Evaluates the given expression in Python and returns the result.</doc>
@@ -884,11 +884,11 @@
 <assign>
 <var>${json_string}</var>
 </assign>
-<msg timestamp="20200828 11:44:41.230" level="INFO">${json_string} = {"productCode": "default_enerkey", "parameters": {"ids": ["15794", "35378", "45410"], "startTime": "2014-04-05T06:28:30.000Z", "endTime": "2014-04-06T06:28:30.000Z"}, "timestamp": "2020-08-28T08:44:41...</msg>
-<status status="PASS" starttime="20200828 11:44:41.230" endtime="20200828 11:44:41.230"></status>
+<msg timestamp="20200831 08:38:40.087" level="INFO">${json_string} = {"productCode": "polku-connector", "parameters": {"ids": ["15794", "35378", "45410"], "startTime": "2014-04-05T06:28:30.000Z", "endTime": "2014-04-06T06:28:30.000Z"}, "timestamp": "2020-08-31T05:38:40...</msg>
+<status status="PASS" starttime="20200831 08:38:40.087" endtime="20200831 08:38:40.087"></status>
 </kw>
-<msg timestamp="20200828 11:44:41.230" level="INFO">${body} = {'productCode': 'default_enerkey', 'parameters': {'ids': ['15794', '35378', '45410'], 'startTime': '2014-04-05T06:28:30.000Z', 'endTime': '2014-04-06T06:28:30.000Z'}, 'timestamp': '2020-08-28T08:44:41...</msg>
-<status status="PASS" starttime="20200828 11:44:41.228" endtime="20200828 11:44:41.230"></status>
+<msg timestamp="20200831 08:38:40.087" level="INFO">${body} = {'productCode': 'polku-connector', 'parameters': {'ids': ['15794', '35378', '45410'], 'startTime': '2014-04-05T06:28:30.000Z', 'endTime': '2014-04-06T06:28:30.000Z'}, 'timestamp': '2020-08-31T05:38:40...</msg>
+<status status="PASS" starttime="20200831 08:38:40.085" endtime="20200831 08:38:40.087"></status>
 </kw>
 <kw name="Pop From Dictionary" library="Collections">
 <doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
@@ -896,7 +896,7 @@
 <arg>${body}</arg>
 <arg>parameters</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:41.231" endtime="20200828 11:44:41.231"></status>
+<status status="PASS" starttime="20200831 08:38:40.087" endtime="20200831 08:38:40.087"></status>
 </kw>
 <kw name="Fetch Data Product">
 <arguments>
@@ -910,8 +910,8 @@
 <assign>
 <var>${signature}</var>
 </assign>
-<msg timestamp="20200828 11:44:41.231" level="INFO">${signature} = y9BrVPp81omSKu5T79LvJeu2qlvZaZuGFi1s3+/jS58=</msg>
-<status status="PASS" starttime="20200828 11:44:41.231" endtime="20200828 11:44:41.231"></status>
+<msg timestamp="20200831 08:38:40.088" level="INFO">${signature} = rP/zA2OXfeeGb5AqV7BTopYg5/wY4tmajy429t+y8Xk=</msg>
+<status status="PASS" starttime="20200831 08:38:40.088" endtime="20200831 08:38:40.088"></status>
 </kw>
 <kw name="Set Headers" library="REST">
 <tags>
@@ -921,7 +921,7 @@
 <arguments>
 <arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:41.232" endtime="20200828 11:44:41.232"></status>
+<status status="PASS" starttime="20200831 08:38:40.088" endtime="20200831 08:38:40.089"></status>
 </kw>
 <kw name="Post" library="REST">
 <tags>
@@ -932,7 +932,7 @@
 <arg>${CONNECTOR_PATH}</arg>
 <arg>${body}</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:41.232" endtime="20200828 11:44:43.239"></status>
+<status status="PASS" starttime="20200831 08:38:40.089" endtime="20200831 08:38:40.119"></status>
 </kw>
 <kw name="Output Schema" library="REST">
 <tags>
@@ -942,7 +942,7 @@
 <arguments>
 <arg>response body</arg>
 </arguments>
-<msg timestamp="20200828 11:44:43.239" level="INFO">
+<msg timestamp="20200831 08:38:40.119" level="INFO">
 {
     "type": "object",
     "properties": {
@@ -981,9 +981,9 @@
         "error"
     ]
 }</msg>
-<status status="PASS" starttime="20200828 11:44:43.239" endtime="20200828 11:44:43.241"></status>
+<status status="PASS" starttime="20200831 08:38:40.119" endtime="20200831 08:38:40.121"></status>
 </kw>
-<status status="PASS" starttime="20200828 11:44:41.231" endtime="20200828 11:44:43.241"></status>
+<status status="PASS" starttime="20200831 08:38:40.088" endtime="20200831 08:38:40.121"></status>
 </kw>
 <kw name="Integer" library="REST">
 <tags>
@@ -994,7 +994,7 @@
 <arg>response status</arg>
 <arg>422</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:43.241" endtime="20200828 11:44:43.241"></status>
+<status status="PASS" starttime="20200831 08:38:40.121" endtime="20200831 08:38:40.122"></status>
 </kw>
 <kw name="Integer" library="REST">
 <tags>
@@ -1005,7 +1005,7 @@
 <arg>response body error status</arg>
 <arg>422</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:43.241" endtime="20200828 11:44:43.241"></status>
+<status status="PASS" starttime="20200831 08:38:40.123" endtime="20200831 08:38:40.123"></status>
 </kw>
 <kw name="String" library="REST">
 <tags>
@@ -1016,12 +1016,12 @@
 <arg>response body error message parameters 0</arg>
 <arg>Missing data for required field.</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:43.243" endtime="20200828 11:44:43.243"></status>
+<status status="PASS" starttime="20200831 08:38:40.125" endtime="20200831 08:38:40.125"></status>
 </kw>
 <tags>
 <tag>bug-0002</tag>
 </tags>
-<status status="PASS" starttime="20200828 11:44:41.228" endtime="20200828 11:44:43.243" critical="yes"></status>
+<status status="PASS" starttime="20200831 08:38:40.085" endtime="20200831 08:38:40.126" critical="yes"></status>
 </test>
 <test id="s1-t4" name="fetch, 422, Missing data for ids required field">
 <kw name="Get Body">
@@ -1037,8 +1037,8 @@
 <assign>
 <var>${body}</var>
 </assign>
-<msg timestamp="20200828 11:44:43.245" level="INFO">${body} = {'productCode': 'default_enerkey', 'parameters': {'ids': ['15794', '35378', '45410'], 'startTime': '2014-04-05T06:28:30.000Z', 'endTime': '2014-04-06T06:28:30.000Z'}}</msg>
-<status status="PASS" starttime="20200828 11:44:43.245" endtime="20200828 11:44:43.245"></status>
+<msg timestamp="20200831 08:38:40.129" level="INFO">${body} = {'productCode': 'polku-connector', 'parameters': {'ids': ['15794', '35378', '45410'], 'startTime': '2014-04-05T06:28:30.000Z', 'endTime': '2014-04-06T06:28:30.000Z'}}</msg>
+<status status="PASS" starttime="20200831 08:38:40.128" endtime="20200831 08:38:40.129"></status>
 </kw>
 <kw name="Get Current Date" library="DateTime">
 <doc>Returns current local or UTC time with an optional increment.</doc>
@@ -1049,8 +1049,8 @@
 <assign>
 <var>${now}</var>
 </assign>
-<msg timestamp="20200828 11:44:43.246" level="INFO">${now} = 2020-08-28T08:44:43+00:00</msg>
-<status status="PASS" starttime="20200828 11:44:43.245" endtime="20200828 11:44:43.246"></status>
+<msg timestamp="20200831 08:38:40.129" level="INFO">${now} = 2020-08-31T05:38:40+00:00</msg>
+<status status="PASS" starttime="20200831 08:38:40.129" endtime="20200831 08:38:40.129"></status>
 </kw>
 <kw name="Set To Dictionary" library="Collections">
 <doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
@@ -1059,7 +1059,7 @@
 <arg>timestamp</arg>
 <arg>${now}</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:43.246" endtime="20200828 11:44:43.246"></status>
+<status status="PASS" starttime="20200831 08:38:40.129" endtime="20200831 08:38:40.129"></status>
 </kw>
 <kw name="Set To Dictionary" library="Collections">
 <doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
@@ -1067,7 +1067,7 @@
 <arg>${body}</arg>
 <arg>&amp;{kwargs}</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:43.246" endtime="20200828 11:44:43.246"></status>
+<status status="PASS" starttime="20200831 08:38:40.129" endtime="20200831 08:38:40.129"></status>
 </kw>
 <kw name="Evaluate" library="BuiltIn">
 <doc>Evaluates the given expression in Python and returns the result.</doc>
@@ -1078,11 +1078,11 @@
 <assign>
 <var>${json_string}</var>
 </assign>
-<msg timestamp="20200828 11:44:43.246" level="INFO">${json_string} = {"productCode": "default_enerkey", "parameters": {"ids": ["15794", "35378", "45410"], "startTime": "2014-04-05T06:28:30.000Z", "endTime": "2014-04-06T06:28:30.000Z"}, "timestamp": "2020-08-28T08:44:43...</msg>
-<status status="PASS" starttime="20200828 11:44:43.246" endtime="20200828 11:44:43.247"></status>
+<msg timestamp="20200831 08:38:40.130" level="INFO">${json_string} = {"productCode": "polku-connector", "parameters": {"ids": ["15794", "35378", "45410"], "startTime": "2014-04-05T06:28:30.000Z", "endTime": "2014-04-06T06:28:30.000Z"}, "timestamp": "2020-08-31T05:38:40...</msg>
+<status status="PASS" starttime="20200831 08:38:40.129" endtime="20200831 08:38:40.130"></status>
 </kw>
-<msg timestamp="20200828 11:44:43.247" level="INFO">${body} = {'productCode': 'default_enerkey', 'parameters': {'ids': ['15794', '35378', '45410'], 'startTime': '2014-04-05T06:28:30.000Z', 'endTime': '2014-04-06T06:28:30.000Z'}, 'timestamp': '2020-08-28T08:44:43...</msg>
-<status status="PASS" starttime="20200828 11:44:43.245" endtime="20200828 11:44:43.247"></status>
+<msg timestamp="20200831 08:38:40.130" level="INFO">${body} = {'productCode': 'polku-connector', 'parameters': {'ids': ['15794', '35378', '45410'], 'startTime': '2014-04-05T06:28:30.000Z', 'endTime': '2014-04-06T06:28:30.000Z'}, 'timestamp': '2020-08-31T05:38:40...</msg>
+<status status="PASS" starttime="20200831 08:38:40.127" endtime="20200831 08:38:40.130"></status>
 </kw>
 <kw name="Pop From Dictionary" library="Collections">
 <doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
@@ -1090,7 +1090,7 @@
 <arg>${body["parameters"]}</arg>
 <arg>ids</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:43.247" endtime="20200828 11:44:43.247"></status>
+<status status="PASS" starttime="20200831 08:38:40.130" endtime="20200831 08:38:40.131"></status>
 </kw>
 <kw name="Fetch Data Product">
 <arguments>
@@ -1104,8 +1104,8 @@
 <assign>
 <var>${signature}</var>
 </assign>
-<msg timestamp="20200828 11:44:43.248" level="INFO">${signature} = drOgo8lOo1YrLPJKU/Wjt51LQhe4dI40U/4ey+psEXI=</msg>
-<status status="PASS" starttime="20200828 11:44:43.248" endtime="20200828 11:44:43.248"></status>
+<msg timestamp="20200831 08:38:40.131" level="INFO">${signature} = jii0BdQ1iaFs2VzkXK/4fmmGgkDTUy0MOP/toHGWaRI=</msg>
+<status status="PASS" starttime="20200831 08:38:40.131" endtime="20200831 08:38:40.131"></status>
 </kw>
 <kw name="Set Headers" library="REST">
 <tags>
@@ -1115,7 +1115,7 @@
 <arguments>
 <arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:43.248" endtime="20200828 11:44:43.248"></status>
+<status status="PASS" starttime="20200831 08:38:40.132" endtime="20200831 08:38:40.132"></status>
 </kw>
 <kw name="Post" library="REST">
 <tags>
@@ -1126,7 +1126,7 @@
 <arg>${CONNECTOR_PATH}</arg>
 <arg>${body}</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:43.248" endtime="20200828 11:44:45.262"></status>
+<status status="PASS" starttime="20200831 08:38:40.132" endtime="20200831 08:38:40.167"></status>
 </kw>
 <kw name="Output Schema" library="REST">
 <tags>
@@ -1136,7 +1136,7 @@
 <arguments>
 <arg>response body</arg>
 </arguments>
-<msg timestamp="20200828 11:44:45.262" level="INFO">
+<msg timestamp="20200831 08:38:40.167" level="INFO">
 {
     "type": "object",
     "properties": {
@@ -1175,9 +1175,9 @@
         "error"
     ]
 }</msg>
-<status status="PASS" starttime="20200828 11:44:45.262" endtime="20200828 11:44:45.264"></status>
+<status status="PASS" starttime="20200831 08:38:40.167" endtime="20200831 08:38:40.169"></status>
 </kw>
-<status status="PASS" starttime="20200828 11:44:43.247" endtime="20200828 11:44:45.264"></status>
+<status status="PASS" starttime="20200831 08:38:40.131" endtime="20200831 08:38:40.169"></status>
 </kw>
 <kw name="Integer" library="REST">
 <tags>
@@ -1188,7 +1188,7 @@
 <arg>response status</arg>
 <arg>422</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:45.264" endtime="20200828 11:44:45.265"></status>
+<status status="PASS" starttime="20200831 08:38:40.170" endtime="20200831 08:38:40.170"></status>
 </kw>
 <kw name="Integer" library="REST">
 <tags>
@@ -1199,7 +1199,7 @@
 <arg>response body error status</arg>
 <arg>422</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:45.265" endtime="20200828 11:44:45.265"></status>
+<status status="PASS" starttime="20200831 08:38:40.170" endtime="20200831 08:38:40.171"></status>
 </kw>
 <kw name="String" library="REST">
 <tags>
@@ -1210,12 +1210,12 @@
 <arg>response body error message parameters.ids 0</arg>
 <arg>Missing data for required field.</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:45.266" endtime="20200828 11:44:45.266"></status>
+<status status="PASS" starttime="20200831 08:38:40.171" endtime="20200831 08:38:40.171"></status>
 </kw>
 <tags>
 <tag>bug-0003</tag>
 </tags>
-<status status="PASS" starttime="20200828 11:44:43.244" endtime="20200828 11:44:45.267" critical="yes"></status>
+<status status="PASS" starttime="20200831 08:38:40.127" endtime="20200831 08:38:40.172" critical="yes"></status>
 </test>
 <test id="s1-t5" name="fetch, 200, Empty ids">
 <kw name="Get Body">
@@ -1231,8 +1231,8 @@
 <assign>
 <var>${body}</var>
 </assign>
-<msg timestamp="20200828 11:44:45.271" level="INFO">${body} = {'productCode': 'default_enerkey', 'parameters': {'ids': ['15794', '35378', '45410'], 'startTime': '2014-04-05T06:28:30.000Z', 'endTime': '2014-04-06T06:28:30.000Z'}}</msg>
-<status status="PASS" starttime="20200828 11:44:45.271" endtime="20200828 11:44:45.271"></status>
+<msg timestamp="20200831 08:38:40.174" level="INFO">${body} = {'productCode': 'polku-connector', 'parameters': {'ids': ['15794', '35378', '45410'], 'startTime': '2014-04-05T06:28:30.000Z', 'endTime': '2014-04-06T06:28:30.000Z'}}</msg>
+<status status="PASS" starttime="20200831 08:38:40.174" endtime="20200831 08:38:40.174"></status>
 </kw>
 <kw name="Get Current Date" library="DateTime">
 <doc>Returns current local or UTC time with an optional increment.</doc>
@@ -1243,8 +1243,8 @@
 <assign>
 <var>${now}</var>
 </assign>
-<msg timestamp="20200828 11:44:45.271" level="INFO">${now} = 2020-08-28T08:44:45+00:00</msg>
-<status status="PASS" starttime="20200828 11:44:45.271" endtime="20200828 11:44:45.271"></status>
+<msg timestamp="20200831 08:38:40.174" level="INFO">${now} = 2020-08-31T05:38:40+00:00</msg>
+<status status="PASS" starttime="20200831 08:38:40.174" endtime="20200831 08:38:40.174"></status>
 </kw>
 <kw name="Set To Dictionary" library="Collections">
 <doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
@@ -1253,7 +1253,7 @@
 <arg>timestamp</arg>
 <arg>${now}</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:45.271" endtime="20200828 11:44:45.271"></status>
+<status status="PASS" starttime="20200831 08:38:40.174" endtime="20200831 08:38:40.174"></status>
 </kw>
 <kw name="Set To Dictionary" library="Collections">
 <doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
@@ -1261,7 +1261,7 @@
 <arg>${body}</arg>
 <arg>&amp;{kwargs}</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:45.271" endtime="20200828 11:44:45.272"></status>
+<status status="PASS" starttime="20200831 08:38:40.175" endtime="20200831 08:38:40.175"></status>
 </kw>
 <kw name="Evaluate" library="BuiltIn">
 <doc>Evaluates the given expression in Python and returns the result.</doc>
@@ -1272,11 +1272,11 @@
 <assign>
 <var>${json_string}</var>
 </assign>
-<msg timestamp="20200828 11:44:45.272" level="INFO">${json_string} = {"productCode": "default_enerkey", "parameters": {"ids": ["15794", "35378", "45410"], "startTime": "2014-04-05T06:28:30.000Z", "endTime": "2014-04-06T06:28:30.000Z"}, "timestamp": "2020-08-28T08:44:45...</msg>
-<status status="PASS" starttime="20200828 11:44:45.272" endtime="20200828 11:44:45.272"></status>
+<msg timestamp="20200831 08:38:40.175" level="INFO">${json_string} = {"productCode": "polku-connector", "parameters": {"ids": ["15794", "35378", "45410"], "startTime": "2014-04-05T06:28:30.000Z", "endTime": "2014-04-06T06:28:30.000Z"}, "timestamp": "2020-08-31T05:38:40...</msg>
+<status status="PASS" starttime="20200831 08:38:40.175" endtime="20200831 08:38:40.175"></status>
 </kw>
-<msg timestamp="20200828 11:44:45.272" level="INFO">${body} = {'productCode': 'default_enerkey', 'parameters': {'ids': ['15794', '35378', '45410'], 'startTime': '2014-04-05T06:28:30.000Z', 'endTime': '2014-04-06T06:28:30.000Z'}, 'timestamp': '2020-08-28T08:44:45...</msg>
-<status status="PASS" starttime="20200828 11:44:45.270" endtime="20200828 11:44:45.272"></status>
+<msg timestamp="20200831 08:38:40.175" level="INFO">${body} = {'productCode': 'polku-connector', 'parameters': {'ids': ['15794', '35378', '45410'], 'startTime': '2014-04-05T06:28:30.000Z', 'endTime': '2014-04-06T06:28:30.000Z'}, 'timestamp': '2020-08-31T05:38:40...</msg>
+<status status="PASS" starttime="20200831 08:38:40.173" endtime="20200831 08:38:40.175"></status>
 </kw>
 <kw name="Set To Dictionary" library="Collections">
 <doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
@@ -1284,7 +1284,7 @@
 <arg>${body["parameters"]}</arg>
 <arg>ids=@{EMPTY}</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:45.273" endtime="20200828 11:44:45.273"></status>
+<status status="PASS" starttime="20200831 08:38:40.176" endtime="20200831 08:38:40.176"></status>
 </kw>
 <kw name="Fetch Data Product">
 <arguments>
@@ -1298,8 +1298,8 @@
 <assign>
 <var>${signature}</var>
 </assign>
-<msg timestamp="20200828 11:44:45.274" level="INFO">${signature} = L+Sfti6T0CunUp0n5On5VHnBi7jUsnvdeE0HMTZDeDs=</msg>
-<status status="PASS" starttime="20200828 11:44:45.274" endtime="20200828 11:44:45.274"></status>
+<msg timestamp="20200831 08:38:40.177" level="INFO">${signature} = znUyYzVHD+MylZuPjWkn7bFhbjFWQ7c7q+56fefXf8U=</msg>
+<status status="PASS" starttime="20200831 08:38:40.176" endtime="20200831 08:38:40.177"></status>
 </kw>
 <kw name="Set Headers" library="REST">
 <tags>
@@ -1309,7 +1309,7 @@
 <arguments>
 <arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:45.274" endtime="20200828 11:44:45.274"></status>
+<status status="PASS" starttime="20200831 08:38:40.177" endtime="20200831 08:38:40.184"></status>
 </kw>
 <kw name="Post" library="REST">
 <tags>
@@ -1320,7 +1320,7 @@
 <arg>${CONNECTOR_PATH}</arg>
 <arg>${body}</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:45.274" endtime="20200828 11:44:47.287"></status>
+<status status="PASS" starttime="20200831 08:38:40.185" endtime="20200831 08:38:40.224"></status>
 </kw>
 <kw name="Output Schema" library="REST">
 <tags>
@@ -1330,7 +1330,7 @@
 <arguments>
 <arg>response body</arg>
 </arguments>
-<msg timestamp="20200828 11:44:47.288" level="INFO">
+<msg timestamp="20200831 08:38:40.225" level="INFO">
 {
     "type": "object",
     "properties": {
@@ -1359,15 +1359,15 @@
                 },
                 "created": {
                     "type": "string",
-                    "default": "2020-08-28T11:44:47+03:00"
+                    "default": "2020-08-31T05:38:39+00:00"
                 },
                 "creator": {
                     "type": "string",
-                    "default": "http://localhost:8080/translator/v1/public.key"
+                    "default": "http://connector.oftrust.dev/translator/v1/public.key"
                 },
                 "signatureValue": {
                     "type": "string",
-                    "default": "aKNgwdwGXHQAlFTHP8ZnFRw4MD4t2AgudxFOGq+Y+SoOvbt201LefUlgmr03A3kj9toLT9LMgfgU6adTFW9Y0+hQzTP9f3E7nUMPfub0ssZm/eT+2sThBhBvGwzeZyuSDPSgjSCyIXz0otqQlJJTXLFcOwX+Xm6n5Gsy/reOeXFE8QphsryuK9eeB3H6JZ5l2jHJvZuxpLmeNb0y9AfiVUcKrn50RsCMMHujnCDqfOhZYvPrhipLKKU1lALOS0oC9i8tn7IdTNUcInp59KlnzwV2ATcLUP7igu21nYmDMXXj/komrYnpSRMuLIKrmYNA08yO7uhXsVHgcr5VzT4/JPlZygy88xDrSYX7bdbVt3oh9e0juUqylyM4lgj0k+drLFUN+kk4W1Dlh3GHsEq6so954QxiVLYv87lz/DNXQF71fdeIoWqP9NZGRn82qORrdhSJuecfhBNZphkbFK01mFjOCyQvvckCM+ejkM3SDiexcXcKuEH1e4x0YKNEzk6EaKZu+CfqTUtPO2hrVH4Cj3PnORjl45rsNHKnChn/mzMHHSu7igYTYWImR7Vns8E+EhRl+yrC9B9Fpl6GF/8owDzOYKpjy1n+lJlSxNC/SU43MBhG79eEuDiKJNIZjYvQoum/rSS0IQMq00xO5bJXEQWJOYs6vqKqTy3jqWam8H0="
+                    "default": "cucZYoJOPPiSnjnBLyh7Llwb7l54/SPDJOHcV6E+yg+iu423BwYSYyQJkDs0ovLazIybwW0ASaZWoLdFtL6Topgg0g/2N4ZH5HoNg2aUtzhUlv+8AJM0dQoFu0m65DPs5b4xG4tinq7C9Vcr/ssyJ7G4mjdJU2hPJhjP9TK4VnoYK4ufgfwjK6zWsEZCkpKzqwT0KkzrqPAu/eVFzH2NHoCxyW6BT5rhfMuFcerLuCc1HjUMzqSQguUcj93WRqI4+vapcNZz7tcDwmYpGoBA3E2cgm8AcT+3VtjvX4Hvh3koNbtLZBwBeJbw4Zengs6rgcbm7i9hbXzE2Vq2HaPrBr4+Du6VSrxMaOtfCzz7tVYCiN5UlCT3fkL9YWQ1hezFgts7eJprnZWMYKbhtm9zjv/GuPzI8+H8dX+x+dt/8wJWsbbzdzl8AvMy13evSRp8basb0GNJFN2cTzWyOzyFU0b+WfZsv4WO1T6Rvzh3nfn+WmpQUNK/SYzwojpAybgpiJ5JdJ158aj9YpmcjKaX8QrZmjZGWVnBQyOyOCAFG0acUCeJTbu/bClyeiZj36XsTpLHU/pOgKgNsaSvyQB7qJ7IMfP+NKesdQCr708ZLR7XH5T4Vr0j5QeIHxBSd8lcWxhq3ZV7OhoEErL/Y/VZbdPPFdysJ3v2msuJKnI+Hbs="
                 }
             },
             "required": [
@@ -1384,9 +1384,9 @@
         "signature"
     ]
 }</msg>
-<status status="PASS" starttime="20200828 11:44:47.288" endtime="20200828 11:44:47.290"></status>
+<status status="PASS" starttime="20200831 08:38:40.224" endtime="20200831 08:38:40.227"></status>
 </kw>
-<status status="PASS" starttime="20200828 11:44:45.273" endtime="20200828 11:44:47.290"></status>
+<status status="PASS" starttime="20200831 08:38:40.176" endtime="20200831 08:38:40.227"></status>
 </kw>
 <kw name="Integer" library="REST">
 <tags>
@@ -1397,7 +1397,7 @@
 <arg>response status</arg>
 <arg>200</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:47.291" endtime="20200828 11:44:47.291"></status>
+<status status="PASS" starttime="20200831 08:38:40.228" endtime="20200831 08:38:40.228"></status>
 </kw>
 <kw name="String" library="REST">
 <tags>
@@ -1408,7 +1408,7 @@
 <arg>response body @context</arg>
 <arg>https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:47.292" endtime="20200828 11:44:47.292"></status>
+<status status="PASS" starttime="20200831 08:38:40.229" endtime="20200831 08:38:40.229"></status>
 </kw>
 <kw name="Array" library="REST">
 <tags>
@@ -1419,15 +1419,15 @@
 <arg>response body data sensors</arg>
 <arg>maxItems=0</arg>
 </arguments>
-<status status="PASS" starttime="20200828 11:44:47.292" endtime="20200828 11:44:47.293"></status>
+<status status="PASS" starttime="20200831 08:38:40.229" endtime="20200831 08:38:40.230"></status>
 </kw>
 <tags>
 <tag>bug-0004</tag>
 </tags>
-<status status="PASS" starttime="20200828 11:44:45.268" endtime="20200828 11:44:47.293" critical="yes"></status>
+<status status="PASS" starttime="20200831 08:38:40.173" endtime="20200831 08:38:40.230" critical="yes"></status>
 </test>
 <doc>EnerKey Data Api Tests</doc>
-<status status="PASS" starttime="20200828 11:44:35.308" endtime="20200828 11:44:47.295"></status>
+<status status="PASS" starttime="20200831 08:38:38.806" endtime="20200831 08:38:40.232"></status>
 </suite>
 <statistics>
 <total>
