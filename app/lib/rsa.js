@@ -110,9 +110,9 @@ const stringifyBody = function (body) {
  * @param {Object} body
  *   The payload to sign.
  * @param {String} [key]
- *   Private key.
- * @return {Object}
- *   The signature object.
+ *   Private key used for signing.
+ * @return {String}
+ *   The signature value.
  */
 const generateSignature = function (body, key) {
     // Use local private key, if not given.
@@ -130,6 +130,7 @@ const generateSignature = function (body, key) {
     } catch (err) {
         winston.log('error', err.message);
     }
+
     return signatureValue;
 };
 
@@ -140,12 +141,15 @@ const generateSignature = function (body, key) {
  *   Payload to validate.
  * @param {String} signature
  *   Signature to validate.
- * @param {String/Object} publicKey
+ * @param {String/Object} [key]
  *   Public key used for validation.
  * @return {Boolean}
  *   True if signature is valid, false otherwise.
  */
-const verifySignature = function (body, signature, publicKey) {
+const verifySignature = function (body, signature, key) {
+    // Use local public key, if not given.
+    if (!key) key = publicKey;
+
     // Initialize verifier.
     const verifier = crypto.createVerify('sha256');
 
@@ -153,7 +157,7 @@ const verifySignature = function (body, signature, publicKey) {
     verifier.update(stringifyBody(body));
 
     // Verify base64 encoded SHA256 signature.
-    return verifier.verify(publicKey, signature, 'base64')
+    return verifier.verify(key, signature, 'base64');
 };
 
 /**
