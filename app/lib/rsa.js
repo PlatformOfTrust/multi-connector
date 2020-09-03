@@ -101,7 +101,8 @@ const stringifyBody = function (body) {
     // Return string.
     return JSON.stringify(sortedBody)
         .replace(/[\u007F-\uFFFF]/g, chr => '\\u' + ('0000' + chr.charCodeAt(0)
-            .toString(16)).substr(-4)).replace(new RegExp('":', 'g'), '": ');
+            .toString(16)).substr(-4)).replace(new RegExp('":', 'g'), '": ')
+        .trim();
 };
 
 /**

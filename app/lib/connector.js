@@ -412,8 +412,8 @@ const interpretMode = function (config, parameters) {
  * Consumes described resources.
  *
  * @param {Object} reqBody
- * @return {Array}
- *   Data array.
+ * @return {Object}
+ *   Data object.
  */
 const getData = async (reqBody) => {
     /** Default request validation */
@@ -548,11 +548,15 @@ const getData = async (reqBody) => {
         }
     }
 
+    // Set output key names.
+    const OBJECT = _.get(template, 'pot.object') || defaultOutput.object;
+    const ARRAY = _.get(template, 'pot.array') || defaultOutput.array;
+
     // Compose output payload.
     let output = {
         [CONTEXT]: _.get(template, 'pot.context') || defaultOutput.context,
-        [_.get(template, 'pot.object') || defaultOutput.object]: {
-            [_.get(template, 'pot.array') || defaultOutput.array]: _.flatten(items)
+        [OBJECT]: {
+            [ARRAY]: _.flatten(items)
         }
     };
 
@@ -563,7 +567,10 @@ const getData = async (reqBody) => {
         }
     }
 
-    return Promise.resolve(output);
+    return Promise.resolve({
+        output,
+        dataKey: OBJECT
+    });
 };
 
 /**
