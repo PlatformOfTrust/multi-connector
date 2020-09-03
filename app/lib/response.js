@@ -183,8 +183,8 @@ const handleData = async (config, path, index, data) => {
             for (let d = 0; d < Object.entries(measurement.data).length; d++ ) {
                 item[keys.data].push({
                     [keys.type]: Object.entries(measurement.data)[d][0],
-                    [keys.value]: Object.entries(measurement.data)[d][1],
                     [keys.timestamp]: measurement.timestamp,
+                    [keys.value]: Object.entries(measurement.data)[d][1],
                 });
             }
             measurements.push(item);
