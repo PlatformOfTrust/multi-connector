@@ -127,7 +127,7 @@ const generateSignature = function (body, key) {
         signatureValue = crypto
             .createSign('sha256')
             .update(stringifyBody(body))
-            .sign({key, padding: crypto.constants.RSA_PKCS1_PSS_PADDING}, 'base64');
+            .sign(key.toString(), 'base64');
     } catch (err) {
         winston.log('error', err.message);
     }

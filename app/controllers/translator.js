@@ -40,8 +40,8 @@ module.exports.fetch = async (req, res) => {
             signature: {
                 ...signature,
                 signatureValue: rsa.generateSignature({
-                    ...(result.output[result.dataKey || 'data'] || {}),
-                    __signed__: signature.created
+                    __signed__: signature.created,
+                    ...(result.output[result.dataKey || 'data'] || {})
                 })
             }
         });

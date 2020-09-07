@@ -1,4 +1,3 @@
-const crypto = require('crypto');
 const expect = require('chai').expect;
 const rsa = require('../app/lib/rsa');
 
@@ -82,16 +81,10 @@ let body = {
 
 describe('RSA library tests', async () => {
     it('should return true', () => {
-        expect(rsa.verifySignature(body, rsa.generateSignature(body, privateKey), {
-            key: publicKey,
-            padding: crypto.constants.RSA_PKCS1_PSS_PADDING
-        })).to.equal(true);
+        expect(rsa.verifySignature(body, rsa.generateSignature(body, privateKey), publicKey.toString())).to.equal(true);
     });
 
     it('should return false', () => {
-        expect(rsa.verifySignature({...body, add: 'me'}, rsa.generateSignature(body, privateKey), {
-            key: publicKey,
-            padding: crypto.constants.RSA_PKCS1_PSS_PADDING
-        })).to.equal(false);
+        expect(rsa.verifySignature({...body, add: 'me'}, rsa.generateSignature(body, privateKey), publicKey.toString())).to.equal(false);
     });
 });
