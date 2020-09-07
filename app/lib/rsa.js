@@ -2,6 +2,7 @@
 /**
  * Module dependencies.
  */
+const _ = require('lodash');
 const crypto = require('crypto');
 const cache = require('../cache');
 const request = require('request');
@@ -77,6 +78,33 @@ const sendPublicKey = function (req, res) {
 };
 
 /**
+ * Sorts object recursively.
+ *
+ * @param {Object} object
+ * @return {Object}
+ *   Sorted object.
+ */
+const sortObject = function (object) {
+    let sortedObj = {};
+    let keys = _.keys(object);
+
+    // Sort keys.
+    keys = _.sortBy(keys, key => key);
+
+    // Iterate sub objects.
+    _.each(keys, key => {
+        if (typeof object[key] == 'object' && !(object[key] instanceof Array)) {
+            /** Recursion. */
+            sortedObj[key] = sortObject(object[key]);
+        } else {
+            sortedObj[key] = object[key];
+        }
+    });
+
+    return sortedObj;
+}
+
+/**
  * Stringifies body object.
  *
  * @param {Object} body
@@ -84,22 +112,8 @@ const sendPublicKey = function (req, res) {
  *   Stringified body.
  */
 const stringifyBody = function (body) {
-    // Sort request body.
-    const sortedBody = {};
-    Object.keys(body).sort().forEach(k => {
-        sortedBody[k] = body[k]
-    });
-
-    if (Object.hasOwnProperty.call(body, 'parameters')) {
-        const sortedParameters = {};
-        Object.keys(body.parameters).sort().forEach(k => {
-            sortedParameters[k] = body.parameters[k]
-        });
-        sortedBody.parameters = sortedParameters;
-    }
-
-    // Return string.
-    return JSON.stringify(sortedBody)
+    // Stringify sorted object.
+    return JSON.stringify(sortObject(body))
         .replace(/[\u007F-\uFFFF]/g, chr => '\\u' + ('0000' + chr.charCodeAt(0)
             .toString(16)).substr(-4)).replace(new RegExp('":', 'g'), '": ')
         .trim();
