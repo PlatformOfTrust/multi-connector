@@ -6,6 +6,7 @@
 
 Following data sources are supported out of the box. Example configs can be found at the repo.
 
+- Digitraffic Live Trains API
 - EnerKey Data API
 - ENTSO-E Transparency Platform
 - Fidelix Pilvivalvomo

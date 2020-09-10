@@ -152,6 +152,7 @@ const requestData = async (config, path, index) => {
         headers: config.authConfig.headers || {},
         resolveWithFullResponse: true,
         query: [],
+        gzip: true,
         encoding: null
     };
 

@@ -1,0 +1,34 @@
+{
+  "plugins": [
+  ],
+  "protocol": "rest",
+  "authConfig": {
+    "url": "https://rata.digitraffic.fi/api",
+    "headers": {
+      "Accept-Encoding": "gzip"
+    },
+    "path": "/v1/live-trains/station/${id}?arrived_trains=5&arriving_trains=5&departed_trains=5&departing_trains=5&include_nonstopping=false&version=0"
+  },
+  "dataObjects": [
+    ""
+  ],
+  "dataPropertyMappings": {
+    "TrainTimetable": "timeTableRows"
+  },
+  "generalConfig": {
+    "hardwareId": {
+      "dataObjectProperty": "trainNumber"
+    },
+    "timestamp": {
+      "dataObjectProperty": "timetableAcceptanceDate"
+    }
+  },
+  "pot": {
+    "context": "https://standards.oftrust.net/v2/Context/DataProductOutput/Timetable/",
+    "array": "trains",
+    "data": "timetables",
+    "id": "id",
+    "value": "timetable",
+    "timestamp": "timestamp"
+  }
+}
