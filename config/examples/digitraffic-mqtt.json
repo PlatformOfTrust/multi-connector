@@ -1,0 +1,26 @@
+{
+  "template": "digitraffic-mqtt",
+  "static": {
+    "url": "mqtt://rata-mqtt.digitraffic.fi",
+    "topic": [
+      "trains-by-station/HKI",
+      "trains-by-station/TPE"
+    ]
+  },
+  "dynamic": {
+    "authConfig.path": "ids"
+  },
+  "plugins": {
+    "azure-service-bus": {
+      "url": "<service-bus-inbound-endpoint>",
+      "pot": {
+        "data": "data"
+      }
+    }
+  },
+  "request": {
+    "ids": [
+      "<station-shortcode>"
+    ]
+  }
+}

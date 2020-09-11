@@ -16,7 +16,7 @@ const plugins = {};
 const supportedPlugins = ['azure-service-bus'];
 
 /**
- * Queries measurements cache.
+ * Queries messages cache.
  *
  * @param {Object} config
  * @param {Array} pathArray
@@ -41,13 +41,20 @@ const getData = async (config, pathArray) => {
             }
         }
 
-        // Retrieve latest measurements from cache.
-        const result = Object.values(cache.getDoc('measurements', config.productCode) || {});
+        // Retrieve latest messages from cache.
+        const result = cache.getDoc('messages', config.productCode) || {};
         for (let p = 0; p < pathArray.length; p++) {
-            // Find measurement by id.
-            const measurement = result.find(i => i[options.id] === pathArray[p]);
-            if (measurement) items.push(await response.handleData(config, pathArray[p], p, measurement));
+            if (Object.hasOwnProperty.call(result, pathArray[p])) {
+                /** Id and topic are linked. */
+                const message = Object.values(result);
+                if (message) items.push(await response.handleData(config, pathArray[p], p, message));
+            } else {
+                /** Messages have to be find by id. */
+                const message = Object.values(result).find(i => i[options.id] === pathArray[p]);
+                if (message) items.push(await response.handleData(config, pathArray[p], p, message));
+            }
         }
+
     } catch (err) {
         winston.log('error', err.message);
 
@@ -71,28 +78,33 @@ const getData = async (config, pathArray) => {
 const connect = async (config, productCode) => {
     try {
         const url = config.static.url;
-        const topic = config.static.topic;
-        const key = cache.getDoc('resources', config.static.key);
-        const cert = cache.getDoc('resources', config.static.cert);
+        let topic = config.static.topic;
+        let options = {};
+
+        if (Object.hasOwnProperty.call(config.static, 'key')) {
+            options.key = cache.getDoc('resources', config.static.key);
+        }
+
+        if (Object.hasOwnProperty.call(config.static, 'cert')) {
+            options.cert = cache.getDoc('resources', config.static.cert);
+        }
 
         // Connect to broker.
-        clients[productCode] = mqtt.connect(url, {
-            key: Buffer.from(key),
-            cert: Buffer.from(cert),
-        });
+        clients[productCode] = mqtt.connect(url, options);
 
         // Subscribe to defined topic on connect.
         clients[productCode].on('connect', () => {
+            /** Topic can be a string or an array of strings. */
             clients[productCode].subscribe(topic);
             winston.log('info', productCode + ' subscribed to topic ' + topic + '.');
         });
 
-        // Store received measurements to cache on receive.
+        // Store received messages to cache on receive.
         clients[productCode].on('message', async (topic, message) => {
             try {
-                const result = cache.getDoc('measurements', productCode) || {};
+                const result = cache.getDoc('messages', productCode) || {};
                 result[topic] = JSON.parse(message.toString());
-                cache.setDoc('measurements', productCode, result);
+                cache.setDoc('messages', productCode, result);
             } catch (err) {
                 winston.log('error', err.message);
             }

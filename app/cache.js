@@ -15,11 +15,11 @@ const defaultTTL = 86400; // 24h
 let cache = {
     grants: {cache: new NodeCache()},
     configs: {cache: new NodeCache()},
+    messages: {cache: new NodeCache()},
     templates: {cache: new NodeCache()},
     resources: {cache: new NodeCache()},
     publicKeys: {cache: new NodeCache()},
-    dataProducts: {cache: new NodeCache()},
-    measurements: {cache: new NodeCache()},
+    dataProducts: {cache: new NodeCache()}
 };
 
 const getDoc = function (collection, id) {

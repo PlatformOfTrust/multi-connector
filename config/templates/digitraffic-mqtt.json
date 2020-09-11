@@ -1,0 +1,32 @@
+{
+  "plugins": [
+  ],
+  "protocol": "mqtt",
+  "authConfig": {
+    "url": "${url}",
+    "path": "trains-by-station/${id}",
+    "topic": "${topic}"
+  },
+  "dataObjects": [
+    ""
+  ],
+  "dataPropertyMappings": {
+    "TrainTimetable": "timeTableRows"
+  },
+  "generalConfig": {
+    "hardwareId": {
+      "dataObjectProperty": "trainNumber"
+    },
+    "timestamp": {
+      "dataObjectProperty": "timetableAcceptanceDate"
+    }
+  },
+  "pot": {
+    "context": "https://standards.oftrust.net/v2/Context/DataProductOutput/Timetable/",
+    "array": "trains",
+    "data": "timetables",
+    "id": "id",
+    "value": "timetable",
+    "timestamp": "timestamp"
+  }
+}
