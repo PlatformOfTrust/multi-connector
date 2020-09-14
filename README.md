@@ -33,8 +33,8 @@ Using environment variables is optional.
 
 Connector generates RSA keys automatically, but keys can be also applied from the environment.
 ```
-PRIVATE_KEY=-----BEGIN PRIVATE KEY-----\nMII...
-PUBLIC_KEY=-----BEGIN PUBLIC KEY-----\nMII...
+PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMII..."
+PUBLIC_KEY="-----BEGIN PUBLIC KEY-----\nMII..."
 ```
 
 Issuing and renewing free Let's Encrypt SSL certificate by Greenlock Express v4 is supported by including the following variables.
