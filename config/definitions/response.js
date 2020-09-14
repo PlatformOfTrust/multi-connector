@@ -11,10 +11,10 @@ const defaultOutput = {
     object: 'data',
     /** Payload */
     timestamp: 'timestamp',
+    data: 'measurements',
     array: 'sensors',
     value: 'value',
     type: '@type',
-    data: 'data',
     id: 'id'
 };
 

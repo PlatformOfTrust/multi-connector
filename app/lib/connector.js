@@ -534,19 +534,6 @@ const getData = async (reqBody) => {
     // Initialize items array.
     let items = [];
 
-    // Check that a protocol is defined.
-    if (!Object.hasOwnProperty.call(template, 'protocol')) {
-        return rest.promiseRejectWithError(500, 'Connection protocol not defined.');
-    } else {
-        // Check that the protocol is supported.
-        if (!Object.hasOwnProperty.call(protocols, template.protocol)) {
-            return rest.promiseRejectWithError(500, 'Connection protocol ' + template.protocol + ' is not supported.');
-        } else {
-            items = await protocols[template.protocol].getData(template, pathArray);
-            if (!items) items = [];
-        }
-    }
-
     // Initialize output definitions.
     template.output = template.output || {};
     template.output = {
@@ -559,6 +546,19 @@ const getData = async (reqBody) => {
         data: template.output.data || defaultOutput.data,
         id: template.output.id || defaultOutput.id,
     };
+
+    // Check that a protocol is defined.
+    if (!Object.hasOwnProperty.call(template, 'protocol')) {
+        return rest.promiseRejectWithError(500, 'Connection protocol not defined.');
+    } else {
+        // Check that the protocol is supported.
+        if (!Object.hasOwnProperty.call(protocols, template.protocol)) {
+            return rest.promiseRejectWithError(500, 'Connection protocol ' + template.protocol + ' is not supported.');
+        } else {
+            items = await protocols[template.protocol].getData(template, pathArray);
+            if (!items) items = [];
+        }
+    }
 
     // Set output key names.
     const CONTEXT = _.get(template, 'output.context');
