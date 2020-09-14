@@ -6,15 +6,6 @@ const winston = require('../../logger.js');
 const moment = require('moment');
 const _ = require('lodash');
 
-/** Import response definitions. */
-const {
-    TIMESTAMP,
-    VALUE,
-    TYPE,
-    DATA,
-    ID
-} = require('../../config/definitions/response');
-
 /**
  * Combines keys and values from two arrays to an object.
  *
@@ -96,17 +87,18 @@ const handleData = async (config, path, index, data) => {
         return Promise.resolve();
     }
 
-    // Define the response as data object by default.
+    // Define response as data object by default.
     if (config.dataObjects.length < 1) config.dataObjects = [''];
 
     let measurements = [];
 
+    // Define output key names for data objects.
     const keys = {
-        id: _.get(config, 'pot.id') || ID || 'id',
-        data: _.get(config, 'pot.data') || DATA || 'data',
-        type: _.get(config, 'pot.type') || TYPE || 'type',
-        value: _.get(config, 'pot.value') || VALUE || 'value',
-        timestamp: _.get(config, 'pot.timestamp') || TIMESTAMP || 'timestamp',
+        timestamp: _.get(config, 'output.timestamp') || 'timestamp',
+        data: _.get(config, 'output.data') || 'measurements',
+        value: _.get(config, 'output.value') || 'value',
+        type: _.get(config, 'output.type') || 'type',
+        id: _.get(config, 'output.id') || 'id'
     };
 
     for (let i = 0; i < config.dataObjects.length; i++) {
@@ -233,4 +225,3 @@ const handleData = async (config, path, index, data) => {
 module.exports = {
     handleData,
 };
-

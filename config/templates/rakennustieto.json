@@ -27,8 +27,8 @@
       "dataObjectProperty": "ItemModifiedAt"
     }
   },
-  "pot": {
-    "context": "https://standards.oftrust.net/v2/Context/DataProductOutput/Product/",
+  "output": {
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Product/",
     "array": "products",
     "data": "data"
   }

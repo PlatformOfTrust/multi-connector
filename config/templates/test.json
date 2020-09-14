@@ -23,13 +23,13 @@
       "dataObjectProperty": "timestamp"
     }
   },
-  "pot": {
-    "context": "https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/",
-    "object": "data",
+  "output": {
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/",
+    "timestamp": "timestamp",
     "array": "sensors",
-    "data": "data",
-    "id": "id",
+    "object": "data",
     "value": "value",
-    "timestamp": "timestamp"
+    "data": "data",
+    "id": "id"
   }
 }

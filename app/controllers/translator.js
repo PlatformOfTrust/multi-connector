@@ -41,7 +41,7 @@ module.exports.fetch = async (req, res) => {
                 ...signature,
                 signatureValue: rsa.generateSignature({
                     __signed__: signature.created,
-                    ...(result.output[result.dataKey || 'data'] || {})
+                    ...(result.output[result.payloadKey || 'data'] || {})
                 })
             }
         });

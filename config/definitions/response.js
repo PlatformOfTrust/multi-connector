@@ -1,27 +1,22 @@
 "use strict";
-/**
- * Response definitions.
- */
-const definitions = {
-    CONTEXT: '@context',
-    TIMESTAMP: 'timestamp',
-    DATA: 'measurements',
-    VALUE: 'value',
-    TYPE: '@type',
-    ID: 'id',
-};
-
 /** Default output definitions. */
 const defaultOutput = {
-    context: 'https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/',
+    /** Body */
+    contextValue: 'https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/',
+    context: '@context',
     object: 'data',
-    array: 'sensors'
+    /** Payload */
+    timestamp: 'timestamp',
+    array: 'sensors',
+    value: 'value',
+    type: '@type',
+    data: 'data',
+    id: 'id'
 };
 
 /**
  * Expose definitions.
  */
 module.exports = {
-    ...definitions,
     defaultOutput
 };

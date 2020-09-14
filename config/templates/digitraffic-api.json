@@ -23,12 +23,12 @@
       "dataObjectProperty": "timetableAcceptanceDate"
     }
   },
-  "pot": {
-    "context": "https://standards.oftrust.net/v2/Context/DataProductOutput/Timetable/",
-    "array": "trains",
+  "output": {
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Timetable/",
+    "timestamp": "timestamp",
     "data": "timetables",
-    "id": "id",
     "value": "timetable",
-    "timestamp": "timestamp"
+    "array": "trains",
+    "id": "id"
   }
 }

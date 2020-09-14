@@ -31,13 +31,18 @@
       "dataObjectProperty": "Publication_MarketDocument.createdDateTime"
     }
   },
-  "pot": {
-    "context": "https://standards.oftrust.net/v2/Context/DataProductOutput/Forecast/Price/Electricity/",
+  "input": {
+    "required": [
+      "parameters.targetObject",
+      "parameters.period"
+    ]
+  },
+  "output": {
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Forecast/Price/Electricity/",
+    "timestamp": "timestamp",
     "array": "forecasts",
     "data": "pricePlans",
-    "id": "id",
     "value": "rate",
-    "timestamp": "timestamp",
-    "required": ["parameters.targetObject", "parameters.period"]
+    "id": "id"
   }
 }

@@ -20,8 +20,8 @@
       "dataObjectProperty": "companyId"
     }
   },
-  "pot": {
-    "context": "https://standards.oftrust.net/v2/Context/DataProductOutput/Company/",
+  "output": {
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Company/",
     "array": "companies",
     "data": "data"
   }

@@ -31,7 +31,6 @@ const {
 
 /** Import platform of trust response definitions. */
 const {
-    CONTEXT,
     defaultOutput
 } = require('../../config/definitions/response');
 
@@ -440,11 +439,11 @@ const getData = async (reqBody) => {
     /* Custom requirements */
     let requiredParameters;
 
-    // Check for required request parameters from template.
-    if (Object.hasOwnProperty.call(template, 'pot')) {
-        if (Object.hasOwnProperty.call(template.pot, 'required')) {
-            if (Array.isArray(template.pot.required)) {
-                requiredParameters = _.uniq(template.pot.required).map((path) => {
+    // Check for required input request parameters from template.
+    if (Object.hasOwnProperty.call(template, 'input')) {
+        if (Object.hasOwnProperty.call(template.input, 'required')) {
+            if (Array.isArray(template.input.required)) {
+                requiredParameters = _.uniq(template.input.required).map((path) => {
                     return {[path.toString()]: {required: true}}
                 }).reduce(function (r, c) {
                     return Object.assign(r, c);
@@ -548,13 +547,27 @@ const getData = async (reqBody) => {
         }
     }
 
+    // Initialize output definitions.
+    template.output = template.output || {};
+    template.output = {
+        contextValue: template.output.contextValue || defaultOutput.contextValue,
+        context: template.output.context || defaultOutput.context,
+        object: template.output.object || defaultOutput.object,
+        array: template.output.array || defaultOutput.array,
+        value: template.output.value || defaultOutput.value,
+        type: template.output.type || defaultOutput.type,
+        data: template.output.data || defaultOutput.data,
+        id: template.output.id || defaultOutput.id,
+    };
+
     // Set output key names.
-    const OBJECT = _.get(template, 'pot.object') || defaultOutput.object;
-    const ARRAY = _.get(template, 'pot.array') || defaultOutput.array;
+    const CONTEXT = _.get(template, 'output.context');
+    const OBJECT = _.get(template, 'output.object');
+    const ARRAY = _.get(template, 'output.array');
 
     // Compose output payload.
     let output = {
-        [CONTEXT]: _.get(template, 'pot.context') || defaultOutput.context,
+        [CONTEXT]: _.get(template, 'output.contextValue'),
         [OBJECT]: {
             [ARRAY]: _.flatten(items)
         }
@@ -567,9 +580,10 @@ const getData = async (reqBody) => {
         }
     }
 
+    // Return output and payload key name separately for signing purposes.
     return Promise.resolve({
         output,
-        dataKey: OBJECT
+        payloadKey: OBJECT
     });
 };
 

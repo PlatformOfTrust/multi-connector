@@ -24,12 +24,12 @@
       "dataObjectProperty": "vehicle.timestamp.low"
     }
   },
-  "pot": {
-    "context": "https://standards.oftrust.net/v2/Context/DataProductOutput/Position/",
+  "output": {
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Position/",
+    "timestamp": "timestamp",
+    "value": "coordinates",
     "array": "vehicles",
     "data": "positions",
-    "id": "id",
-    "value": "coordinates",
-    "timestamp": "timestamp"
+    "id": "id"
   }
 }

@@ -66,7 +66,7 @@ const parameters = async (config, parameters) => {
  */
 const response = async (config, response) => {
     try {
-        response = parser.parse(response.body.replace(/\.(?=[^<>]*>)/g, ''));
+        response = parser.parse(response.body.toString().replace(/\.(?=[^<>]*>)/g, ''));
         return response;
     } catch (e) {
         return response;

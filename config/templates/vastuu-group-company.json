@@ -4,7 +4,7 @@
   ],
   "protocol": "rest",
   "authConfig": {
-    "url": "https://companyapi.beta.tilaajavastuu.fi",
+    "url": "https://companyapi.bet.tilaajavastuu.fi",
     "authPath": "/token",
     "clientId": "${clientId}",
     "clientSecret": "${clientSecret}",

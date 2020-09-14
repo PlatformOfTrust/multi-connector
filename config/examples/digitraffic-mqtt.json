@@ -13,7 +13,7 @@
   "plugins": {
     "azure-service-bus": {
       "url": "<service-bus-inbound-endpoint>",
-      "pot": {
+      "output": {
         "data": "data"
       }
     }
