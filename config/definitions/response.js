@@ -1,5 +1,9 @@
 "use strict";
-/** Default output definitions. */
+/**
+ * Connector response definitions.
+ */
+
+/** List of default output keys and values. */
 const defaultOutput = {
     /** Body */
     contextValue: 'https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/',
