@@ -466,11 +466,17 @@ const getData = async (reqBody) => {
     // Pick supported parameters from reqBody.
     const timestamp = parseTs(_.get(reqBody, TIMESTAMP) || moment.now());
     let parameters = {
-        ids: _.uniq(_.get(reqBody, IDS) || []),
+        ids: _.get(reqBody, IDS) || [],
         start: parseTs(_.get(reqBody, START)),
         end: parseTs(_.get(reqBody, END) || timestamp),
         dataTypes: _.uniq(_.get(reqBody, DATA_TYPES) || []),
     };
+
+    // Make sure ids is an array and remove duplicates.
+    if (!Array.isArray(parameters.ids)) {
+        parameters.ids = [parameters.ids];
+    }
+    parameters.ids = _.uniq(parameters.ids);
 
     // Leave unsupported parameters untouched.
     _.unset(reqBody, IDS);
