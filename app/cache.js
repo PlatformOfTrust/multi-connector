@@ -22,11 +22,24 @@ let cache = {
     dataProducts: {cache: new NodeCache()}
 };
 
+/**
+ * Reads a document.
+ *
+ * @param {String} collection
+ * @param {String} id
+ * @return {String}
+ */
 const getDoc = function (collection, id) {
     if (cache.hasOwnProperty(collection)) return cache[collection].cache.get(id.toString());
     else return undefined;
 };
 
+/**
+ * Reads documents by collection.
+ *
+ * @param {String} collection
+ * @return {Array}
+ */
 const getDocs = function (collection) {
     if (Object.hasOwnProperty.call(cache, collection)) {
         let array = [];
@@ -38,12 +51,25 @@ const getDocs = function (collection) {
     } else return [];
 };
 
+/**
+ * Reads keys by collection.
+ *
+ * @param {String} collection
+ * @return {Array}
+ */
 const getKeys = function (collection) {
     if (Object.hasOwnProperty.call(cache, collection)) {
         return cache[collection].cache.keys();
-    } else return {};
+    } else return [];
 };
 
+/**
+ * Writes a document to a collection.
+ *
+ * @param {String} collection
+ * @param {String} id
+ * @param {Object/Array/String} doc
+ */
 const setDoc = function (collection, id, doc) {
     doc = JSON.parse(JSON.stringify(doc));
     if (!Object.hasOwnProperty.call(cache, collection)) cache[collection] = {cache: new NodeCache(), TTL: defaultTTL};
@@ -54,10 +80,19 @@ const setDoc = function (collection, id, doc) {
     }
 };
 
+/**
+ * Deletes a document in a collection.
+ *
+ * @param {String} collection
+ * @param {String} id
+ */
 const delDoc = function (collection, id) {
     if (Object.hasOwnProperty.call(cache, collection)) cache[collection].cache.del(id.toString());
 };
 
+/**
+ * Expose methods.
+ */
 module.exports = {
     getDoc,
     getDocs,

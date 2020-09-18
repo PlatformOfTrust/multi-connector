@@ -2,7 +2,6 @@
 /**
  * Module dependencies.
  */
-const _ = require('lodash');
 const transformer = require('../../app/lib/transformer');
 
 /**
@@ -17,9 +16,10 @@ const map = {
     ItemTalo2000Classes: 'talo2000'
 };
 
+// Source mapping.
 const schema = {
     "$schema": "http://json-schema.org/draft-07/schema",
-    "$id": "https://standards-ontotest.oftrust.net/v2/Schema/DataProductOutput/ProductCatalog",
+    "$id": "https://standards.oftrust.net/v2/Schema/DataProductOutput/ProductCatalog",
     "source": null,
     "type": "object",
     "title": "Data product output core schema",
@@ -36,7 +36,7 @@ const schema = {
             "type": "string",
             "title": "JSON-LD context url",
             "description": "JSON-LD context url with terms required to understand data product content.",
-            "const": "https://standards-ontotest.oftrust.net/v2/Context/DataProductOutput/ProductCatalog/"
+            "const": "https://standards.oftrust.net/v2/Context/DataProductOutput/ProductCatalog/"
         },
         "data": {
             "$id": "#/properties/data",
@@ -500,7 +500,7 @@ const schema = {
             }
         }
     }
-}
+};
 
 /**
  * Translates response id to request id.
