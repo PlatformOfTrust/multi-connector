@@ -10,7 +10,7 @@
     "authContentType": "application/json",
     "username": "${username}",
     "password": "${password}",
-    "path": "/package/basic-data?${property}=${value}"
+    "path": "/package/basic-data?${property}=${codeProductCatalog}"
   },
   "dataObjects": [
     ""
@@ -29,8 +29,13 @@
       "dataObjectProperty": ""
     }
   },
+  "input": {
+    "required": [
+      "parameters.codeProductCatalog"
+    ]
+  },
   "output": {
-    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Product/",
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/ProductCatalog/",
     "array": "products",
     "data": "data"
   }

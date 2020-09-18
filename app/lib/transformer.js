@@ -3,6 +3,7 @@
  * Module dependencies.
  */
 const _ = require('lodash');
+
 /**
  * Transformer library.
  *
@@ -23,12 +24,17 @@ const transform = function (source, schema) {
             case 'object':
                 value = {};
                 Object.entries(schema.properties || {})
-                    .forEach(entry => value[entry[0]] = transform(source, entry[1] || {}));
+                    .forEach(entry => {
+                        const result = transform(source, entry[1]);
+                        if (result !== undefined) value[entry[0]] = result;
+                    });
+                if (_.isEmpty(value)) value = undefined;
                 break;
             case 'array':
                 value = [];
                 if (Object.hasOwnProperty.call(schema, 'source')) {
                     let array = _.get(source, schema.source);
+                    if (array === undefined) return;
                     if (!Array.isArray(array)) array = [array];
                     array.forEach(element => {
                         if (!Object.hasOwnProperty.call(schema, 'items')) return;

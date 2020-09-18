@@ -4,17 +4,13 @@
     "url": "<url>",
     "username": "<username>",
     "password": "<password>",
-    "type": "productInfo"
+    "type": "ProductCatalog",
+    "property": "itemNumber"
   },
   "dynamic": {
-    "authConfig.path": "ids"
+    "authConfig.path": "codeProductCatalog"
   },
   "request": {
-    "ids": [
-      {
-        "property": "<property>",
-        "value": "<value>"
-      }
-    ]
+    "codeProductCatalog": "<product-code>"
   }
 }

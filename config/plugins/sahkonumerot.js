@@ -10,6 +10,7 @@ const transformer = require('../../app/lib/transformer');
 
 /** Property to path parameter mapping. */
 const map = {
+    TT010: 'electricalNumber',
     TT052: 'gtinCode'
 };
 

@@ -8,7 +8,7 @@
     "url": "${url}",
     "username": "${username}",
     "password": "${password}",
-    "path": "/ws/rest/rakennustieto/api/tradeItems/${property}/${value}"
+    "path": "/ws/rest/rakennustieto/api/tradeItems/${property}/${codeProductCatalog}"
   },
   "dataObjects": [
     "Items"
@@ -27,8 +27,13 @@
       "dataObjectProperty": "ItemModifiedAt"
     }
   },
+  "input": {
+    "required": [
+      "parameters.codeProductCatalog"
+    ]
+  },
   "output": {
-    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Product/",
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/ProductCatalog/",
     "array": "products",
     "data": "data"
   }
