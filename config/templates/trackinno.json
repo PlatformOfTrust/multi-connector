@@ -1,0 +1,38 @@
+{
+  "plugins": [
+    "basic"
+  ],
+  "protocol": "rest",
+  "authConfig": {
+    "url": "https://service.trackinno.com",
+    "username": "${clientId}",
+    "password": "${clientSecret}",
+    "path": "/api/v2/assets/${id}"
+  },
+  "dataObjects": [
+    ""
+  ],
+  "dataPropertyMappings": {
+    "${type}": ""
+  },
+  "generalConfig": {
+    "sourceName": {
+      "dataObjectProperty": "name"
+    },
+    "hardwareId": {
+      "dataObjectProperty": "_id"
+    },
+    "timestamp": {
+      "dataObjectProperty": "updatedAt"
+    }
+  },
+  "output": {
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Asset/",
+    "timestamp": "timestamp",
+    "array": "assets",
+    "object": "data",
+    "value": "value",
+    "data": "data",
+    "id": "id"
+  }
+}

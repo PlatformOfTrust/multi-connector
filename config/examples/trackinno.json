@@ -1,0 +1,16 @@
+{
+  "template": "trackinno",
+  "static": {
+    "clientId": "<client-id>",
+    "clientSecret": "<client-secret>",
+    "type": "Asset"
+  },
+  "dynamic": {
+    "authConfig.path": "ids"
+  },
+  "request": {
+    "ids": [
+      "<asset-id>"
+    ]
+  }
+}

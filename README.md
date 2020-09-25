@@ -20,6 +20,7 @@ Following data sources are supported out of the box. Example configs can be foun
 - Siemens Mindsphere
 - Siemens Navigator
 - Talotohtori API
+- Trackinno Service API
 - Vastuu Group Company API
 - Wapice IoT-Ticket
 
