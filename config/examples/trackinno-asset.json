@@ -3,6 +3,7 @@
   "static": {
     "clientId": "<client-id>",
     "clientSecret": "<client-secret>",
+    "api": "assets",
     "type": "Asset"
   },
   "dynamic": {

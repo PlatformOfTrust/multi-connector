@@ -7,7 +7,7 @@
     "url": "https://service.trackinno.com",
     "username": "${clientId}",
     "password": "${clientSecret}",
-    "path": "/api/v2/assets/${id}"
+    "path": "/api/v2/${api}/${id}"
   },
   "dataObjects": [
     ""
