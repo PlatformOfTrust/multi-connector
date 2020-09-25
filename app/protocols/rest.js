@@ -145,10 +145,10 @@ const parseResBody = function (response) {
  */
 const requestData = async (config, path, index) => {
     // Initialize request options.
-    let method = 'GET';
     let options = {
-        method: method,
+        method: config.authConfig.method || 'GET',
         url: path.includes('://') ? path : config.authConfig.url + path,
+        body: config.authConfig.body || undefined,
         headers: config.authConfig.headers || {},
         resolveWithFullResponse: true,
         query: [],
