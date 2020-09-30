@@ -25,6 +25,12 @@
       "dataObjectProperty": "vehicle.timestamp.low"
     }
   },
+  "input": {
+    "required": [
+      "parameters.vehicle",
+      "parameters.vehicle.idLocal"
+    ]
+  },
   "output": {
     "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/VehicleInformation/",
     "timestamp": "timestamp",

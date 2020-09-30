@@ -4,12 +4,12 @@
     "username": "<client-id>",
     "password": "<client-secret>"
   },
-  "dynamic": {
-    "authConfig.path": "ids"
-  },
+  "dynamic": {},
   "request": {
-    "ids": [
-      "<vehicle-id>"
-    ]
+    "vehicle": {
+      "idLocal": [
+        "<vehicle-id>"
+      ]
+    }
   }
 }

@@ -215,6 +215,27 @@ const schema = {
 }
 
 /**
+ * Transfer vehicle idLocal values to ids array.
+ *
+ * @param {Object} config
+ * @param {Object} parameters
+ * @return {Object}
+ */
+const parameters = async (config, parameters) => {
+    try {
+        if (Object.hasOwnProperty.call(parameters, 'vehicle')) {
+            if (Object.hasOwnProperty.call(parameters.vehicle, 'idLocal')) {
+                parameters.ids = Array.isArray(parameters.vehicle.idLocal) ?
+                    parameters.vehicle.idLocal : [parameters.vehicle.idLocal]
+            }
+        }
+        return parameters;
+    } catch (e) {
+        return parameters;
+    }
+};
+
+/**
  * Handles data objects.
  *
  * @param {Object} config
@@ -282,5 +303,6 @@ const output = async (config, output) => {
  */
 module.exports = {
     name: 'nysse',
+    parameters,
     output
 };
