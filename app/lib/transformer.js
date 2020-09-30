@@ -33,7 +33,7 @@ const transform = function (source, schema) {
             case 'array':
                 value = [];
                 if (Object.hasOwnProperty.call(schema, 'source')) {
-                    let array = _.get(source, schema.source);
+                    let array = schema.source === '' ? source : _.get(source, schema.source);
                     if (array === undefined) return;
                     if (!Array.isArray(array)) array = [array];
                     array.forEach(element => {
@@ -45,8 +45,9 @@ const transform = function (source, schema) {
                 }
                 break;
             case 'string':
+            case 'number':
                 if (Object.hasOwnProperty.call(schema, 'source')) {
-                    if (schema.source) value = _.get(source, schema.source);
+                    if (schema.source) value = schema.source === '' ? source : _.get(source, schema.source, schema.default);
                 }
                 break;
         }

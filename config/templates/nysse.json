@@ -1,7 +1,8 @@
 {
   "plugins": [
     "basic",
-    "gtfs-realtime"
+    "gtfs-realtime",
+    "nysse"
   ],
   "protocol": "rest",
   "authConfig": {
@@ -14,7 +15,7 @@
     ""
   ],
   "dataPropertyMappings": {
-    "Position": "vehicle.position"
+    "TransportationRoute": "vehicle"
   },
   "generalConfig": {
     "hardwareId": {
@@ -25,11 +26,11 @@
     }
   },
   "output": {
-    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Position/",
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/VehicleInformation/",
     "timestamp": "timestamp",
-    "value": "coordinates",
-    "array": "vehicles",
-    "data": "positions",
+    "value": "vehicle",
+    "array": "transportationRoute",
+    "data": "vehicle",
     "id": "id"
   }
 }

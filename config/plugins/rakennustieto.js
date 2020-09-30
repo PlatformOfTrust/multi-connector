@@ -595,7 +595,7 @@ const output = async (config, output) => {
             result[config.output.object][config.output.array] =
                 result[config.output.object][config.output.array].map((o => {
                     return Object.values(o)
-                })).flat();
+                })).flat(2);
         }
         return result;
     } catch (err) {
