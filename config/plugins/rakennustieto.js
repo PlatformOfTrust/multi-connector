@@ -559,7 +559,7 @@ const handleData = function (config, id, data) {
     } catch (err) {
         return result;
     }
-}
+};
 
 /**
  * Transforms output to Platform of Trust context schema.
