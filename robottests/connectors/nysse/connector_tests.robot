@@ -15,10 +15,11 @@ ${CONNECTOR_PATH}            /translator/v1/fetch
 ${APP_TOKEN}                 %{POT_APP_ACCESS_TOKEN}
 ${CLIENT_SECRET}             %{POT_CLIENT_SECRET}
 ${PRODUCT_CODE}              %{POT_PRODUCT_CODE}
-${ID1}                       130792
-${ID2}                       130793
+${ID1}                       130095
+${ID2}                       130096
 @{IDS}                       ${ID1}  ${ID2}
-&{BROKER_BODY_PARAMETERS}    ids=@{IDS}
+&{VEHICLE}                   idLocal=@{IDS}
+&{BROKER_BODY_PARAMETERS}    vehicle=${VEHICLE}
 &{BROKER_BODY}               productCode=${PRODUCT_CODE}
 ...                          parameters=${BROKER_BODY_PARAMETERS}
 
@@ -66,45 +67,57 @@ fetch, 200
     [Tags]                bug-0001
     ${body}               Get Body
     Fetch Data Product    ${body}
-    Integer               response status                                         200
-    String                response body @context                                  https://standards.oftrust.net/v2/Context/DataProductOutput/Position/
+    Integer               response status                                                   200
+    String                response body @context                                            https://standards.oftrust.net/v2/Context/DataProductOutput/VehicleInformation/
     Object                response body data
-    Array                 response body data vehicles
-    Array                 response body data vehicles 0 positions
-    String                response body data vehicles 0 positions 0 @type       Position
+    Array                 response body data transportationRoute
+    String                response body data transportationRoute 0 @type                    TransportationRoute
+    Object                response body data transportationRoute 0 vehicle
+    String                response body data transportationRoute 0 vehicle @type            Vehicle
+    Object                response body data transportationRoute 0 vehicle location
+    String                response body data transportationRoute 0 vehicle location @type   Location
 
 fetch, 422, Missing data for timestamp required field
-    [Tags]                 bug-0001
-    ${body}                Get Body
-    Pop From Dictionary    ${body}                              timestamp
-    Fetch Data Product     ${body}
-    Integer    response status                                  422
-    Integer    response body error status                       422
-    String     response body error message timestamp 0          Missing data for required field.
-
-fetch, 422, Missing data for parameters required field
     [Tags]                 bug-0002
     ${body}                Get Body
-    Pop From Dictionary    ${body}                              parameters
+    Pop From Dictionary    ${body}                                          timestamp
     Fetch Data Product     ${body}
-    Integer    response status                                  422
-    Integer    response body error status                       422
-    String     response body error message parameters 0         Missing data for required field.
+    Integer    response status                                              422
+    Integer    response body error status                                   422
+    String     response body error message timestamp 0                      Missing data for required field.
 
-fetch, 422, Missing data for ids required field
+fetch, 422, Missing data for parameters required field
     [Tags]                 bug-0003
     ${body}                Get Body
-    Pop From Dictionary    ${body["parameters"]}                ids
+    Pop From Dictionary    ${body}                                          parameters
     Fetch Data Product     ${body}
-    Integer    response status                                  422
-    Integer    response body error status                       422
-    String     response body error message parameters.ids 0     Missing data for required field.
+    Integer    response status                                              422
+    Integer    response body error status                                   422
+    String     response body error message parameters 0                     Missing data for required field.
 
-fetch, 200, Empty ids
+fetch, 422, Missing data for vehicle required field
     [Tags]                 bug-0004
     ${body}                Get Body
-    Set To Dictionary      ${body["parameters"]}                ids=@{EMPTY}
+    Pop From Dictionary    ${body["parameters"]}                            vehicle
     Fetch Data Product     ${body}
-    Integer    response status                200
-    String     response body @context         https://standards.oftrust.net/v2/Context/DataProductOutput/Position/
-    Array      response body data vehicles     maxItems=0
+    Integer    response status                                              422
+    Integer    response body error status                                   422
+    String     response body error message parameters.vehicle 0             Missing data for required field.
+
+fetch, 422, Missing data for idLocal required field
+    [Tags]                 bug-0005
+    ${body}                Get Body
+    Pop From Dictionary    ${body["parameters"]["vehicle"]}                 idLocal
+    Fetch Data Product     ${body}
+    Integer    response status                                              422
+    Integer    response body error status                                   422
+    String     response body error message parameters.vehicle.idLocal 0     Missing data for required field.
+
+fetch, 200, Empty idLocal
+    [Tags]                 bug-0006
+    ${body}                Get Body
+    Set To Dictionary      ${body["parameters"]["vehicle"]}                 idLocal=@{EMPTY}
+    Fetch Data Product     ${body}
+    Integer    response status                                              200
+    String     response body @context                                       https://standards.oftrust.net/v2/Context/DataProductOutput/VehicleInformation/
+    Array      response body data transportationRoute                       maxItems=0

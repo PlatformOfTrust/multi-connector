@@ -26,7 +26,7 @@ const response = async (config, response) => {
         // Pick requested ids from request parameters.
         const ids = _.get(config, IDS) ? _.get(config, IDS).map(o => o.id.toString()) : []
         // Filter out only requested entities.
-        return response.entity.filter(e => ids.length === 0 || ids.includes(e.id.toString()));
+        return response.entity.filter(e => ids.length !== 0 && ids.includes(e.id.toString()));
     } catch (e) {
         return response;
     }
