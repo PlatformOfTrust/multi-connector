@@ -1,0 +1,3 @@
+--pythonpath lib
+--outputdir connectors/trackinno/result
+connectors/trackinno/connector_tests.robot

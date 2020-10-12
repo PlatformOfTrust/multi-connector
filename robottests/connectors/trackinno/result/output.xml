@@ -1,0 +1,2992 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 3.2.1 (Python 3.8.3 on win32)" generated="20201012 08:30:20.248" rpa="false">
+<suite id="s1" name="Connector Tests" source="C:\Users\artor\WebstormProjects\translator\robottests\connectors\trackinno\connector_tests.robot">
+<test id="s1-t1" name="fetch, 200">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20201012 08:30:20.508" level="INFO">${body} = {'productCode': 'default_trackinno', 'parameters': {'ids': ['572a0b01c99937671bec8788']}}</msg>
+<status status="PASS" starttime="20201012 08:30:20.508" endtime="20201012 08:30:20.508"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20201012 08:30:20.509" level="INFO">${now} = 2020-10-12T05:30:20+00:00</msg>
+<status status="PASS" starttime="20201012 08:30:20.508" endtime="20201012 08:30:20.509"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:20.509" endtime="20201012 08:30:20.509"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:20.509" endtime="20201012 08:30:20.509"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20201012 08:30:20.509" level="INFO">${json_string} = {"productCode": "default_trackinno", "parameters": {"ids": ["572a0b01c99937671bec8788"]}, "timestamp": "2020-10-12T05:30:20+00:00"}</msg>
+<status status="PASS" starttime="20201012 08:30:20.509" endtime="20201012 08:30:20.509"></status>
+</kw>
+<msg timestamp="20201012 08:30:20.510" level="INFO">${body} = {'productCode': 'default_trackinno', 'parameters': {'ids': ['572a0b01c99937671bec8788']}, 'timestamp': '2020-10-12T05:30:20+00:00'}</msg>
+<status status="PASS" starttime="20201012 08:30:20.508" endtime="20201012 08:30:20.510"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20201012 08:30:20.510" level="INFO">${signature} = 4/AKCDxJMdguwE0kyPuqPTaFaaPerYYlhkga7PSvzbk=</msg>
+<status status="PASS" starttime="20201012 08:30:20.510" endtime="20201012 08:30:20.510"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:20.510" endtime="20201012 08:30:20.511"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:20.511" endtime="20201012 08:30:22.619"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20201012 08:30:22.623" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "@context": {
+            "type": "string",
+            "default": "https://standards.oftrust.net/v2/Context/DataProductOutput/Asset/"
+        },
+        "data": {
+            "type": "object",
+            "properties": {
+                "assets": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "@type": {
+                                            "type": "string"
+                                        },
+                                        "timestamp": {
+                                            "type": "string"
+                                        },
+                                        "value": {
+                                            "type": "object",
+                                            "properties": {
+                                                "_id": {
+                                                    "type": "string"
+                                                },
+                                                "identifier": {
+                                                    "type": "string"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "holder": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "updatedAt": {
+                                                            "type": "string"
+                                                        },
+                                                        "createdAt": {
+                                                            "type": "string"
+                                                        },
+                                                        "parent": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "_id": {
+                                                                    "type": "string"
+                                                                },
+                                                                "parent": {
+                                                                    "type": "string"
+                                                                },
+                                                                "organization": {
+                                                                    "type": "string"
+                                                                },
+                                                                "name": {
+                                                                    "type": "string"
+                                                                },
+                                                                "__v": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "updatedAt": {
+                                                                    "type": "string"
+                                                                },
+                                                                "responsibleHolders": {
+                                                                    "type": "array"
+                                                                },
+                                                                "textSearchIndex": {
+                                                                    "type": "array",
+                                                                    "items": {
+                                                                        "type": "string"
+                                                                    }
+                                                                },
+                                                                "billingTerms": {
+                                                                    "type": "array"
+                                                                },
+                                                                "fields": {
+                                                                    "type": "array"
+                                                                },
+                                                                "deleted": {
+                                                                    "type": "boolean"
+                                                                },
+                                                                "children": {
+                                                                    "type": "array",
+                                                                    "items": {
+                                                                        "type": "string"
+                                                                    }
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "__v",
+                                                                "_id",
+                                                                "billingTerms",
+                                                                "children",
+                                                                "deleted",
+                                                                "fields",
+                                                                "name",
+                                                                "organization",
+                                                                "parent",
+                                                                "responsibleHolders",
+                                                                "textSearchIndex",
+                                                                "updatedAt"
+                                                            ]
+                                                        },
+                                                        "type": {
+                                                            "type": "string"
+                                                        },
+                                                        "name": {
+                                                            "type": "string"
+                                                        },
+                                                        "holderID": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "createdAt",
+                                                        "holderID",
+                                                        "name",
+                                                        "parent",
+                                                        "type",
+                                                        "updatedAt"
+                                                    ]
+                                                },
+                                                "__v": {
+                                                    "type": "integer"
+                                                },
+                                                "defaultPicture": {
+                                                    "type": "string"
+                                                },
+                                                "group": {
+                                                    "type": "string"
+                                                },
+                                                "updatedAt": {
+                                                    "type": "string"
+                                                },
+                                                "updateUser": {
+                                                    "type": "string"
+                                                },
+                                                "model": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "_id": {
+                                                            "type": "string"
+                                                        },
+                                                        "updatedAt": {
+                                                            "type": "string"
+                                                        },
+                                                        "createdAt": {
+                                                            "type": "string"
+                                                        },
+                                                        "name": {
+                                                            "type": "string"
+                                                        },
+                                                        "labels": {
+                                                            "type": "array"
+                                                        },
+                                                        "__v": {
+                                                            "type": "integer"
+                                                        },
+                                                        "unit": {
+                                                            "type": "string"
+                                                        },
+                                                        "category": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "string"
+                                                                },
+                                                                "path": {
+                                                                    "type": "array",
+                                                                    "items": {
+                                                                        "type": "string"
+                                                                    }
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "id",
+                                                                "path"
+                                                            ]
+                                                        },
+                                                        "consumable": {
+                                                            "type": "boolean"
+                                                        },
+                                                        "textSearchIndex": {
+                                                            "type": "array"
+                                                        },
+                                                        "canBeAsset": {
+                                                            "type": "string"
+                                                        },
+                                                        "canBeALot": {
+                                                            "type": "string"
+                                                        },
+                                                        "tasks": {
+                                                            "type": "array"
+                                                        },
+                                                        "attachments": {
+                                                            "type": "array"
+                                                        },
+                                                        "fields": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "value": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "field": {
+                                                                        "type": "string"
+                                                                    }
+                                                                },
+                                                                "required": [
+                                                                    "field",
+                                                                    "value"
+                                                                ]
+                                                            }
+                                                        },
+                                                        "requiredFields": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "required": {
+                                                                        "type": "boolean"
+                                                                    },
+                                                                    "field": {
+                                                                        "type": "string"
+                                                                    }
+                                                                },
+                                                                "required": [
+                                                                    "field",
+                                                                    "required"
+                                                                ]
+                                                            }
+                                                        },
+                                                        "responsibleHolders": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "holderID": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "name": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "type": {
+                                                                        "type": "string"
+                                                                    }
+                                                                },
+                                                                "required": [
+                                                                    "holderID",
+                                                                    "name",
+                                                                    "type"
+                                                                ]
+                                                            }
+                                                        },
+                                                        "ticketTypes": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "deleted": {
+                                                            "type": "boolean"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "__v",
+                                                        "_id",
+                                                        "attachments",
+                                                        "canBeALot",
+                                                        "canBeAsset",
+                                                        "category",
+                                                        "consumable",
+                                                        "createdAt",
+                                                        "deleted",
+                                                        "fields",
+                                                        "labels",
+                                                        "name",
+                                                        "requiredFields",
+                                                        "responsibleHolders",
+                                                        "tasks",
+                                                        "textSearchIndex",
+                                                        "ticketTypes",
+                                                        "unit",
+                                                        "updatedAt"
+                                                    ]
+                                                },
+                                                "identifierNumber": {
+                                                    "type": "integer"
+                                                },
+                                                "identifierAlpha": {
+                                                    "type": "string"
+                                                },
+                                                "assetGroup": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "_id": {
+                                                            "type": "string"
+                                                        },
+                                                        "name": {
+                                                            "type": "string"
+                                                        },
+                                                        "updateUser": {
+                                                            "type": "string"
+                                                        },
+                                                        "updatedAt": {
+                                                            "type": "string"
+                                                        },
+                                                        "deleted": {
+                                                            "type": "boolean"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "_id",
+                                                        "deleted",
+                                                        "name",
+                                                        "updateUser",
+                                                        "updatedAt"
+                                                    ]
+                                                },
+                                                "createdAt": {
+                                                    "type": "string"
+                                                },
+                                                "forms": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "ticketTypes": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "status": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "_id": {
+                                                            "type": "string"
+                                                        },
+                                                        "name": {
+                                                            "type": "string"
+                                                        },
+                                                        "checkOutStatus": {
+                                                            "type": "string"
+                                                        },
+                                                        "checkInStatus": {
+                                                            "type": "string"
+                                                        },
+                                                        "default": {
+                                                            "type": "boolean"
+                                                        },
+                                                        "class": {
+                                                            "type": "string"
+                                                        },
+                                                        "deleted": {
+                                                            "type": "boolean"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "_id",
+                                                        "checkInStatus",
+                                                        "checkOutStatus",
+                                                        "class",
+                                                        "default",
+                                                        "deleted",
+                                                        "name"
+                                                    ]
+                                                },
+                                                "location": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "_id": {
+                                                            "type": "string"
+                                                        },
+                                                        "updatedAt": {
+                                                            "type": "string"
+                                                        },
+                                                        "createdAt": {
+                                                            "type": "string"
+                                                        },
+                                                        "latitude": {
+                                                            "type": "number"
+                                                        },
+                                                        "longitude": {
+                                                            "type": "number"
+                                                        },
+                                                        "battery": {
+                                                            "type": "string"
+                                                        },
+                                                        "activeTag": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "deleted": {
+                                                                    "type": "boolean"
+                                                                },
+                                                                "__v": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "assetId": {
+                                                                    "type": "string"
+                                                                },
+                                                                "tenantId": {
+                                                                    "type": "string"
+                                                                },
+                                                                "description": {
+                                                                    "type": "string"
+                                                                },
+                                                                "nodeId": {
+                                                                    "type": "string"
+                                                                },
+                                                                "createdAt": {
+                                                                    "type": "string"
+                                                                },
+                                                                "updatedAt": {
+                                                                    "type": "string"
+                                                                },
+                                                                "_id": {
+                                                                    "type": "string"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "__v",
+                                                                "_id",
+                                                                "assetId",
+                                                                "createdAt",
+                                                                "deleted",
+                                                                "description",
+                                                                "nodeId",
+                                                                "tenantId",
+                                                                "updatedAt"
+                                                            ]
+                                                        },
+                                                        "data": {
+                                                            "type": "string"
+                                                        },
+                                                        "__v": {
+                                                            "type": "integer"
+                                                        },
+                                                        "type": {
+                                                            "type": "string"
+                                                        },
+                                                        "assets": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "deleted": {
+                                                            "type": "boolean"
+                                                        },
+                                                        "time": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "__v",
+                                                        "_id",
+                                                        "activeTag",
+                                                        "assets",
+                                                        "battery",
+                                                        "createdAt",
+                                                        "data",
+                                                        "deleted",
+                                                        "latitude",
+                                                        "longitude",
+                                                        "time",
+                                                        "type",
+                                                        "updatedAt"
+                                                    ]
+                                                },
+                                                "currentUsage": {
+                                                    "type": "null"
+                                                },
+                                                "balance": {
+                                                    "type": "null"
+                                                },
+                                                "defaultHolder": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "updatedAt": {
+                                                            "type": "string"
+                                                        },
+                                                        "createdAt": {
+                                                            "type": "string"
+                                                        },
+                                                        "parent": {
+                                                            "type": "string"
+                                                        },
+                                                        "type": {
+                                                            "type": "string"
+                                                        },
+                                                        "name": {
+                                                            "type": "string"
+                                                        },
+                                                        "holderID": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "createdAt",
+                                                        "holderID",
+                                                        "name",
+                                                        "parent",
+                                                        "type",
+                                                        "updatedAt"
+                                                    ]
+                                                },
+                                                "latestSensorData": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "type": {
+                                                            "type": "string"
+                                                        },
+                                                        "value": {
+                                                            "type": "integer"
+                                                        },
+                                                        "updatedAt": {
+                                                            "type": "string"
+                                                        },
+                                                        "sensorData": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "sensorData",
+                                                        "type",
+                                                        "updatedAt",
+                                                        "value"
+                                                    ]
+                                                },
+                                                "category": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "path": {
+                                                            "type": "array"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "path"
+                                                    ]
+                                                },
+                                                "geofences": {
+                                                    "type": "array"
+                                                },
+                                                "textSearchIndex": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "lite": {
+                                                    "type": "boolean"
+                                                },
+                                                "lot": {
+                                                    "type": "boolean"
+                                                },
+                                                "lastEventWithComment": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "eventId": {
+                                                            "type": "string"
+                                                        },
+                                                        "user": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "holderID": {
+                                                                    "type": "string"
+                                                                },
+                                                                "name": {
+                                                                    "type": "string"
+                                                                },
+                                                                "phone": {
+                                                                    "type": "string"
+                                                                },
+                                                                "email": {
+                                                                    "type": "string"
+                                                                },
+                                                                "type": {
+                                                                    "type": "string"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "email",
+                                                                "holderID",
+                                                                "name",
+                                                                "phone",
+                                                                "type"
+                                                            ]
+                                                        },
+                                                        "timestamp": {
+                                                            "type": "string"
+                                                        },
+                                                        "fields": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "field": {
+                                                                        "type": "object",
+                                                                        "properties": {
+                                                                            "updatedAt": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "createdAt": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "inputType": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "temporary": {
+                                                                                "type": "boolean"
+                                                                            },
+                                                                            "label": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "type": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "lines": {
+                                                                                "type": "integer"
+                                                                            },
+                                                                            "placeholder": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "expectedValue": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "limitForRoleIds": {
+                                                                                "type": "array"
+                                                                            },
+                                                                            "useValueAsFaultReportName": {
+                                                                                "type": "boolean"
+                                                                            },
+                                                                            "showOnTimeline": {
+                                                                                "type": "boolean"
+                                                                            },
+                                                                            "deleted": {
+                                                                                "type": "boolean"
+                                                                            },
+                                                                            "global": {
+                                                                                "type": "boolean"
+                                                                            },
+                                                                            "showOnSelectList": {
+                                                                                "type": "boolean"
+                                                                            },
+                                                                            "showOnMobileList": {
+                                                                                "type": "boolean"
+                                                                            },
+                                                                            "personRoleIds": {
+                                                                                "type": "array"
+                                                                            },
+                                                                            "options": {
+                                                                                "type": "array"
+                                                                            }
+                                                                        },
+                                                                        "required": [
+                                                                            "createdAt",
+                                                                            "deleted",
+                                                                            "expectedValue",
+                                                                            "global",
+                                                                            "inputType",
+                                                                            "label",
+                                                                            "limitForRoleIds",
+                                                                            "lines",
+                                                                            "options",
+                                                                            "personRoleIds",
+                                                                            "placeholder",
+                                                                            "showOnMobileList",
+                                                                            "showOnSelectList",
+                                                                            "showOnTimeline",
+                                                                            "temporary",
+                                                                            "type",
+                                                                            "updatedAt",
+                                                                            "useValueAsFaultReportName"
+                                                                        ]
+                                                                    },
+                                                                    "value": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "_id": {
+                                                                        "type": "string"
+                                                                    }
+                                                                },
+                                                                "required": [
+                                                                    "_id",
+                                                                    "field",
+                                                                    "value"
+                                                                ]
+                                                            }
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "eventId",
+                                                        "fields",
+                                                        "timestamp",
+                                                        "user"
+                                                    ]
+                                                },
+                                                "pendingTasks": {
+                                                    "type": "array"
+                                                },
+                                                "tasks": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "verifyEvent": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "user": {
+                                                            "type": "string"
+                                                        },
+                                                        "date": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "date",
+                                                        "user"
+                                                    ]
+                                                },
+                                                "createTime": {
+                                                    "type": "string"
+                                                },
+                                                "tags": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "type": {
+                                                                "type": "string"
+                                                            },
+                                                            "batchcode": {
+                                                                "type": "string"
+                                                            },
+                                                            "hash": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "batchcode",
+                                                            "hash",
+                                                            "type"
+                                                        ]
+                                                    }
+                                                },
+                                                "deleted": {
+                                                    "type": "boolean"
+                                                },
+                                                "attachments": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "_id": {
+                                                                "type": "string"
+                                                            },
+                                                            "updatedAt": {
+                                                                "type": "string"
+                                                            },
+                                                            "createdAt": {
+                                                                "type": "string"
+                                                            },
+                                                            "date": {
+                                                                "type": "string"
+                                                            },
+                                                            "mime": {
+                                                                "type": "string"
+                                                            },
+                                                            "type": {
+                                                                "type": "string"
+                                                            },
+                                                            "name": {
+                                                                "type": "string"
+                                                            },
+                                                            "awsKey": {
+                                                                "type": "string"
+                                                            },
+                                                            "__v": {
+                                                                "type": "integer"
+                                                            },
+                                                            "deleted": {
+                                                                "type": "boolean"
+                                                            },
+                                                            "downloadUrl": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "__v",
+                                                            "_id",
+                                                            "awsKey",
+                                                            "createdAt",
+                                                            "date",
+                                                            "deleted",
+                                                            "downloadUrl",
+                                                            "mime",
+                                                            "name",
+                                                            "type",
+                                                            "updatedAt"
+                                                        ]
+                                                    }
+                                                },
+                                                "fields": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "field": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "_id": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "updatedAt": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "createdAt": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "inputType": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "label": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "type": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "description": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "placeholder": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "__v": {
+                                                                        "type": "integer"
+                                                                    },
+                                                                    "required": {
+                                                                        "type": "boolean"
+                                                                    },
+                                                                    "limitForRoleIds": {
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    },
+                                                                    "useValueAsFaultReportName": {
+                                                                        "type": "boolean"
+                                                                    },
+                                                                    "showOnTimeline": {
+                                                                        "type": "boolean"
+                                                                    },
+                                                                    "deleted": {
+                                                                        "type": "boolean"
+                                                                    },
+                                                                    "global": {
+                                                                        "type": "boolean"
+                                                                    },
+                                                                    "showOnSelectList": {
+                                                                        "type": "boolean"
+                                                                    },
+                                                                    "showOnMobileList": {
+                                                                        "type": "boolean"
+                                                                    },
+                                                                    "personRoleIds": {
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    },
+                                                                    "options": {
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "type": "object",
+                                                                            "properties": {
+                                                                                "name": {
+                                                                                    "type": "string"
+                                                                                },
+                                                                                "value": {
+                                                                                    "type": "string"
+                                                                                },
+                                                                                "_id": {
+                                                                                    "type": "string"
+                                                                                }
+                                                                            },
+                                                                            "required": [
+                                                                                "_id",
+                                                                                "name",
+                                                                                "value"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    "dataID": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "lines": {
+                                                                        "type": "integer"
+                                                                    },
+                                                                    "temporary": {
+                                                                        "type": "boolean"
+                                                                    }
+                                                                },
+                                                                "required": [
+                                                                    "__v",
+                                                                    "_id",
+                                                                    "createdAt",
+                                                                    "deleted",
+                                                                    "global",
+                                                                    "inputType",
+                                                                    "label",
+                                                                    "limitForRoleIds",
+                                                                    "options",
+                                                                    "personRoleIds",
+                                                                    "placeholder",
+                                                                    "showOnMobileList",
+                                                                    "showOnSelectList",
+                                                                    "showOnTimeline",
+                                                                    "type",
+                                                                    "updatedAt",
+                                                                    "useValueAsFaultReportName"
+                                                                ]
+                                                            },
+                                                            "value": {
+                                                                "anyOf": [
+                                                                    {
+                                                                        "type": "string"
+                                                                    },
+                                                                    {
+                                                                        "type": "object",
+                                                                        "properties": {
+                                                                            "1": {
+                                                                                "type": "boolean"
+                                                                            },
+                                                                            "578dd8762a7898e50d7dceca": {
+                                                                                "type": "boolean"
+                                                                            },
+                                                                            "578dd8762a7898e50d7dcec9": {
+                                                                                "type": "boolean"
+                                                                            },
+                                                                            "578dd8762a7898e50d7dcec8": {
+                                                                                "type": "boolean"
+                                                                            },
+                                                                            "type": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "email": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "phone": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "name": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "holderID": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "value": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "_id": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "selected": {
+                                                                                "type": "boolean"
+                                                                            },
+                                                                            "59e06add1e4b9597a7d73280": {
+                                                                                "type": "boolean"
+                                                                            },
+                                                                            "59e06add1e4b9597a7d73281": {
+                                                                                "type": "boolean"
+                                                                            },
+                                                                            "59e06add1e4b9597a7d73282": {
+                                                                                "type": "boolean"
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "field"
+                                                        ]
+                                                    }
+                                                },
+                                                "labels": {
+                                                    "type": "null"
+                                                },
+                                                "groupHead": {
+                                                    "type": "boolean"
+                                                },
+                                                "assetImage": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "__v",
+                                                "_id",
+                                                "assetGroup",
+                                                "assetImage",
+                                                "attachments",
+                                                "balance",
+                                                "category",
+                                                "createTime",
+                                                "createdAt",
+                                                "currentUsage",
+                                                "defaultHolder",
+                                                "defaultPicture",
+                                                "deleted",
+                                                "fields",
+                                                "forms",
+                                                "geofences",
+                                                "group",
+                                                "groupHead",
+                                                "holder",
+                                                "identifier",
+                                                "identifierAlpha",
+                                                "identifierNumber",
+                                                "labels",
+                                                "lastEventWithComment",
+                                                "latestSensorData",
+                                                "lite",
+                                                "location",
+                                                "lot",
+                                                "model",
+                                                "name",
+                                                "pendingTasks",
+                                                "status",
+                                                "tags",
+                                                "tasks",
+                                                "textSearchIndex",
+                                                "ticketTypes",
+                                                "updateUser",
+                                                "updatedAt",
+                                                "verifyEvent"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "@type",
+                                        "timestamp",
+                                        "value"
+                                    ]
+                                }
+                            }
+                        },
+                        "required": [
+                            "data",
+                            "id"
+                        ]
+                    },
+                    "default": [
+                        {
+                            "id": "572a0b01c99937671bec8788",
+                            "data": [
+                                {
+                                    "@type": "Asset",
+                                    "timestamp": "2018-04-09T13:34:41.939Z",
+                                    "value": {
+                                        "_id": "572a0b01c99937671bec8788",
+                                        "identifier": "A12",
+                                        "name": "Bolt",
+                                        "holder": {
+                                            "updatedAt": "2018-04-08T20:47:53.717Z",
+                                            "createdAt": "2018-01-17T18:14:57.553Z",
+                                            "parent": {
+                                                "_id": "57873e1199f03329fb23abb9",
+                                                "parent": "5783ab6c04816025ebee9271",
+                                                "organization": "57565f2f20d051ec43325127",
+                                                "name": "Kirkonkylä",
+                                                "__v": 0,
+                                                "updatedAt": "2018-02-26T17:27:35.959Z",
+                                                "responsibleHolders": [],
+                                                "textSearchIndex": [
+                                                    "Kirkonkylä",
+                                                    "Alataso"
+                                                ],
+                                                "billingTerms": [],
+                                                "fields": [],
+                                                "deleted": false,
+                                                "children": [
+                                                    "57873e4d99f03329fb23abbb"
+                                                ]
+                                            },
+                                            "type": "OrganizationNode",
+                                            "name": "Kaupungintalo",
+                                            "holderID": "57873e4d99f03329fb23abbb"
+                                        },
+                                        "__v": 36,
+                                        "defaultPicture": "57285922adfb7349138513ea/596bd3ed0a7f49a0296b7c76.jpg",
+                                        "group": "58a44aa187e49d9e245f0fd3",
+                                        "updatedAt": "2018-04-09T13:34:41.939Z",
+                                        "updateUser": "57285922adfb7349138513e9",
+                                        "model": {
+                                            "_id": "58f8a0587e6b6144134a9936",
+                                            "updatedAt": "2018-03-21T15:01:10.955Z",
+                                            "createdAt": "2017-04-20T11:49:44.000Z",
+                                            "name": "Bolt",
+                                            "labels": [],
+                                            "__v": 0,
+                                            "unit": "kpl",
+                                            "category": {
+                                                "id": "5aa804a3895cb17f4c9178a9",
+                                                "path": [
+                                                    "Huoltokohteet"
+                                                ]
+                                            },
+                                            "consumable": true,
+                                            "textSearchIndex": [],
+                                            "canBeAsset": "true",
+                                            "canBeALot": "true",
+                                            "tasks": [],
+                                            "attachments": [],
+                                            "fields": [
+                                                {
+                                                    "value": "2018-01-27T10:00:00.000Z",
+                                                    "field": "5799dd9598a691553c1eefb5"
+                                                }
+                                            ],
+                                            "requiredFields": [
+                                                {
+                                                    "required": true,
+                                                    "field": "58d917dd53193fa27f28231f"
+                                                },
+                                                {
+                                                    "required": true,
+                                                    "field": "57c800f411254f085848cdcd"
+                                                }
+                                            ],
+                                            "responsibleHolders": [
+                                                {
+                                                    "holderID": "575682880e5d12d8499394fb",
+                                                    "name": "Joni Lehtonen2",
+                                                    "type": "User"
+                                                }
+                                            ],
+                                            "ticketTypes": [
+                                                "Kierteet on mennyt",
+                                                "Kanta pyöreä"
+                                            ],
+                                            "deleted": false
+                                        },
+                                        "identifierNumber": 12,
+                                        "identifierAlpha": "A",
+                                        "assetGroup": {
+                                            "_id": "58ab5d3355e19724768653bb",
+                                            "name": "Pulttipussi",
+                                            "updateUser": "57285922adfb7349138513e9",
+                                            "updatedAt": "2017-02-22T06:48:55.841Z",
+                                            "deleted": false
+                                        },
+                                        "createdAt": "2016-05-04T14:45:21.000Z",
+                                        "forms": [
+                                            "59401823950a78091358fcb4",
+                                            "5940ff80fc78446d0569986b",
+                                            "59410085fc78446d0569986e",
+                                            "5941453995cbe2d10810bdc9",
+                                            "59416eeea5da907b0afdeb43",
+                                            "5942362a7220b9c50f4c92c0",
+                                            "594237b97220b9c50f4c92c4",
+                                            "59423e0a7220b9c50f4c92c7",
+                                            "59437f11a61a63fb18ddac43",
+                                            "5943d88f844715c11dd00d73",
+                                            "59476e60b3a91ce1228c8f25",
+                                            "59476fcfb3a91ce1228c8f2a",
+                                            "5947701b66c10a232370ef30",
+                                            "59477464bb53d5b52392bb3c",
+                                            "59477d0143b49441243a6c8d",
+                                            "59477e0eaa6c685b24959e5b",
+                                            "59477e79cd00519924dcc99a",
+                                            "59477ef0efc2bfa524911e0e",
+                                            "59b7a6778e88dbf00a874194",
+                                            "59b7b078e806bb0c0c2a757d",
+                                            "59b7b0e4e806bb0c0c2a7583",
+                                            "59ba281cc47f1e4622ee7f23",
+                                            "59ba2831c47f1e4622ee7f27",
+                                            "59ba374effdba4ee22367539",
+                                            "59ba39b1ffdba4ee2236753d",
+                                            "59ba4ec51d50d0a0028f8a39",
+                                            "59ba5219560125e5022d6936",
+                                            "59ba52ee560125e5022d6940",
+                                            "59ba5305560125e5022d6944",
+                                            "59ba5ff98b4e130d04b6c6b2",
+                                            "59bb840ab1a409520f26bd38",
+                                            "59bb955ba9ddacf10ffb4633",
+                                            "59bb9564a9ddacf10ffb4636",
+                                            "59cbcdfcdedeb2830bd14fc9"
+                                        ],
+                                        "ticketTypes": [
+                                            "Kierteet on mennyt",
+                                            "Kanta pyöreä"
+                                        ],
+                                        "status": {
+                                            "_id": "57285923adfb7349138513f1",
+                                            "name": "Available",
+                                            "checkOutStatus": "false",
+                                            "checkInStatus": "true",
+                                            "default": true,
+                                            "class": "alert-success",
+                                            "deleted": false
+                                        },
+                                        "location": {
+                                            "_id": "5a2fc72c6e74c98e194bb682",
+                                            "updatedAt": "2017-12-12T12:10:20.000Z",
+                                            "createdAt": "2017-12-12T12:10:20.000Z",
+                                            "latitude": 50.80255,
+                                            "longitude": 4.33915,
+                                            "battery": "",
+                                            "activeTag": {
+                                                "deleted": false,
+                                                "__v": 0,
+                                                "assetId": "572a0b01c99937671bec8788",
+                                                "tenantId": "57285922adfb7349138513ea",
+                                                "description": "sigfox",
+                                                "nodeId": "18788B",
+                                                "createdAt": "2017-11-16T08:13:29.000Z",
+                                                "updatedAt": "2017-11-16T08:13:29.000Z",
+                                                "_id": "5a0d48a9532167870d626c46"
+                                            },
+                                            "data": "0095010300084d84bf069efb",
+                                            "__v": 0,
+                                            "type": "activeTag",
+                                            "assets": [
+                                                "572a0b01c99937671bec8788"
+                                            ],
+                                            "deleted": false,
+                                            "time": "2017-12-12T12:10:20.087Z"
+                                        },
+                                        "currentUsage": null,
+                                        "balance": null,
+                                        "defaultHolder": {
+                                            "updatedAt": "2018-04-08T20:47:53.717Z",
+                                            "createdAt": "2018-01-17T18:14:57.553Z",
+                                            "parent": "57873e1199f03329fb23abb9",
+                                            "type": "OrganizationNode",
+                                            "name": "Kaupungintalo",
+                                            "holderID": "57873e4d99f03329fb23abbb"
+                                        },
+                                        "latestSensorData": {
+                                            "type": "number",
+                                            "value": 10,
+                                            "updatedAt": "2018-03-29T10:04:57.308Z",
+                                            "sensorData": "5abcba49659941785e1a6744"
+                                        },
+                                        "category": {
+                                            "path": []
+                                        },
+                                        "geofences": [],
+                                        "textSearchIndex": [
+                                            "A12",
+                                            "Bolt",
+                                            "Pulttipussi",
+                                            "Kaupungintalo",
+                                            "Kirkonkylä",
+                                            "Ylöjärvi",
+                                            "19.01.2018",
+                                            "Admin Trackinno",
+                                            "info@trackinno.com",
+                                            "0401234568",
+                                            "Kyllä",
+                                            "Yksi",
+                                            "12.10.2017",
+                                            "14.10.2017",
+                                            "Toimiiko",
+                                            "Toimii3",
+                                            "23.02.2018",
+                                            "asdf127",
+                                            "18788B"
+                                        ],
+                                        "lite": false,
+                                        "lot": false,
+                                        "lastEventWithComment": {
+                                            "eventId": "59cbcdfcdedeb2830bd14fcb",
+                                            "user": {
+                                                "holderID": "57285922adfb7349138513e9",
+                                                "name": "Admin Trackinno",
+                                                "phone": "0401234568",
+                                                "email": "info@trackinno.com",
+                                                "type": "User"
+                                            },
+                                            "timestamp": "2017-09-27T16:12:44.000Z",
+                                            "fields": [
+                                                {
+                                                    "field": {
+                                                        "updatedAt": "2018-04-08T20:47:53.716Z",
+                                                        "createdAt": "2017-09-11T10:51:05.171Z",
+                                                        "inputType": "text",
+                                                        "temporary": true,
+                                                        "label": "Kommentti",
+                                                        "type": "textarea",
+                                                        "lines": 2,
+                                                        "placeholder": "testsetse",
+                                                        "expectedValue": "testsetse",
+                                                        "limitForRoleIds": [],
+                                                        "useValueAsFaultReportName": false,
+                                                        "showOnTimeline": true,
+                                                        "deleted": false,
+                                                        "global": false,
+                                                        "showOnSelectList": false,
+                                                        "showOnMobileList": false,
+                                                        "personRoleIds": [],
+                                                        "options": []
+                                                    },
+                                                    "value": "Lollero",
+                                                    "_id": "59cbcdfcdedeb2830bd14fcc"
+                                                }
+                                            ]
+                                        },
+                                        "pendingTasks": [],
+                                        "tasks": [
+                                            "5a6f8c297fd6d24b5c1cedb6",
+                                            "5a6f8d7f7fd6d24b5c1cedbc",
+                                            "5a702a50591829f1676d0ef4",
+                                            "5a7057fab748ebed7cdf7841",
+                                            "5a70a12eac5f2f42855ae136",
+                                            "5a70b3a841bbfa6e89228cc2",
+                                            "5a70b44fe63dcafd89c935e5",
+                                            "5a7812fc1314851505ca0c40",
+                                            "5a78305615c3bce107813160",
+                                            "5a8bbe1df3f57bc8ad4f76cf",
+                                            "5a8bbf8af3f57bc8ad4f76de",
+                                            "5aca7ff971447eeac60c2fe5",
+                                            "5a931eb153e54aecf6d11d04",
+                                            "5a7832ac11f42e06080813b8"
+                                        ],
+                                        "verifyEvent": {
+                                            "user": "57285922adfb7349138513e9",
+                                            "date": "2017-06-13T13:19:52.099Z"
+                                        },
+                                        "createTime": "2017-06-13T13:18:21.830Z",
+                                        "tags": [
+                                            {
+                                                "type": "activeTag",
+                                                "batchcode": "asdf127",
+                                                "hash": "activeTagasdf127"
+                                            },
+                                            {
+                                                "type": "activeTag",
+                                                "batchcode": "18788B",
+                                                "hash": "activeTag18788B"
+                                            }
+                                        ],
+                                        "deleted": false,
+                                        "attachments": [
+                                            {
+                                                "_id": "596bd3ed0a7f49a0296b7c76",
+                                                "updatedAt": "2017-07-16T21:00:29.000Z",
+                                                "createdAt": "2017-07-16T21:00:29.000Z",
+                                                "date": "2017-07-16T21:00:29.533Z",
+                                                "mime": "image/jpeg",
+                                                "type": "jpg",
+                                                "name": "hilti_30_500x500.jpg",
+                                                "awsKey": "57285922adfb7349138513ea/596bd3ed0a7f49a0296b7c76.jpg",
+                                                "__v": 0,
+                                                "deleted": false,
+                                                "downloadUrl": "https://trackinno-attachments.s3.eu-central-1.amazonaws.com/57285922adfb7349138513ea/596bd3ed0a7f49a0296b7c76.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAJLQW2WDDYPOG3DGQ%2F20180412%2Feu-central-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20180412T104613Z&amp;X-Amz-Expires=900&amp;X-Amz-Signature=c57bfb4c7520401bfe74a895541911bbe70568ff67602ea6b0e9ccc02db69e99&amp;X-Amz-SignedHeaders=host"
+                                            },
+                                            {
+                                                "_id": "596bd4040a7f49a0296b7c78",
+                                                "updatedAt": "2017-07-16T21:00:52.000Z",
+                                                "createdAt": "2017-07-16T21:00:52.000Z",
+                                                "date": "2017-07-16T21:00:52.262Z",
+                                                "mime": "image/jpeg",
+                                                "type": "jpg",
+                                                "name": "hilti_30_500x500.jpg",
+                                                "awsKey": "57285922adfb7349138513ea/596bd4040a7f49a0296b7c78.jpg",
+                                                "__v": 0,
+                                                "deleted": false,
+                                                "downloadUrl": "https://trackinno-attachments.s3.eu-central-1.amazonaws.com/57285922adfb7349138513ea/596bd4040a7f49a0296b7c78.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAJLQW2WDDYPOG3DGQ%2F20180412%2Feu-central-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20180412T104613Z&amp;X-Amz-Expires=900&amp;X-Amz-Signature=d99d2015ed948063cb2ae24a52c9f892f81598c6811aa600f8453e3d2cf42ccc&amp;X-Amz-SignedHeaders=host"
+                                            },
+                                            {
+                                                "_id": "596c4ff88256934a2b055e0f",
+                                                "updatedAt": "2017-07-17T05:49:44.000Z",
+                                                "createdAt": "2017-07-17T05:49:44.000Z",
+                                                "date": "2017-07-17T05:49:44.750Z",
+                                                "mime": "image/jpeg",
+                                                "type": "jpg",
+                                                "name": "hilti_30_500x500(2).jpg",
+                                                "awsKey": "57285922adfb7349138513ea/596c4ff88256934a2b055e0f.jpg",
+                                                "__v": 0,
+                                                "deleted": false,
+                                                "downloadUrl": "https://trackinno-attachments.s3.eu-central-1.amazonaws.com/57285922adfb7349138513ea/596c4ff88256934a2b055e0f.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAJLQW2WDDYPOG3DGQ%2F20180412%2Feu-central-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20180412T104613Z&amp;X-Amz-Expires=900&amp;X-Amz-Signature=313e2589ed06746dca81963abced604981830546e4ee76c3a54c8c644b928788&amp;X-Amz-SignedHeaders=host"
+                                            },
+                                            {
+                                                "_id": "596c6627d1686c402d23713c",
+                                                "updatedAt": "2017-07-17T07:24:23.000Z",
+                                                "createdAt": "2017-07-17T07:24:23.000Z",
+                                                "date": "2017-07-17T07:24:23.068Z",
+                                                "mime": "image/jpeg",
+                                                "type": "jpg",
+                                                "name": "hilti_30_500x500(3).jpg",
+                                                "awsKey": "57285922adfb7349138513ea/596c6627d1686c402d23713c.jpg",
+                                                "__v": 0,
+                                                "deleted": false,
+                                                "downloadUrl": "https://trackinno-attachments.s3.eu-central-1.amazonaws.com/57285922adfb7349138513ea/596c6627d1686c402d23713c.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAJLQW2WDDYPOG3DGQ%2F20180412%2Feu-central-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20180412T104613Z&amp;X-Amz-Expires=900&amp;X-Amz-Signature=632ed362ae7f40363d33a8fc14c5982eaf96be05e58ba474f362f1b5b4aebb3c&amp;X-Amz-SignedHeaders=host"
+                                            },
+                                            {
+                                                "_id": "596cca48c83ea1d6305a1b48",
+                                                "updatedAt": "2017-07-17T14:31:36.000Z",
+                                                "createdAt": "2017-07-17T14:31:36.000Z",
+                                                "date": "2017-07-17T14:31:36.575Z",
+                                                "mime": "image/jpeg",
+                                                "type": "jpg",
+                                                "name": "hilti_30_500x500.jpg",
+                                                "awsKey": "57285922adfb7349138513ea/596cca48c83ea1d6305a1b48.jpg",
+                                                "__v": 0,
+                                                "deleted": false,
+                                                "downloadUrl": "https://trackinno-attachments.s3.eu-central-1.amazonaws.com/57285922adfb7349138513ea/596cca48c83ea1d6305a1b48.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAJLQW2WDDYPOG3DGQ%2F20180412%2Feu-central-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20180412T104613Z&amp;X-Amz-Expires=900&amp;X-Amz-Signature=d8d4762998f94fc6c5d80dd06bc66ce42fab7037829cdada9bfa681c0ca418ac&amp;X-Amz-SignedHeaders=host"
+                                            },
+                                            {
+                                                "_id": "596ccafbc83ea1d6305a1b4a",
+                                                "updatedAt": "2017-07-17T14:34:35.000Z",
+                                                "createdAt": "2017-07-17T14:34:35.000Z",
+                                                "date": "2017-07-17T14:34:35.859Z",
+                                                "mime": "image/jpeg",
+                                                "type": "jpg",
+                                                "name": "hilti_30_500x500(4).jpg",
+                                                "awsKey": "57285922adfb7349138513ea/596ccafbc83ea1d6305a1b4a.jpg",
+                                                "__v": 0,
+                                                "deleted": false,
+                                                "downloadUrl": "https://trackinno-attachments.s3.eu-central-1.amazonaws.com/57285922adfb7349138513ea/596ccafbc83ea1d6305a1b4a.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAJLQW2WDDYPOG3DGQ%2F20180412%2Feu-central-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20180412T104613Z&amp;X-Amz-Expires=900&amp;X-Amz-Signature=1c1b03758a6247cfb46f560accbf171ae5ed052c05d76039f5433fd38d6ae80f&amp;X-Amz-SignedHeaders=host"
+                                            },
+                                            {
+                                                "_id": "596ccb85c83ea1d6305a1b4c",
+                                                "updatedAt": "2017-07-17T14:36:53.000Z",
+                                                "createdAt": "2017-07-17T14:36:53.000Z",
+                                                "date": "2017-07-17T14:36:53.509Z",
+                                                "mime": "image/jpeg",
+                                                "type": "jpg",
+                                                "name": "hilti_30_500x500.jpg",
+                                                "awsKey": "57285922adfb7349138513ea/596ccb85c83ea1d6305a1b4c.jpg",
+                                                "__v": 0,
+                                                "deleted": false,
+                                                "downloadUrl": "https://trackinno-attachments.s3.eu-central-1.amazonaws.com/57285922adfb7349138513ea/596ccb85c83ea1d6305a1b4c.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAJLQW2WDDYPOG3DGQ%2F20180412%2Feu-central-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20180412T104613Z&amp;X-Amz-Expires=900&amp;X-Amz-Signature=812717a08f8896852d3c6a4be527063147513182b6e35bc452609638c5426f25&amp;X-Amz-SignedHeaders=host"
+                                            },
+                                            {
+                                                "_id": "596ccd58c83ea1d6305a1b4f",
+                                                "updatedAt": "2017-07-17T14:44:40.000Z",
+                                                "createdAt": "2017-07-17T14:44:40.000Z",
+                                                "date": "2017-07-17T14:44:40.767Z",
+                                                "mime": "image/jpeg",
+                                                "type": "jpg",
+                                                "name": "hilti_30_500x500.jpg",
+                                                "awsKey": "57285922adfb7349138513ea/596ccd58c83ea1d6305a1b4f.jpg",
+                                                "__v": 0,
+                                                "deleted": false,
+                                                "downloadUrl": "https://trackinno-attachments.s3.eu-central-1.amazonaws.com/57285922adfb7349138513ea/596ccd58c83ea1d6305a1b4f.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAJLQW2WDDYPOG3DGQ%2F20180412%2Feu-central-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20180412T104613Z&amp;X-Amz-Expires=900&amp;X-Amz-Signature=cb370b65c9f13016a6ffb2ed1b10ebff6406a0df5c48029cdae5aa909f994e07&amp;X-Amz-SignedHeaders=host"
+                                            },
+                                            {
+                                                "_id": "596ccecf20bd992f31f0a525",
+                                                "updatedAt": "2017-07-17T14:50:55.000Z",
+                                                "createdAt": "2017-07-17T14:50:55.000Z",
+                                                "date": "2017-07-17T14:50:55.228Z",
+                                                "mime": "image/jpeg",
+                                                "type": "jpg",
+                                                "name": "hilti_30_500x500(5).jpg",
+                                                "awsKey": "57285922adfb7349138513ea/596ccecf20bd992f31f0a525.jpg",
+                                                "__v": 0,
+                                                "deleted": false,
+                                                "downloadUrl": "https://trackinno-attachments.s3.eu-central-1.amazonaws.com/57285922adfb7349138513ea/596ccecf20bd992f31f0a525.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAJLQW2WDDYPOG3DGQ%2F20180412%2Feu-central-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20180412T104613Z&amp;X-Amz-Expires=900&amp;X-Amz-Signature=30a0c03700d2164734253d5c234c6e0e83c9ede6bca0f74e0930b1bf9c1d6207&amp;X-Amz-SignedHeaders=host"
+                                            },
+                                            {
+                                                "_id": "596ccef120bd992f31f0a528",
+                                                "updatedAt": "2017-10-12T14:51:17.484Z",
+                                                "createdAt": "2017-07-17T14:51:29.000Z",
+                                                "date": "2017-07-17T14:51:29.276Z",
+                                                "mime": "image/jpeg",
+                                                "type": "jpg",
+                                                "name": "hilti_30.jpg",
+                                                "awsKey": "57285922adfb7349138513ea/596ccef120bd992f31f0a528.jpg",
+                                                "__v": 0,
+                                                "deleted": false,
+                                                "downloadUrl": "https://trackinno-attachments.s3.eu-central-1.amazonaws.com/57285922adfb7349138513ea/596ccef120bd992f31f0a528.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAJLQW2WDDYPOG3DGQ%2F20180412%2Feu-central-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20180412T104613Z&amp;X-Amz-Expires=900&amp;X-Amz-Signature=752be02f369267d1426743a2993d11d563d6de07f2178ba2b43e163eec085bf8&amp;X-Amz-SignedHeaders=host"
+                                            }
+                                        ],
+                                        "fields": [
+                                            {
+                                                "field": {
+                                                    "_id": "578cc89bec8ae0080a6c0d44",
+                                                    "updatedAt": "2017-03-29T10:31:31.957Z",
+                                                    "createdAt": "2016-07-18T12:16:27.000Z",
+                                                    "inputType": "text",
+                                                    "label": "Due date",
+                                                    "type": "date",
+                                                    "description": "Deadline for performing action. Can be used with reminder notifications.",
+                                                    "placeholder": "Due date",
+                                                    "__v": 0,
+                                                    "required": false,
+                                                    "limitForRoleIds": [],
+                                                    "useValueAsFaultReportName": false,
+                                                    "showOnTimeline": false,
+                                                    "deleted": false,
+                                                    "global": false,
+                                                    "showOnSelectList": false,
+                                                    "showOnMobileList": false,
+                                                    "personRoleIds": [],
+                                                    "options": []
+                                                }
+                                            },
+                                            {
+                                                "field": {
+                                                    "_id": "578dd8762a7898e50d7dcec7",
+                                                    "updatedAt": "2017-03-29T10:31:41.507Z",
+                                                    "createdAt": "2016-07-19T07:36:22.000Z",
+                                                    "inputType": "text",
+                                                    "type": "checklist",
+                                                    "label": "TODO",
+                                                    "description": "Tarkastuslistatesti",
+                                                    "placeholder": "TODO",
+                                                    "__v": 0,
+                                                    "required": true,
+                                                    "limitForRoleIds": [],
+                                                    "useValueAsFaultReportName": false,
+                                                    "showOnTimeline": false,
+                                                    "deleted": false,
+                                                    "global": false,
+                                                    "showOnSelectList": false,
+                                                    "showOnMobileList": false,
+                                                    "personRoleIds": [],
+                                                    "options": [
+                                                        {
+                                                            "name": "Object 1",
+                                                            "value": "1",
+                                                            "_id": "578dd8762a7898e50d7dceca"
+                                                        },
+                                                        {
+                                                            "name": "Object 2",
+                                                            "value": "2",
+                                                            "_id": "578dd8762a7898e50d7dcec9"
+                                                        },
+                                                        {
+                                                            "name": "Object 3",
+                                                            "value": "3",
+                                                            "_id": "578dd8762a7898e50d7dcec8"
+                                                        }
+                                                    ]
+                                                },
+                                                "value": {
+                                                    "1": true,
+                                                    "578dd8762a7898e50d7dceca": true,
+                                                    "578dd8762a7898e50d7dcec9": false,
+                                                    "578dd8762a7898e50d7dcec8": true
+                                                }
+                                            },
+                                            {
+                                                "field": {
+                                                    "_id": "5799dd9598a691553c1eefb5",
+                                                    "updatedAt": "2017-03-29T10:52:28.111Z",
+                                                    "createdAt": "2016-07-28T10:25:25.000Z",
+                                                    "inputType": "text",
+                                                    "type": "datetime",
+                                                    "label": "Deadline",
+                                                    "placeholder": "Deadline",
+                                                    "__v": 0,
+                                                    "required": true,
+                                                    "limitForRoleIds": [],
+                                                    "useValueAsFaultReportName": false,
+                                                    "showOnTimeline": false,
+                                                    "deleted": false,
+                                                    "global": true,
+                                                    "showOnSelectList": false,
+                                                    "showOnMobileList": false,
+                                                    "personRoleIds": [],
+                                                    "options": []
+                                                },
+                                                "value": "2018-01-19T10:00:00.000Z"
+                                            },
+                                            {
+                                                "field": {
+                                                    "_id": "57c800f411254f085848cdcd",
+                                                    "updatedAt": "2017-03-29T10:35:23.588Z",
+                                                    "createdAt": "2016-09-01T10:20:36.000Z",
+                                                    "inputType": "text",
+                                                    "label": "GlobaaliTekstikenttä",
+                                                    "type": "text",
+                                                    "description": "Testikenttä globaaleja kenttiä varten.",
+                                                    "placeholder": "GlobaaliTekstikenttä",
+                                                    "__v": 0,
+                                                    "required": false,
+                                                    "limitForRoleIds": [],
+                                                    "useValueAsFaultReportName": false,
+                                                    "showOnTimeline": false,
+                                                    "deleted": false,
+                                                    "global": false,
+                                                    "showOnSelectList": false,
+                                                    "showOnMobileList": true,
+                                                    "personRoleIds": [],
+                                                    "options": []
+                                                }
+                                            },
+                                            {
+                                                "field": {
+                                                    "_id": "58d917dd53193fa27f28231f",
+                                                    "updatedAt": "2017-12-05T08:46:10.217Z",
+                                                    "createdAt": "2017-03-27T13:47:09.000Z",
+                                                    "inputType": "text",
+                                                    "label": "Vastuuhenkilökö",
+                                                    "type": "person",
+                                                    "description": "Vastuuhenkilö tälle assetille",
+                                                    "placeholder": "Vastuuhenkilö",
+                                                    "__v": 0,
+                                                    "required": false,
+                                                    "limitForRoleIds": [],
+                                                    "useValueAsFaultReportName": false,
+                                                    "showOnTimeline": false,
+                                                    "deleted": false,
+                                                    "global": false,
+                                                    "showOnSelectList": false,
+                                                    "showOnMobileList": false,
+                                                    "personRoleIds": [
+                                                        "5773d3fd6a0051aab7f6ac45",
+                                                        "57501a12926a2c62124e3939"
+                                                    ],
+                                                    "options": []
+                                                },
+                                                "value": {
+                                                    "type": "User",
+                                                    "email": "info@trackinno.com",
+                                                    "phone": "0401234568",
+                                                    "name": "Admin Trackinno",
+                                                    "holderID": "57285922adfb7349138513e9"
+                                                }
+                                            },
+                                            {
+                                                "field": {
+                                                    "_id": "59e06ab01e4b9597a7d7327b",
+                                                    "updatedAt": "2017-10-13T07:26:50.937Z",
+                                                    "createdAt": "2017-10-13T07:26:40.000Z",
+                                                    "inputType": "text",
+                                                    "type": "radio",
+                                                    "label": "Valintanappi",
+                                                    "placeholder": "Toimiiko tämä?",
+                                                    "__v": 0,
+                                                    "limitForRoleIds": [],
+                                                    "useValueAsFaultReportName": false,
+                                                    "showOnTimeline": false,
+                                                    "deleted": false,
+                                                    "global": false,
+                                                    "showOnSelectList": false,
+                                                    "showOnMobileList": false,
+                                                    "personRoleIds": [],
+                                                    "options": [
+                                                        {
+                                                            "name": "Kyllä",
+                                                            "value": "1",
+                                                            "_id": "59e06ab01e4b9597a7d7327d"
+                                                        },
+                                                        {
+                                                            "name": "Ei",
+                                                            "value": "2",
+                                                            "_id": "59e06ab01e4b9597a7d7327c"
+                                                        }
+                                                    ]
+                                                },
+                                                "value": {
+                                                    "name": "Kyllä",
+                                                    "value": "1",
+                                                    "_id": "59e06ab01e4b9597a7d7327d"
+                                                }
+                                            },
+                                            {
+                                                "field": {
+                                                    "_id": "59e06aca1e4b9597a7d7327e",
+                                                    "updatedAt": "2017-10-13T07:27:06.000Z",
+                                                    "createdAt": "2017-10-13T07:27:06.000Z",
+                                                    "inputType": "text",
+                                                    "type": "person",
+                                                    "label": "Henkilö",
+                                                    "placeholder": "Henkilö",
+                                                    "__v": 0,
+                                                    "limitForRoleIds": [],
+                                                    "useValueAsFaultReportName": false,
+                                                    "showOnTimeline": false,
+                                                    "deleted": false,
+                                                    "global": false,
+                                                    "showOnSelectList": false,
+                                                    "showOnMobileList": false,
+                                                    "personRoleIds": [
+                                                        "57501a12926a2c62124e3937"
+                                                    ],
+                                                    "options": []
+                                                },
+                                                "value": {
+                                                    "holderID": "57285922adfb7349138513e9",
+                                                    "name": "Admin Trackinno",
+                                                    "phone": "0401234568",
+                                                    "email": "info@trackinno.com",
+                                                    "type": "User",
+                                                    "selected": true
+                                                }
+                                            },
+                                            {
+                                                "field": {
+                                                    "_id": "59e06add1e4b9597a7d7327f",
+                                                    "updatedAt": "2017-10-13T07:27:25.000Z",
+                                                    "createdAt": "2017-10-13T07:27:25.000Z",
+                                                    "inputType": "text",
+                                                    "type": "checklist",
+                                                    "label": "Tarkastuslista",
+                                                    "placeholder": "Tarkastuslista",
+                                                    "__v": 0,
+                                                    "limitForRoleIds": [],
+                                                    "useValueAsFaultReportName": false,
+                                                    "showOnTimeline": false,
+                                                    "deleted": false,
+                                                    "global": false,
+                                                    "showOnSelectList": false,
+                                                    "showOnMobileList": false,
+                                                    "personRoleIds": [],
+                                                    "options": [
+                                                        {
+                                                            "name": "Yksi",
+                                                            "value": "1",
+                                                            "_id": "59e06add1e4b9597a7d73282"
+                                                        },
+                                                        {
+                                                            "name": "Kaksi",
+                                                            "value": "2",
+                                                            "_id": "59e06add1e4b9597a7d73281"
+                                                        },
+                                                        {
+                                                            "name": "Kolme",
+                                                            "value": "3",
+                                                            "_id": "59e06add1e4b9597a7d73280"
+                                                        }
+                                                    ]
+                                                },
+                                                "value": {
+                                                    "59e06add1e4b9597a7d73280": true,
+                                                    "59e06add1e4b9597a7d73281": true,
+                                                    "59e06add1e4b9597a7d73282": false
+                                                }
+                                            },
+                                            {
+                                                "field": {
+                                                    "_id": "59e06af41e4b9597a7d73283",
+                                                    "updatedAt": "2017-10-13T07:27:48.000Z",
+                                                    "createdAt": "2017-10-13T07:27:48.000Z",
+                                                    "inputType": "text",
+                                                    "type": "OrganizationType",
+                                                    "label": "Sijaintipaikka",
+                                                    "dataID": "57565ee020d051ec43325126",
+                                                    "placeholder": "Sijaintipaikka",
+                                                    "__v": 0,
+                                                    "limitForRoleIds": [],
+                                                    "useValueAsFaultReportName": false,
+                                                    "showOnTimeline": false,
+                                                    "deleted": false,
+                                                    "global": false,
+                                                    "showOnSelectList": false,
+                                                    "showOnMobileList": false,
+                                                    "personRoleIds": [],
+                                                    "options": []
+                                                },
+                                                "value": "{\"_id\":\"5783ab6c04816025ebee9271\",\"organization\":\"57565ee020d051ec43325126\",\"parent\":null,\"name\":\"Ylöjärvi\",\"__v\":0,\"updatedAt\":\"2016-09-02T15:48:03.604Z\",\"deleted\":false}"
+                                            },
+                                            {
+                                                "field": {
+                                                    "_id": "59e06b091e4b9597a7d73284",
+                                                    "updatedAt": "2017-10-13T07:28:09.000Z",
+                                                    "createdAt": "2017-10-13T07:28:09.000Z",
+                                                    "inputType": "text",
+                                                    "type": "select",
+                                                    "label": "Valitse",
+                                                    "placeholder": "Valitse",
+                                                    "__v": 0,
+                                                    "limitForRoleIds": [],
+                                                    "useValueAsFaultReportName": false,
+                                                    "showOnTimeline": false,
+                                                    "deleted": false,
+                                                    "global": false,
+                                                    "showOnSelectList": false,
+                                                    "showOnMobileList": false,
+                                                    "personRoleIds": [],
+                                                    "options": [
+                                                        {
+                                                            "name": "Yksi",
+                                                            "value": "1",
+                                                            "_id": "59e06b091e4b9597a7d73288"
+                                                        },
+                                                        {
+                                                            "name": "Kaksi",
+                                                            "value": "2",
+                                                            "_id": "59e06b091e4b9597a7d73287"
+                                                        },
+                                                        {
+                                                            "name": "Kolme",
+                                                            "value": "3",
+                                                            "_id": "59e06b091e4b9597a7d73286"
+                                                        },
+                                                        {
+                                                            "name": "Neljä",
+                                                            "value": "4",
+                                                            "_id": "59e06b091e4b9597a7d73285"
+                                                        }
+                                                    ]
+                                                },
+                                                "value": "{\"name\":\"Yksi\",\"value\":\"1\",\"_id\":\"59e06b091e4b9597a7d73288\"}"
+                                            },
+                                            {
+                                                "field": {
+                                                    "_id": "59e06b161e4b9597a7d73289",
+                                                    "updatedAt": "2017-10-13T07:28:22.000Z",
+                                                    "createdAt": "2017-10-13T07:28:22.000Z",
+                                                    "inputType": "text",
+                                                    "type": "datetime",
+                                                    "label": "Päivämäärä ja aika",
+                                                    "placeholder": "Päivämäärä ja aika",
+                                                    "__v": 0,
+                                                    "limitForRoleIds": [],
+                                                    "useValueAsFaultReportName": false,
+                                                    "showOnTimeline": false,
+                                                    "deleted": false,
+                                                    "global": false,
+                                                    "showOnSelectList": false,
+                                                    "showOnMobileList": false,
+                                                    "personRoleIds": [],
+                                                    "options": []
+                                                },
+                                                "value": "2017-10-11T22:10:00.000Z"
+                                            },
+                                            {
+                                                "field": {
+                                                    "_id": "59e06b211e4b9597a7d7328a",
+                                                    "updatedAt": "2017-10-13T07:28:33.000Z",
+                                                    "createdAt": "2017-10-13T07:28:33.000Z",
+                                                    "inputType": "text",
+                                                    "type": "date",
+                                                    "label": "Päivämäärä",
+                                                    "placeholder": "Päivämäärä",
+                                                    "__v": 0,
+                                                    "limitForRoleIds": [],
+                                                    "useValueAsFaultReportName": false,
+                                                    "showOnTimeline": false,
+                                                    "deleted": false,
+                                                    "global": false,
+                                                    "showOnSelectList": false,
+                                                    "showOnMobileList": false,
+                                                    "personRoleIds": [],
+                                                    "options": []
+                                                },
+                                                "value": "2017-10-13T21:00:00.000Z"
+                                            },
+                                            {
+                                                "field": {
+                                                    "_id": "59e06b2b1e4b9597a7d7328b",
+                                                    "updatedAt": "2017-10-13T07:28:43.000Z",
+                                                    "createdAt": "2017-10-13T07:28:43.000Z",
+                                                    "inputType": "text",
+                                                    "type": "textarea",
+                                                    "label": "Tekstialue",
+                                                    "lines": 3,
+                                                    "placeholder": "Tekstialue",
+                                                    "__v": 0,
+                                                    "limitForRoleIds": [],
+                                                    "useValueAsFaultReportName": false,
+                                                    "showOnTimeline": false,
+                                                    "deleted": false,
+                                                    "global": false,
+                                                    "showOnSelectList": false,
+                                                    "showOnMobileList": false,
+                                                    "personRoleIds": [],
+                                                    "options": []
+                                                },
+                                                "value": "Toimiiko"
+                                            },
+                                            {
+                                                "field": {
+                                                    "_id": "59e06b351e4b9597a7d7328c",
+                                                    "updatedAt": "2018-02-11T19:23:40.013Z",
+                                                    "createdAt": "2017-10-13T07:28:53.000Z",
+                                                    "inputType": "text",
+                                                    "type": "text",
+                                                    "label": "Tekstikenttä",
+                                                    "placeholder": "Tekstikenttä",
+                                                    "__v": 0,
+                                                    "required": true,
+                                                    "limitForRoleIds": [
+                                                        "57501a12926a2c62124e3939",
+                                                        "5773d3fd6a0051aab7f6ac45"
+                                                    ],
+                                                    "useValueAsFaultReportName": false,
+                                                    "showOnTimeline": false,
+                                                    "deleted": false,
+                                                    "global": false,
+                                                    "showOnSelectList": true,
+                                                    "showOnMobileList": true,
+                                                    "personRoleIds": [],
+                                                    "options": []
+                                                },
+                                                "value": "Toimii3"
+                                            },
+                                            {
+                                                "field": {
+                                                    "_id": "59e599cbd09a19721422e40a",
+                                                    "updatedAt": "2017-10-17T05:48:59.000Z",
+                                                    "createdAt": "2017-10-17T05:48:59.000Z",
+                                                    "inputType": "text",
+                                                    "label": "Lämp.rek. kalibr. / Rec. calibr.",
+                                                    "type": "date",
+                                                    "placeholder": "Lämp.rek. kalibr. / Rec. calibr.",
+                                                    "temporary": true,
+                                                    "__v": 0,
+                                                    "limitForRoleIds": [],
+                                                    "useValueAsFaultReportName": false,
+                                                    "showOnTimeline": false,
+                                                    "deleted": false,
+                                                    "global": false,
+                                                    "showOnSelectList": false,
+                                                    "showOnMobileList": false,
+                                                    "personRoleIds": [],
+                                                    "options": []
+                                                },
+                                                "value": "2017-10-11T21:00:00.000Z"
+                                            },
+                                            {
+                                                "field": {
+                                                    "_id": "5a8297915051dc005f03feae",
+                                                    "updatedAt": "2018-02-13T07:45:21.000Z",
+                                                    "createdAt": "2018-02-13T07:45:21.000Z",
+                                                    "inputType": "text",
+                                                    "type": "datetime",
+                                                    "label": "Liveline",
+                                                    "required": true,
+                                                    "placeholder": "Liveline",
+                                                    "__v": 0,
+                                                    "limitForRoleIds": [],
+                                                    "useValueAsFaultReportName": false,
+                                                    "showOnTimeline": false,
+                                                    "deleted": false,
+                                                    "global": true,
+                                                    "showOnSelectList": false,
+                                                    "showOnMobileList": false,
+                                                    "personRoleIds": [],
+                                                    "options": []
+                                                },
+                                                "value": "2018-02-23T10:00:00.000Z"
+                                            }
+                                        ],
+                                        "labels": null,
+                                        "groupHead": false,
+                                        "assetImage": "https://trackinno-thumbnails.s3.eu-central-1.amazonaws.com/57285922adfb7349138513ea/100_596bd3ed0a7f49a0296b7c76.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAJLQW2WDDYPOG3DGQ%2F20180412%2Feu-central-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20180412T104613Z&amp;X-Amz-Expires=900&amp;X-Amz-Signature=af1ef6b05b8d46063e698239656727abc93573490bd2aa5acfcfcf0cf1856146&amp;X-Amz-SignedHeaders=host"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "assets"
+            ]
+        },
+        "signature": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "default": "RsaSignature2018"
+                },
+                "created": {
+                    "type": "string",
+                    "default": "2020-10-12T08:30:22+03:00"
+                },
+                "creator": {
+                    "type": "string",
+                    "default": "http://localhost:8080/translator/v1/public.key"
+                },
+                "signatureValue": {
+                    "type": "string",
+                    "default": "Qwh2PoEY7D88i5Z8Rzeccf8yL200R0/rFTS2t1KzGrvZ0oIxwWXFwjZ9W3gqpYubyuls9pKiZVo/kMD7bY0w67VoHxfejM0sEu/MBgzvMD+S91JH/P8sD+p/52ld8idO90FHZSqePJZyCFC1RkA9s5hCeTDD3HBYLd5t9UyUk4KDCmuXrRXwS2GNmQ18uOKVSDsLTQ8GNC2MWbD43gm3CzttVqIn4acz7k+fQ7wktW1rwUE1EF0QM0AT/6NMZku+LYOiye+CnDkalJZPYUQwd+Z6wGG1ggoVZhqXyKPihPHon4qNXUx6Qbdn+MXEBLtfwMiRVgBWNVnqFD2r7KOY9fGgzuolGRDwGVUyQCctjqN57wH5RKc5pJzdthf99MvT7C0KRylywvxeCZTc06/vafU6o+g3D+h2tiq80t9QIs8BF+ROfGXLmQwCsr2KMxZRlVnlYw0MJt2J8GGNi7mI6i1v0/9OdzYumcPS6XhSFVu2NoQAXMgz785DOoq5kNShhO2xZ2e9T4GiTDl+A9Agw03WBu/LTNLLW8NpO93EbCFI4RAwPsbbIE3hx78fpxAWLJGapRIyG++85RjiUC9iX1f+Y9kJEL8ZXE+Y1HUt4G3SSXA7pdcXqE9OoAB3o4rZMSCuG1jocDyPwmW7qg/4j1wpMbKFG6H5tTpQvw0g7ZM="
+                }
+            },
+            "required": [
+                "created",
+                "creator",
+                "signatureValue",
+                "type"
+            ]
+        }
+    },
+    "required": [
+        "@context",
+        "data",
+        "signature"
+    ]
+}</msg>
+<status status="PASS" starttime="20201012 08:30:22.619" endtime="20201012 08:30:22.784"></status>
+</kw>
+<status status="PASS" starttime="20201012 08:30:20.510" endtime="20201012 08:30:22.784"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>200</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:22.785" endtime="20201012 08:30:22.786"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body @context</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductOutput/Asset/</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:22.786" endtime="20201012 08:30:22.786"></status>
+</kw>
+<kw name="Object" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON object.*</doc>
+<arguments>
+<arg>response body data</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:22.787" endtime="20201012 08:30:22.795"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data assets</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:22.796" endtime="20201012 08:30:22.810"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data assets 0 data</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:22.814" endtime="20201012 08:30:22.838"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body data assets 0 data 0 @type</arg>
+<arg>Asset</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:22.839" endtime="20201012 08:30:22.842"></status>
+</kw>
+<tags>
+<tag>bug-0001</tag>
+</tags>
+<status status="PASS" starttime="20201012 08:30:20.506" endtime="20201012 08:30:22.843" critical="yes"></status>
+</test>
+<test id="s1-t2" name="fetch, 422, Missing data for timestamp required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20201012 08:30:22.845" level="INFO">${body} = {'productCode': 'default_trackinno', 'parameters': {'ids': ['572a0b01c99937671bec8788']}}</msg>
+<status status="PASS" starttime="20201012 08:30:22.844" endtime="20201012 08:30:22.845"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20201012 08:30:22.845" level="INFO">${now} = 2020-10-12T05:30:22+00:00</msg>
+<status status="PASS" starttime="20201012 08:30:22.845" endtime="20201012 08:30:22.845"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:22.845" endtime="20201012 08:30:22.845"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:22.845" endtime="20201012 08:30:22.845"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20201012 08:30:22.846" level="INFO">${json_string} = {"productCode": "default_trackinno", "parameters": {"ids": ["572a0b01c99937671bec8788"]}, "timestamp": "2020-10-12T05:30:22+00:00"}</msg>
+<status status="PASS" starttime="20201012 08:30:22.845" endtime="20201012 08:30:22.846"></status>
+</kw>
+<msg timestamp="20201012 08:30:22.846" level="INFO">${body} = {'productCode': 'default_trackinno', 'parameters': {'ids': ['572a0b01c99937671bec8788']}, 'timestamp': '2020-10-12T05:30:22+00:00'}</msg>
+<status status="PASS" starttime="20201012 08:30:22.844" endtime="20201012 08:30:22.846"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:22.846" endtime="20201012 08:30:22.846"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20201012 08:30:22.847" level="INFO">${signature} = hmxpu3J017HQswz0xJdiyvL7ycdQHUG8Hd3qH6zAgTg=</msg>
+<status status="PASS" starttime="20201012 08:30:22.847" endtime="20201012 08:30:22.847"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:22.847" endtime="20201012 08:30:22.847"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:22.848" endtime="20201012 08:30:24.855"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20201012 08:30:24.855" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "timestamp": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "timestamp"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20201012 08:30:24.855" endtime="20201012 08:30:24.857"></status>
+</kw>
+<status status="PASS" starttime="20201012 08:30:22.847" endtime="20201012 08:30:24.857"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:24.857" endtime="20201012 08:30:24.857"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:24.858" endtime="20201012 08:30:24.858"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message timestamp 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:24.858" endtime="20201012 08:30:24.859"></status>
+</kw>
+<tags>
+<tag>bug-0001</tag>
+</tags>
+<status status="PASS" starttime="20201012 08:30:22.844" endtime="20201012 08:30:24.859" critical="yes"></status>
+</test>
+<test id="s1-t3" name="fetch, 422, Missing data for parameters required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20201012 08:30:24.862" level="INFO">${body} = {'productCode': 'default_trackinno', 'parameters': {'ids': ['572a0b01c99937671bec8788']}}</msg>
+<status status="PASS" starttime="20201012 08:30:24.861" endtime="20201012 08:30:24.862"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20201012 08:30:24.862" level="INFO">${now} = 2020-10-12T05:30:24+00:00</msg>
+<status status="PASS" starttime="20201012 08:30:24.862" endtime="20201012 08:30:24.862"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:24.862" endtime="20201012 08:30:24.862"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:24.862" endtime="20201012 08:30:24.862"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20201012 08:30:24.863" level="INFO">${json_string} = {"productCode": "default_trackinno", "parameters": {"ids": ["572a0b01c99937671bec8788"]}, "timestamp": "2020-10-12T05:30:24+00:00"}</msg>
+<status status="PASS" starttime="20201012 08:30:24.862" endtime="20201012 08:30:24.863"></status>
+</kw>
+<msg timestamp="20201012 08:30:24.863" level="INFO">${body} = {'productCode': 'default_trackinno', 'parameters': {'ids': ['572a0b01c99937671bec8788']}, 'timestamp': '2020-10-12T05:30:24+00:00'}</msg>
+<status status="PASS" starttime="20201012 08:30:24.861" endtime="20201012 08:30:24.863"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>parameters</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:24.863" endtime="20201012 08:30:24.864"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20201012 08:30:24.864" level="INFO">${signature} = W4/3utUJI3t1JGclJJ678oSO/5iFuA5L545bq7zt0J8=</msg>
+<status status="PASS" starttime="20201012 08:30:24.864" endtime="20201012 08:30:24.864"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:24.864" endtime="20201012 08:30:24.865"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:24.865" endtime="20201012 08:30:26.872"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20201012 08:30:26.872" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "parameters": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "parameters"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20201012 08:30:26.872" endtime="20201012 08:30:26.874"></status>
+</kw>
+<status status="PASS" starttime="20201012 08:30:24.864" endtime="20201012 08:30:26.874"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:26.874" endtime="20201012 08:30:26.875"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:26.876" endtime="20201012 08:30:26.876"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message parameters 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:26.877" endtime="20201012 08:30:26.877"></status>
+</kw>
+<tags>
+<tag>bug-0002</tag>
+</tags>
+<status status="PASS" starttime="20201012 08:30:24.861" endtime="20201012 08:30:26.878" critical="yes"></status>
+</test>
+<test id="s1-t4" name="fetch, 422, Missing data for ids required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20201012 08:30:26.883" level="INFO">${body} = {'productCode': 'default_trackinno', 'parameters': {'ids': ['572a0b01c99937671bec8788']}}</msg>
+<status status="PASS" starttime="20201012 08:30:26.883" endtime="20201012 08:30:26.883"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20201012 08:30:26.884" level="INFO">${now} = 2020-10-12T05:30:26+00:00</msg>
+<status status="PASS" starttime="20201012 08:30:26.884" endtime="20201012 08:30:26.884"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:26.884" endtime="20201012 08:30:26.884"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:26.884" endtime="20201012 08:30:26.885"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20201012 08:30:26.885" level="INFO">${json_string} = {"productCode": "default_trackinno", "parameters": {"ids": ["572a0b01c99937671bec8788"]}, "timestamp": "2020-10-12T05:30:26+00:00"}</msg>
+<status status="PASS" starttime="20201012 08:30:26.885" endtime="20201012 08:30:26.885"></status>
+</kw>
+<msg timestamp="20201012 08:30:26.885" level="INFO">${body} = {'productCode': 'default_trackinno', 'parameters': {'ids': ['572a0b01c99937671bec8788']}, 'timestamp': '2020-10-12T05:30:26+00:00'}</msg>
+<status status="PASS" starttime="20201012 08:30:26.883" endtime="20201012 08:30:26.885"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body["parameters"]}</arg>
+<arg>ids</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:26.885" endtime="20201012 08:30:26.886"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20201012 08:30:26.886" level="INFO">${signature} = CDoLCfVTDZpEEFAIEliu10v+ZJc0hVMl7amxUR4BAOQ=</msg>
+<status status="PASS" starttime="20201012 08:30:26.886" endtime="20201012 08:30:26.886"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:26.886" endtime="20201012 08:30:26.887"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:26.887" endtime="20201012 08:30:28.892"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20201012 08:30:28.893" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "parameters.ids": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "parameters.ids"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20201012 08:30:28.892" endtime="20201012 08:30:28.894"></status>
+</kw>
+<status status="PASS" starttime="20201012 08:30:26.886" endtime="20201012 08:30:28.894"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:28.895" endtime="20201012 08:30:28.895"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:28.895" endtime="20201012 08:30:28.896"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message parameters.ids 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:28.896" endtime="20201012 08:30:28.896"></status>
+</kw>
+<tags>
+<tag>bug-0003</tag>
+</tags>
+<status status="PASS" starttime="20201012 08:30:26.882" endtime="20201012 08:30:28.897" critical="yes"></status>
+</test>
+<test id="s1-t5" name="fetch, 200, Empty ids">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20201012 08:30:28.899" level="INFO">${body} = {'productCode': 'default_trackinno', 'parameters': {'ids': ['572a0b01c99937671bec8788']}}</msg>
+<status status="PASS" starttime="20201012 08:30:28.898" endtime="20201012 08:30:28.899"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20201012 08:30:28.899" level="INFO">${now} = 2020-10-12T05:30:28+00:00</msg>
+<status status="PASS" starttime="20201012 08:30:28.899" endtime="20201012 08:30:28.899"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:28.899" endtime="20201012 08:30:28.900"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:28.900" endtime="20201012 08:30:28.900"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20201012 08:30:28.900" level="INFO">${json_string} = {"productCode": "default_trackinno", "parameters": {"ids": ["572a0b01c99937671bec8788"]}, "timestamp": "2020-10-12T05:30:28+00:00"}</msg>
+<status status="PASS" starttime="20201012 08:30:28.900" endtime="20201012 08:30:28.900"></status>
+</kw>
+<msg timestamp="20201012 08:30:28.900" level="INFO">${body} = {'productCode': 'default_trackinno', 'parameters': {'ids': ['572a0b01c99937671bec8788']}, 'timestamp': '2020-10-12T05:30:28+00:00'}</msg>
+<status status="PASS" starttime="20201012 08:30:28.898" endtime="20201012 08:30:28.900"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body["parameters"]}</arg>
+<arg>ids=@{EMPTY}</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:28.901" endtime="20201012 08:30:28.901"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20201012 08:30:28.902" level="INFO">${signature} = hkE7BvPvLJyiYjpnAOlWe1zYqgsBg6zVWJdCOOQkzIo=</msg>
+<status status="PASS" starttime="20201012 08:30:28.901" endtime="20201012 08:30:28.902"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:28.902" endtime="20201012 08:30:28.902"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:28.902" endtime="20201012 08:30:30.914"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20201012 08:30:30.914" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "@context": {
+            "type": "string",
+            "default": "https://standards.oftrust.net/v2/Context/DataProductOutput/Asset/"
+        },
+        "data": {
+            "type": "object",
+            "properties": {
+                "assets": {
+                    "type": "array",
+                    "default": []
+                }
+            },
+            "required": [
+                "assets"
+            ]
+        },
+        "signature": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "default": "RsaSignature2018"
+                },
+                "created": {
+                    "type": "string",
+                    "default": "2020-10-12T08:30:30+03:00"
+                },
+                "creator": {
+                    "type": "string",
+                    "default": "http://localhost:8080/translator/v1/public.key"
+                },
+                "signatureValue": {
+                    "type": "string",
+                    "default": "rdvxUuRS5ZtASSzXwutJbtCueQ+I2XVS4+7AUsbyd7YZKmxunUIm3RyjzJmU59DOL9by3MAAv1+awTjDBO0SJIGMnm0qMDpDy6FuuY7VJLkhMZXLXt7WaATm6RmYkgRrPQcKQDcp0n3qDu38oLWufHAEAmELD5lc00ocAsmRg96/ezBPBtaoOzPFyjQLnK78MLP1zLYoH5wlp9lbSnE5fqOKCnMupXehOP/zSrjCNbZIzHIxTi+r4CHmC1AwrchUV+dEvs58732mDU3PztK4HLxmT2iTboVdhgUkYYeMwic4Imzco/Mn13FcYp18taQvqFjtXdFi3JOh8w2XVyt4x05TawGLUGJY9LV7TuvYSoX56ygDHfFOcI+E4AE9FhxTkVNjcLP+TKJ8gMi36z19qQ+b9Bw98MtT/k/87Pia++3xJtvHnuxc4sFMeP6UcNDHRx5b/La8POJTewdz/smGdiHs+t5rGfAjw2gfiLPtZcQxe9xlgBVs2ShEaWZQaZaJMNfY3TNxKrGvNwqyC5MwdnOYaQf8NIHqi/jDYeBnfuh4XX3efIF91EHpYY4jkYVeUXpviKHL7zy1BU2XWKn/NuxKUEeaKDG7hBX+2C1l7SZ8Y2GzsV2DqZm/IIVEdObEHtinxnjyLyrjlHZvcrkdVFqsd07vEay5ee3ZHicW9co="
+                }
+            },
+            "required": [
+                "created",
+                "creator",
+                "signatureValue",
+                "type"
+            ]
+        }
+    },
+    "required": [
+        "@context",
+        "data",
+        "signature"
+    ]
+}</msg>
+<status status="PASS" starttime="20201012 08:30:30.914" endtime="20201012 08:30:30.918"></status>
+</kw>
+<status status="PASS" starttime="20201012 08:30:28.901" endtime="20201012 08:30:30.918"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>200</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:30.918" endtime="20201012 08:30:30.919"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body @context</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductOutput/Asset/</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:30.919" endtime="20201012 08:30:30.919"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data assets</arg>
+<arg>maxItems=0</arg>
+</arguments>
+<status status="PASS" starttime="20201012 08:30:30.920" endtime="20201012 08:30:30.920"></status>
+</kw>
+<tags>
+<tag>bug-0004</tag>
+</tags>
+<status status="PASS" starttime="20201012 08:30:28.898" endtime="20201012 08:30:30.920" critical="yes"></status>
+</test>
+<doc>Trackinno Service API Tests</doc>
+<status status="PASS" starttime="20201012 08:30:20.249" endtime="20201012 08:30:30.921"></status>
+</suite>
+<statistics>
+<total>
+<stat pass="5" fail="0">Critical Tests</stat>
+<stat pass="5" fail="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="2" fail="0">bug-0001</stat>
+<stat pass="1" fail="0">bug-0002</stat>
+<stat pass="1" fail="0">bug-0003</stat>
+<stat pass="1" fail="0">bug-0004</stat>
+</tag>
+<suite>
+<stat pass="5" fail="0" id="s1" name="Connector Tests">Connector Tests</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

@@ -10,7 +10,7 @@
     "path": "/api/v2/${api}/${id}"
   },
   "dataObjects": [
-    ""
+    "docs"
   ],
   "dataPropertyMappings": {
     "${type}": ""
