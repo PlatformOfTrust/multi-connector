@@ -9,6 +9,7 @@ const winston = require('../../logger.js');
 const cache = require('../cache');
 const _ = require('lodash');
 
+const brokers = {};
 const clients = {};
 const plugins = {};
 
@@ -24,6 +25,7 @@ const supportedPlugins = ['azure-service-bus'];
  * @return {Array}
  */
 const getData = async (config, pathArray) => {
+
     let options;
     const items = [];
 
@@ -43,6 +45,7 @@ const getData = async (config, pathArray) => {
 
         // Retrieve latest messages from cache.
         const result = cache.getDoc('messages', config.productCode) || {};
+
         for (let p = 0; p < pathArray.length; p++) {
             if (Object.hasOwnProperty.call(result, pathArray[p])) {
                 /** Id and topic are linked. */
@@ -50,7 +53,7 @@ const getData = async (config, pathArray) => {
                 if (message) items.push(await response.handleData(config, pathArray[p], p, message));
             } else {
                 /** Messages have to be find by id. */
-                const message = Object.values(result).find(i => i[options.id] === pathArray[p]);
+                const message = Object.values(result).flat().find(i => i[options.id] === pathArray[p]);
                 if (message) items.push(await response.handleData(config, pathArray[p], p, message));
             }
         }
@@ -70,12 +73,12 @@ const getData = async (config, pathArray) => {
 };
 
 /**
- * Connects to MQTT broker.
+ * Connects to broker and listens for updates.
  *
  * @param {Object} config
  * @param {String} productCode
  */
-const connect = async (config, productCode) => {
+const callback = async (config, productCode) => {
     try {
         const url = config.static.url;
         let topic = config.static.topic;
@@ -89,10 +92,18 @@ const connect = async (config, productCode) => {
             options.cert = cache.getDoc('resources', config.static.cert);
         }
 
+        if (Object.hasOwnProperty.call(config.static, 'username')) {
+            options.username = config.static.username;
+        }
+
+        if (Object.hasOwnProperty.call(config.static, 'password')) {
+            options.password = config.static.password;
+        }
+
         // Connect to broker.
         clients[productCode] = mqtt.connect(url, options);
 
-        // Subscribe to defined topic on connect.
+        // Subscribe to defined topic/-s on connect.
         clients[productCode].on('connect', () => {
             /** Topic can be a string or an array of strings. */
             clients[productCode].subscribe(topic);
@@ -118,7 +129,7 @@ const connect = async (config, productCode) => {
                     for (let i = 0; i < streamPlugins.length; i++) {
                         // Require plugin, if not yet available.
                         if (!Object.keys(plugins).includes(streamPlugins[i])) {
-                            plugins[streamPlugins[i]] = require('../.' + './config/plugins/' + '/' + streamPlugins[i] + '.js');
+                            plugins[streamPlugins[i]] = require('../.' + './config/plugins' + '/' + streamPlugins[i] + '.js');
                         }
                         // Check that plugin has stream method.
                         if (!!plugins[streamPlugins[i]].stream) {
@@ -154,6 +165,29 @@ const connect = async (config, productCode) => {
                 winston.log('error', err.message);
             }
         });
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+}
+
+/**
+ * Initiates actions required by MQTT protocol.
+ *
+ * @param {Object} config
+ * @param {String} productCode
+ */
+const connect = async (config, productCode) => {
+    try {
+        // Check for MQTT broker plugin.
+        if (Object.hasOwnProperty.call(config, 'plugins')) {
+            if (Object.hasOwnProperty.call(config.plugins, 'mqtt-server')) {
+                // Start local broker and pass client connection as a callback.
+                brokers[productCode] = require('../.' + './config/plugins' + '/' + 'mqtt-broker' + '.js').connect(config, {...config.plugins['mqtt-server'], productCode }, callback);
+                return;
+            }
+        }
+        // Connect to external broker.
+        return callback(config, productCode);
     } catch (err) {
         winston.log('error', err.message);
     }

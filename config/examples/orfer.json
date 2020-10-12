@@ -1,0 +1,29 @@
+{
+  "template": "orfer",
+  "static": {
+    "url": "mqtt://<connector-url>:8883",
+    "topic": "sensors/#",
+    "username": "<username>",
+    "password": "<password>"
+  },
+  "dynamic": {
+    "authConfig.path": "ids"
+  },
+  "plugins": {
+    "azure-service-bus": {
+      "url": "<service-bus-inbound-endpoint>",
+      "output": {
+        "data": "data"
+      }
+    },
+    "mqtt-server": {
+      "username": "<username>",
+      "password": "<password>"
+    }
+  },
+  "request": {
+    "ids": [
+      "<id>"
+    ]
+  }
+}

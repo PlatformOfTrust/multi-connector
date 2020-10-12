@@ -1,5 +1,5 @@
 # Specify where to get the base image and create a new container
-FROM node:10
+FROM node:12
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -12,5 +12,5 @@ RUN npm install
 COPY . .
 
 # Run the app
-EXPOSE 8080
+EXPOSE 8080 1883
 CMD [ "node", "server.js" ]

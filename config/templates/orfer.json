@@ -1,0 +1,29 @@
+{
+  "plugins": [
+    "azure-service-bus",
+    "mqtt-broker"
+  ],
+  "protocol": "mqtt",
+  "authConfig": {
+    "url": "${url}",
+    "path": "${id}",
+    "topic": "${topic}"
+  },
+  "dataObjects": [
+    ""
+  ],
+  "dataPropertyMappings": {
+    "MeasureAirTemperatureCelsiusDegree": "temp"
+  },
+  "generalConfig": {
+    "sourceName": {
+      "dataObjectProperty": "name"
+    },
+    "hardwareId": {
+      "dataObjectProperty": "id"
+    },
+    "timestamp": {
+      "dataObjectProperty": "ts"
+    }
+  }
+}

@@ -14,6 +14,7 @@ Following data sources are supported out of the box. Example configs can be foun
 - HubSpot API
 - Nuuka Solutions Platform
 - Nysse GTFS RT public API
+- Orfer Production Line
 - Rakennustieto API
 - Sähkönumerot.fi API
 - Schneider EcoStruxure Cloud
@@ -46,10 +47,12 @@ GREENLOCK_MAINTANER=info@example.com
 
 ## Installing
 
-A step by step series of examples that tell you how to get the connector configured. Configuration is accomplished by entering parameters and credentials to make a connection to the data source. Enabling handling of broker requests requires the following configurations.
+> A step by step series of examples that tell you how to get the connector configured.
+
+Configuration is accomplished by entering parameters and credentials to make a connection to the data source. Enabling handling of broker requests requires the following configurations.
 
 - Template at /config/templates/{data-source}.json
-- Config at /config/{data-product}.json
+- Config at /config/{product-code}.json
 -- example configs for supported data sources can be found at /config/examples/
 
 Optionally
