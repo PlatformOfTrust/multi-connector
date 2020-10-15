@@ -12,6 +12,7 @@ Following data sources are supported out of the box. Example configs can be foun
 - Fidelix Pilvivalvomo
 - Haltian Thingsee API
 - HubSpot API
+- Microsoft Office 365
 - Nuuka Solutions Platform
 - Nysse GTFS RT public API
 - Orfer Production Line
