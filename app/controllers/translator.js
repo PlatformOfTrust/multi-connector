@@ -25,7 +25,7 @@ module.exports.fetch = async (req, res) => {
     let result;
     try {
         // Fetch data.
-        result = await connector.getData(req.body);
+        result = await connector.getData(req);
 
         // Initialize signature object.
         let signature = {

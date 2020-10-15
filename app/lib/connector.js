@@ -209,6 +209,7 @@ function emit(collections) {
         return load(pluginsDir, '.js', 'plugins', readFile)
     })
     .then(() => {
+        emitter.emit('plugins', plugins);
         return emit(['templates', 'configs', 'resources'])
     })
     .catch((err) => winston.log('error', err.message));
@@ -410,11 +411,13 @@ const interpretMode = function (config, parameters) {
  * Places static and dynamic parameters to the template as described.
  * Consumes described resources.
  *
- * @param {Object} reqBody
+ * @param {Object} req
  * @return {Object}
  *   Data object.
  */
-const getData = async (reqBody) => {
+const getData = async (req) => {
+    const reqBody = req.body;
+
     /** Default request validation */
     let validation = validator.validate(reqBody, supportedParameters);
     if (Object.hasOwnProperty.call(validation, 'error')) {
@@ -488,7 +491,11 @@ const getData = async (reqBody) => {
     // Template identifies connector settings for multiple configs.
     // ProductCode identifies requested data product.
     template.authConfig.template = config.template;
+    template.authConfig.productCode = productCode;
     template.productCode = productCode;
+
+    // Store connector URL.
+    template.authConfig.connectorURL = req.protocol + '://' + req.get('host');
 
     // Execute parameters plugin function.
     for (let i = 0; i < template.plugins.length; i++) {

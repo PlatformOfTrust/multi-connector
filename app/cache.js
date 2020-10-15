@@ -13,6 +13,7 @@ const defaultTTL = 86400; // 24h
 
 // Initialize cache object.
 let cache = {
+    codes: {cache: new NodeCache()},
     grants: {cache: new NodeCache()},
     configs: {cache: new NodeCache()},
     messages: {cache: new NodeCache()},
@@ -30,7 +31,7 @@ let cache = {
  * @return {String}
  */
 const getDoc = function (collection, id) {
-    if (cache.hasOwnProperty(collection)) return cache[collection].cache.get(id.toString());
+    if (cache.hasOwnProperty(collection) && !!id) return cache[collection].cache.get(id.toString());
     else return undefined;
 };
 

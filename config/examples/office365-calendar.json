@@ -1,0 +1,17 @@
+{
+  "template": "office365",
+  "static": {
+    "api": "calendarview",
+    "clientId": "<client-id>",
+    "clientSecret": "<client-secret>",
+    "type": "event"
+  },
+  "dynamic": {
+    "authConfig.path": "ids"
+  },
+  "request": {
+    "ids": [
+      "<calendar-id>"
+    ]
+  }
+}

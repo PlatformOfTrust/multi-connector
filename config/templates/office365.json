@@ -1,0 +1,40 @@
+{
+  "plugins": [
+    "oauth2",
+    "office365"
+  ],
+  "protocol": "rest",
+  "authConfig": {
+    "url": "https://login.microsoftonline.com",
+    "authPath": "/common/oauth2/v2.0",
+    "grantType": "authorization_code",
+    "scope": "${scope}",
+    "accessToken": "${accessToken}",
+    "clientId": "${clientId}",
+    "clientSecret": "${clientSecret}",
+    "path": "https://graph.microsoft.com/v1.0/me/${api}"
+  },
+  "dataObjects": [
+    "value"
+  ],
+  "dataPropertyMappings": {
+    "${type}": ""
+  },
+  "generalConfig": {
+    "query": {
+      "end": "endDateTime",
+      "start": "startDateTime"
+    },
+    "sourceName": {
+      "dataObjectProperty": "subject"
+    },
+    "hardwareId": {
+      "dataObjectProperty": "location.displayName"
+    }
+  },
+  "output": {
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/CalendarEvent/",
+    "array": "events",
+    "data": "data"
+  }
+}

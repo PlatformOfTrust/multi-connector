@@ -46,6 +46,20 @@ module.exports = function (passport) {
      */
     router.use('/fetch/', require('./fetch')(passport));
 
+    /** Plugins.
+     *
+     * @swagger
+     * /translator/v1/plugins:
+     *   post:
+     *     description: Dynamic endpoint for plugins.
+     *     produces:
+     *       - application/json
+     *     responses:
+     *       200:
+     *         description: Action completed.
+     */
+    router.use('/plugins/', require('./plugins')(passport));
+
     /** Swagger documentation. */
     router.get('/swagger.json', function (req, res) {
         res.setHeader('Content-Type', 'application/json');
