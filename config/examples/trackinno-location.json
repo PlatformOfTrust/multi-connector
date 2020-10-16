@@ -3,16 +3,16 @@
   "static": {
     "clientId": "<client-id>",
     "clientSecret": "<client-secret>",
-    "api": "assets",
-    "type": "Asset",
-    "dataObject": "docs"
+    "api": "locations",
+    "type": "Location",
+    "dataObject": ""
   },
   "dynamic": {
     "authConfig.path": "ids"
   },
   "request": {
     "ids": [
-      "<asset-id>"
+      "<location-id>"
     ]
   }
 }

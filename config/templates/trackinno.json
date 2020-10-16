@@ -10,7 +10,7 @@
     "path": "/api/v2/${api}/${id}"
   },
   "dataObjects": [
-    "docs"
+    "${dataObject}"
   ],
   "dataPropertyMappings": {
     "${type}": ""
@@ -27,9 +27,9 @@
     }
   },
   "output": {
-    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Asset/",
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/${type}/",
     "timestamp": "timestamp",
-    "array": "assets",
+    "array": "${api}",
     "object": "data",
     "value": "value",
     "data": "data",
