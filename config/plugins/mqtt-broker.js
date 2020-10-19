@@ -2,6 +2,7 @@
 /**
  * Module dependencies.
  */
+const fs = require('fs');
 const aedes = require('aedes');
 const ws = require('websocket-stream');
 const winston = require('../../logger.js');
@@ -20,7 +21,25 @@ const winston = require('../../logger.js');
  */
 const connect = async (config, options, callback) => {
     const instance = aedes();
-    const server = require('net').createServer(instance.handle);
+    let server;
+
+    // Import files for TLS.
+    if (Object.hasOwnProperty.call(options, 'tls') && process.env.GREENLOCK_DOMAIN) {
+        try {
+            options.key = fs.readFileSync('./greenlock.d/live/' + process.env.GREENLOCK_DOMAIN + '/privkey.pem');
+            options.cert = fs.readFileSync('./greenlock.d/live/' + process.env.GREENLOCK_DOMAIN + '/cert.pem');
+            options.ca = fs.readFileSync('./greenlock.d/live/' + process.env.GREENLOCK_DOMAIN + '/chain.pem');
+        } catch (err) {
+            winston.log('error', 'Failed to set up MQTT over TLS. ' + err.message);
+        }
+    }
+
+    // Initiate server.
+    if (options.key && options.cert && options.ca) {
+        server = require('tls').createServer(options, instance.handle);
+    } else {
+        server = require('net').createServer(instance.handle);
+    }
 
     // Initialize authentication.
     instance.authenticate = (client, username, password, cb) => {
@@ -41,7 +60,7 @@ const connect = async (config, options, callback) => {
         }
     };
 
-    // Start MQTT broker.
+    // Start MQTT/MQTTS broker.
     try {
         const port = options.port || 8881;
         server.listen(port, function () {

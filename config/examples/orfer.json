@@ -18,7 +18,8 @@
     },
     "mqtt-server": {
       "username": "<username>",
-      "password": "<password>"
+      "password": "<password>",
+      "tls": false
     }
   },
   "request": {

@@ -47,6 +47,7 @@
     "request-promise": "^4.2.5",
     "soap": "^0.31.0",
     "swagger-jsdoc": "^4.0.0",
+    "tls": "0.0.1",
     "util": "^0.12.2",
     "websocket-stream": "^5.5.2",
     "winston": "^3.2.1",
