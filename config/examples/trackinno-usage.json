@@ -3,8 +3,8 @@
   "static": {
     "clientId": "<client-id>",
     "clientSecret": "<client-secret>",
-    "api": "locations",
-    "type": "Location",
+    "api": "usages",
+    "type": "Usage",
     "dataObject": "docs"
   },
   "dynamic": {
@@ -12,7 +12,7 @@
   },
   "request": {
     "ids": [
-      "<location-id>"
+      "<usage-id>"
     ]
   }
 }
