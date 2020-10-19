@@ -12,5 +12,5 @@ RUN npm install
 COPY . .
 
 # Run the app
-EXPOSE 8080 1883
+EXPOSE 8080 8881 8882
 CMD [ "node", "server.js" ]

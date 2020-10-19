@@ -3,6 +3,7 @@
  * Module dependencies.
  */
 const aedes = require('aedes');
+const ws = require('websocket-stream');
 const winston = require('../../logger.js');
 
 /**
@@ -40,9 +41,9 @@ const connect = async (config, options, callback) => {
         }
     };
 
-    // Start broker.
+    // Start MQTT broker.
     try {
-        const port = 1883
+        const port = options.port || 8881;
         server.listen(port, function () {
             winston.log('info', options.productCode
                 + ' MQTT broker started and listening on port ' + port);
@@ -51,6 +52,21 @@ const connect = async (config, options, callback) => {
     } catch (err) {
         console.log(err.message);
     }
+
+    // Start MQTT-WS broker.
+    /*
+    try {
+        const port = options.port || 8881;
+        const httpServer = require('http').createServer();
+        ws.createServer({ server: httpServer }, instance.handle);
+        httpServer.listen(port, function () {
+            winston.log('info', options.productCode
+                + ' MQTT broker started and listening on port ' + port);
+        })
+    } catch (err) {
+        console.log(err.message);
+    }
+    */
 
     return server;
 };

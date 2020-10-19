@@ -9,6 +9,7 @@ const winston = require('../../logger.js');
 const cache = require('../cache');
 const _ = require('lodash');
 
+let port = 8881;
 const brokers = {};
 const clients = {};
 const plugins = {};
@@ -181,8 +182,11 @@ const connect = async (config, productCode) => {
         // Check for MQTT broker plugin.
         if (Object.hasOwnProperty.call(config, 'plugins')) {
             if (Object.hasOwnProperty.call(config.plugins, 'mqtt-server')) {
+                // Reserve port.
+                const reservedPort = port;
+                port++;
                 // Start local broker and pass client connection as a callback.
-                brokers[productCode] = require('../.' + './config/plugins' + '/' + 'mqtt-broker' + '.js').connect(config, {...config.plugins['mqtt-server'], productCode }, callback);
+                brokers[productCode] = require('../.' + './config/plugins' + '/' + 'mqtt-broker' + '.js').connect(config, {...config.plugins['mqtt-server'], productCode, port: reservedPort}, callback);
                 return;
             }
         }

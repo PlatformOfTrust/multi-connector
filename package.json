@@ -32,6 +32,7 @@
     "greenlock-express": "^4.0.3",
     "gtfs-realtime-bindings": "0.0.5",
     "helmet": "^3.21.3",
+    "http": "0.0.1-security",
     "httpntlm": "^1.7.6",
     "hubspot": "^2.3.12",
     "lodash": "^4.17.15",
@@ -47,6 +48,7 @@
     "soap": "^0.31.0",
     "swagger-jsdoc": "^4.0.0",
     "util": "^0.12.2",
+    "websocket-stream": "^5.5.2",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^4.4.2"
   },
