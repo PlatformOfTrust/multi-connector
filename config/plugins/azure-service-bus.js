@@ -45,10 +45,14 @@ function request(method, url, headers, body) {
  */
 const stream = async (config, data) => {
     try {
-        // Extract stream endpoint url from config.
+        // Extract stream endpoint url and output definitions from config.
         const url = config.url;
+        const objectKey = config.output.object;
+        const arrayKey = config.output.array;
         // Send data to azure.
-        if (url) await request('POST', url, {}, data);
+        for (const d of (Array.isArray(data) ? data : [data])) {
+            if (url) await request('POST', url, {}, d[objectKey][arrayKey]);
+        }
     } catch (err) {
         // console.log(err.message);
     }

@@ -3,7 +3,6 @@ greenlock.d/
 .idea/
 wsdl/
 temp/
-log/
 out/
 
 robottests/poetry.lock

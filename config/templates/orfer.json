@@ -1,7 +1,8 @@
 {
   "plugins": [
     "azure-service-bus",
-    "mqtt-broker"
+    "mqtt-broker",
+    "orfer"
   ],
   "protocol": "mqtt",
   "authConfig": {
@@ -13,17 +14,22 @@
     ""
   ],
   "dataPropertyMappings": {
-    "MeasureAirTemperatureCelsiusDegree": "temp"
+    "Process": ""
   },
   "generalConfig": {
     "sourceName": {
-      "dataObjectProperty": "name"
+      "dataObjectProperty": "@type"
     },
     "hardwareId": {
-      "dataObjectProperty": "id"
+      "dataObjectProperty": "name"
     },
     "timestamp": {
-      "dataObjectProperty": "ts"
+      "dataObjectProperty": "timestamp"
     }
+  },
+  "output": {
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Process/",
+    "array": "processes",
+    "data": "data"
   }
 }

@@ -5,7 +5,6 @@ robottests/
 temp/
 test/
 wsdl/
-log/
 out/
 
 package-lock.json

@@ -2,20 +2,17 @@
 /**
  * Module dependencies.
  */
-const fs = require('fs');
-const mqtt = require('mqtt');
+const connector = require('../lib/connector');
 const response = require('../lib/response');
 const winston = require('../../logger.js');
 const cache = require('../cache');
+const mqtt = require('mqtt');
 const _ = require('lodash');
+const fs = require('fs');
 
 let port = 8881;
 const brokers = {};
 const clients = {};
-const plugins = {};
-
-/** Supported parallel plugins */
-const supportedPlugins = ['azure-service-bus'];
 
 /**
  * Queries messages cache.
@@ -26,7 +23,6 @@ const supportedPlugins = ['azure-service-bus'];
  * @return {Array}
  */
 const getData = async (config, pathArray) => {
-
     let options;
     const items = [];
 
@@ -72,6 +68,21 @@ const getData = async (config, pathArray) => {
 
     return items;
 };
+
+/**
+ * Fetches data and passes it to the callback.
+ *
+ * @param {Object} template
+ * @param {Function} callback
+ */
+const composeDataObject = async (template, callback) => {
+    try {
+        let result = await connector.composeOutput(template);
+        await callback(template, _.flatten([result.output]));
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+}
 
 /**
  * Connects to broker and listens for updates.
@@ -123,43 +134,28 @@ const callback = async (config, productCode) => {
 
             // Handle data and stream.
             try {
-                const template = cache.getDoc('templates', config.template);
-                const streamPlugins = template.plugins.filter(p => supportedPlugins.includes(p));
-                if (streamPlugins.length > 0) {
-                    // Execute stream plugin function.
-                    for (let i = 0; i < streamPlugins.length; i++) {
-                        // Require plugin, if not yet available.
-                        if (!Object.keys(plugins).includes(streamPlugins[i])) {
-                            plugins[streamPlugins[i]] = require('../.' + './config/plugins' + '/' + streamPlugins[i] + '.js');
-                        }
-                        // Check that plugin has stream method.
-                        if (!!plugins[streamPlugins[i]].stream) {
-                            try {
-                                // Resolve id.
-                                const path = template.generalConfig.hardwareId.dataObjectProperty;
-                                const id = JSON.parse(message.toString())[path];
-                                // Compose plugin config, which has plugin specific options.
-                                const pluginConfig = (config.plugins ? config.plugins[streamPlugins[i]] || {} : {});
-                                // Stream data.
-                                plugins[streamPlugins[i]].stream(
-                                    {
-                                        ...template,
-                                        ...pluginConfig
-                                    },
-                                    _.flatten(await getData(
-                                        {
-                                            ...template,
-                                            ...pluginConfig,
-                                            plugins: [],
-                                            productCode: productCode,
-                                        },
-                                        [id])
-                                    )
-                                );
-                            } catch (err) {
-                                winston.log('error', err.message);
-                            }
-                        }
+                let template = cache.getDoc('templates', config.template);
+                template = await connector.resolvePlugins(template);
+
+                if (template.plugins.filter(p => !!p.stream).length > 0) {
+                    // Replace resource path.
+                    const path = template.generalConfig.hardwareId.dataObjectProperty;
+                    const id = JSON.parse(message.toString())[path];
+                    template.authConfig.path = [id];
+                }
+
+                // Execute stream plugin function.
+                for (let i = 0; i < template.plugins.length; i++) {
+                    if (!!template.plugins[i].stream) {
+                        // Compose plugin config, which has plugin specific options.
+                        const pluginConfig = (config.plugins ? config.plugins[template.plugins[i].name] || {} : {});
+                        await composeDataObject({
+                                ...template,
+                                ...pluginConfig,
+                                productCode
+                            },
+                            template.plugins[i].stream
+                        );
                     }
                 }
             } catch (err) {
@@ -186,7 +182,11 @@ const connect = async (config, productCode) => {
                 const reservedPort = port;
                 port++;
                 // Start local broker and pass client connection as a callback.
-                brokers[productCode] = require('../.' + './config/plugins' + '/' + 'mqtt-broker' + '.js').connect(config, {...config.plugins['mqtt-server'], productCode, port: reservedPort}, callback);
+                brokers[productCode] = require('../.' + './config/plugins' + '/' + 'mqtt-broker' + '.js').connect(config, {
+                    ...config.plugins['mqtt-server'],
+                    productCode,
+                    port: reservedPort
+                }, callback);
                 return;
             }
         }

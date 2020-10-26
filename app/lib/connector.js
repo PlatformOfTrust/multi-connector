@@ -407,9 +407,106 @@ const interpretMode = function (config, parameters) {
 };
 
 /**
+ * Resolves plugin names.
+ *
+ * @param {Object} template
+ * @return {Object}
+ *   Template with resolved plugins.
+ */
+const resolvePlugins = async (template) => {
+    // Attach plugins.
+    if (Object.hasOwnProperty.call(template, 'plugins')) {
+        if (template.plugins.length !== Object.keys(plugins).filter(p => template.plugins.includes(p)).length) {
+            return rest.promiseRejectWithError(500, 'Missing required plugins.');
+        } else {
+            template.plugins = Object.keys(plugins).filter(n => template.plugins.includes(n)).map(n => plugins[n]);
+        }
+    } else {
+        template.plugins = [];
+    }
+    return Promise.resolve(template);
+}
+
+/**
+ * Consumes described resources.
+ *
+ * @param {Object} template
+ * @return {Object}
+ *   Data object.
+ */
+const composeOutput = async (template) => {
+    // Check that resource path is defined.
+    if (!Object.hasOwnProperty.call(template.authConfig, 'path')) {
+        return rest.promiseRejectWithError(500, 'Insufficient resource configurations.');
+    }
+
+    let pathArray = [];
+    let path = template.authConfig.path;
+    if (!Array.isArray(path)) pathArray.push(path);
+    else pathArray = path;
+
+    // Remove duplicates.
+    pathArray = _.uniq(pathArray);
+
+    // Initialize items array.
+    let items = [];
+
+    // Initialize output definitions.
+    template.output = template.output || {};
+    template.output = {
+        contextValue: template.output.contextValue || defaultOutput.contextValue,
+        context: template.output.context || defaultOutput.context,
+        object: template.output.object || defaultOutput.object,
+        array: template.output.array || defaultOutput.array,
+        value: template.output.value || defaultOutput.value,
+        type: template.output.type || defaultOutput.type,
+        data: template.output.data || defaultOutput.data,
+        id: template.output.id || defaultOutput.id,
+    };
+
+    // Check that a protocol is defined.
+    if (!Object.hasOwnProperty.call(template, 'protocol')) {
+        return rest.promiseRejectWithError(500, 'Connection protocol not defined.');
+    } else {
+        // Check that the protocol is supported.
+        if (!Object.hasOwnProperty.call(protocols, template.protocol)) {
+            return rest.promiseRejectWithError(500, 'Connection protocol ' + template.protocol + ' is not supported.');
+        } else {
+            items = await protocols[template.protocol].getData(template, pathArray);
+            if (!items) items = [];
+        }
+    }
+
+    // Set output key names.
+    const CONTEXT = _.get(template, 'output.context');
+    const OBJECT = _.get(template, 'output.object');
+    const ARRAY = _.get(template, 'output.array');
+
+    // Compose output payload.
+    let output = {
+        [CONTEXT]: _.get(template, 'output.contextValue'),
+        [OBJECT]: {
+            [ARRAY]: _.flatten(items)
+        }
+    };
+
+    // Execute output plugin function.
+    for (let i = 0; i < template.plugins.length; i++) {
+        if (!!template.plugins[i].output) {
+            output = await template.plugins[i].output(template, output);
+        }
+    }
+
+    // Return output and payload key name separately for signing purposes.
+    return Promise.resolve({
+        output,
+        payloadKey: OBJECT
+    });
+};
+
+/**
  * Loads config by requested product code and retrieves template defined in the config.
  * Places static and dynamic parameters to the template as described.
- * Consumes described resources.
  *
  * @param {Object} req
  * @return {Object}
@@ -520,84 +617,11 @@ const getData = async (req) => {
         return rest.promiseRejectWithError(500, 'Insufficient authentication configurations.');
     }
 
-    // Attach plugins.
-    if (Object.hasOwnProperty.call(template, 'plugins')) {
-        if (template.plugins.length !== Object.keys(plugins).filter(p => template.plugins.includes(p)).length) {
-            return rest.promiseRejectWithError(500, 'Missing required plugins.');
-        } else {
-            template.plugins = Object.keys(plugins).filter(n => template.plugins.includes(n)).map(n => plugins[n]);
-        }
-    } else {
-        template.plugins = [];
-    }
-
-    // Check that resource path is defined.
-    if (!Object.hasOwnProperty.call(template.authConfig, 'path')) {
-        return rest.promiseRejectWithError(500, 'Insufficient resource configurations.');
-    }
-
-    let pathArray = [];
-    let path = template.authConfig.path;
-    if (!Array.isArray(path)) pathArray.push(path);
-    else pathArray = path;
-
-    // Remove duplicates.
-    pathArray = _.uniq(pathArray);
-
-    // Initialize items array.
-    let items = [];
-
-    // Initialize output definitions.
-    template.output = template.output || {};
-    template.output = {
-        contextValue: template.output.contextValue || defaultOutput.contextValue,
-        context: template.output.context || defaultOutput.context,
-        object: template.output.object || defaultOutput.object,
-        array: template.output.array || defaultOutput.array,
-        value: template.output.value || defaultOutput.value,
-        type: template.output.type || defaultOutput.type,
-        data: template.output.data || defaultOutput.data,
-        id: template.output.id || defaultOutput.id,
-    };
-
-    // Check that a protocol is defined.
-    if (!Object.hasOwnProperty.call(template, 'protocol')) {
-        return rest.promiseRejectWithError(500, 'Connection protocol not defined.');
-    } else {
-        // Check that the protocol is supported.
-        if (!Object.hasOwnProperty.call(protocols, template.protocol)) {
-            return rest.promiseRejectWithError(500, 'Connection protocol ' + template.protocol + ' is not supported.');
-        } else {
-            items = await protocols[template.protocol].getData(template, pathArray);
-            if (!items) items = [];
-        }
-    }
-
-    // Set output key names.
-    const CONTEXT = _.get(template, 'output.context');
-    const OBJECT = _.get(template, 'output.object');
-    const ARRAY = _.get(template, 'output.array');
+    // Resolve plugins.
+    template = await resolvePlugins(template);
 
     // Compose output payload.
-    let output = {
-        [CONTEXT]: _.get(template, 'output.contextValue'),
-        [OBJECT]: {
-            [ARRAY]: _.flatten(items)
-        }
-    };
-
-    // Execute output plugin function.
-    for (let i = 0; i < template.plugins.length; i++) {
-        if (!!template.plugins[i].output) {
-            output = await template.plugins[i].output(template, output);
-        }
-    }
-
-    // Return output and payload key name separately for signing purposes.
-    return Promise.resolve({
-        output,
-        payloadKey: OBJECT
-    });
+    return Promise.resolve(composeOutput(template));
 };
 
 /**
@@ -605,5 +629,7 @@ const getData = async (req) => {
  */
 module.exports = {
     getData,
+    resolvePlugins,
+    composeOutput,
     emitter
 };
