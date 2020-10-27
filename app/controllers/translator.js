@@ -2,6 +2,7 @@
 /**
  * Module dependencies.
  */
+const net = require('net');
 const moment = require('moment');
 const rsa = require('../lib/rsa');
 const connector = require('../lib/connector');
@@ -23,15 +24,18 @@ const connector = require('../lib/connector');
  */
 module.exports.fetch = async (req, res) => {
     let result;
+    let host;
     try {
         // Fetch data.
         result = await connector.getData(req);
+        host = req.get('host').split(':')[0];
 
         // Initialize signature object.
         let signature = {
             type: 'RsaSignature2018',
             created: moment().format(),
-            creator: req.protocol + '://' + req.get('host') + '/translator/v1/public.key',
+            creator: (host === 'localhost' || net.isIP(host) ? 'http' : 'https')
+                + '://' + req.get('host') + '/translator/v1/public.key'
         };
 
         // Send signed data response.
