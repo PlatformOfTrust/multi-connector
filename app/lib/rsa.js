@@ -2,7 +2,6 @@
 /**
  * Module dependencies.
  */
-const _ = require('lodash');
 const crypto = require('crypto');
 const cache = require('../cache');
 const request = require('request');
