@@ -17,7 +17,7 @@ const winston = require('../../logger.js');
 /** Platform of Trust related definitions. */
 const {
     defaultKeySize,
-    publicKeyURLs,
+    publicKeyURLs
 } = require('../../config/definitions/pot');
 
 /** Optional environment variables. */
@@ -34,12 +34,12 @@ if (!privateKey || !publicKey) {
             modulusLength: defaultKeySize,
             publicKeyEncoding: {
                 type: 'spki',
-                format: 'pem',
+                format: 'pem'
             },
             privateKeyEncoding: {
                 type: 'pkcs8',
-                format: 'pem',
-            },
+                format: 'pem'
+            }
         },
         (err, pubKey, privKey) => {
             if (!err) {
@@ -65,7 +65,7 @@ const readPublicKeys = function() {
                 cache.setDoc('publicKeys', i, {
                     priority: i,
                     ...publicKeyURLs[i],
-                    key: body.toString(),
+                    key: body.toString()
                 });
             }
         });
@@ -224,5 +224,5 @@ const verifySignature = function(body, signature, key) {
 module.exports = {
     generateSignature,
     verifySignature,
-    sendPublicKey,
+    sendPublicKey
 };
