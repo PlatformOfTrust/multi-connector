@@ -123,13 +123,43 @@ const sortObject = function(object) {
  */
 const stringifyBody = function(body) {
     // Stringify sorted object.
-    return JSON.stringify(sortObject(body))
-        .replace(
-            /[\u007F-\uFFFF]/g,
-            chr => "\\u" + ("0000" + chr.charCodeAt(0).toString(16)).substr(-4)
-        )
-        .replace(new RegExp('":', "g"), '": ')
-        .trim();
+    const json = JSON.stringify(sortObject(body));
+    let res = "";
+    let isEscaped = false;
+    let isValue = false;
+
+    for (let i = 0; i < json.length; i++) {
+        let b = json[i];
+
+        // Escape non ASCII characters
+        const charCode = b.charCodeAt(0);
+        if (charCode > 127) {
+            b = "\\u" + ("0000" + charCode.toString(16)).substr(-4);
+        }
+        res += b;
+
+        // specify the start of the json value
+        if (!isEscaped && charCode === 24) {
+            isValue = !isValue;
+        }
+        // specify if the value separator is outside of a value declaration
+        if (charCode === 58 && !isValue) {
+            res += " ";
+        }
+
+        // mark the next charracter as escaped if theres a leading backward
+        // slash and it's not escaped
+        if (charCode === 92 && !isEscaped) {
+            isEscaped = true;
+            continue;
+        }
+        // if the charracter was escaped turn of escaping for the next one
+        if (isEscaped) {
+            isEscaped = false;
+        }
+    }
+
+    return res;
 };
 
 /**
