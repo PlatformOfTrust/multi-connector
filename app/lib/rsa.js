@@ -1,12 +1,12 @@
-"use strict";
+'use strict';
 /**
  * Module dependencies.
  */
-const _ = require("lodash");
-const crypto = require("crypto");
-const cache = require("../cache");
-const request = require("request");
-const winston = require("../../logger.js");
+const _ = require('lodash');
+const crypto = require('crypto');
+const cache = require('../cache');
+const request = require('request');
+const winston = require('../../logger.js');
 
 /**
  * RSA library.
@@ -18,7 +18,7 @@ const winston = require("../../logger.js");
 const {
     defaultKeySize,
     publicKeyURLs,
-} = require("../../config/definitions/pot");
+} = require('../../config/definitions/pot');
 
 /** Optional environment variables. */
 let privateKey = process.env.PRIVATE_KEY;
@@ -29,25 +29,25 @@ if (!privateKey || !publicKey) {
     // they are generated on load with the default key size.
 
     crypto.generateKeyPair(
-        "rsa",
+        'rsa',
         {
             modulusLength: defaultKeySize,
             publicKeyEncoding: {
-                type: "spki",
-                format: "pem",
+                type: 'spki',
+                format: 'pem',
             },
             privateKeyEncoding: {
-                type: "pkcs8",
-                format: "pem",
+                type: 'pkcs8',
+                format: 'pem',
             },
         },
         (err, pubKey, privKey) => {
             if (!err) {
                 privateKey = privKey;
                 publicKey = pubKey;
-                winston.log("info", "Generated RSA keys.");
+                winston.log('info', 'Generated RSA keys.');
             } else {
-                winston.log("error", err.message);
+                winston.log('error', err.message);
             }
         }
     );
@@ -60,9 +60,9 @@ const readPublicKeys = function() {
     for (let i = 0; i < publicKeyURLs.length; i++) {
         request(publicKeyURLs[i].url, function(err, response, body) {
             if (err) {
-                winston.log("error", err.message);
+                winston.log('error', err.message);
             } else {
-                cache.setDoc("publicKeys", i, {
+                cache.setDoc('publicKeys', i, {
                     priority: i,
                     ...publicKeyURLs[i],
                     key: body.toString(),
@@ -82,8 +82,8 @@ readPublicKeys();
  * @param {Object} res
  */
 const sendPublicKey = function(req, res) {
-    res.setHeader("Content-type", "application/octet-stream");
-    res.setHeader("Content-disposition", "attachment; filename=public.key");
+    res.setHeader('Content-type', 'application/octet-stream');
+    res.setHeader('Content-disposition', 'attachment; filename=public.key');
     res.send(publicKey);
 };
 
@@ -102,7 +102,7 @@ const sortObject = function(object) {
         .forEach(key => {
             if (
                 object[key] instanceof Array ||
-                typeof object[key] !== "object"
+                typeof object[key] !== 'object'
             ) {
                 sortedObj[key] = object[key];
                 return;
@@ -124,7 +124,7 @@ const sortObject = function(object) {
 const stringifyBody = function(body) {
     // Stringify sorted object.
     const json = JSON.stringify(sortObject(body));
-    let res = "";
+    let res = '';
     let isEscaped = false;
     let isValue = false;
 
@@ -134,7 +134,7 @@ const stringifyBody = function(body) {
         // Escape non ASCII characters
         const charCode = b.charCodeAt(0);
         if (charCode > 127) {
-            b = "\\u" + ("0000" + charCode.toString(16)).substr(-4);
+            b = '\\u' + ('0000' + charCode.toString(16)).substr(-4);
         }
         res += b;
 
@@ -144,7 +144,7 @@ const stringifyBody = function(body) {
         }
         // specify if the value separator is outside of a value declaration
         if (charCode === 58 && !isValue) {
-            res += " ";
+            res += ' ';
         }
 
         // mark the next charracter as escaped if theres a leading backward
@@ -182,11 +182,11 @@ const generateSignature = function(body, key) {
     // Create SHA256 signature in base64 encoded format.
     try {
         signatureValue = crypto
-            .createSign("sha256")
+            .createSign('sha256')
             .update(stringifyBody(body))
-            .sign(key.toString(), "base64");
+            .sign(key.toString(), 'base64');
     } catch (err) {
-        winston.log("error", err.message);
+        winston.log('error', err.message);
     }
 
     return signatureValue;
@@ -209,13 +209,13 @@ const verifySignature = function(body, signature, key) {
     if (!key) key = publicKey;
 
     // Initialize verifier.
-    const verifier = crypto.createVerify("sha256");
+    const verifier = crypto.createVerify('sha256');
 
     // Update verifier.
     verifier.update(stringifyBody(body));
 
     // Verify base64 encoded SHA256 signature.
-    return verifier.verify(key, signature, "base64");
+    return verifier.verify(key, signature, 'base64');
 };
 
 /**
