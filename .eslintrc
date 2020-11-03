@@ -10,7 +10,7 @@
         "semi": [2, "always"],
         "quotes": [2, "single"],
         "indent": [2, 4, {
-            "SwitchCase": 1,
+            "SwitchCase": 1
         }],
         "no-var": 2,
         "prefer-const": 1,
