@@ -1,8 +1,7 @@
-"use strict";
+'use strict';
 /**
  * Module dependencies.
  */
-const _ = require('lodash');
 const crypto = require('crypto');
 const cache = require('../cache');
 const request = require('request');
@@ -15,14 +14,16 @@ const winston = require('../../logger.js');
  */
 
 /** Platform of Trust related definitions. */
-const {defaultKeySize, publicKeyURLs} = require('../../config/definitions/pot');
+const {
+    defaultKeySize,
+    publicKeyURLs,
+} = require('../../config/definitions/pot');
 
 /** Optional environment variables. */
 let privateKey = process.env.PRIVATE_KEY;
 let publicKey = process.env.PUBLIC_KEY;
 
 if (!privateKey || !publicKey) {
-
     // If RSA keys are not provided by environment variables,
     // they are generated on load with the default key size.
 
@@ -30,12 +31,12 @@ if (!privateKey || !publicKey) {
         modulusLength: defaultKeySize,
         publicKeyEncoding: {
             type: 'spki',
-            format: 'pem'
+            format: 'pem',
         },
         privateKeyEncoding: {
             type: 'pkcs8',
-            format: 'pem'
-        }
+            format: 'pem',
+        },
     }, (err, pubKey, privKey) => {
         if (!err) {
             privateKey = privKey;
@@ -56,7 +57,11 @@ const readPublicKeys = function () {
             if (err) {
                 winston.log('error', err.message);
             } else {
-                cache.setDoc('publicKeys', i, {priority: i, ...publicKeyURLs[i], key: body.toString()})
+                cache.setDoc('publicKeys', i, {
+                    priority: i,
+                    ...publicKeyURLs[i],
+                    key: body.toString(),
+                });
             }
         });
     }
@@ -72,7 +77,7 @@ readPublicKeys();
  * @param {Object} res
  */
 const sendPublicKey = function (req, res) {
-    res.setHeader('Content-type', "application/octet-stream");
+    res.setHeader('Content-type', 'application/octet-stream');
     res.setHeader('Content-disposition', 'attachment; filename=public.key');
     res.send(publicKey);
 };
@@ -85,24 +90,19 @@ const sendPublicKey = function (req, res) {
  *   Sorted object.
  */
 const sortObject = function (object) {
-    let sortedObj = {};
-    let keys = _.keys(object);
+    if (object instanceof Array || typeof object !== 'object') {
+        return object;
+    }
 
-    // Sort keys.
-    keys = _.sortBy(keys, key => key);
-
-    // Iterate sub objects.
-    _.each(keys, key => {
-        if (typeof object[key] == 'object' && !(object[key] instanceof Array)) {
-            /** Recursion. */
+    const sortedObj = {};
+    Object.keys(object)
+        .sort()
+        .forEach(key => {
             sortedObj[key] = sortObject(object[key]);
-        } else {
-            sortedObj[key] = object[key];
-        }
-    });
+        }, {});
 
     return sortedObj;
-}
+};
 
 /**
  * Stringifies body object.
@@ -113,10 +113,43 @@ const sortObject = function (object) {
  */
 const stringifyBody = function (body) {
     // Stringify sorted object.
-    return JSON.stringify(sortObject(body))
-        .replace(/[\u007F-\uFFFF]/g, chr => '\\u' + ('0000' + chr.charCodeAt(0)
-            .toString(16)).substr(-4)).replace(new RegExp('":', 'g'), '": ')
-        .trim();
+    const json = JSON.stringify(sortObject(body));
+    let res = '';
+    let isEscaped = false;
+    let isValue = false;
+
+    for (let i = 0; i < json.length; i++) {
+        let b = json[i];
+
+        // Escape non ASCII characters
+        const charCode = b.charCodeAt(0);
+        if (charCode > 127) {
+            b = '\\u' + ('0000' + charCode.toString(16)).substr(-4);
+        }
+        res += b;
+
+        // specify the start of the JSON value
+        if (!isEscaped && charCode === 34) {
+            isValue = !isValue;
+        }
+        // specify if the value separator is outside of a value declaration
+        if (charCode === 58 && !isValue) {
+            res += ' ';
+        }
+
+        // mark the next character as escaped if there's a leading backward
+        // slash and it's not escaped
+        if (charCode === 92 && !isEscaped) {
+            isEscaped = true;
+            continue;
+        }
+        // if the character was escaped turn of escaping for the next one
+        if (isEscaped) {
+            isEscaped = false;
+        }
+    }
+
+    return res;
 };
 
 /**
@@ -179,6 +212,8 @@ const verifySignature = function (body, signature, key) {
  * Expose library functions.
  */
 module.exports = {
+    sortObject,
+    stringifyBody,
     generateSignature,
     verifySignature,
     sendPublicKey,
