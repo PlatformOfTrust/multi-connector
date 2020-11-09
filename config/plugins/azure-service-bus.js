@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Module dependencies.
  */
@@ -20,20 +20,20 @@ const rp = require('request-promise');
  * @param {String/Object/Array} body
  * @return {Promise}
  */
-function request(method, url, headers, body) {
+function request (method, url, headers, body) {
     const options = {
         method: method,
         uri: url,
         json: true,
         body: body,
         resolveWithFullResponse: true,
-        headers: headers
+        headers: headers,
     };
 
     return rp(options).then(result => Promise.resolve(result))
         .catch((error) => {
             return Promise.reject(error);
-        })
+        });
 }
 
 /**
@@ -56,7 +56,7 @@ const stream = async (config, data) => {
     } catch (err) {
         // console.log(err.message);
     }
-    return data
+    return data;
 };
 
 /**
@@ -64,5 +64,5 @@ const stream = async (config, data) => {
  */
 module.exports = {
     name: 'azure-service-bus',
-    stream
+    stream,
 };

@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Module dependencies.
  */
@@ -43,7 +43,7 @@ const Strategy = require('passport-strategy');
  * @api public
  */
 
-function SignatureStrategy(options, verify) {
+function SignatureStrategy (options, verify) {
     if (typeof options == 'function') {
         verify = options;
         options = {};
@@ -70,14 +70,14 @@ util.inherits(SignatureStrategy, Strategy);
 SignatureStrategy.prototype.authenticate = function (req, options) {
     options = options || {};
     // Looking for this._signatureField inside both request queries and request bodies.
-    let signature = lookup(req.headers, this._signatureField);
+    const signature = lookup(req.headers, this._signatureField);
     if (!signature) {
-        return this.fail(new Error("Missing signature"));
+        return this.fail(new Error('Missing signature'));
     }
 
-    let self = this;
+    const self = this;
 
-    function verified(err, user, info) {
+    function verified (err, user, info) {
         if (err) {
             return self.error(err);
         }
@@ -93,13 +93,13 @@ SignatureStrategy.prototype.authenticate = function (req, options) {
         this._verify(signature, verified);
     }
 
-    function lookup(obj, field) {
+    function lookup (obj, field) {
         if (!obj) {
             return null;
         }
-        let chain = field.split(']').join('').split('[');
+        const chain = field.split(']').join('').split('[');
         for (let i = 0, len = chain.length; i < len; i++) {
-            let prop = obj[chain[i]];
+            const prop = obj[chain[i]];
             if (typeof (prop) === 'undefined') {
                 return null;
             }

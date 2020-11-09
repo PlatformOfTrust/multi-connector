@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Module dependencies.
  */
@@ -22,7 +22,7 @@ const getData = async (config, pathArray) => {
 
         // Execute request plugin function.
         for (let i = 0; i < config.plugins.length; i++) {
-            if (!!config.plugins[i].request) {
+            if (config.plugins[i].request) {
                 options = await config.plugins[i].request(config, options);
             }
         }
@@ -36,7 +36,7 @@ const getData = async (config, pathArray) => {
 
         // Execute onerror plugin function.
         for (let i = 0; i < config.plugins.length; i++) {
-            if (!!config.plugins[i].onerror) {
+            if (config.plugins[i].onerror) {
                 return await config.plugins[i].onerror(config, err);
             }
         }
@@ -49,5 +49,5 @@ const getData = async (config, pathArray) => {
  * Expose library functions.
  */
 module.exports = {
-    getData
+    getData,
 };

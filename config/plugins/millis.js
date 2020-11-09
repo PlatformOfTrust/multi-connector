@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Module dependencies.
  */
@@ -25,12 +25,12 @@ const toMillis = function (config, path, target) {
         target = target.map((q) => {
             if (Object.keys(q).includes(key)) {
                 /** Conversion to millis. */
-                q[key] = new Date(q[key]).getTime()
+                q[key] = new Date(q[key]).getTime();
             }
-            return q
-        })
+            return q;
+        });
     }
-    return target
+    return target;
 };
 
 /**
@@ -56,5 +56,5 @@ const request = async (config, options) => {
  */
 module.exports = {
     name: 'millis',
-    request
+    request,
 };

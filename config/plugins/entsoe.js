@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Module dependencies.
  */
@@ -16,7 +16,7 @@ const _ = require('lodash');
  * @param {Number} h
  * @return {Date}
  */
-function addHours(time, h) {
+function addHours (time, h) {
     time.setTime(time.getTime() + (h * 60 * 60 * 1000));
     return time;
 }
@@ -30,14 +30,14 @@ function addHours(time, h) {
 const getDate = (ISOString) => {
     let date;
     try {
-        date = ISOString.split("T")[0];
-        date = date.replace(/-/g, ".");
-        date = date.split(".")[2] + "." + date.split(".")[1] + "." + date.split(".")[0];
+        date = ISOString.split('T')[0];
+        date = date.replace(/-/g, '.');
+        date = date.split('.')[2] + '.' + date.split('.')[1] + '.' + date.split('.')[0];
     } catch (e) {
         return ISOString;
     }
     return date;
-}
+};
 
 /**
  * If parameter period first date is bigger than second, change their place without getting error
@@ -48,14 +48,14 @@ const getDate = (ISOString) => {
  */
 const parameters = async (config, parameters) => {
     let time = parameters.period;
-    time = time.split("/");
-    let startTime = Date.parse(time[0]);
-    let endTime = Date.parse(time[1]);
+    time = time.split('/');
+    const startTime = Date.parse(time[0]);
+    const endTime = Date.parse(time[1]);
     if (startTime > endTime) {
-        parameters.period = time[1].concat("/", time[0]);
+        parameters.period = time[1].concat('/', time[0]);
     }
     return parameters;
-}
+};
 
 /**
  * Removes dots from xml response < > tags.
@@ -109,24 +109,24 @@ const output = async (config, output) => {
                     // Format plan period.
                     let periodStart = addHours(new Date(s.Period.timeInterval.start), p.position - 1);
                     periodStart = getDate(periodStart.toISOString())
-                        + "T"
-                        + periodStart.toISOString().split("T")[1].split(":")[0]
+                        + 'T'
+                        + periodStart.toISOString().split('T')[1].split(':')[0]
                         + ':00';
 
                     return {
-                        '@type': "PricePlan",
+                        '@type': 'PricePlan',
                         currency: s.currency_Unitname,
                         period: periodStart + '/1h',
-                        rate: p.priceamount
+                        rate: p.priceamount,
                     };
-                })))
+                })));
             }));
 
             // Comment, if id field is required to be included.
             delete forecast.id;
 
             // Format output period.
-            forecast.period = getDate(start.toISOString()) + "/" + getDate(end.toISOString());
+            forecast.period = getDate(start.toISOString()) + '/' + getDate(end.toISOString());
             return forecast;
         });
         return output;

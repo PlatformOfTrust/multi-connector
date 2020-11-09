@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Module dependencies.
  */
@@ -13,18 +13,18 @@ const _ = require('lodash');
  * @return {Object}
  */
 const mapArrays = function (arrays) {
-    let dataObject = [];
+    const dataObject = [];
     if (arrays.length >= 2) {
         if (Array.isArray(arrays[1][0])) {
             for (let a = 0; a < arrays[1].length; a++) {
-                let object = {};
+                const object = {};
                 for (let b = 0; b < arrays[1][a].length; b++) {
                     object[arrays[0][b]] = arrays[1][a][b];
                 }
                 dataObject.push(object);
             }
         } else {
-            let object = {};
+            const object = {};
             for (let b = 0; b < arrays[1].length; b++) {
                 object[arrays[0][b]] = arrays[1][b];
             }
@@ -48,7 +48,7 @@ const mapArrays = function (arrays) {
  *   Config property key.
  * @return {Object/String}
  */
-function getValueFromResponse(config, path, object, key) {
+function getValueFromResponse (config, path, object, key) {
     if (config[key]) {
         if (config[key].dataObjectProperty) {
             return _.get(object, config[key].dataObjectProperty);
@@ -72,7 +72,7 @@ function getValueFromResponse(config, path, object, key) {
 const handleData = async (config, path, index, data) => {
     // Execute response plugin function.
     for (let i = 0; i < config.plugins.length; i++) {
-        if (!!config.plugins[i].response) {
+        if (config.plugins[i].response) {
             data = await config.plugins[i].response(config, data);
         }
     }
@@ -90,7 +90,7 @@ const handleData = async (config, path, index, data) => {
     // Define response as data object by default.
     if (config.dataObjects.length < 1) config.dataObjects = [''];
 
-    let measurements = [];
+    const measurements = [];
 
     // Define output key names for data objects.
     const keys = {
@@ -98,7 +98,7 @@ const handleData = async (config, path, index, data) => {
         data: _.get(config, 'output.data') || 'measurements',
         value: _.get(config, 'output.value') || 'value',
         type: _.get(config, 'output.type') || 'type',
-        id: _.get(config, 'output.id') || 'id'
+        id: _.get(config, 'output.id') || 'id',
     };
 
     for (let i = 0; i < config.dataObjects.length; i++) {
@@ -108,9 +108,9 @@ const handleData = async (config, path, index, data) => {
 
         if (config.dataObjects[i] === '') dataObject = data;
         else if (Array.isArray(config.dataObjects[i])) {
-            let arrays = [];
+            const arrays = [];
             for (let n = 0; n < config.dataObjects[i].length; n++) {
-                arrays.push(_.get(data, config.dataObjects[i][n]))
+                arrays.push(_.get(data, config.dataObjects[i][n]));
             }
             dataObject = mapArrays(arrays);
         } else dataObject = _.get(data, config.dataObjects[i]);
@@ -121,16 +121,16 @@ const handleData = async (config, path, index, data) => {
         for (let j = 0; j < dataObjects.length; j++) {
 
             // Look for hardwareId.
-            let hardwareId = getValueFromResponse(config.generalConfig, path, dataObjects[j], 'hardwareId');
+            const hardwareId = getValueFromResponse(config.generalConfig, path, dataObjects[j], 'hardwareId');
 
             // Look for timestamp.
             let timestamp = getValueFromResponse(config.generalConfig, path, dataObjects[j], 'timestamp');
             if (!timestamp) timestamp = moment.now();
 
             // Map data from the response data.
-            let measurement = {
+            const measurement = {
                 timestamp: new Date(timestamp),
-                data: {}
+                data: {},
             };
 
             // Sometimes a timestamp in seconds is encountered and needs to be converted to millis.
@@ -151,7 +151,7 @@ const handleData = async (config, path, index, data) => {
 
             // Execute data plugin function.
             for (let i = 0; i < config.plugins.length; i++) {
-                if (!!config.plugins[i].data) {
+                if (config.plugins[i].data) {
                     measurement.data = await config.plugins[i].data(config, measurement.data);
                 }
             }
@@ -168,11 +168,11 @@ const handleData = async (config, path, index, data) => {
 
             const item = {
                 [keys.id]: hardwareId,
-                [keys.data]: []
+                [keys.data]: [],
             };
 
             // Format data
-            for (let d = 0; d < Object.entries(measurement.data).length; d++ ) {
+            for (let d = 0; d < Object.entries(measurement.data).length; d++) {
                 item[keys.data].push({
                     [keys.type]: Object.entries(measurement.data)[d][0],
                     [keys.timestamp]: measurement.timestamp,
@@ -187,26 +187,26 @@ const handleData = async (config, path, index, data) => {
 
     // Merge measurements with same hardwareId to same data array (history).
     try {
-        let merged = {};
-        for (let i = 0; i < measurements.length; i++ ) {
+        const merged = {};
+        for (let i = 0; i < measurements.length; i++) {
             if (!Object.hasOwnProperty.call(merged, measurements[i][keys.id])) {
                 merged[measurements[i][keys.id]] =  measurements[i];
             } else {
                 merged[measurements[i][keys.id]][keys.data]
-                    = [...measurements[i][keys.data], ...merged[measurements[i][keys.id]][keys.data]]
+                    = [...measurements[i][keys.data], ...merged[measurements[i][keys.id]][keys.data]];
             }
         }
         mergedData = Object.values(merged);
 
         // Sort data arrays.
-        for (let j = 0; j < mergedData.length; j++ ) {
+        for (let j = 0; j < mergedData.length; j++) {
             mergedData[j][keys.data] =
                 mergedData[j][keys.data]
                     .sort((a, b) => a[keys.timestamp] - b[keys.timestamp]);
 
             // Execute id plugin function.
             for (let i = 0; i < config.plugins.length; i++) {
-                if (!!config.plugins[i].id) {
+                if (config.plugins[i].id) {
                     mergedData[j][keys.id] = await config.plugins[i].id({...config, index}, mergedData[j][keys.id]);
                 }
             }

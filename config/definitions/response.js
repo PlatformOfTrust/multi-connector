@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Connector response definitions.
  */
@@ -15,12 +15,12 @@ const defaultOutput = {
     array: 'sensors',
     value: 'value',
     type: '@type',
-    id: 'id'
+    id: 'id',
 };
 
 /**
  * Expose definitions.
  */
 module.exports = {
-    defaultOutput
+    defaultOutput,
 };

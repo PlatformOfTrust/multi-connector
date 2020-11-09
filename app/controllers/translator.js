@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Module dependencies.
  */
@@ -31,11 +31,11 @@ module.exports.fetch = async (req, res) => {
         host = req.get('host').split(':')[0];
 
         // Initialize signature object.
-        let signature = {
+        const signature = {
             type: 'RsaSignature2018',
             created: moment().format(),
             creator: (host === 'localhost' || net.isIP(host) ? 'http' : 'https')
-                + '://' + req.get('host') + '/translator/v1/public.key'
+                + '://' + req.get('host') + '/translator/v1/public.key',
         };
 
         // Send signed data response.
@@ -45,17 +45,17 @@ module.exports.fetch = async (req, res) => {
                 ...signature,
                 signatureValue: rsa.generateSignature({
                     __signed__: signature.created,
-                    ...(result.output[result.payloadKey || 'data'] || {})
-                })
-            }
+                    ...(result.output[result.payloadKey || 'data'] || {}),
+                }),
+            },
         });
     } catch (err) {
         // Compose error response object.
         result = {
             error: {
                 status: err.httpStatusCode || 500,
-                message: err.message || 'Internal Server Error.'
-            }
+                message: err.message || 'Internal Server Error.',
+            },
         };
 
         // Send response.

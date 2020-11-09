@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Module dependencies.
  */
@@ -74,8 +74,8 @@ module.exports = function (passport) {
                 host: req.protocol + '://' + req.get('host'),
             },
             apis: [
-                './app/routes/translator/v1/index.js'
-            ]
+                './app/routes/translator/v1/index.js',
+            ],
         }));
     });
 

@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Module dependencies.
  */
@@ -30,12 +30,12 @@ const getData = async (config, pathArray) => {
     try {
         // Initialize options.
         options = {
-            id: config.generalConfig.hardwareId.dataObjectProperty
+            id: config.generalConfig.hardwareId.dataObjectProperty,
         };
 
         // Execute request plugin function.
         for (let i = 0; i < config.plugins.length; i++) {
-            if (!!config.plugins[i].request) {
+            if (config.plugins[i].request) {
                 options = await config.plugins[i].request(config, options);
             }
         }
@@ -60,7 +60,7 @@ const getData = async (config, pathArray) => {
 
         // Execute onerror plugin function.
         for (let i = 0; i < config.plugins.length; i++) {
-            if (!!config.plugins[i].onerror) {
+            if (config.plugins[i].onerror) {
                 return await config.plugins[i].onerror(config, err);
             }
         }
@@ -77,12 +77,12 @@ const getData = async (config, pathArray) => {
  */
 const composeDataObject = async (template, callback) => {
     try {
-        let result = await connector.composeOutput(template);
+        const result = await connector.composeOutput(template);
         await callback(template, _.flatten([result.output]));
     } catch (err) {
         winston.log('error', err.message);
     }
-}
+};
 
 /**
  * Connects to broker and listens for updates.
@@ -93,8 +93,8 @@ const composeDataObject = async (template, callback) => {
 const callback = async (config, productCode) => {
     try {
         const url = config.static.url;
-        let topic = config.static.topic;
-        let options = {};
+        const topic = config.static.topic;
+        const options = {};
 
         if (Object.hasOwnProperty.call(config.static, 'key')) {
             options.key = cache.getDoc('resources', config.static.key);
@@ -146,15 +146,15 @@ const callback = async (config, productCode) => {
 
                 // Execute stream plugin function.
                 for (let i = 0; i < template.plugins.length; i++) {
-                    if (!!template.plugins[i].stream) {
+                    if (template.plugins[i].stream) {
                         // Compose plugin config, which has plugin specific options.
                         const pluginConfig = (config.plugins ? config.plugins[template.plugins[i].name] || {} : {});
                         await composeDataObject({
-                                ...template,
-                                ...pluginConfig,
-                                productCode
-                            },
-                            template.plugins[i].stream
+                            ...template,
+                            ...pluginConfig,
+                            productCode,
+                        },
+                        template.plugins[i].stream,
                         );
                     }
                 }
@@ -165,7 +165,7 @@ const callback = async (config, productCode) => {
     } catch (err) {
         winston.log('error', err.message);
     }
-}
+};
 
 /**
  * Initiates actions required by MQTT protocol.
@@ -185,7 +185,7 @@ const connect = async (config, productCode) => {
                 brokers[productCode] = require('../.' + './config/plugins' + '/' + 'mqtt-broker' + '.js').connect(config, {
                     ...config.plugins['mqtt-server'],
                     productCode,
-                    port: reservedPort
+                    port: reservedPort,
                 }, callback);
                 return;
             }
@@ -202,5 +202,5 @@ const connect = async (config, productCode) => {
  */
 module.exports = {
     connect,
-    getData
+    getData,
 };

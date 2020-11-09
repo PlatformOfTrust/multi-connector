@@ -96,7 +96,7 @@ describe('RSA library tests', async () => {
     it('should return false', () => {
         expect(
             rsa.verifySignature(
-                { ...body, add: 'me' },
+                {...body, add: 'me'},
                 rsa.generateSignature(body, privateKey),
                 publicKey.toString(),
             ),
@@ -112,27 +112,27 @@ const stringifyBodyTestHelper = (fn, oldImplementation = false) => {
             in: {
                 b: 'test',
                 c: [
-                    { embedded: 2 },
+                    {embedded: 2},
                 ],
-                a: { z: 'value', x: 'data' },
+                a: {z: 'value', x: 'data'},
             },
             expect: '{"a": {"x": "data","z": "value"},"b": "test","c": [{"embedded": 2}]}',
         },
         {
             name: 'should succeed with ascii charracters',
-            in: { test: '! \\"$#%&\'()*,+-./:;<=>?[]{}~|_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz' },
+            in: {test: '! \\"$#%&\'()*,+-./:;<=>?[]{}~|_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'},
             // double escape to check that the charracter actually gets escaped.
             expect: '{"test": "! \\\\\\"$#%&\'()*,+-./:;<=>?[]{}~|_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"}',
         },
         {
             name: 'should succeed with non ascii charracters',
-            in: { test: 'hello & foo € bar' },
+            in: {test: 'hello & foo € bar'},
             // double escape to check that the charracter actually gets escaped.
             expect: '{"test": "hello & foo \\u20ac bar"}',
         },
         {
             name: 'should succeed with non ascii charracters 2',
-            in: { test: 'äöuyåÅ' },
+            in: {test: 'äöuyåÅ'},
             // double escape to check that the charracter actually gets escaped.
             expect: '{"test": "\\u00e4\\u00f6uy\\u00e5\\u00c5"}',
         },
@@ -153,7 +153,7 @@ const stringifyBodyTestHelper = (fn, oldImplementation = false) => {
     tests.forEach(test => {
         it(test.name, () => {
             const out = expect(fn(test.in));
-            if(test.shouldThrow) {
+            if (test.shouldThrow) {
                 out.to.throw();
                 return;
             }
@@ -164,7 +164,7 @@ const stringifyBodyTestHelper = (fn, oldImplementation = false) => {
             */
             out.to.equal(test.expect);
         });});
-}
+};
 
 const sortObjectOld = function (object) {
     const sortedObj = {};
@@ -195,11 +195,11 @@ const stringifyBodyOld = function (body) {
 };
 
 describe('stringifyBody tests', async () => {
-    stringifyBodyTestHelper(rsa.stringifyBody)
+    stringifyBodyTestHelper(rsa.stringifyBody);
 });
 
 describe('stringifyBodyOld tests', async () => {
-    stringifyBodyTestHelper(stringifyBodyOld, true)
+    stringifyBodyTestHelper(stringifyBodyOld, true);
 });
 
 describe('sortObject old vs new implementation', async () => {

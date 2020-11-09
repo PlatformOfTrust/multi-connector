@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Test plugin.
  */
@@ -25,13 +25,13 @@ const genRand = function (min, max, decimalPlaces) {
  * @return {Array}
  */
 const generateData = function (id, range) {
-    let entry = {
+    const entry = {
         value: genRand(19, 26, 2),
         name: 'Sensor ' + id,
-        id
+        id,
     };
     if (range) {
-        let data = [];
+        const data = [];
         let length = 1;
         if (range[0].toString() !== 'Invalid Date'
             && range[1].toString() !== 'Invalid Date') {
@@ -44,12 +44,12 @@ const generateData = function (id, range) {
                 timestamp: range[0].getTime() + i * 600000,
                 value: genRand(19, 26, 2),
                 name: 'Sensor ' + id,
-                id
-            }
+                id,
+            };
         }
         return data;
     } else {
-        return [entry]
+        return [entry];
     }
 };
 
@@ -67,7 +67,7 @@ const response = async (config, res) => {
     try {
         let range;
         if (config.mode === 'history' || config.mode === 'prediction') {
-            range = [config.parameters.start, config.parameters.end]
+            range = [config.parameters.start, config.parameters.end];
         }
 
         // Generate data.

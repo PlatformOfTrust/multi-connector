@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * IoT-Ticket path parameter encoding.
  */
@@ -9,7 +9,7 @@
  * @param {Object} a
  * @return {Boolean}
  */
-const isObject = function(a) {
+const isObject = function (a) {
     return (!!a) && (a.constructor === Object);
 };
 
@@ -62,5 +62,5 @@ const id = async (config, id) => {
 module.exports = {
     name: 'iot-ticket',
     parameters,
-    id
+    id,
 };

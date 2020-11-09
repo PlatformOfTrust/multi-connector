@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Broker request definitions.
  */
@@ -16,45 +16,45 @@ const definitions = {
     IDS: 'parameters.ids',
     START: 'parameters.startTime',
     END: 'parameters.endTime',
-    DATA_TYPES:  'parameters.dataTypes'
+    DATA_TYPES:  'parameters.dataTypes',
 };
 
 /** List of supported headers, and if they're required or not. */
 const supportedHeaders = {
     [definitions.SIGNATURE]: {
-        required: true
+        required: true,
     },
     [definitions.APP_TOKEN]: {
-        required: true
+        required: true,
     },
     [definitions.USER_TOKEN]: {
-        required: false
-    }
+        required: false,
+    },
 };
 
 /** List of supported parameters, and if they're required or not. */
 const supportedParameters = {
     [definitions.PRODUCT_CODE]: {
-        required: true
+        required: true,
     },
     [definitions.TIMESTAMP]: {
-        required: true
+        required: true,
     },
     [definitions.PARAMETERS]: {
-        required: true
+        required: true,
     },
     [definitions.IDS]: {
-        required: false
+        required: false,
     },
     [definitions.START]: {
-        required: false
+        required: false,
     },
     [definitions.END]: {
-        required: false
+        required: false,
     },
     [definitions.DATA_TYPES]: {
-        required: false
-    }
+        required: false,
+    },
 };
 
 /**
@@ -63,5 +63,5 @@ const supportedParameters = {
 module.exports = {
     ...definitions,
     supportedHeaders,
-    supportedParameters
+    supportedParameters,
 };

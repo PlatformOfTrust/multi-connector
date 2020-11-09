@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Module dependencies.
  */
@@ -24,7 +24,7 @@ const response = async (config, response) => {
         // Parse response.
         response = gtfs.transit_realtime.FeedMessage.decode(response.body);
         // Pick requested ids from request parameters.
-        const ids = _.get(config, IDS) ? _.get(config, IDS).map(o => o.id.toString()) : []
+        const ids = _.get(config, IDS) ? _.get(config, IDS).map(o => o.id.toString()) : [];
         // Filter out only requested entities.
         return response.entity.filter(e => ids.length !== 0 && ids.includes(e.id.toString()));
     } catch (e) {
@@ -37,5 +37,5 @@ const response = async (config, response) => {
  */
 module.exports = {
     name: 'gtfs-realtime',
-    response
+    response,
 };

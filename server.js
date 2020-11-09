@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Module dependencies.
  */
@@ -38,7 +38,7 @@ require('./app/routes/index').app(app, passport);
 
 // Catch 404 and forward to error handler.
 app.use(function (req, res, next) {
-    let err = new Error('Not Found');
+    const err = new Error('Not Found');
     err.status = 404;
     next(err);
 });
@@ -58,8 +58,8 @@ app.use(function (err, req, res, next) {
     res.status(err.status || 500).send({
         error: {
             status: err.status || 500,
-            message
-        }
+            message,
+        },
     });
 });
 
@@ -93,18 +93,18 @@ if (process.env.GREENLOCK_MAINTANER) {
         if (config.sites.length === 0) {
             config.sites.push({
                 subject: process.env.GREENLOCK_DOMAIN,
-                altnames: [process.env.GREENLOCK_DOMAIN]
+                altnames: [process.env.GREENLOCK_DOMAIN],
             });
             fs.writeFileSync(configFile, JSON.stringify(config), 'utf8');
         }
     } catch (err) {
         winston.log('error', err.message);
     }
-    server = require("greenlock-express").init({
+    server = require('greenlock-express').init({
         packageRoot: __dirname,
         configDir,
         maintainerEmail: process.env.GREENLOCK_MAINTANER,
-        cluster: false
+        cluster: false,
     }).serve(app);
 } else {
     server = require('http').createServer(app)

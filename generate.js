@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Module dependencies.
  */
@@ -28,7 +28,7 @@ connector.emitter.on('collections',
                     'utf8');
                 console.log('Generated environment variable ' + Object.keys(collections)[i].toUpperCase() + '.');
             } catch (err) {
-                console.log(err.message)
+                console.log(err.message);
             }
         }
         // Exit.

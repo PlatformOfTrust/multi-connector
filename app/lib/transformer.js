@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Module dependencies.
  */
@@ -41,7 +41,7 @@ const transform = function (source, schema) {
                         if (!Object.hasOwnProperty.call(schema.items, 'anyOf')) return;
                         if (!Array.isArray(schema.items.anyOf)) return;
                         schema.items.anyOf.forEach(item => value.push(transform(element, item)));
-                    })
+                    });
                 }
                 break;
             case 'string':
@@ -61,5 +61,5 @@ const transform = function (source, schema) {
  * Expose library functions.
  */
 module.exports = {
-    transform
+    transform,
 };

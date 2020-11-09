@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Module dependencies.
  */
@@ -25,7 +25,7 @@ const fs = require('fs');
  *   File contents.
  * @return {Promise}
  */
-function writeSOAPFile(dir, data) {
+function writeSOAPFile (dir, data) {
     return new Promise(function (resolve, reject) {
         fs.writeFile(dir, data, function (err) {
             if (err) {
@@ -42,7 +42,7 @@ function writeSOAPFile(dir, data) {
  * @param {Object} config
  * @return {Promise}
  */
-function getWSDL(config) {
+function getWSDL (config) {
     const url = config.authConfig.url;
     const protocol = url.includes('https://') ? 'https://' : 'http://';
     const username = config.authConfig.username;
@@ -54,7 +54,7 @@ function getWSDL(config) {
             httpntlm.get({
                 url: url,
                 password: password,
-                username: username
+                username: username,
             }, function (err, response) {
                 if (err) reject(err);
                 else resolve(response.body);
@@ -67,7 +67,7 @@ function getWSDL(config) {
                 function (err, response, body) {
                     if (err) reject(err);
                     else resolve(body);
-                }
+                },
             );
         });
     }
@@ -81,12 +81,12 @@ function getWSDL(config) {
  * @param {Object} args
  * @return {Promise}
  */
-function executeRemoteFunction(client, path, args) {
+function executeRemoteFunction (client, path, args) {
     return new Promise((resolve, reject) => {
         _.get(client, path)(args, function (err, result, envelope, soapHeader) {
             // if (err) reject(err);
             if (err) resolve();
-            else resolve(result)
+            else resolve(result);
         });
     });
 }
@@ -104,7 +104,7 @@ const createSOAPClient = async (config, url, pathArray) => {
     const username = config.authConfig.username;
     const password = config.authConfig.password;
     const SOAPFunction = config.authConfig.function;
-    let options = {wsdl_headers: {Authorization: "Basic " + new Buffer(username + ":" + password).toString("base64")}};
+    let options = {wsdl_headers: {Authorization: 'Basic ' + new Buffer(username + ':' + password).toString('base64')}};
     if (config.plugins.find(p => p.name === 'soap-ntlm')) {
         options = {};
     }
@@ -114,7 +114,7 @@ const createSOAPClient = async (config, url, pathArray) => {
             if (err) {
                 // Execute onerror plugin function.
                 for (let i = 0; i < config.plugins.length; i++) {
-                    if (!!config.plugins[i].onerror) {
+                    if (config.plugins[i].onerror) {
                         return await config.plugins[i].onerror(config, err);
                     }
                 }
@@ -123,7 +123,7 @@ const createSOAPClient = async (config, url, pathArray) => {
             } else {
                 // Execute request plugin function.
                 for (let i = 0; i < config.plugins.length; i++) {
-                    if (!!config.plugins[i].request) {
+                    if (config.plugins[i].request) {
                         client = await config.plugins[i].request(config, client);
                     }
                 }
@@ -192,5 +192,5 @@ const getData = async (config, pathArray) => {
  * Expose library functions.
  */
 module.exports = {
-    getData
+    getData,
 };

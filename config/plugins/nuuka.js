@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * Nuuka Open API.
@@ -10,7 +10,7 @@
  * @param {Date} date
  * @return {String}
  */
-function formatDate(date) {
+function formatDate (date) {
     let d = date,
         month = '' + (d.getMonth() + 1),
         day = '' + d.getDate(),
@@ -71,5 +71,5 @@ const request = async (config, options) => {
 module.exports = {
     name: 'nuuka',
     parameters,
-    request
+    request,
 };

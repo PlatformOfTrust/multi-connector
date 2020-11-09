@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Basic authentication plugin.
  */
@@ -15,7 +15,7 @@ const request = async (config, options) => {
     // Authorize request.
     try {
         options.headers = {
-            Authorization: 'Basic ' + Buffer.from(config.authConfig.username + ':' + config.authConfig.password).toString('base64')
+            Authorization: 'Basic ' + Buffer.from(config.authConfig.username + ':' + config.authConfig.password).toString('base64'),
         };
     } catch (err) {
         console.log(err.message);
@@ -28,5 +28,5 @@ const request = async (config, options) => {
  */
 module.exports = {
     name: 'basic',
-    request
+    request,
 };

@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Module dependencies.
  */
@@ -23,7 +23,7 @@ const rp = require('request-promise');
  * @return {Promise}
  */
 const promiseRejectWithError = function (code, msg, reference) {
-    let err = new Error();
+    const err = new Error();
     err.httpStatusCode = code || 500;
     err.reference = reference;
     err.message = msg || 'Internal Server Error.';
@@ -52,9 +52,9 @@ const getDataByOptions = async (config, options, path) => {
             }
 
             // Check whether the URL already contains query entries.
-            let entries = [];
-            for (let entry of new URL(options.url).searchParams.keys()) {
-                entries.push(entry)
+            const entries = [];
+            for (const entry of new URL(options.url).searchParams.keys()) {
+                entries.push(entry);
             }
             if (entries.length > 0) queryString = '&' + queryString.substr(1);
 
@@ -92,7 +92,7 @@ const handleError = async (config, err) => {
 
     // Execute onerror plugin function.
     for (let i = 0; i < config.plugins.length; i++) {
-        if (!!config.plugins[i].onerror) {
+        if (config.plugins[i].onerror) {
             return await config.plugins[i].onerror(config, err);
         }
     }
@@ -153,23 +153,23 @@ const requestData = async (config, path, index) => {
         resolveWithFullResponse: true,
         query: [],
         gzip: true,
-        encoding: null
+        encoding: null,
     };
 
     // Define start and end query properties
     if (config.generalConfig.query) {
         if (config.generalConfig.query.start) {
             options.query.push({
-                [config.generalConfig.query.start]: config.parameters.start.toISOString()
+                [config.generalConfig.query.start]: config.parameters.start.toISOString(),
             });
         }
         if (config.generalConfig.query.end) {
             options.query.push({
-                [config.generalConfig.query.end]: config.parameters.end.toISOString()
+                [config.generalConfig.query.end]: config.parameters.end.toISOString(),
             });
         }
         if (config.generalConfig.query.properties) {
-            for (let property in config.generalConfig.query.properties) {
+            for (const property in config.generalConfig.query.properties) {
                 if (Object.hasOwnProperty.call(config.generalConfig.query.properties, property)) {
                     options.query.push(config.generalConfig.query.properties[property]);
                 }
@@ -179,7 +179,7 @@ const requestData = async (config, path, index) => {
 
     // Execute request plugin function.
     for (let i = 0; i < config.plugins.length; i++) {
-        if (!!config.plugins[i].request) {
+        if (config.plugins[i].request) {
             options = await config.plugins[i].request(config, options);
         }
     }
@@ -227,5 +227,5 @@ const requestData = async (config, path, index) => {
  */
 module.exports = {
     getData,
-    promiseRejectWithError
+    promiseRejectWithError,
 };

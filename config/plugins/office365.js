@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Module dependencies.
  */
@@ -36,5 +36,5 @@ const response = async (config, res) => {
  */
 module.exports = {
     name: 'office365',
-    response
+    response,
 };

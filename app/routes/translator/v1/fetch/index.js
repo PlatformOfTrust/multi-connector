@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Module dependencies.
  */
@@ -10,7 +10,7 @@ const ctrl = require('../../../../controllers/translator');
  */
 module.exports = function (passport) {
     /** Signature verification. */
-    let auth = passport.authenticate(['signature'], {session: false});
+    const auth = passport.authenticate(['signature'], {session: false});
 
     /** Platform of Trust fetch endpoint. */
     router.post('', auth, ctrl.fetch);

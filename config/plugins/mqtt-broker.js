@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Module dependencies.
  */
@@ -67,7 +67,7 @@ const connect = async (config, options, callback) => {
             winston.log('info', options.productCode
                 + ' MQTT broker started and listening on port ' + port);
             if (callback) callback(config, options.productCode);
-        })
+        });
     } catch (err) {
         console.log(err.message);
     }
@@ -95,5 +95,5 @@ const connect = async (config, options, callback) => {
  */
 module.exports = {
     name: 'mqtt-broker',
-    connect
+    connect,
 };

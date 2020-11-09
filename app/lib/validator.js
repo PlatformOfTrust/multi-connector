@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Module dependencies.
  */
@@ -22,7 +22,7 @@ const validate = function (target, schema) {
     let result;
     let error;
     const missing = [];
-    for (let parameter in schema) {
+    for (const parameter in schema) {
         if (Object.hasOwnProperty.call(schema, parameter)) {
             if (!_.get(target, parameter)) {
                 if (schema[parameter].required) missing.push(parameter);
@@ -32,18 +32,18 @@ const validate = function (target, schema) {
     if (missing.length > 0) {
         result = false;
         error = Object.assign({}, ...missing.map((p) => {
-            return {[p]: ['Missing data for required field.']}
+            return {[p]: ['Missing data for required field.']};
         }));
     }
     return {
         result,
-        error
-    }
+        error,
+    };
 };
 
 /**
  * Expose library functions.
  */
 module.exports = {
-    validate
+    validate,
 };

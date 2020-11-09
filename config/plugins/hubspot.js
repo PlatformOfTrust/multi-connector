@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Module dependencies.
  */
@@ -28,7 +28,7 @@ const response = async (config, res) => {
         if (!Object.hasOwnProperty.call(clients, config.productCode)) {
             clients[config.productCode] = new Hubspot({
                 apiKey: config.authConfig.apikey,
-                checkLimit: true // (Optional) Specify whether to check the API limit on each call. Default: true
+                checkLimit: true, // (Optional) Specify whether to check the API limit on each call. Default: true
             });
         }
 

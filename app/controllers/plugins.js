@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Module dependencies.
  */
@@ -23,7 +23,7 @@ connector.emitter.on('plugins',
                     const pluginName = Object.keys(collections)[i];
                     routers[pluginName] = Object.values(collections)[i].endpoints;
                 } catch (err) {
-                    console.log(err.message)
+                    console.log(err.message);
                 }
             }
         }
@@ -35,7 +35,7 @@ connector.emitter.on('plugins',
  * @param {Object} passport
  */
 const setRoutes = function (passport) {
-    for (let i = 0; i < Object.keys(routers).length; i++){
+    for (let i = 0; i < Object.keys(routers).length; i++) {
         try {
             // Define paths for plugin endpoints.
             router.use('/' + Object.keys(routers)[i] + '/', Object.values(routers)[i](passport));
@@ -43,7 +43,7 @@ const setRoutes = function (passport) {
             console.log(err.message);
         }
     }
-}
+};
 
 /**
  * Expose router.

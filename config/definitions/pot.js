@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Platform of Trust definitions.
  */
@@ -10,20 +10,20 @@ const defaultKeySize = 4096;
 const publicKeyURLs = [
     {
         env: 'production',
-        url: 'https://static.oftrust.net/keys/translator.pub'
+        url: 'https://static.oftrust.net/keys/translator.pub',
     },
     {
         env: 'sandbox',
-        url: 'https://static-sandbox.oftrust.net/keys/translator.pub'
+        url: 'https://static-sandbox.oftrust.net/keys/translator.pub',
     },
     {
         env: 'staging',
-        url: 'https://static-staging.oftrust.net/keys/translator.pub'
+        url: 'https://static-staging.oftrust.net/keys/translator.pub',
     },
     {
         env: 'test',
-        url: 'https://static-test.oftrust.net/keys/translator.pub'
-    }
+        url: 'https://static-test.oftrust.net/keys/translator.pub',
+    },
 ];
 
 /**
@@ -31,5 +31,5 @@ const publicKeyURLs = [
  */
 module.exports = {
     defaultKeySize,
-    publicKeyURLs
+    publicKeyURLs,
 };

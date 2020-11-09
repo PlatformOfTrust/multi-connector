@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Module dependencies.
  */
@@ -29,5 +29,5 @@ const request = async (config, options) => {
  */
 module.exports = {
     name: 'soap-basic',
-    request
+    request,
 };

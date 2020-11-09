@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Module dependencies.
  */
@@ -26,12 +26,12 @@ const {
     START,
     END,
     DATA_TYPES,
-    supportedParameters
+    supportedParameters,
 } = require('../../config/definitions/request');
 
 /** Import platform of trust response definitions. */
 const {
-    defaultOutput
+    defaultOutput,
 } = require('../../config/definitions/response');
 
 // Initialize objects for protocols and plugins.
@@ -59,7 +59,7 @@ if (!fs.existsSync(pluginsDir)) fs.mkdirSync(pluginsDir);
  * @param {Object} file
  * @param {String} data
  */
-function handleFile(collection, file, data) {
+function handleFile (collection, file, data) {
     let object;
     try {
         object = JSON.parse(data);
@@ -83,7 +83,7 @@ function handleFile(collection, file, data) {
  * @param {String} collection
  * @param {Object} file
  */
-function readFile(dir, ext, collection, file) {
+function readFile (dir, ext, collection, file) {
     return new Promise(function (resolve, reject) {
         fs.readFile(dir + '/' + file, 'utf8', function (err, data) {
             if (err) return winston.log('error', 'File read error', err.message);
@@ -123,7 +123,7 @@ function readFile(dir, ext, collection, file) {
  *  @param {Function} callback
  *   Handler for single file.
  */
-function load(dir, ext, collection, callback) {
+function load (dir, ext, collection, callback) {
     return new Promise(function (resolve, reject) {
         fs.readdir(dir, async (err, files) => {
             if (err) reject(err);
@@ -148,7 +148,7 @@ const emitter = new events.EventEmitter();
  * @param {String} string
  *   Content of the environment variable.
  */
-function loadJSON(collection, string) {
+function loadJSON (collection, string) {
     try {
         const object = JSON.parse(Buffer.from(string, 'base64').toString('utf8'));
         for (let i = 0; i < Object.keys(object).length; i++) {
@@ -168,15 +168,15 @@ function loadJSON(collection, string) {
  * @param {Array} collections
  *   Collection names.
  */
-function emit(collections) {
+function emit (collections) {
     const data = {};
     for (let i = 0; i < collections.length; i++) {
         try {
             data[collections[i]] = Object.assign({},
                 ...cache.getKeys(collections[i]).map(key => {
-                    return {[key]: cache.getDoc(collections[i], key)}
-                })
-            )
+                    return {[key]: cache.getDoc(collections[i], key)};
+                }),
+            );
         } catch (err) {
             winston.log('error', err.message);
         }
@@ -194,23 +194,23 @@ function emit(collections) {
         return (process.env.RESOURCES ?
             /** Source selection for resources. */
             loadJSON('resources', process.env.RESOURCES) :
-            load(resourcesDir, '.*', 'resources', readFile))
+            load(resourcesDir, '.*', 'resources', readFile));
     })
     .then(() => {
-        return load(protocolsDir, '.js', 'protocols', readFile)
+        return load(protocolsDir, '.js', 'protocols', readFile);
     })
     .then(() => {
         return (process.env.CONFIGS ?
             /** Source selection for configs. */
             loadJSON('configs', process.env.CONFIGS) :
-            load(configsDir, '.json', 'configs', readFile))
+            load(configsDir, '.json', 'configs', readFile));
     })
     .then(() => {
-        return load(pluginsDir, '.js', 'plugins', readFile)
+        return load(pluginsDir, '.js', 'plugins', readFile);
     })
     .then(() => {
         emitter.emit('plugins', plugins);
-        return emit(['templates', 'configs', 'resources'])
+        return emit(['templates', 'configs', 'resources']);
     })
     .catch((err) => winston.log('error', err.message));
 
@@ -220,7 +220,7 @@ function emit(collections) {
  * @param {String} string
  * @return {String}
  */
-function escapeRegExp(string) {
+function escapeRegExp (string) {
     // $& means the whole matched string.
     return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&');
 }
@@ -233,7 +233,7 @@ function escapeRegExp(string) {
  * @param {String} replace
  * @return {String}
  */
-function replaceAll(str, find, replace) {
+function replaceAll (str, find, replace) {
     return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
 }
 
@@ -249,7 +249,7 @@ function replaceAll(str, find, replace) {
  * @return {String/Object}
  *   Template value with placeholder values.
  */
-function replacer(template, placeholder, value) {
+function replacer (template, placeholder, value) {
     let r = JSON.stringify(template);
     if (value instanceof Date) value = value.toISOString();
     if (_.isObject(value)) {
@@ -280,7 +280,7 @@ function replacer(template, placeholder, value) {
  * @return {Object}
  *   Configured template.
  */
-function replacePlaceholders(config, template, params) {
+function replacePlaceholders (config, template, params) {
     // In case dynamic parameter object ´ids´ does not contain objects,
     // these elements will be converted from [x, y, ...] to [{id: x}, {id: y}, ...].
     // This will ease the following dynamic placeholder procedure.
@@ -425,7 +425,7 @@ const resolvePlugins = async (template) => {
         template.plugins = [];
     }
     return Promise.resolve(template);
-}
+};
 
 /**
  * Consumes described resources.
@@ -441,7 +441,7 @@ const composeOutput = async (template) => {
     }
 
     let pathArray = [];
-    let path = template.authConfig.path;
+    const path = template.authConfig.path;
     if (!Array.isArray(path)) pathArray.push(path);
     else pathArray = path;
 
@@ -486,13 +486,13 @@ const composeOutput = async (template) => {
     let output = {
         [CONTEXT]: _.get(template, 'output.contextValue'),
         [OBJECT]: {
-            [ARRAY]: _.flatten(items)
-        }
+            [ARRAY]: _.flatten(items),
+        },
     };
 
     // Execute output plugin function.
     for (let i = 0; i < template.plugins.length; i++) {
-        if (!!template.plugins[i].output) {
+        if (template.plugins[i].output) {
             output = await template.plugins[i].output(template, output);
         }
     }
@@ -500,7 +500,7 @@ const composeOutput = async (template) => {
     // Return output and payload key name separately for signing purposes.
     return Promise.resolve({
         output,
-        payloadKey: OBJECT
+        payloadKey: OBJECT,
     });
 };
 
@@ -544,17 +544,17 @@ const getData = async (req) => {
         if (Object.hasOwnProperty.call(template.input, 'required')) {
             if (Array.isArray(template.input.required)) {
                 requiredParameters = _.uniq(template.input.required).map((path) => {
-                    return {[path.toString()]: {required: true}}
+                    return {[path.toString()]: {required: true}};
                 }).reduce(function (r, c) {
                     return Object.assign(r, c);
-                }, {})
+                }, {});
             }
         }
     }
 
     // If required parameters are not defined in template. Set IDS parameter required by default.
     if (!requiredParameters) {
-        requiredParameters = {[IDS]: {required: true}}
+        requiredParameters = {[IDS]: {required: true}};
     }
 
     /** Validation of data product specific parameters */
@@ -597,7 +597,7 @@ const getData = async (req) => {
     // Execute parameters plugin function.
     for (let i = 0; i < template.plugins.length; i++) {
         if (Object.hasOwnProperty.call(plugins, template.plugins[i])) {
-            if (!!plugins[template.plugins[i]].parameters) {
+            if (plugins[template.plugins[i]].parameters) {
                 parameters = await plugins[template.plugins[i]].parameters(config, parameters);
             }
         }
@@ -631,5 +631,5 @@ module.exports = {
     getData,
     resolvePlugins,
     composeOutput,
-    emitter
+    emitter,
 };

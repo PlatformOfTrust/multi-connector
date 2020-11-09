@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Siemens Mindsphere.
  */
@@ -69,5 +69,5 @@ const id = async (config, id) => {
 module.exports = {
     name: 'siemens-mindsphere',
     request,
-    id
+    id,
 };

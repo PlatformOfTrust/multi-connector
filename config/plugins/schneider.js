@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Schneider id double encoding.
  */
@@ -30,5 +30,5 @@ const parameters = async (config, parameters) => {
  */
 module.exports = {
     name: 'schneider',
-    parameters
+    parameters,
 };

@@ -1,11 +1,11 @@
-"use strict";
+'use strict';
 /**
  * Module dependencies.
  */
 const fs = require('fs');
 const env = process.env.NODE_ENV || 'development';
-const { createLogger, format, transports } = require('winston');
-const { timestamp, printf } = format;
+const {createLogger, format, transports} = require('winston');
+const {timestamp, printf} = format;
 require('winston-daily-rotate-file');
 
 /**
@@ -19,7 +19,7 @@ const logDir = 'log';
 if (!fs.existsSync(logDir)) fs.mkdirSync(logDir);
 
 // Define logging format.
-const myFormat = printf(({ level, message, timestamp }) => {
+const myFormat = printf(({level, message, timestamp}) => {
     return `${timestamp} ${level}: ${message}`;
 });
 
@@ -33,23 +33,23 @@ const logger = createLogger({
             format: format.combine(
                 timestamp(),
                 format.colorize(),
-                myFormat
+                myFormat,
             ),
             handleExceptions: true,
-            exitOnError: false
+            exitOnError: false,
         }),
         new (transports.DailyRotateFile)({
             level: env === 'development' ? 'verbose' : 'info',
             filename: `${logDir}/%DATE%-results.log`,
             format: format.combine(
                 timestamp(),
-                format.json()
+                format.json(),
             ),
             datePattern: 'YYYY-MM-DD',
             handleExceptions: true,
-            exitOnError: false
-        })
-    ]
+            exitOnError: false,
+        }),
+    ],
 });
 
 /**

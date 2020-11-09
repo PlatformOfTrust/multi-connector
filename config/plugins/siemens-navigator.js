@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Siemens Navigator.
  */
@@ -30,5 +30,5 @@ const request = async (config, options) => {
  */
 module.exports = {
     name: 'siemens-navigator',
-    request
+    request,
 };

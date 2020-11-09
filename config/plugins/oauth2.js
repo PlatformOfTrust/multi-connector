@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Module dependencies.
  */
@@ -25,7 +25,7 @@ const failures = {};
  * @return {Promise}
  */
 const promiseRejectWithError = function (code, msg, reference) {
-    let err = new Error(msg || 'Internal Server Error.');
+    const err = new Error(msg || 'Internal Server Error.');
     err.httpStatusCode = code || 500;
     err.reference = reference;
     return Promise.reject(err);
@@ -42,7 +42,7 @@ const promiseRejectWithError = function (code, msg, reference) {
  */
 const updateToken = async (authConfig, refresh) => {
     // Request new token with selected grant type.
-    let grant = refresh ? await requestToken(authConfig, true) : await requestToken(authConfig);
+    const grant = refresh ? await requestToken(authConfig, true) : await requestToken(authConfig);
     if (!grant) return promiseRejectWithError(500, 'Authentication failed.');
     return Promise.resolve();
 };
@@ -53,7 +53,7 @@ const updateToken = async (authConfig, refresh) => {
  * @param {Object} authConfig
  * @return {Promise}
  */
-function getTokenWithPassword(authConfig) {
+function getTokenWithPassword (authConfig) {
     let onlyClientAuth;
     let onlyUserAuth;
     if (!authConfig.username || !authConfig.password || !authConfig.clientId || !authConfig.clientSecret) {
@@ -64,7 +64,7 @@ function getTokenWithPassword(authConfig) {
         } else return promiseRejectWithError(500, 'No credentials found in authConfig.');
     }
 
-    let options = {
+    const options = {
         method: 'POST',
         url: authConfig.url + authConfig.authPath,
         headers: {'content-type': 'application/x-www-form-urlencoded'},
@@ -75,23 +75,23 @@ function getTokenWithPassword(authConfig) {
                 password: authConfig.password,
                 client_id: authConfig.clientId,
                 client_secret: authConfig.clientSecret,
-                scope: authConfig.scope || ''
+                scope: authConfig.scope || '',
             },
-        resolveWithFullResponse: true
+        resolveWithFullResponse: true,
     };
 
     if (onlyClientAuth) {
         delete options.form.username;
         delete options.form.password;
         delete options.form.scope;
-        options.form.grant_type = 'client_credentials'
+        options.form.grant_type = 'client_credentials';
     }
 
     if (onlyUserAuth) {
         delete options.form.client_id;
         delete options.form.client_secret;
         delete options.form.scope;
-        options.form.grant_type = 'password'
+        options.form.grant_type = 'password';
     }
 
     if (Object.hasOwnProperty.call(authConfig, 'authContentType')) {
@@ -118,25 +118,25 @@ function getTokenWithPassword(authConfig) {
  * @param {String} refreshToken
  * @return {Promise}
  */
-function getTokenWithRefreshToken(authConfig, refreshToken) {
+function getTokenWithRefreshToken (authConfig, refreshToken) {
     if (!authConfig.url && !authConfig.authPath) {
         return promiseRejectWithError(500, 'No url or authPath found in authConfig.');
     } else {
-        let options = {
+        const options = {
             method: 'POST',
             url: authConfig.url + authConfig.authPath + '/token',
             headers:
                 {
-                    'content-type': 'application/x-www-form-urlencoded'
+                    'content-type': 'application/x-www-form-urlencoded',
                 },
             form:
                 {
                     grant_type: 'refresh_token',
                     refresh_token: refreshToken,
                     client_id: authConfig.clientId,
-                    client_secret: authConfig.clientSecret
+                    client_secret: authConfig.clientSecret,
                 },
-            resolveWithFullResponse: true
+            resolveWithFullResponse: true,
         };
 
         /** Philips HUE specific refresh. */
@@ -146,7 +146,7 @@ function getTokenWithRefreshToken(authConfig, refreshToken) {
             delete options.form.client_secret;
             options.headers = {
                 Authorization: 'Basic '
-                    + Buffer.from(authConfig.clientId + ':' + authConfig.clientSecret).toString('base64')
+                    + Buffer.from(authConfig.clientId + ':' + authConfig.clientSecret).toString('base64'),
             };
             options.url = authConfig.url + authConfig.authPath + '/refresh?grant_type=refresh_token';
         }
@@ -168,7 +168,7 @@ function getTokenWithRefreshToken(authConfig, refreshToken) {
 const getTokenWithCode = async (authConfig) => {
     let code = cache.getDoc('codes', authConfig.productCode);
     if (!code) {
-        code = authConfig.code
+        code = authConfig.code;
     }
 
     const redirectURL = authConfig.connectorURL + '/translator/v1/plugins/oauth2/' + authConfig.productCode + '/redirect';
@@ -187,7 +187,7 @@ const getTokenWithCode = async (authConfig) => {
         headers:
             {
                 'cache-control': 'no-cache',
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/x-www-form-urlencoded',
             },
         form:
             {
@@ -195,9 +195,9 @@ const getTokenWithCode = async (authConfig) => {
                 code: code,
                 client_id: authConfig.clientId,
                 client_secret: authConfig.clientSecret,
-                redirect_uri: redirectURL
+                redirect_uri: redirectURL,
             },
-        resolveWithFullResponse: true
+        resolveWithFullResponse: true,
     };
 
     return rp(options).then(function (result) {
@@ -205,7 +205,7 @@ const getTokenWithCode = async (authConfig) => {
     }).catch(function (error) {
         return Promise.reject(error);
     });
-}
+};
 
 /**
  * Initiates request to acquire access token.
@@ -228,8 +228,8 @@ const requestToken = async (authConfig, refresh) => {
     }
 
     return (refresh && grant.refresh_token
-            ? getTokenWithRefreshToken(authConfig, grant.refresh_token)
-            : (grantType !== 'authorization_code' ? getTokenWithPassword(authConfig) : getTokenWithCode(authConfig))
+        ? getTokenWithRefreshToken(authConfig, grant.refresh_token)
+        : (grantType !== 'authorization_code' ? getTokenWithPassword(authConfig) : getTokenWithCode(authConfig))
     ).then(function (result) {
         let body;
         if (result) {
@@ -244,7 +244,7 @@ const requestToken = async (authConfig, refresh) => {
             }
             return Promise.resolve(body);
         }
-        return Promise.resolve()
+        return Promise.resolve();
     }).catch(function (err) {
         return onerror(authConfig, err).then(function (result) {
             /** Second attempt was successful. */
@@ -254,7 +254,7 @@ const requestToken = async (authConfig, refresh) => {
             return Promise.reject(err);
         });
     });
-}
+};
 
 /**
  * Handles erroneous response.
@@ -303,22 +303,22 @@ const getConfig = function (req, res, next) {
         const result = {
             error: {
                 status: err.httpStatusCode || 500,
-                message: err.message || 'Internal Server Error.'
-            }
+                message: err.message || 'Internal Server Error.',
+            },
         };
 
         // Send response.
         return res.status(err.httpStatusCode || 500).send(result);
     }
     next();
-}
+};
 
 /** Limiter definitions. */
 const MINS10 = 600000, MINS30 = 3 * MINS10;
 
 // Clean limiter.
 setInterval(function () {
-    for (let ip in failures) {
+    for (const ip in failures) {
         if (Date.now() - failures[ip].resetTime > MINS10) {
             delete failures[ip];
         }
@@ -331,9 +331,9 @@ setInterval(function () {
  * @param {Object} req
  */
 const getRemoteIP = function (req) {
-    return req.headers["x-forwarded-for"] || req.connection.remoteAddress ||
+    return req.headers['x-forwarded-for'] || req.connection.remoteAddress ||
         req.socket.remoteAddress || req.connection.socket.remoteAddress;
-}
+};
 
 /**
  * Removes failed authentication attempts on authentication success.
@@ -342,7 +342,7 @@ const getRemoteIP = function (req) {
  */
 const authSuccess = function (req) {
     delete failures[getRemoteIP(req)];
-}
+};
 
 /**
  * Stores failed authentication attempts.
@@ -355,7 +355,7 @@ const authFailed = function (req) {
     ++f.count;
     // Wait 30 seconds for every failed attempt.
     f.resetTime.setTime(Date.now() + 30000 * f.count);
-}
+};
 
 /**
  * Limiter middleware.
@@ -370,11 +370,11 @@ const limiter = function (req, res, next) {
     if (f && Date.now() < f.resetTime) {
         req.rateLimit = {
             remaining: 0,
-            resetTime: f.resetTime
-        }
+            resetTime: f.resetTime,
+        };
     }
     next();
-}
+};
 
 /**
  * Returns plugin HTTP endpoints.
@@ -386,11 +386,11 @@ const endpoints = function (passport) {
     // GET endpoints.
     router.get('/*', getConfig, async (req, res, next) => {
         res.writeHead(200, {
-            'Content-Type': 'text/html'
+            'Content-Type': 'text/html',
         });
         res.write('<!doctype html><html>' +
             '<head><title>OAuth2 plugin</title></head>' +
-            '<body style="margin-top: 50px; text-align: center;"><h2><b>OAuth2 Authorization</b></h2>')
+            '<body style="margin-top: 50px; text-align: center;"><h2><b>OAuth2 Authorization</b></h2>');
         /** Pages. */
         switch (req.endpoint) {
             /** Redirect page. */
@@ -405,10 +405,10 @@ const endpoints = function (passport) {
                 }
 
                 if (!token) {
-                    let redirectURL = req.protocol + '://' + req.get('host') + '/translator/v1/plugins/oauth2/' + req.authConfig.productCode + '/authorize';
+                    const redirectURL = req.protocol + '://' + req.get('host') + '/translator/v1/plugins/oauth2/' + req.authConfig.productCode + '/authorize';
                     res.write(
                         '<h4>Authentication configurator</h4>' +
-                        '<p>Authorization failed. Requesting access token with authorization code failed.</p><br><input type="button" onclick="location.href=\'' + redirectURL + '\';" value="Try again" />')
+                        '<p>Authorization failed. Requesting access token with authorization code failed.</p><br><input type="button" onclick="location.href=\'' + redirectURL + '\';" value="Try again" />');
                 } else {
                     res.write(
                         '<h4>Access token stored successfully!</h4>' +
@@ -435,15 +435,15 @@ const endpoints = function (passport) {
         }
         res.write('</body></html>');
         res.end();
-    })
+    });
     // POST endpoints.
     router.post('/*', limiter, getConfig, async (req, res, next) => {
         res.writeHead(200, {
-            'Content-Type': 'text/html'
+            'Content-Type': 'text/html',
         });
         res.write('<!doctype html><html>' +
             '<head><title>OAuth2 plugin</title></head>' +
-            '<body style="margin-top: 50px; text-align: center;"><h2><b>OAuth2 Authorization</b></h2>')
+            '<body style="margin-top: 50px; text-align: center;"><h2><b>OAuth2 Authorization</b></h2>');
         /** Pages. */
         switch (req.endpoint) {
             /** Authorize page. */
@@ -469,7 +469,7 @@ const endpoints = function (passport) {
                             // Validate client secret.
                             if (clientSecret === req.authConfig.clientSecret) {
                                 authSuccess(req);
-                                let redirectURL = req.protocol + '://' + req.get('host') + '/translator/v1/plugins/oauth2/' + req.authConfig.productCode + '/redirect';
+                                const redirectURL = req.protocol + '://' + req.get('host') + '/translator/v1/plugins/oauth2/' + req.authConfig.productCode + '/redirect';
                                 // Generate state.
                                 const state = crypto.randomBytes(48).toString('hex');
                                 // Generate link to authorization page.
@@ -479,7 +479,7 @@ const endpoints = function (passport) {
                                     + '&redirect_uri=' + redirectURL
                                     + '&scope=' + req.authConfig.scope
                                     + '&state=' + state;
-                                message = 'User authenticated. Visit the following link<br>'
+                                message = 'User authenticated. Visit the following link<br>';
                                 message += 'to complete the authorization.<br>';
                                 message += '<p><a href="' + authorizationURL + '">Authorize access to resources</a></p>';
                             } else {
@@ -496,9 +496,9 @@ const endpoints = function (passport) {
         }
         res.write('</body></html>');
         res.end();
-    })
+    });
     return router;
-}
+};
 
 module.exports = {
     name: 'oauth2',
@@ -526,5 +526,5 @@ module.exports = {
     },
     /** Request error handling. */
     onerror,
-    endpoints
+    endpoints,
 };

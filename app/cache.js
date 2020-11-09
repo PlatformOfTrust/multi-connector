@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Module dependencies.
  */
@@ -12,7 +12,7 @@ const NodeCache = require('node-cache');
 const defaultTTL = 86400; // 24h
 
 // Initialize cache object.
-let cache = {
+const cache = {
     codes: {cache: new NodeCache()},
     grants: {cache: new NodeCache()},
     configs: {cache: new NodeCache()},
@@ -20,7 +20,7 @@ let cache = {
     templates: {cache: new NodeCache()},
     resources: {cache: new NodeCache()},
     publicKeys: {cache: new NodeCache()},
-    dataProducts: {cache: new NodeCache()}
+    dataProducts: {cache: new NodeCache()},
 };
 
 /**
@@ -43,8 +43,8 @@ const getDoc = function (collection, id) {
  */
 const getDocs = function (collection) {
     if (Object.hasOwnProperty.call(cache, collection)) {
-        let array = [];
-        let keys = cache[collection].cache.keys();
+        const array = [];
+        const keys = cache[collection].cache.keys();
         for (let j = 0; j < keys.length; j++) {
             array.push(cache[collection].cache.get(keys[j]));
         }
@@ -99,5 +99,5 @@ module.exports = {
     getDocs,
     getKeys,
     setDoc,
-    delDoc
+    delDoc,
 };

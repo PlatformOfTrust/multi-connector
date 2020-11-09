@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Orfer.
  */
@@ -21,7 +21,7 @@ const handleData = function (config, id, data) {
     } catch (err) {
         return result;
     }
-}
+};
 
 /**
  * Transforms output to Platform of Trust context schema.
@@ -32,11 +32,11 @@ const handleData = function (config, id, data) {
  */
 const output = async (config, output) => {
     // Initialize harmonized output.
-    let result = {
+    const result = {
         [config.output.context]: config.output.contextValue,
         [config.output.object]: {
-            [config.output.array]: []
-        }
+            [config.output.array]: [],
+        },
     };
 
     // Hand over data objects to transformer.
@@ -47,7 +47,7 @@ const output = async (config, output) => {
                 handleData(
                     config,
                     array[i][config.output.id],
-                    array[i][config.output.data]
+                    array[i][config.output.data],
                 ));
         }
         if (result[config.output.object][config.output.array].length === 1) {
@@ -56,7 +56,7 @@ const output = async (config, output) => {
         } else {
             result[config.output.object][config.output.array] =
                 result[config.output.object][config.output.array].map((o => {
-                    return Object.values(o)
+                    return Object.values(o);
                 })).flat(2);
         }
         return result;
@@ -70,5 +70,5 @@ const output = async (config, output) => {
  */
 module.exports = {
     name: 'orfer',
-    output
+    output,
 };
