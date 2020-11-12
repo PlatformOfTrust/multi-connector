@@ -42,11 +42,23 @@ const getData = async (config, pathArray) => {
 
         // Retrieve latest messages from cache.
         const result = cache.getDoc('messages', config.productCode) || {};
-
         for (let p = 0; p < pathArray.length; p++) {
             if (Object.hasOwnProperty.call(result, pathArray[p])) {
                 /** Id and topic are linked. */
-                const message = Object.values(result);
+                let message = Object.values(result);
+                if (Array.isArray(message)) {
+                    message = message.map(m => {
+                        return {
+                            [options.id]: pathArray[p],
+                            ...m,
+                        };
+                    });
+                } else {
+                    message = {
+                        [options.id]: pathArray[p],
+                        ...message,
+                    };
+                }
                 if (message) items.push(await response.handleData(config, pathArray[p], p, message));
             } else {
                 /** Messages have to be find by id. */
@@ -136,11 +148,15 @@ const callback = async (config, productCode) => {
             try {
                 let template = cache.getDoc('templates', config.template);
                 template = await connector.resolvePlugins(template);
-
                 if (template.plugins.filter(p => !!p.stream).length > 0) {
                     // Replace resource path.
                     const path = template.generalConfig.hardwareId.dataObjectProperty;
-                    const id = JSON.parse(message.toString())[path];
+                    let id;
+                    if (Object.hasOwnProperty.call(JSON.parse(message.toString()), path)) {
+                        id = JSON.parse(message.toString())[path];
+                    } else {
+                        id = topic;
+                    }
                     template.authConfig.path = [id];
                 }
 

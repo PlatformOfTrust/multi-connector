@@ -18,18 +18,18 @@
   },
   "generalConfig": {
     "sourceName": {
-      "dataObjectProperty": "@type"
+      "dataObjectProperty": "type"
     },
     "hardwareId": {
-      "dataObjectProperty": "name"
+      "dataObjectProperty": "topic"
     },
     "timestamp": {
-      "dataObjectProperty": "timestamp"
+      "dataObjectProperty": "Timestamp"
     }
   },
   "output": {
     "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Process/",
-    "array": "processes",
-    "data": "data"
+    "array": "process",
+    "data": "process"
   }
 }

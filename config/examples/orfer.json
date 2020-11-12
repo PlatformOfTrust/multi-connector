@@ -11,10 +11,7 @@
   },
   "plugins": {
     "azure-service-bus": {
-      "url": "<service-bus-inbound-endpoint>",
-      "output": {
-        "data": "data"
-      }
+      "url": "<service-bus-inbound-endpoint>"
     },
     "mqtt-server": {
       "username": "<username>",
