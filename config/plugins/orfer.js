@@ -977,9 +977,9 @@ const handleData = function (config, id, data) {
 
             // Make sure name, executor.idLocal and executor.type are strings.
             try {
-                result.name = String(result.name);
-                result.executor.idLocal = String(result.executor.idLocal);
-                result.executor.type = String(result.executor.type);
+                result.process.name = String(result.process.name);
+                result.process.executor.idLocal = String(result.process.executor.idLocal);
+                result.process.executor.type = String(result.process.executor.type);
             } catch (e) {
                 console.log(e.message);
             }
