@@ -975,6 +975,15 @@ const handleData = function (config, id, data) {
 
             result = transformer.transform(value, schemas[schemaName].properties.data);
 
+            // Make sure name, executor.idLocal and executor.type are strings.
+            try {
+                result.name = String(result.name);
+                result.executor.idLocal = String(result.executor.idLocal);
+                result.executor.type = String(result.executor.type);
+            } catch (e) {
+                console.log(e.message);
+            }
+
             if (Object.hasOwnProperty.call(result.process, 'timestamp')) {
                 result.process.timestamp = new Date(result.process.timestamp).toISOString();
             }
