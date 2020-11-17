@@ -68,7 +68,7 @@ const response = async (config, response) => {
                     const childMovings = Object.entries(d).filter(e => e[0].includes('Tulokuljetin')).map((t) => {
                         const executorIdLocal = 'Tulokuljetin' + t[0][12];
                         const obj = {
-                            wrapperId: mainMoving.executorIdLocal,
+                            robotId: mainMoving.executorIdLocal,
                             executorIdLocal,
                             executorCategorizationLocal: 'Conveyor',
                             Status: mainMoving[executorIdLocal + '_Status'],
