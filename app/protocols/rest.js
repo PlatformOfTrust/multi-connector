@@ -160,12 +160,12 @@ const requestData = async (config, path, index) => {
     if (config.generalConfig.query) {
         if (config.generalConfig.query.start) {
             options.query.push({
-                [config.generalConfig.query.start]: config.parameters.start.toISOString(),
+                [config.generalConfig.query.start]: new Date(config.parameters.start).toISOString(),
             });
         }
         if (config.generalConfig.query.end) {
             options.query.push({
-                [config.generalConfig.query.end]: config.parameters.end.toISOString(),
+                [config.generalConfig.query.end]: new Date(config.parameters.end).toISOString(),
             });
         }
         if (config.generalConfig.query.properties) {

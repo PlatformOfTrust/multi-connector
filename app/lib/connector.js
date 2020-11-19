@@ -382,7 +382,7 @@ const interpretMode = function (config, parameters) {
     }
 
     // Detect prediction request from end time and client's current local time.
-    if (parameters.end.getTime() > config.timestamp.getTime()) {
+    if (new Date(parameters.end).getTime() > config.timestamp.getTime()) {
         config.mode = 'prediction';
     }
 
