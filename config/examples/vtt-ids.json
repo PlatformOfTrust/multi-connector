@@ -1,0 +1,12 @@
+{
+  "template": "vtt-ids",
+  "dynamic": {
+    "authConfig.path": ["dclat", "dclon", "uclat", "uclon"]
+  },
+  "request": {
+    "dclat": "<dclat>",
+    "dclon": "<dclon>",
+    "uclat": "<uclat>",
+    "uclon": "<uclon>"
+  }
+}

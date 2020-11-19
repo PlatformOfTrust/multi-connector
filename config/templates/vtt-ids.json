@@ -1,0 +1,44 @@
+{
+  "plugins": [
+      "vtt-ids"
+  ],
+  "protocol": "rest",
+  "authConfig": {
+    "url": "http://xba-datastorage.northeurope.cloudapp.azure.com:4004",
+    "path": "/hfpdata?dclat=${dclat}&dclon=${dclon}&uclat=${uclat}&uclon=${uclon}"
+  },
+  "dataObjects": [
+    ""
+  ],
+  "dataPropertyMappings": {
+    "HFPData": ""
+  },
+  "generalConfig": {
+    "query": {
+        "start": "start",
+        "end": "stop"
+    },
+    "hardwareId": {
+      "dataObjectProperty": ""
+    },
+    "sourceName": {
+      "dataObjectProperty": ""
+    },
+    "timestamp": {
+      "dataObjectProperty": ""
+    }
+  },
+  "input": {
+    "required": [
+      "parameters.dclat",
+      "parameters.dclon",
+      "parameters.uclat",
+      "parameters.uclon",
+      "parameters.start",
+      "parameters.end"
+    ]
+  },
+  "output": {
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/HFPData/",
+  }
+}
