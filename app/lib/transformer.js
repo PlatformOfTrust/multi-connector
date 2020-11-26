@@ -38,9 +38,15 @@ const transform = function (source, schema) {
                     if (!Array.isArray(array)) array = [array];
                     array.forEach(element => {
                         if (!Object.hasOwnProperty.call(schema, 'items')) return;
-                        if (!Object.hasOwnProperty.call(schema.items, 'anyOf')) return;
-                        if (!Array.isArray(schema.items.anyOf)) return;
-                        schema.items.anyOf.forEach(item => value.push(transform(element, item)));
+                        if (!Object.hasOwnProperty.call(schema.items, 'anyOf')
+                            && !Object.hasOwnProperty.call(schema.items, 'properties')) return;
+                        if (Object.hasOwnProperty.call(schema.items, 'anyOf')
+                            && !Array.isArray(schema.items.anyOf)) return;
+                        if (!Object.hasOwnProperty.call(schema.items, 'anyOf')) {
+                            value.push(transform(element, schema.items));
+                        } else {
+                            schema.items.anyOf.forEach(item => value.push(transform(element, item)));
+                        }
                     });
                 }
                 break;
