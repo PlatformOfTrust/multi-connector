@@ -261,7 +261,7 @@ const schemas = {
                             },
                             'factory': {
                                 '$id': '#/properties/data/properties/process/properties/factory',
-                                'source': 'robotId',
+                                'source': 'Factory',
                                 'type': 'string',
                                 'title': '',
                                 'description': '',
@@ -385,7 +385,7 @@ const schemas = {
                             },
                             'factory': {
                                 '$id': '#/properties/data/properties/process/properties/factory',
-                                'source': 'robotId',
+                                'source': 'Factory',
                                 'type': 'string',
                                 'title': '',
                                 'description': '',
@@ -638,7 +638,7 @@ const schemas = {
                                 },
                                 'factory': {
                                     '$id': '#/properties/data/properties/process/properties/factory',
-                                    'source': 'robotId',
+                                    'source': 'Factory',
                                     'type': 'string',
                                     'title': '',
                                     'description': '',
@@ -756,7 +756,7 @@ const schemas = {
                             },
                             'factory': {
                                 '$id': '#/properties/data/properties/process/properties/factory',
-                                'source': 'robotId',
+                                'source': 'Factory',
                                 'type': 'string',
                                 'title': '',
                                 'description': '',
@@ -915,7 +915,7 @@ const schemas = {
                             },
                             'factory': {
                                 '$id': '#/properties/data/properties/process/properties/factory',
-                                'source': 'robotId',
+                                'source': 'Factory',
                                 'type': 'string',
                                 'title': '',
                                 'description': '',
@@ -1060,7 +1060,7 @@ const schemas = {
                             },
                             'factory': {
                                 '$id': '#/properties/data/properties/process/properties/factory',
-                                'source': 'robotId',
+                                'source': 'Factory',
                                 'type': 'string',
                                 'title': '',
                                 'description': '',
