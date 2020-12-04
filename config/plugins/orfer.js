@@ -1141,8 +1141,7 @@ const handleData = function (config, id, data) {
                 value.name = 'ChildOrder';
                 schemaName = 'childOrderSchema';
             }
-            if (Object.hasOwnProperty.call(value, 'Start_Timestamp') ||
-                Object.hasOwnProperty.call(value, 'order')) {
+            if (Object.hasOwnProperty.call(value, 'order')) {
                 value.executorType = 'Order';
                 value.name = 'Order';
                 schemaName = 'orderSchema';
