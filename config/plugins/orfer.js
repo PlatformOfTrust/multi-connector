@@ -203,6 +203,13 @@ const schemas = {
                                 'title': '',
                                 'description': '',
                             },
+                            'slitterId': {
+                                '$id': '#/properties/data/properties/process/properties/slitterId',
+                                'source': 'slitterId',
+                                'type': 'string',
+                                'title': '',
+                                'description': '',
+                            },
                             'width': {
                                 '$id': '#/properties/data/properties/process/properties/width',
                                 'source': 'Width',
@@ -241,6 +248,34 @@ const schemas = {
                             'qualityReason': {
                                 '$id': '#/properties/data/properties/process/properties/qualityReason',
                                 'source': 'ReasonCode',
+                                'type': 'string',
+                                'title': '',
+                                'description': '',
+                            },
+                            'company': {
+                                '$id': '#/properties/data/properties/process/properties/company',
+                                'source': 'Company',
+                                'type': 'string',
+                                'title': '',
+                                'description': '',
+                            },
+                            'factory': {
+                                '$id': '#/properties/data/properties/process/properties/factory',
+                                'source': 'robotId',
+                                'type': 'string',
+                                'title': '',
+                                'description': '',
+                            },
+                            'productionLine': {
+                                '$id': '#/properties/data/properties/process/properties/productionLine',
+                                'source': 'Line',
+                                'type': 'string',
+                                'title': '',
+                                'description': '',
+                            },
+                            'globalOrderId': {
+                                '$id': '#/properties/data/properties/process/properties/globalOrderId',
+                                'source': 'Order_Id',
                                 'type': 'string',
                                 'title': '',
                                 'description': '',
@@ -337,6 +372,34 @@ const schemas = {
                             'startDateTime': {
                                 '$id': '#/properties/data/properties/process/properties/startDateTime',
                                 'source': 'Start_Timestamp',
+                                'type': 'string',
+                                'title': '',
+                                'description': '',
+                            },
+                            'company': {
+                                '$id': '#/properties/data/properties/process/properties/company',
+                                'source': 'Company',
+                                'type': 'string',
+                                'title': '',
+                                'description': '',
+                            },
+                            'factory': {
+                                '$id': '#/properties/data/properties/process/properties/factory',
+                                'source': 'robotId',
+                                'type': 'string',
+                                'title': '',
+                                'description': '',
+                            },
+                            'productionLine': {
+                                '$id': '#/properties/data/properties/process/properties/productionLine',
+                                'source': 'Line',
+                                'type': 'string',
+                                'title': '',
+                                'description': '',
+                            },
+                            'globalOrderId': {
+                                '$id': '#/properties/data/properties/process/properties/globalOrderId',
+                                'source': 'Order_Id',
                                 'type': 'string',
                                 'title': '',
                                 'description': '',
@@ -566,6 +629,34 @@ const schemas = {
                                         'description': '',
                                     },
                                 },
+                                'company': {
+                                    '$id': '#/properties/data/properties/process/properties/company',
+                                    'source': 'Company',
+                                    'type': 'string',
+                                    'title': '',
+                                    'description': '',
+                                },
+                                'factory': {
+                                    '$id': '#/properties/data/properties/process/properties/factory',
+                                    'source': 'robotId',
+                                    'type': 'string',
+                                    'title': '',
+                                    'description': '',
+                                },
+                                'productionLine': {
+                                    '$id': '#/properties/data/properties/process/properties/productionLine',
+                                    'source': 'Line',
+                                    'type': 'string',
+                                    'title': '',
+                                    'description': '',
+                                },
+                                'globalOrderId': {
+                                    '$id': '#/properties/data/properties/process/properties/globalOrderId',
+                                    'source': 'Order_Id',
+                                    'type': 'string',
+                                    'title': '',
+                                    'description': '',
+                                },
                             },
                         },
                     },
@@ -655,6 +746,34 @@ const schemas = {
                                         'description': '',
                                     },
                                 },
+                            },
+                            'company': {
+                                '$id': '#/properties/data/properties/process/properties/company',
+                                'source': 'Company',
+                                'type': 'string',
+                                'title': '',
+                                'description': '',
+                            },
+                            'factory': {
+                                '$id': '#/properties/data/properties/process/properties/factory',
+                                'source': 'robotId',
+                                'type': 'string',
+                                'title': '',
+                                'description': '',
+                            },
+                            'productionLine': {
+                                '$id': '#/properties/data/properties/process/properties/productionLine',
+                                'source': 'Line',
+                                'type': 'string',
+                                'title': '',
+                                'description': '',
+                            },
+                            'globalOrderId': {
+                                '$id': '#/properties/data/properties/process/properties/globalOrderId',
+                                'source': 'Order_Id',
+                                'type': 'string',
+                                'title': '',
+                                'description': '',
                             },
                         },
                     },
@@ -787,6 +906,34 @@ const schemas = {
                                 'title': '',
                                 'description': '',
                             },
+                            'company': {
+                                '$id': '#/properties/data/properties/process/properties/company',
+                                'source': 'Company',
+                                'type': 'string',
+                                'title': '',
+                                'description': '',
+                            },
+                            'factory': {
+                                '$id': '#/properties/data/properties/process/properties/factory',
+                                'source': 'robotId',
+                                'type': 'string',
+                                'title': '',
+                                'description': '',
+                            },
+                            'productionLine': {
+                                '$id': '#/properties/data/properties/process/properties/productionLine',
+                                'source': 'Line',
+                                'type': 'string',
+                                'title': '',
+                                'description': '',
+                            },
+                            'globalOrderId': {
+                                '$id': '#/properties/data/properties/process/properties/globalOrderId',
+                                'source': 'Order_Id',
+                                'type': 'string',
+                                'title': '',
+                                'description': '',
+                            },
                         },
                     },
                 },
@@ -904,6 +1051,34 @@ const schemas = {
                                 'title': '',
                                 'description': '',
                             },
+                            'company': {
+                                '$id': '#/properties/data/properties/process/properties/company',
+                                'source': 'Company',
+                                'type': 'string',
+                                'title': '',
+                                'description': '',
+                            },
+                            'factory': {
+                                '$id': '#/properties/data/properties/process/properties/factory',
+                                'source': 'robotId',
+                                'type': 'string',
+                                'title': '',
+                                'description': '',
+                            },
+                            'productionLine': {
+                                '$id': '#/properties/data/properties/process/properties/productionLine',
+                                'source': 'Line',
+                                'type': 'string',
+                                'title': '',
+                                'description': '',
+                            },
+                            'globalOrderId': {
+                                '$id': '#/properties/data/properties/process/properties/globalOrderId',
+                                'source': 'Order_Id',
+                                'type': 'string',
+                                'title': '',
+                                'description': '',
+                            },
                         },
                     },
                 },
@@ -947,7 +1122,7 @@ const handleData = function (config, id, data) {
                 schemaName = 'movingSchema';
             }
             if (Object.hasOwnProperty.call(value, 'Virhekoodit') ||
-            Object.hasOwnProperty.call(value, 'wrapping')) {
+                Object.hasOwnProperty.call(value, 'wrapping')) {
                 value.executorType = 'Machine';
                 value.name = 'Wrapping';
                 schemaName = 'wrappingSchema';
@@ -961,13 +1136,13 @@ const handleData = function (config, id, data) {
                 value.executorCategorizationLocal = 'Slitter';
             }
             if (Object.hasOwnProperty.call(value, 'ReelCount') ||
-            Object.hasOwnProperty.call(value, 'childOrder')) {
+                Object.hasOwnProperty.call(value, 'childOrder')) {
                 value.executorType = 'Order';
                 value.name = 'ChildOrder';
                 schemaName = 'childOrderSchema';
             }
             if (Object.hasOwnProperty.call(value, 'Start_Timestamp') ||
-            Object.hasOwnProperty.call(value, 'order')) {
+                Object.hasOwnProperty.call(value, 'order')) {
                 value.executorType = 'Order';
                 value.name = 'Order';
                 schemaName = 'orderSchema';
