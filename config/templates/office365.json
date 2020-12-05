@@ -39,7 +39,7 @@
     ]
   },
   "output": {
-    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/CalendarEvent/",
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Event/",
     "array": "events",
     "data": "data"
   }
