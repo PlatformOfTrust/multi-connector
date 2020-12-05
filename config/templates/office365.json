@@ -32,6 +32,12 @@
       "dataObjectProperty": "location.displayName"
     }
   },
+  "input": {
+    "required": [
+      "parameters.targetObject",
+      "parameters.period"
+    ]
+  },
   "output": {
     "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/CalendarEvent/",
     "array": "events",
