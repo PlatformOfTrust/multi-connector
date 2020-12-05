@@ -237,6 +237,34 @@ const schema = {
 };
 
 /**
+ * Splits period to start and end properties and renames targetObject to ids.
+ *
+ * @param {Object} config
+ * @param {Object/String} parameters
+ * @return {Object}
+ */
+const parameters = async (config, parameters) => {
+    try {
+        if (Object.hasOwnProperty.call(parameters, 'period')) {
+            parameters.start = parameters.period.split('/')[0];
+            parameters.end = parameters.period.split('/')[1];
+            delete parameters.period;
+        }
+        if (Object.hasOwnProperty.call(parameters, 'targetObject')) {
+            if (Array.isArray(parameters.targetObject)) {
+                parameters.ids = parameters.targetObject;
+            } else {
+                parameters.ids = [parameters.targetObject];
+            }
+            delete parameters.targetObject;
+        }
+        return parameters;
+    } catch (e) {
+        return parameters;
+    }
+};
+
+/**
  * Handles data objects.
  *
  * @param {Object} config
@@ -353,6 +381,7 @@ const response = async (config, res) => {
  */
 module.exports = {
     name: 'office365',
+    parameters,
     response,
     output,
 };
