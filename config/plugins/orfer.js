@@ -51,6 +51,11 @@ const response = async (config, response) => {
                                 // To be recognized as a slitting process.
                                 slitting: true,
                                 name: 'Slitting',
+                                /** Additional fields. */
+                                Company: mainOrder.Company,
+                                Factory: mainOrder.Factory,
+                                Line: mainOrder.Line,
+                                Order_Id: mainOrder.Order_Id,
                             };
                         });
                         delete mainOrder.Tilaus;
@@ -76,6 +81,11 @@ const response = async (config, response) => {
                             // To be recognized as a moving process.
                             moving: true,
                             name: 'Moving',
+                            /** Additional fields. */
+                            Company: mainMoving.Company,
+                            Factory: mainMoving.Factory,
+                            Line: mainMoving.Line,
+                            Order_Id: mainMoving.Order_Id,
                         };
                         return obj;
                     });
@@ -99,6 +109,11 @@ const response = async (config, response) => {
                                 // To be recognized as a moving process.
                                 moving: true,
                                 name: 'Moving',
+                                /** Additional fields. */
+                                Company: mainWrapping.Company,
+                                Factory: mainWrapping.Factory,
+                                Line: mainWrapping.Line,
+                                Order_Id: mainWrapping.Order_Id,
                             };
                             return obj;
                         });
@@ -1100,7 +1115,6 @@ const handleData = function (config, id, data) {
     let result = {};
     try {
         for (let j = 0; j < data.length; j++) {
-            // result = {processes: data[j][config.output.value]};
             const value = data[j][config.output.value];
 
             // Include parameters.
