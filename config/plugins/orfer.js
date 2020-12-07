@@ -39,6 +39,11 @@ const response = async (config, response) => {
                                 childOrder: true,
                                 name: 'childOrder',
                                 ...o,
+                                /** Additional fields. */
+                                Company: mainOrder.Company,
+                                Factory: mainOrder.Factory,
+                                Line: mainOrder.Line,
+                                Order_Id: mainOrder.Order_Id,
                             };
                         });
                         const slittings = d.Tilaus.map(() => {
