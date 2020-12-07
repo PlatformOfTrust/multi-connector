@@ -1102,7 +1102,6 @@ const schemas = {
     },
 };
 
-
 /**
  * Handles data objects.
  *
@@ -1112,9 +1111,10 @@ const schemas = {
  * @return {Object}
  */
 const handleData = function (config, id, data) {
-    let result = {};
+    let object = {};
     try {
         for (let j = 0; j < data.length; j++) {
+            let result = {};
             const value = data[j][config.output.value];
 
             // Include parameters.
@@ -1193,10 +1193,20 @@ const handleData = function (config, id, data) {
                     result.process.reel.ReelLabelingTime = new Date(result.process.reel.ReelLabelingTime).toISOString();
                 }
             }
+
+            // Merge all processes to same result.
+            if (Object.hasOwnProperty.call(object, 'process')) {
+                if (!Array.isArray(object.process)) {
+                    object.process = [object.process];
+                }
+                object.process.push(result.process);
+            } else {
+                object = result;
+            }
         }
-        return result;
+        return object;
     } catch (err) {
-        return result;
+        return object;
     }
 };
 
