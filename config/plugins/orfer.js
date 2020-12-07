@@ -53,6 +53,7 @@ const response = async (config, response) => {
                                 Start_Timestamp: mainOrder.Start_Timestamp,
                                 operatorId: mainOrder.OperatorId,
                                 executorName: mainOrder.Slitter_name,
+                                Workcenter: mainOrder.Workcenter,
                                 // To be recognized as a slitting process.
                                 slitting: true,
                                 name: 'Slitting',
