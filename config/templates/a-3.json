@@ -1,0 +1,29 @@
+{
+  "plugins": [],
+  "protocol": "rest",
+  "authConfig": {
+    "url": "${url}",
+    "headers": {
+      "x-api-key": "${apikey}",
+      "secret": "${secret}"
+    },
+    "path": "/prod/values?siteId=${siteId}&pointIds=${id}"
+  },
+  "dataObjects": [
+    "body"
+  ],
+  "dataPropertyMappings": {
+    "${type}": "value"
+  },
+  "generalConfig": {
+    "sourceName": {
+      "dataObjectProperty": "description"
+    },
+    "hardwareId": {
+      "dataObjectProperty": "pointid"
+    },
+    "timestamp": {
+      "dataObjectProperty": "time"
+    }
+  }
+}
