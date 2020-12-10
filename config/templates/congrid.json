@@ -1,0 +1,33 @@
+{
+  "plugins": [],
+  "protocol": "rest",
+  "authConfig": {
+    "url": "https://${api}.congrid.com",
+    "headers": {
+      "Congrid-API-Token": "${token}"
+    },
+    "path": "/${version}/${resource}"
+  },
+  "dataObjects": [
+    "results"
+  ],
+  "dataPropertyMappings": {
+    "${type}": ""
+  },
+  "generalConfig": {
+    "sourceName": {
+      "dataObjectProperty": "description"
+    },
+    "hardwareId": {
+      "dataObjectProperty": "projectId"
+    },
+    "timestamp": {
+      "dataObjectProperty": "createdAt"
+    }
+  },
+  "output": {
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Observation/",
+    "array": "observations",
+    "data": "data"
+  }
+}
