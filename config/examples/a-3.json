@@ -1,18 +1,20 @@
 {
-    "template": "a-3",
-    "static": {
-        "url": "<api-url>",
-        "type": "MeasureAirTemperatureCelsiusDegree",
-        "apikey": "<apikey>",
-        "secret": "<secret>"
-    },
-    "dynamic": {
-        "authConfig.path": "ids",
-        "dataPropertyMappings": "type"
-    },
-    "request": {
-        "ids": [
-            "<id>"
-        ]
-    }
+  "template": "a-3",
+  "static": {
+    "url": "<api-url>",
+    "type": "MeasureAirTemperatureCelsiusDegree",
+    "apikey": "<apikey>",
+    "secret": "<secret>"
+  },
+  "dynamic": {
+    "authConfig.path": "ids",
+    "dataPropertyMappings": "type",
+    "generalConfig": "option"
+  },
+  "request": {
+    "option": "history",
+    "ids": [
+      "<device-id>"
+    ]
+  }
 }

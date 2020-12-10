@@ -16,6 +16,9 @@
     "${type}": "value"
   },
   "generalConfig": {
+    "query": {
+      "properties": [{"${option}": 1}]
+    },
     "sourceName": {
       "dataObjectProperty": "description"
     },
