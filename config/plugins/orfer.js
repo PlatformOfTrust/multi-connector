@@ -1122,10 +1122,11 @@ const handleData = function (config, id, data) {
         for (let j = 0; j < data.length; j++) {
             let result = {};
             const value = data[j][config.output.value];
+            const ts = new Date(Date.now());
 
             // Include parameters.
             value.type = 'Process';
-            value.ts = new Date(Date.now()).toISOString();
+            value.ts = ts.toISOString();
 
             let schemaName = 'orderSchema';
 
@@ -1198,6 +1199,13 @@ const handleData = function (config, id, data) {
                 if (Object.hasOwnProperty.call(result.process.reel, 'ReelLabelingTime')) {
                     result.process.reel.ReelLabelingTime = new Date(result.process.reel.ReelLabelingTime).toISOString();
                 }
+            }
+
+            // Include milliseconds of the timestamp.
+            try {
+                result.process.timestamp_milliseconds = ts.getMilliseconds();
+            } catch (e) {
+                console.log(e.message);
             }
 
             // Merge all processes to same result.
