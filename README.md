@@ -25,6 +25,7 @@ Following data sources are supported out of the box. Example configs can be foun
 - Talotohtori API
 - Trackinno Service API
 - Vastuu Group Company API
+- VTT Transport Data Platform
 - Wapice IoT-Ticket
 
 ## Getting Started
