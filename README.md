@@ -6,13 +6,14 @@
 
 Following data sources are supported out of the box. Example configs can be found at the repo.
 
+- A-3 Integration API
 - Digitraffic Live Trains API
 - EnerKey Data API
 - ENTSO-E Transparency Platform
 - Fidelix Pilvivalvomo
 - Haltian Thingsee API
 - HubSpot API
-- Microsoft Office 365
+- Microsoft 365
 - Nuuka Solutions Platform
 - Nysse GTFS RT public API
 - Orfer Production Line
