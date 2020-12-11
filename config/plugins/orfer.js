@@ -1203,7 +1203,7 @@ const handleData = function (config, id, data) {
 
             // Include milliseconds of the timestamp.
             try {
-                result.process.timestamp_milliseconds = ts.getMilliseconds();
+                result.process.timestamp_milliseconds = ts.getTime();
             } catch (e) {
                 console.log(e.message);
             }
