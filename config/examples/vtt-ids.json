@@ -1,12 +1,20 @@
 {
   "template": "vtt-ids",
   "dynamic": {
-    "authConfig.path": ["dclat", "dclon", "uclat", "uclon"]
+    "authConfig.path": [
+      "lowLeftCornerCoordinateAxis1",
+      "lowLeftCornerCoordinateAxis2",
+      "upperRightCornerCoordinateAxis1",
+      "upperRightCornerCoordinateAxis2"
+    ]
   },
   "request": {
-    "dclat": "<dclat>",
-    "dclon": "<dclon>",
-    "uclat": "<uclat>",
-    "uclon": "<uclon>"
+    "period": "<start>/<end>",
+    "targetObject": {
+      "lowLeftCornerCoordinateAxis1": "<dclat>",
+      "lowLeftCornerCoordinateAxis2": "<dclon>",
+      "upperRightCornerCoordinateAxis1": "<uclat>",
+      "upperRightCornerCoordinateAxis2": "<uclon>"
+    }
   }
 }
