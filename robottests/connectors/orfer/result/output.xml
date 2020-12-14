@@ -1,0 +1,995 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 3.2.1 (Python 3.8.3 on win32)" generated="20201214 15:30:46.436" rpa="false">
+<suite id="s1" name="Connector Tests" source="C:\Users\artor\WebstormProjects\multi-connector\robottests\connectors\orfer\connector_tests.robot">
+<test id="s1-t1" name="fetch, 200">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20201214 15:30:46.681" level="INFO">${body} = {'productCode': 'orfer', 'parameters': {'ids': ['sites/wipak']}}</msg>
+<status status="PASS" starttime="20201214 15:30:46.680" endtime="20201214 15:30:46.681"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20201214 15:30:46.681" level="INFO">${now} = 2020-12-14T13:30:46+00:00</msg>
+<status status="PASS" starttime="20201214 15:30:46.681" endtime="20201214 15:30:46.681"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:46.681" endtime="20201214 15:30:46.681"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:46.681" endtime="20201214 15:30:46.682"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20201214 15:30:46.682" level="INFO">${json_string} = {"productCode": "orfer", "parameters": {"ids": ["sites/wipak"]}, "timestamp": "2020-12-14T13:30:46+00:00"}</msg>
+<status status="PASS" starttime="20201214 15:30:46.682" endtime="20201214 15:30:46.682"></status>
+</kw>
+<msg timestamp="20201214 15:30:46.682" level="INFO">${body} = {'productCode': 'orfer', 'parameters': {'ids': ['sites/wipak']}, 'timestamp': '2020-12-14T13:30:46+00:00'}</msg>
+<status status="PASS" starttime="20201214 15:30:46.680" endtime="20201214 15:30:46.682"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20201214 15:30:46.683" level="INFO">${signature} = i45HydKjQIa1VDRATg0y8RfFpk83SX6Pwa9q4GbML6g=</msg>
+<status status="PASS" starttime="20201214 15:30:46.683" endtime="20201214 15:30:46.683"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:46.684" endtime="20201214 15:30:46.684"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:46.684" endtime="20201214 15:30:48.770"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20201214 15:30:48.771" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "@context": {
+            "type": "string",
+            "default": "https://standards.oftrust.net/v2/Context/DataProductOutput/Process/"
+        },
+        "data": {
+            "type": "object",
+            "properties": {
+                "process": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "type": {
+                                "type": "string"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "timestamp": {
+                                "type": "string"
+                            },
+                            "executor": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "string"
+                                    },
+                                    "idLocal": {
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "categorizationLocal": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "categorizationLocal",
+                                    "idLocal",
+                                    "type"
+                                ]
+                            },
+                            "status": {
+                                "type": [
+                                    "integer",
+                                    "null"
+                                ]
+                            },
+                            "error": {
+                                "type": "null"
+                            },
+                            "errorMessage": {
+                                "type": "null"
+                            },
+                            "reelId": {
+                                "type": "string"
+                            },
+                            "company": {
+                                "type": "string"
+                            },
+                            "factory": {
+                                "type": "string"
+                            },
+                            "productionLine": {
+                                "type": "string"
+                            },
+                            "timestamp_milliseconds": {
+                                "type": "integer"
+                            },
+                            "robotId": {
+                                "type": "integer"
+                            }
+                        },
+                        "required": [
+                            "company",
+                            "executor",
+                            "factory",
+                            "name",
+                            "productionLine",
+                            "status",
+                            "timestamp",
+                            "timestamp_milliseconds",
+                            "type"
+                        ]
+                    },
+                    "default": [
+                        {
+                            "type": "Process",
+                            "name": "Moving",
+                            "timestamp": "2020-12-14T13:30:48.691Z",
+                            "executor": {
+                                "type": "Machine",
+                                "idLocal": "4",
+                                "name": "",
+                                "categorizationLocal": "Robot"
+                            },
+                            "status": 2,
+                            "error": null,
+                            "errorMessage": null,
+                            "reelId": "",
+                            "company": "Wipak",
+                            "factory": "Nastola",
+                            "productionLine": "Orfer2",
+                            "timestamp_milliseconds": 1607952648691
+                        },
+                        {
+                            "type": "Process",
+                            "name": "Moving",
+                            "timestamp": "2020-12-14T13:30:48.691Z",
+                            "executor": {
+                                "type": "Machine",
+                                "idLocal": "Tulokuljetin1",
+                                "categorizationLocal": "Conveyor"
+                            },
+                            "status": null,
+                            "robotId": 4,
+                            "company": "Wipak",
+                            "factory": "Nastola",
+                            "productionLine": "Orfer2",
+                            "timestamp_milliseconds": 1607952648691
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "process"
+            ]
+        },
+        "signature": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "default": "RsaSignature2018"
+                },
+                "created": {
+                    "type": "string",
+                    "default": "2020-12-14T15:30:48+02:00"
+                },
+                "creator": {
+                    "type": "string",
+                    "default": "http://localhost:8080/translator/v1/public.key"
+                },
+                "signatureValue": {
+                    "type": "string",
+                    "default": "jAmJy2yYbTNntvNq1AksTgBcjOf/BCp6XGDnORuGdfYPVP6LJWNws5h6xrXqJ4gstsFWSWtRWMJbZ6Cc1hqTYKoxKMM3koM+ECxypi4PA03mN8aggEbaiSBwlV/BBjqT+aR/ZBhM8wZ2Lmx54K95X2fT8JLx/U7HMzjKfBTjLG2zvT4Ci/m8lC63vM7RlFHX8DngnSZkTjfk/kWmgS1gwnW+KZAuB6RhBUhut+dpn1+wF4skgSOG14YKQX98Hh2On3Zy4i19Icg+0jFVMyPKNaSSWTGbGFLMvuTL/zybYgT0JvTColG6rGhl2uHlSUhQyKM17W/G1mrMGpnZA06zmEuGn1+nt5kAMh7rtIASYVnSvmgWTwm+t7nXltCdyIPxN9oI0Nt0/X/5niKfU2WNF0ysHmblh9+wvJImRk1oFy+tjXBBY2hbRUJRltqcX9/kmI3sc1Gg8l/LtkeKJYPxzPWd1A7b7lw3WrO0zhIjGxEvMIosjf9iB6AkKNEG9CK0zKufw/etxN9e4A5qYzOabOD+aWLwXlh+yc613pXs4IuH9JyUoIgIZUp/xpcaMOCC27oXL8vi8F0pNrx2nOJlu98ML44cYXxDR66SNBVL0qtrmgcEz6yN9Fc/3U7HhyAs3CGxWdJqsIJPS7Tp36yz5iLc2pB9PJWvsT0lhAo5hlg="
+                }
+            },
+            "required": [
+                "created",
+                "creator",
+                "signatureValue",
+                "type"
+            ]
+        }
+    },
+    "required": [
+        "@context",
+        "data",
+        "signature"
+    ]
+}</msg>
+<status status="PASS" starttime="20201214 15:30:48.771" endtime="20201214 15:30:48.784"></status>
+</kw>
+<status status="PASS" starttime="20201214 15:30:46.683" endtime="20201214 15:30:48.784"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>200</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:48.785" endtime="20201214 15:30:48.786"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body @context</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductOutput/Process/</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:48.790" endtime="20201214 15:30:48.791"></status>
+</kw>
+<kw name="Object" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON object.*</doc>
+<arguments>
+<arg>response body data</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:48.791" endtime="20201214 15:30:48.792"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data process</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:48.792" endtime="20201214 15:30:48.793"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body data process 0 type</arg>
+<arg>Process</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:48.794" endtime="20201214 15:30:48.794"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body data process 0 name</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:48.794" endtime="20201214 15:30:48.795"></status>
+</kw>
+<kw name="Object" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON object.*</doc>
+<arguments>
+<arg>response body data process 0 executor</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:48.795" endtime="20201214 15:30:48.796"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body data process 0 executor idLocal</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:48.796" endtime="20201214 15:30:48.797"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body data process 0 executor name</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:48.797" endtime="20201214 15:30:48.797"></status>
+</kw>
+<tags>
+<tag>bug-0001</tag>
+</tags>
+<status status="PASS" starttime="20201214 15:30:46.680" endtime="20201214 15:30:48.798" critical="yes"></status>
+</test>
+<test id="s1-t2" name="fetch, 422, Missing data for parameters required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20201214 15:30:48.799" level="INFO">${body} = {'productCode': 'orfer', 'parameters': {'ids': ['sites/wipak']}}</msg>
+<status status="PASS" starttime="20201214 15:30:48.799" endtime="20201214 15:30:48.799"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20201214 15:30:48.800" level="INFO">${now} = 2020-12-14T13:30:48+00:00</msg>
+<status status="PASS" starttime="20201214 15:30:48.799" endtime="20201214 15:30:48.800"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:48.800" endtime="20201214 15:30:48.800"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:48.800" endtime="20201214 15:30:48.800"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20201214 15:30:48.801" level="INFO">${json_string} = {"productCode": "orfer", "parameters": {"ids": ["sites/wipak"]}, "timestamp": "2020-12-14T13:30:48+00:00"}</msg>
+<status status="PASS" starttime="20201214 15:30:48.800" endtime="20201214 15:30:48.801"></status>
+</kw>
+<msg timestamp="20201214 15:30:48.801" level="INFO">${body} = {'productCode': 'orfer', 'parameters': {'ids': ['sites/wipak']}, 'timestamp': '2020-12-14T13:30:48+00:00'}</msg>
+<status status="PASS" starttime="20201214 15:30:48.799" endtime="20201214 15:30:48.801"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>parameters</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:48.801" endtime="20201214 15:30:48.801"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20201214 15:30:48.802" level="INFO">${signature} = ki0UpbOW20rTZ/TvyycPxLynzI+tsalMr6rs3/CG+gc=</msg>
+<status status="PASS" starttime="20201214 15:30:48.802" endtime="20201214 15:30:48.802"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:48.802" endtime="20201214 15:30:48.802"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:48.802" endtime="20201214 15:30:50.808"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20201214 15:30:50.808" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "parameters": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "parameters"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20201214 15:30:50.808" endtime="20201214 15:30:50.810"></status>
+</kw>
+<status status="PASS" starttime="20201214 15:30:48.801" endtime="20201214 15:30:50.810"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:50.811" endtime="20201214 15:30:50.811"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:50.811" endtime="20201214 15:30:50.812"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message parameters 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:50.812" endtime="20201214 15:30:50.812"></status>
+</kw>
+<tags>
+<tag>bug-0002</tag>
+</tags>
+<status status="PASS" starttime="20201214 15:30:48.798" endtime="20201214 15:30:50.813" critical="yes"></status>
+</test>
+<test id="s1-t3" name="fetch, 422, Missing data for ids required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20201214 15:30:50.816" level="INFO">${body} = {'productCode': 'orfer', 'parameters': {'ids': ['sites/wipak']}}</msg>
+<status status="PASS" starttime="20201214 15:30:50.815" endtime="20201214 15:30:50.816"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20201214 15:30:50.816" level="INFO">${now} = 2020-12-14T13:30:50+00:00</msg>
+<status status="PASS" starttime="20201214 15:30:50.816" endtime="20201214 15:30:50.816"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:50.816" endtime="20201214 15:30:50.816"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:50.816" endtime="20201214 15:30:50.817"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20201214 15:30:50.817" level="INFO">${json_string} = {"productCode": "orfer", "parameters": {"ids": ["sites/wipak"]}, "timestamp": "2020-12-14T13:30:50+00:00"}</msg>
+<status status="PASS" starttime="20201214 15:30:50.817" endtime="20201214 15:30:50.817"></status>
+</kw>
+<msg timestamp="20201214 15:30:50.817" level="INFO">${body} = {'productCode': 'orfer', 'parameters': {'ids': ['sites/wipak']}, 'timestamp': '2020-12-14T13:30:50+00:00'}</msg>
+<status status="PASS" starttime="20201214 15:30:50.815" endtime="20201214 15:30:50.817"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body["parameters"]}</arg>
+<arg>ids</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:50.817" endtime="20201214 15:30:50.818"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20201214 15:30:50.819" level="INFO">${signature} = sh0UdKQHx4YLV9+M3jlsB/Fm5EsDVrU5akDoSLt8IY8=</msg>
+<status status="PASS" starttime="20201214 15:30:50.818" endtime="20201214 15:30:50.819"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:50.819" endtime="20201214 15:30:50.819"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:50.819" endtime="20201214 15:30:52.826"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20201214 15:30:52.827" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "parameters.ids": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "parameters.ids"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20201214 15:30:52.827" endtime="20201214 15:30:52.829"></status>
+</kw>
+<status status="PASS" starttime="20201214 15:30:50.818" endtime="20201214 15:30:52.829"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:52.830" endtime="20201214 15:30:52.831"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:52.832" endtime="20201214 15:30:52.832"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message parameters.ids 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:52.833" endtime="20201214 15:30:52.833"></status>
+</kw>
+<tags>
+<tag>bug-0003</tag>
+</tags>
+<status status="PASS" starttime="20201214 15:30:50.815" endtime="20201214 15:30:52.834" critical="yes"></status>
+</test>
+<test id="s1-t4" name="fetch, 200, Empty ids">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20201214 15:30:52.836" level="INFO">${body} = {'productCode': 'orfer', 'parameters': {'ids': ['sites/wipak']}}</msg>
+<status status="PASS" starttime="20201214 15:30:52.836" endtime="20201214 15:30:52.836"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20201214 15:30:52.837" level="INFO">${now} = 2020-12-14T13:30:52+00:00</msg>
+<status status="PASS" starttime="20201214 15:30:52.836" endtime="20201214 15:30:52.837"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:52.837" endtime="20201214 15:30:52.837"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:52.837" endtime="20201214 15:30:52.837"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20201214 15:30:52.837" level="INFO">${json_string} = {"productCode": "orfer", "parameters": {"ids": ["sites/wipak"]}, "timestamp": "2020-12-14T13:30:52+00:00"}</msg>
+<status status="PASS" starttime="20201214 15:30:52.837" endtime="20201214 15:30:52.837"></status>
+</kw>
+<msg timestamp="20201214 15:30:52.838" level="INFO">${body} = {'productCode': 'orfer', 'parameters': {'ids': ['sites/wipak']}, 'timestamp': '2020-12-14T13:30:52+00:00'}</msg>
+<status status="PASS" starttime="20201214 15:30:52.836" endtime="20201214 15:30:52.838"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body["parameters"]}</arg>
+<arg>ids=@{EMPTY}</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:52.838" endtime="20201214 15:30:52.838"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20201214 15:30:52.840" level="INFO">${signature} = QE5DIyqRJodKP2GFaxPRCgnLl2d0snbv2KiCEHnxIm4=</msg>
+<status status="PASS" starttime="20201214 15:30:52.840" endtime="20201214 15:30:52.840"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:52.840" endtime="20201214 15:30:52.840"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:52.840" endtime="20201214 15:30:54.853"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20201214 15:30:54.854" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "@context": {
+            "type": "string",
+            "default": "https://standards.oftrust.net/v2/Context/DataProductOutput/Process/"
+        },
+        "data": {
+            "type": "object",
+            "properties": {
+                "process": {
+                    "type": "array",
+                    "default": []
+                }
+            },
+            "required": [
+                "process"
+            ]
+        },
+        "signature": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "default": "RsaSignature2018"
+                },
+                "created": {
+                    "type": "string",
+                    "default": "2020-12-14T15:30:54+02:00"
+                },
+                "creator": {
+                    "type": "string",
+                    "default": "http://localhost:8080/translator/v1/public.key"
+                },
+                "signatureValue": {
+                    "type": "string",
+                    "default": "IWTrU7WPagVSvziH2gGSmQeKF9OYboBYkRWnjdRDIc2t7WX2cW8VMEhvWfardlBuDvhLU/Qe9nrQ4u1rR3IhbvVwGOOMvfqqmGvoA+fFIn/BqEqxe0dDSt+XoTcXkNxLZUQQ+Zt+EsJpzSOe7w8PpzjprRql4ArRxEkNWdBZaUMlJVAXHmfyvsu+5vIfU7Gk8l+vjMh40cUgj2GeOQO9LSb4NRRpGdZNgNsUwGlg+Icql5oXHXfHZNRH8AzyesWTNxpqiJxS85lL8rG88jA4LMxOwateyFq1NvdeUVdyBPpvT9YPeCE0kpaSb7Ti8N5G6IARzHgwTd7Xxa79HXRrm71xW94G0QsJOHUy2Lo3LsHEEIpfoM+ljNJlAAspuS5wYOowjuyq7sBSqeTA3SZzraAONUJPqDRex6xZay8nOk6n6NVfaqqHim/kL6O2lLJDx9RT+7WICiowToOKGNm88bAa5zUdAAgpbNu/e4rCagn8MlY9l6sfQHh4dd1Bk4RyP3xanA8dVIz7ITdm/yZsN+OjadjmtC2/g0CgDzDhws+0VBgiXEOArUj5M8WmbfUgBwzbEy4H+jYybcNPD/gr8fHsgXMTCCKSZLSOj626Vw19uhIwZJNuV8uTF7tMCq2KI1FuWsQ/wbXoM4frXbFbPyTtVIvhnrmAmmj9D6Sq8jQ="
+                }
+            },
+            "required": [
+                "created",
+                "creator",
+                "signatureValue",
+                "type"
+            ]
+        }
+    },
+    "required": [
+        "@context",
+        "data",
+        "signature"
+    ]
+}</msg>
+<status status="PASS" starttime="20201214 15:30:54.854" endtime="20201214 15:30:54.858"></status>
+</kw>
+<status status="PASS" starttime="20201214 15:30:52.839" endtime="20201214 15:30:54.858"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>200</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:54.858" endtime="20201214 15:30:54.859"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body @context</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductOutput/Process/</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:54.859" endtime="20201214 15:30:54.860"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data process</arg>
+<arg>maxItems=0</arg>
+</arguments>
+<status status="PASS" starttime="20201214 15:30:54.860" endtime="20201214 15:30:54.860"></status>
+</kw>
+<tags>
+<tag>bug-0004</tag>
+</tags>
+<status status="PASS" starttime="20201214 15:30:52.835" endtime="20201214 15:30:54.861" critical="yes"></status>
+</test>
+<doc>Orfer Production Line Tests</doc>
+<status status="PASS" starttime="20201214 15:30:46.437" endtime="20201214 15:30:54.862"></status>
+</suite>
+<statistics>
+<total>
+<stat pass="4" fail="0">Critical Tests</stat>
+<stat pass="4" fail="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="1" fail="0">bug-0001</stat>
+<stat pass="1" fail="0">bug-0002</stat>
+<stat pass="1" fail="0">bug-0003</stat>
+<stat pass="1" fail="0">bug-0004</stat>
+</tag>
+<suite>
+<stat pass="4" fail="0" id="s1" name="Connector Tests">Connector Tests</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
