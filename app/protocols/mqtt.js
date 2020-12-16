@@ -43,29 +43,37 @@ const getData = async (config, pathArray) => {
         // Retrieve latest messages from cache.
         const result = cache.getDoc('messages', config.productCode) || {};
         for (let p = 0; p < pathArray.length; p++) {
-            if (Object.hasOwnProperty.call(result, pathArray[p])) {
+            /** Multi level wildcard implementation */
+            const root = pathArray[p].split('#')[0];
+            const matchingKeys = Object.keys(result).filter(key => key.substring(0, root.length) === root);
+
+            if (matchingKeys.length > 0) {
                 /** Id and topic are linked. */
-                let message = result[pathArray[p]];
-                if (Array.isArray(message)) {
-                    message = message.map(m => {
-                        return _.isObject(m) ? {
-                            [options.id]: pathArray[p],
-                            ...m,
+                const messages = Object.entries(result).filter(entry => matchingKeys.includes(entry[0]));
+                for (let x = 0; x < messages.length; x++) {
+                    const id = messages[x][0];
+                    let message = messages[x][1];
+                    if (Array.isArray(message)) {
+                        message = message.map(m => {
+                            return _.isObject(m) ? {
+                                [options.id]: id,
+                                ...m,
+                            } : {
+                                [options.id]: id,
+                                message: m,
+                            };
+                        });
+                    } else {
+                        message = _.isObject(message) ? {
+                            [options.id]: id,
+                            ...message,
                         } : {
-                            [options.id]: pathArray[p],
-                            message: m,
+                            [options.id]: id,
+                            message,
                         };
-                    });
-                } else {
-                    message = _.isObject(message) ? {
-                        [options.id]: pathArray[p],
-                        ...message,
-                    } : {
-                        [options.id]: pathArray[p],
-                        message,
-                    };
+                    }
+                    if (message) items.push(await response.handleData(config, id, p, message));
                 }
-                if (message) items.push(await response.handleData(config, pathArray[p], p, message));
             } else {
                 /** Messages have to be find by id. */
                 const message = Object.values(result).flat().find(i => i[options.id] === pathArray[p]);
