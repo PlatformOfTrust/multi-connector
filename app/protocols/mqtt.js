@@ -45,18 +45,24 @@ const getData = async (config, pathArray) => {
         for (let p = 0; p < pathArray.length; p++) {
             if (Object.hasOwnProperty.call(result, pathArray[p])) {
                 /** Id and topic are linked. */
-                let message = Object.values(result);
+                let message = result[pathArray[p]];
                 if (Array.isArray(message)) {
                     message = message.map(m => {
-                        return {
+                        return _.isObject(m) ? {
                             [options.id]: pathArray[p],
                             ...m,
+                        } : {
+                            [options.id]: pathArray[p],
+                            message: m,
                         };
                     });
                 } else {
-                    message = {
+                    message = _.isObject(message) ? {
                         [options.id]: pathArray[p],
                         ...message,
+                    } : {
+                        [options.id]: pathArray[p],
+                        message,
                     };
                 }
                 if (message) items.push(await response.handleData(config, pathArray[p], p, message));
