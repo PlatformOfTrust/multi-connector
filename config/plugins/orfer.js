@@ -17,6 +17,9 @@ const transformer = require('../../app/lib/transformer');
  */
 const response = async (config, response) => {
     try {
+        if (!Array.isArray(response)) {
+            response = [response];
+        }
         if (Array.isArray(response)) {
             response = response.map(d => {
                 if (Object.hasOwnProperty.call(d, 'Tilaus')) {
