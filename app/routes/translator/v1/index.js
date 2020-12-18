@@ -3,6 +3,7 @@
  * Module dependencies.
  */
 const swaggerJSDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 const router = require('express').Router();
 const rsa = require('../../../lib/rsa');
 
@@ -15,7 +16,18 @@ const rsa = require('../../../lib/rsa');
  */
 module.exports = function (passport) {
 
-    /** Public key. */
+    /** Public key.
+     *
+     * @swagger
+     * /translator/v1/public.key:
+     *   get:
+     *     description: Public RSA key.
+     *     produces:
+     *       - application/octet-stream; charset=utf-8
+     *     responses:
+     *       200:
+     *         description: Key file.
+     */
     router.get('/public.key', rsa.sendPublicKey);
 
     /** Status.
@@ -60,24 +72,37 @@ module.exports = function (passport) {
      */
     router.use('/plugins/', require('./plugins')(passport));
 
-    /** Swagger documentation. */
-    router.get('/swagger.json', function (req, res) {
-        res.setHeader('Content-Type', 'application/json');
-        res.send(swaggerJSDoc({
-            swaggerDefinition: {
-                info: {
-                    title: 'Connector',
-                    version: '1.0.0',
-                    description: 'HTTP server to handle Platform of Trust Broker API requests.',
-                },
-                basePath: '/',
-                host: req.protocol + '://' + req.get('host'),
+    // Initialize swagger-jsdoc -> returns validated swagger spec in json format.
+    const swaggerSpec = swaggerJSDoc({
+        swaggerDefinition: {
+            info: {
+                title: 'Connector',
+                version: '1.0.0',
+                description: 'HTTP server to handle Platform of Trust Broker API requests.',
             },
-            apis: [
-                './app/routes/translator/v1/index.js',
-            ],
-        }));
+            basePath: '/',
+        },
+        apis: [
+            './app/routes/translator/v1/index.js',
+        ],
     });
+
+    /** Swagger Documentation. */
+    router.get('/swagger.json', function (req, res) {
+        swaggerSpec.host = req.get('host');
+        res.setHeader('Content-Type', 'application/json');
+        res.send(swaggerSpec);
+    });
+
+    /** Swagger UI. */
+    router.use('/api-docs', swaggerUi.serve);
+    router.get('/api-docs', function (req, res, next) {
+        swaggerSpec.host = req.get('host');
+        req.swaggerDoc = swaggerSpec;
+        next();
+    }, swaggerUi.serve, swaggerUi.setup(null, {
+        explorer: false,
+    }));
 
     return router;
 };
