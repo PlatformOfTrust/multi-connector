@@ -90,7 +90,7 @@ const sendPublicKey = function (req, res) {
  *   Sorted object.
  */
 const sortObject = function (object) {
-    if (object instanceof Array || typeof object !== 'object') {
+    if (object instanceof Array || typeof object !== 'object' || object === null) {
         return object;
     }
 
