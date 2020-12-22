@@ -431,10 +431,11 @@ const resolvePlugins = async (template) => {
  * Consumes described resources.
  *
  * @param {Object} template
+ * @param {Object/Array} input
  * @return {Object}
  *   Data object.
  */
-const composeOutput = async (template) => {
+const composeOutput = async (template, input) => {
     // Check that resource path is defined.
     if (!Object.hasOwnProperty.call(template.authConfig, 'path')) {
         return rest.promiseRejectWithError(500, 'Insufficient resource configurations.');
@@ -472,7 +473,7 @@ const composeOutput = async (template) => {
         if (!Object.hasOwnProperty.call(protocols, template.protocol)) {
             return rest.promiseRejectWithError(500, 'Connection protocol ' + template.protocol + ' is not supported.');
         } else {
-            items = await protocols[template.protocol].getData(template, pathArray);
+            items = input || await protocols[template.protocol].getData(template, pathArray);
             if (!items) items = [];
         }
     }
