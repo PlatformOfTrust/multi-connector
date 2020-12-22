@@ -1,0 +1,15 @@
+{
+  "template": "c4-cals-demand-supply",
+  "static": {
+    "type": "DemandSupply"
+  },
+  "dynamic": {
+    "authConfig.path": "VendorId",
+    "dataPropertyMappings": "type"
+  },
+  "request": {
+    "ids": [
+      "<id>"
+    ]
+  }
+}
