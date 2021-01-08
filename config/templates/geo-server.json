@@ -1,0 +1,51 @@
+{
+    "plugins": [
+        "geo-server"
+    ],
+    "protocol": "rest",
+    "authConfig": {
+        "url": "${url}",
+        "path": "/geoserver/ogc/features/collections/${idLocal}/items"
+    },
+    "dataObjects": [
+        "features"
+    ],
+    "dataPropertyMappings": {
+        "BuildingData": ""
+    },
+    "generalConfig": {
+        "query": {
+            "properties": [
+                {
+                    "datetime": "${period}"
+                },
+                {
+                    "bbox": "${lowLeftCornerCoordinateAxis1},${lowLeftCornerCoordinateAxis2},${upperRightCornerCoordinateAxis1},${upperRightCornerCoordinateAxis2}"
+                }
+            ]
+        },
+        "hardwareId": {
+            "dataObjectProperty": ""
+        },
+        "sourceName": {
+            "dataObjectProperty": ""
+        },
+        "timestamp": {
+            "dataObjectProperty": ""
+        }
+    },
+    "input": {
+        "required": [
+            "parameters.targetObject.idLocal",
+            "parameters.targetObject.lowLeftCornerCoordinateAxis1",
+            "parameters.targetObject.lowLeftCornerCoordinateAxis2",
+            "parameters.targetObject.upperRightCornerCoordinateAxis1",
+            "parameters.targetObject.upperRightCornerCoordinateAxis2"
+        ]
+    },
+    "output": {
+        "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Process/Measure/Traffic/",
+        "array": "buildings",
+        "data": "data"
+    }
+}
