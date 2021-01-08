@@ -1,0 +1,37 @@
+{
+  "plugins": [
+    "lvi-info"
+  ],
+  "protocol": "rest",
+  "authConfig": {
+    "url": "${url}",
+    "path": "/api/v1/products/full-data/${codeProductCatalog}?apiKey=${apikey}"
+  },
+  "dataObjects": [
+    ""
+  ],
+  "dataPropertyMappings": {
+    "${type}": ""
+  },
+  "generalConfig": {
+    "sourceName": {
+      "dataObjectProperty": "TT200"
+    },
+    "hardwareId": {
+      "dataObjectProperty": "${property}"
+    },
+    "timestamp": {
+      "dataObjectProperty": ""
+    }
+  },
+  "input": {
+    "required": [
+      "parameters.codeProductCatalog"
+    ]
+  },
+  "output": {
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/ProductCatalog/",
+    "array": "products",
+    "data": "data"
+  }
+}

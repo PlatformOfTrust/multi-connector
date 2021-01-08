@@ -1,0 +1,15 @@
+{
+    "template": "lvi-info",
+    "static": {
+        "url": "https://lvi-hakupalvelu-qa.ose.amb.fi",
+        "apikey": "<apikey>",
+        "type": "ProductCatalog",
+        "property": "productLinkNumber"
+    },
+    "dynamic": {
+        "authConfig.path": "codeProductCatalog"
+    },
+    "request": {
+        "codeProductCatalog": "<product-code>"
+    }
+}

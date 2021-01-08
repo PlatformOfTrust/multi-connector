@@ -16,6 +16,7 @@ Following data sources are supported out of the box. Example configs can be foun
 - Microsoft 365
 - Nuuka Solutions Platform
 - Nysse GTFS RT public API
+- LVI-Info.fi API
 - Orfer Production Line
 - Rakennustieto API
 - Sähkönumerot.fi API
