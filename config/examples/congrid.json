@@ -1,0 +1,19 @@
+{
+  "template": "congrid",
+  "static": {
+    "api": "api-sandbox",
+    "version": "v2",
+    "resource": "notes",
+    "token": "<congrid-api-token>",
+    "type": "Observation"
+  },
+  "dynamic": {
+    "authConfig.path": "ids",
+    "dataPropertyMappings": "type"
+  },
+  "request": {
+    "ids": [
+      "<project-id>"
+    ]
+  }
+}
