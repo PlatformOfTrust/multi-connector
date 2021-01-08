@@ -7,6 +7,7 @@
 Following data sources are supported out of the box. Example configs can be found at the repo.
 
 - A-3 Integration API
+- Congrid Public API
 - Digitraffic Live Trains API
 - EnerKey Data API
 - ENTSO-E Transparency Platform
