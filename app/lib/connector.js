@@ -300,9 +300,9 @@ function replacePlaceholders (config, template, params) {
                 placeholders = [placeholders];
             }
             placeholders.forEach(function (placeholder) {
-                if (Object.hasOwnProperty.call(params, placeholder)) {
+                if (_.get(params, placeholder)) {
                     const templateValue = _.get(template, path);
-                    if (Array.isArray(params[placeholder])) {
+                    if (Array.isArray(_.get(params, placeholder))) {
                         // Transform placeholder to array, if given parameters are in an array.
                         const array = [];
                         params[placeholder].forEach(function (element) {
@@ -310,7 +310,7 @@ function replacePlaceholders (config, template, params) {
                         });
                         _.set(template, path, array);
                     } else {
-                        _.set(template, path, replacer(templateValue, placeholder, params[placeholder]));
+                        _.set(template, path, replacer(templateValue, placeholder, _.get(params, placeholder)));
                     }
                 }
             });

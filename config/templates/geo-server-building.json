@@ -1,17 +1,17 @@
 {
     "plugins": [
-        "geo-server"
+        "geo-server-building"
     ],
     "protocol": "rest",
     "authConfig": {
         "url": "${url}",
-        "path": "/geoserver/ogc/features/collections/${idLocal}/items"
+        "path": "/geoserver/ogc/features/collections/${targetObject.idLocal}/items"
     },
     "dataObjects": [
         "features"
     ],
     "dataPropertyMappings": {
-        "BuildingData": ""
+        "BuildingInformation": ""
     },
     "generalConfig": {
         "query": {
@@ -20,12 +20,12 @@
                     "datetime": "${period}"
                 },
                 {
-                    "bbox": "${lowLeftCornerCoordinateAxis1},${lowLeftCornerCoordinateAxis2},${upperRightCornerCoordinateAxis1},${upperRightCornerCoordinateAxis2}"
+                    "bbox": "${targetObject.lowLeftCornerCoordinateAxis1},${targetObject.lowLeftCornerCoordinateAxis2},${targetObject.upperRightCornerCoordinateAxis1},${targetObject.upperRightCornerCoordinateAxis2}"
                 }
             ]
         },
         "hardwareId": {
-            "dataObjectProperty": ""
+            "dataObjectProperty": "id"
         },
         "sourceName": {
             "dataObjectProperty": ""
@@ -44,7 +44,7 @@
         ]
     },
     "output": {
-        "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Process/Measure/Traffic/",
+        "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/BuildingInformation/",
         "array": "buildings",
         "data": "data"
     }
