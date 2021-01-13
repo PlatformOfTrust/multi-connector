@@ -10,15 +10,15 @@
         "features"
     ],
     "dataPropertyMappings": {
-        "BuildingInformation": ""
+        "Geometry": "geometry.coordinates",
+        "Feature": "properties"
     },
     "generalConfig": {
         "query": {
             "properties": [
                 {
-                    "datetime": "${period}"
-                },
-                {
+                    "datetime": "${period}",
+                    "bbox-crs": "${bbox-crs}",
                     "bbox": "${targetObject.lowLeftCornerCoordinateAxis1},${targetObject.lowLeftCornerCoordinateAxis2},${targetObject.upperRightCornerCoordinateAxis1},${targetObject.upperRightCornerCoordinateAxis2}"
                 }
             ]
@@ -35,7 +35,6 @@
     },
     "input": {
         "required": [
-            "parameters.period",
             "parameters.targetObject.idLocal",
             "parameters.targetObject.lowLeftCornerCoordinateAxis1",
             "parameters.targetObject.lowLeftCornerCoordinateAxis2",
@@ -44,8 +43,8 @@
         ]
     },
     "output": {
-        "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/BuildingInformation/",
-        "array": "buildings",
+        "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Generic/",
+        "array": "items",
         "data": "data"
     }
 }
