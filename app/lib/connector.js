@@ -234,6 +234,8 @@ function escapeRegExp (string) {
  * @return {String}
  */
 function replaceAll (str, find, replace) {
+    // Handle undefined string.
+    if (str === undefined) return undefined;
     return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
 }
 
@@ -251,6 +253,9 @@ function replaceAll (str, find, replace) {
  */
 function replacer (template, placeholder, value) {
     let r = JSON.stringify(template);
+    // Handle missing template.
+    if (r === undefined) return undefined;
+    // Convert all dates to strings.
     if (value instanceof Date) value = value.toISOString();
     if (_.isObject(value)) {
         Object.keys(value).forEach(function (key) {
@@ -263,6 +268,8 @@ function replacer (template, placeholder, value) {
         }
         return JSON.parse(r);
     } else {
+        // Handle undefined placeholders.
+        if (value === undefined && r === '"${' + placeholder + '}"') return undefined;
         return JSON.parse(replaceAll(r, '${' + placeholder + '}', value));
     }
 }
@@ -300,18 +307,16 @@ function replacePlaceholders (config, template, params) {
                 placeholders = [placeholders];
             }
             placeholders.forEach(function (placeholder) {
-                if (Object.hasOwnProperty.call(params, placeholder)) {
-                    const templateValue = _.get(template, path);
-                    if (Array.isArray(params[placeholder])) {
-                        // Transform placeholder to array, if given parameters are in an array.
-                        const array = [];
-                        params[placeholder].forEach(function (element) {
-                            array.push(replacer(templateValue, placeholder, element));
-                        });
-                        _.set(template, path, array);
-                    } else {
-                        _.set(template, path, replacer(templateValue, placeholder, params[placeholder]));
-                    }
+                const templateValue = _.get(template, path);
+                if (Array.isArray(_.get(params, placeholder))) {
+                    // Transform placeholder to array, if given parameters are in an array.
+                    const array = [];
+                    params[placeholder].forEach(function (element) {
+                        array.push(replacer(templateValue, placeholder, element));
+                    });
+                    _.set(template, path, array);
+                } else {
+                    _.set(template, path, replacer(templateValue, placeholder, _.get(params, placeholder)));
                 }
             });
         });
@@ -431,7 +436,7 @@ const resolvePlugins = async (template) => {
  * Consumes described resources.
  *
  * @param {Object} template
- * @param {Object/Array} input
+ * @param {Object/Array} [input]
  * @return {Object}
  *   Data object.
  */
