@@ -144,8 +144,60 @@ const demand = {
     DemandWeek: 'TestDemandWeek',
 };
 
+const purchaseOrder = {
+    Instance: 'Instance001',
+    PurchaseOrderId: 'PurchaseOrder002',
+    PurchaseOrderNumber: 'PurchaseOrderNumber',
+    PurchaseOrderDate: 'PurchaseOrderDate',
+    PurchaseOrderTime: 'PurchaseOrderTime',
+    PurchaseOrderContactName: 'PurchaseOrderContactName',
+    PurchaseOrderContactEmail: 'PurchaseOrderContactEmail',
+    PurchaseOrderContactTelephone: 'PurchaseOrderContactTelephone',
+    CustomerId: 'CustomerId004',
+    CustomerName: 'TestCustomerName',
+    ProjectId: 'ProjectId005',
+    ProjectName: 'TestProjectName',
+    ProjectNumber: 'TestProjectNumber',
+    RequiredDeliveryDate: 'RequiredDeliveryDate',
+    RequiredDeliveryTime: 'RequiredDeliveryTime',
+    OurReference: 'OurReference',
+    PurchaseOrderQRC: 'PurchaseOrderQRC',
+    PurchaseOrderInfo: 'PurchaseOrderInfo',
+    VendorId: 'VendorId003',
+    VendorName: 'TestVendor',
+    VendorStreetAddress: 'TestStreetAddress',
+    VendorPostalCode: 'TestPostalCode',
+    VendorTown: 'TestVendorTown',
+    VendorCountry: 'TestVendorCountry',
+    ShipToId: 'ShipToId006',
+    ShipToName: 'TestShipToName',
+    ShipToStreetAddress: 'TestShipToStreetAddress',
+    ShipToPostalCode: 'TestShipToPostalCode',
+    ShipToTown: 'TestShipToTown',
+    ShipToCountry: 'TestShipToCountry',
+    BillToId: 'BillToId007',
+    BillToName: 'BillToName',
+    BillToStreetAddress: 'BillToStreetAddress',
+    BillToPostalCode: 'BillToPostalCode',
+    BillToTown: 'BillToTown',
+    BillToCountry: 'BillToCountry',
+};
+
 const demandItem = {
-    DemandSupplyItemId: 'MaterialId007',
+    DemandSupplyItemId: 'DemandSupplyItemId007',
+    MaterialId: 'MaterialId008',
+    MaterialExternalId: 'MaterialExternalId009',
+    MaterialName: 'TestMaterialName1',
+    MaterialPrimaryCode: 'TestMaterialPrimaryCode1',
+    MaterialPrimaryCodeType: 'TestMaterialPrimaryCodeType1',
+    MaterialSecondaryCode: 'TestMaterialSecondaryCode1',
+    MaterialSecondaryCodeType: 'TestMaterialSecondaryCodeType1',
+    DemandQuantity: 10,
+    UnitOfMeasure: 'pcs',
+};
+
+const purchaseOrderItem = {
+    PurchaseOrderItemId: 'PurchaseOrderId007',
     MaterialId: 'MaterialId008',
     MaterialExternalId: 'MaterialExternalId009',
     MaterialName: 'TestMaterialName1',
@@ -158,9 +210,11 @@ const demandItem = {
 };
 
 const demandList = [];
+const purchaseOrderList = [];
 const numberOfDemands = 4;
+const numberOfPurchaseOrders = 3;
 
-// Generate random demand for testing.
+// Generate random demand supply for testing.
 for (let d = 1; d <= numberOfDemands; d++) {
     const entry = {...demand};
     entry.Instance = 'Instance' + d;
@@ -184,10 +238,39 @@ for (let d = 1; d <= numberOfDemands; d++) {
     demandList.push(entry);
 }
 
+// Generate random purchase order for testing.
+for (let d = 1; d <= numberOfPurchaseOrders; d++) {
+    const entry = {...purchaseOrder};
+    entry.Instance = 'Instance' + d;
+    entry.DemandSupplyId = 'DemandSupplyId' + d;
+    entry.VendorId = 'VendorId' + d;
+    entry.CustomerId = 'CustomerId' + d;
+    entry.ProjectId = 'ProjectId' + d;
+    entry.ShipToId = 'ShipToId' + d;
+    entry.BillToId = 'BillToId' + d;
+    entry.PurchaseOrderItems = [];
+    const numberOfPurchaseOrders = Math.floor(Math.random() * 10) + 1;
+    for (let i = 1; i <= numberOfPurchaseOrders; i++) {
+        const item = {...purchaseOrderItem};
+        item.PurchaseOrderItemId = 'PurchaseOrderItemId' + d + '' + i;
+        item.MaterialId = 'MaterialId' + d + '' + i;
+        item.MaterialExternalId = 'MaterialExternalId' + d + '' + i;
+        item.MaterialName = 'MaterialName' + d + '' + i;
+        item.Quantity = Math.floor(Math.random() * 20) + 5;
+        entry.PurchaseOrderItems.push(item);
+    }
+    purchaseOrderList.push(entry);
+}
+
 const response = async (config, res) => {
+    console.log(config);
     /** Find by vendor ID */
     try {
-        return demandList.filter(d => d.VendorId === config.parameters.targetObject.VendorId);
+        if (config.authConfig.template === 'c4-cals-purchase-order') {
+            return purchaseOrderList.filter(d => d.VendorId === config.parameters.targetObject.VendorId);
+        } else {
+            return demandList.filter(d => d.VendorId === config.parameters.targetObject.VendorId);
+        }
     } catch (e) {
         return [];
     }
@@ -204,6 +287,7 @@ const endpoints = function (passport) {
     router.get('/*', getConfig, async (req, res, next) => {
         try {
             let demand;
+            let order;
             const redirectURL = req.protocol + '://' + req.get('host') + '/translator/v1/plugins/c4-cals/' + req.config.authConfig.productCode + '/demand';
             res.writeHead(200, {
                 'Content-Type': 'text/html',
@@ -242,6 +326,26 @@ const endpoints = function (passport) {
                             + '\';" value="Confirm Supply" /></div>');
                     }
                     break;
+                /** Order page. */
+                case 'order':
+                    if (req.query.token !== TOKEN) {
+                        // res.write('Unauthorized');
+                        // break;
+                    }
+                    res.write(
+                        '<b>Purchase Order list</b>:<br>');
+                    for (let i = 0; i < purchaseOrderList.length; i++) {
+                        /** Order details */
+                        res.write(
+                            '<div style="position: relative; max-width: 600px; margin: auto;"><textarea readonly name="text" cols="25" rows="5" style="width: 100%; height: 200px;">' +
+                            JSON.stringify(demandList[i], null, 2) + '</textarea>');
+                        /** Confirm order button */
+                        const redirectURL = req.protocol + '://' + req.get('host') + '/translator/v1/plugins/c4-cals/'
+                            + req.config.authConfig.productCode + '/confirm?instance=' + purchaseOrderList[i].Instance;
+                        res.write('<input type="button" style="position: absolute; right: 15px; top: 5px;" onclick="location.href=\'' + redirectURL
+                            + '\';" value="Confirm Order" /></div>');
+                    }
+                    break;
                 /** Supply confirmation page. */
                 case 'supply':
                     demand = demandList.find(d => d.Instance === req.query.instance);
@@ -274,6 +378,36 @@ const endpoints = function (passport) {
                         '<input type="submit" value="Submit" style="margin: 20px;">' +
                         '</form>');
                     break;
+                /** Order confirmation page. */
+                case 'confirm':
+                    order = purchaseOrderList.find(d => d.Instance === req.query.instance);
+                    if (!order) {
+                        res.write('<p>Order not found.</p><br>' +
+                            '<input type="button" onclick="location.href=\'' + redirectURL + '\';" value="Back" />');
+                        break;
+                    }
+                    res.write('<h4>Order confirmation page</h4>' +
+                        '<p>Click submit to confirm the order.</p><br>' +
+                        '<form action="?token=' + TOKEN + '" method="post">' +
+                        '<label for="client_secret"><b>Instance</b>:</label>' +
+                        '<input type="text" id="instance" name="Instance" value="' + order.Instance + '" readonly><br>' +
+                        '<label for="purchase_order_id"><b>PurchaseOrderId</b>:</label>' +
+                        '<input type="text" id="purchase_order_id" name="PurchaseOrderId" value="' + order.DemandSupplyId + '" readonly><br>');
+                    for (let i = 0; i < order.PurchaseOrderItems.length; i++) {
+                        res.write(
+                            '<label for="item' + i + '_material_name" style="margin-top: 10px;"><b>PurchaseOrderItem ' + i + ' Material Name</b>:</label>' +
+                            '<input type="text" id="item' + i + '_material_name" name="PurchaseOrderItems[' + i + '][UnitOfMeasure]" value="' + order.PurchaseOrderItems[i].MaterialName + '" readonly disabled="disabled"><br>' +
+                            '<label for="item' + i + '_quantity"><b>Quantity</b>:</label>' +
+                            '<input type="number" id="item' + i + '_quantity" name="PurchaseOrderItems[' + i + '][Quantity]" value="' + order.PurchaseOrderItems[i].Quantity + '" readonly disabled="disabled"><br>' +
+                            '<label for="item' + i + '_purchase_order_item_id"><b>PurchaseOrderItemId</b>:</label>' +
+                            '<input type="text" id="item' + i + '_purchase_order_item_id" name="PurchaseOrderItems[' + i + '][PurchaseOrderItemId]" value="' + order.PurchaseOrderItems[i].PurchaseOrderItemId + '" readonly disabled="disabled"><br>' +
+                            '<label for="item' + i + '_unit_of_measure"><b>UnitOfMeasure</b>:</label>' +
+                            '<input type="text" id="item0_unit_of_measure" name="PurchaseOrderItems[' + i + '][UnitOfMeasure]" value="' + order.PurchaseOrderItems[i].UnitOfMeasure + '" readonly disabled="disabled"><br>');
+                    }
+                    res.write('<input type="button" onclick="location.href=\'' + redirectURL + '\';" value="Cancel" />' +
+                        '<input type="submit" value="Submit" style="margin: 20px;">' +
+                        '</form>');
+                    break;
             }
             res.write('</body></html>');
             res.end();
@@ -289,9 +423,11 @@ const endpoints = function (passport) {
         try {
             const host = req.get('host').split(':')[0];
             let demand;
+            let order;
             let result;
             let signature;
             const supply = {};
+            const confirmation = {};
             const redirectURL = req.protocol + '://' + req.get('host') + '/translator/v1/plugins/c4-cals/' + req.config.authConfig.productCode + '/demand';
             /** Pages. */
             switch (req.endpoint) {
@@ -354,6 +490,39 @@ const endpoints = function (passport) {
                         },
                     });
                     break;
+                /** Supply page. */
+                case 'confirm':
+                    order = purchaseOrderList.find(d => d.Instance === req.body.Instance);
+                    if (!order) {
+                        res.json(404, 'Order not found');
+                        break;
+                    }
+                    confirmation.Instance = req.body.Instance;
+                    confirmation.PurchaseOrderId = req.body.PurchaseOrderId;
+
+                    result = await composeOutput(req.config,[confirmation]);
+
+                    // Initialize signature object.
+                    signature = {
+                        type: 'RsaSignature2018',
+                        created: moment().format(),
+                        creator: (host === 'localhost' || net.isIP(host) ? 'http' : 'https')
+                            + '://' + req.get('host') + '/translator/v1/public.key',
+                    };
+
+                    // Send signed data response.
+                    res.status(201).send({
+                        ...(result.output || {}),
+                        redirectURL,
+                        signature: {
+                            ...signature,
+                            signatureValue: rsa.generateSignature({
+                                __signed__: signature.created,
+                                ...(result.output[result.payloadKey || 'data'] || {}),
+                            }),
+                        },
+                    });
+                    break;
             }
         } catch (e) {
             if (!res.finished) {
@@ -378,12 +547,22 @@ const handleData = function (config, id, data) {
     try {
         for (let j = 0; j < data.length; j++) {
             const value = data[j][config.output.value];
-            result = {
-                demandSupply: {
-                    '@type': 'DemandSupply',
-                    ...value,
-                },
-            };
+            if (config.authConfig.template === 'c4-cals-purchase-order') {
+                result = {
+                    purchaseOrder: {
+                        '@type': 'PurchaseOrder',
+                        ...value,
+                    },
+                };
+            } else {
+                result = {
+                    demandSupply: {
+                        '@type': 'DemandSupply',
+                        ...value,
+                    },
+                };
+            }
+
             // TODO: Transform with a schema.
             // result = transformer.transform(value, schema.properties.data);
         }

@@ -1,0 +1,15 @@
+{
+  "template": "c4-cals-purchase-order",
+  "static": {
+    "type": "PurchaseOrder"
+  },
+  "dynamic": {
+    "authConfig.path": "VendorId",
+    "dataPropertyMappings": "type"
+  },
+  "request": {
+    "ids": [
+      "<id>"
+    ]
+  }
+}

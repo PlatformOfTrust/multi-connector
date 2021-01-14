@@ -1,0 +1,34 @@
+{
+  "plugins": [
+      "c4-cals"
+  ],
+  "protocol": "custom",
+  "authConfig": {
+    "url": "${url}",
+    "path": "${VendorId}"
+  },
+  "dataObjects": [
+    ""
+  ],
+  "dataPropertyMappings": {
+    "${type}": ""
+  },
+  "generalConfig": {
+    "sourceName": {
+      "dataObjectProperty": "VendorName"
+    },
+    "hardwareId": {
+      "dataObjectProperty": "VendorId"
+    }
+  },
+    "input": {
+        "required": [
+            "parameters.targetObject"
+        ]
+    },
+  "output": {
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/PurchaseOrder/",
+    "array": "PurchaseOrder",
+    "data": "data"
+  }
+}
