@@ -308,15 +308,20 @@ function replacePlaceholders (config, template, params) {
             }
             placeholders.forEach(function (placeholder) {
                 const templateValue = _.get(template, path);
-                if (Array.isArray(_.get(params, placeholder))) {
-                    // Transform placeholder to array, if given parameters are in an array.
-                    const array = [];
-                    params[placeholder].forEach(function (element) {
-                        array.push(replacer(templateValue, placeholder, element));
-                    });
-                    _.set(template, path, array);
-                } else {
-                    _.set(template, path, replacer(templateValue, placeholder, _.get(params, placeholder)));
+                if (templateValue) {
+                    if (Array.isArray(_.get(params, placeholder))) {
+                        // Transform placeholder to array, if given parameters are in an array.
+                        const array = [];
+                        params[placeholder].forEach(function (element) {
+                            array.push(replacer(templateValue, placeholder, element));
+                        });
+                        _.set(template, path, array);
+                    } else {
+                        // If not found at static parameters, replace placeholder with undefined.
+                        if (_.get(params, placeholder) || !Object.keys(config.static).includes(placeholder)) {
+                            _.set(template, path, replacer(templateValue, placeholder, _.get(params, placeholder)));
+                        }
+                    }
                 }
             });
         });
