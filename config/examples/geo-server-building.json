@@ -5,7 +5,8 @@
   },
   "dynamic": {
     "generalConfig.query.properties.0.datetime": "period",
-    "generalConfig.query.properties.1.bbox": [
+    "generalConfig.query.properties.0.bbox-crs": "bbox-crs",
+    "generalConfig.query.properties.0.bbox": [
       "targetObject.lowLeftCornerCoordinateAxis1",
       "targetObject.lowLeftCornerCoordinateAxis2",
       "targetObject.upperRightCornerCoordinateAxis1",
