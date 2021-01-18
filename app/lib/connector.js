@@ -266,6 +266,10 @@ function replacer (template, placeholder, value) {
             // Place object to the id placeholder.
             r = replaceAll(r, '"${id}"', JSON.stringify(value));
         }
+        // In case placeholder is for the whole object.
+        if (r === '"${' + placeholder + '}"') {
+            r = replaceAll(r, '"${' + placeholder + '}"', JSON.stringify(value));
+        }
         return JSON.parse(r);
     } else {
         // Handle undefined placeholders.

@@ -5,6 +5,7 @@
 const winston = require('../../logger.js');
 const response = require('../lib/response');
 const rp = require('request-promise');
+const _ = require('lodash');
 
 /**
  * REST library.
@@ -47,8 +48,14 @@ const getDataByOptions = async (config, options, path) => {
         if (options.query.length > 0) {
             queryString += '?';
             for (let i = 0; i < options.query.length; i++) {
-                queryString += Object.keys(options.query[i])[0] + '=' + Object.values(options.query[i])[0];
-                if (i !== (options.query.length - 1)) queryString += '&';
+                if (_.isObject(options.query[i])) {
+                    const entries = Object.entries(options.query[i]);
+                    entries.forEach(entry => queryString += entry[0] + '=' + entry[1] + '&');
+                }
+            }
+
+            if (queryString[queryString.length - 1] === '&') {
+                queryString = queryString.slice(0, -1);
             }
 
             // Check whether the URL already contains query entries.
@@ -65,6 +72,13 @@ const getDataByOptions = async (config, options, path) => {
         return rp({...options, query: undefined}).then(function (result) {
             return Promise.resolve(result);
         }).catch(function (err) {
+            try {
+                if (Object.prototype.toString.call(err.response.body) === '[object Uint8Array]') {
+                    err.message = new Buffer.from(err.response.body).toString();
+                }
+            } catch (err) {
+                return Promise.reject(err);
+            }
             return Promise.reject(err);
         });
     }

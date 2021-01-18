@@ -1,0 +1,3 @@
+--pythonpath lib
+--outputdir connectors/geo-server/result
+connectors/geo-server/connector_tests.robot
