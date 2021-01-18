@@ -18,9 +18,10 @@
             "properties": [
                 {
                     "datetime": "${period}",
-                    "bbox-crs": "${bbox-crs}",
+                    "bbox-crs": "${targetObject.bbox-crs}",
                     "bbox": "${targetObject.lowLeftCornerCoordinateAxis1},${targetObject.lowLeftCornerCoordinateAxis2},${targetObject.upperRightCornerCoordinateAxis1},${targetObject.upperRightCornerCoordinateAxis2}"
-                }
+                },
+                "${targetObject.additionalProps}"
             ]
         },
         "hardwareId": {
