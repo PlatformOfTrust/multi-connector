@@ -1,0 +1,2144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 3.2.1 (Python 3.8.3 on win32)" generated="20210118 12:26:10.695" rpa="false">
+<suite id="s1" name="Connector Tests" source="C:\Users\artor\WebstormProjects\multi-connector\robottests\connectors\geo-server\connector_tests.robot">
+<test id="s1-t1" name="fetch, 200">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20210118 12:26:10.937" level="INFO">${body} = {'productCode': 'geo-server-building', 'parameters': {'targetObject': {'idLocal': 'helsinki_rakennukset', 'lowLeftCornerCoordinateAxis2': '60.185', 'lowLeftCornerCoordinateAxis1': '24.829', 'upperRigh...</msg>
+<status status="PASS" starttime="20210118 12:26:10.936" endtime="20210118 12:26:10.937"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20210118 12:26:10.937" level="INFO">${now} = 2021-01-18T10:26:10+00:00</msg>
+<status status="PASS" starttime="20210118 12:26:10.937" endtime="20210118 12:26:10.937"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:10.937" endtime="20210118 12:26:10.937"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:10.937" endtime="20210118 12:26:10.938"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20210118 12:26:10.938" level="INFO">${json_string} = {"productCode": "geo-server-building", "parameters": {"targetObject": {"idLocal": "helsinki_rakennukset", "lowLeftCornerCoordinateAxis2": "60.185", "lowLeftCornerCoordinateAxis1": "24.829", "upperRigh...</msg>
+<status status="PASS" starttime="20210118 12:26:10.938" endtime="20210118 12:26:10.938"></status>
+</kw>
+<msg timestamp="20210118 12:26:10.938" level="INFO">${body} = {'productCode': 'geo-server-building', 'parameters': {'targetObject': {'idLocal': 'helsinki_rakennukset', 'lowLeftCornerCoordinateAxis2': '60.185', 'lowLeftCornerCoordinateAxis1': '24.829', 'upperRigh...</msg>
+<status status="PASS" starttime="20210118 12:26:10.936" endtime="20210118 12:26:10.938"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20210118 12:26:10.939" level="INFO">${signature} = TxvAqNO7SPcKKSHf1sZ5TiDnru7eM43v4DRKwQIqQos=</msg>
+<status status="PASS" starttime="20210118 12:26:10.939" endtime="20210118 12:26:10.939"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:10.939" endtime="20210118 12:26:10.939"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:10.939" endtime="20210118 12:26:13.721"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20210118 12:26:13.723" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "@context": {
+            "type": "string",
+            "default": "https://standards.oftrust.net/v2/Context/DataProductOutput/BuildingInformation/"
+        },
+        "data": {
+            "type": "object",
+            "properties": {
+                "buildings": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "@type": {
+                                "type": "string"
+                            },
+                            "idSystemLocal": {
+                                "type": "integer"
+                            },
+                            "idOfficial": {
+                                "type": "integer"
+                            },
+                            "idLocal": {
+                                "type": "integer"
+                            },
+                            "idOfficial2": {
+                                "type": "integer"
+                            },
+                            "categorizationOfficial": {
+                                "type": "string"
+                            },
+                            "categorizationOfficialCode": {
+                                "type": "integer"
+                            },
+                            "status": {
+                                "type": "object",
+                                "properties": {
+                                    "@type": {
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "@type",
+                                    "name"
+                                ]
+                            },
+                            "sewageConnectionAvailability": {
+                                "type": "string"
+                            },
+                            "waterConnectionAvailability": {
+                                "type": [
+                                    "null",
+                                    "string"
+                                ]
+                            },
+                            "completed": {
+                                "type": "string"
+                            },
+                            "materialStructure": {
+                                "type": "string"
+                            },
+                            "heatingFuel": {
+                                "type": "string"
+                            },
+                            "heatingMechanism": {
+                                "type": "string"
+                            },
+                            "usageMain": {
+                                "type": "string"
+                            },
+                            "materialVeneer": {
+                                "type": "string"
+                            },
+                            "area": {
+                                "type": "object",
+                                "properties": {
+                                    "@type": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "@type"
+                                ]
+                            },
+                            "realEstate": {
+                                "type": "object",
+                                "properties": {
+                                    "@type": {
+                                        "type": "string"
+                                    },
+                                    "idOfficial": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "@type",
+                                    "idOfficial"
+                                ]
+                            },
+                            "StreetAddress": {
+                                "type": "object",
+                                "properties": {
+                                    "@type": {
+                                        "type": "string"
+                                    },
+                                    "streetAddressLine1": {
+                                        "type": "string"
+                                    },
+                                    "streetAddressLine2": {
+                                        "type": "string"
+                                    },
+                                    "postalCode": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "@type",
+                                    "postalCode",
+                                    "streetAddressLine1",
+                                    "streetAddressLine2"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "@type",
+                            "StreetAddress",
+                            "area",
+                            "categorizationOfficial",
+                            "categorizationOfficialCode",
+                            "completed",
+                            "heatingFuel",
+                            "heatingMechanism",
+                            "idLocal",
+                            "idOfficial",
+                            "idOfficial2",
+                            "idSystemLocal",
+                            "materialStructure",
+                            "materialVeneer",
+                            "realEstate",
+                            "sewageConnectionAvailability",
+                            "status",
+                            "usageMain",
+                            "waterConnectionAvailability"
+                        ]
+                    },
+                    "default": [
+                        {
+                            "@type": "Building",
+                            "idSystemLocal": 873984,
+                            "idOfficial": 5097819,
+                            "idLocal": 5097819,
+                            "idOfficial2": 63767,
+                            "categorizationOfficial": "Talousrakennus",
+                            "categorizationOfficialCode": 4,
+                            "status": {
+                                "@type": "Status",
+                                "name": "voimassa"
+                            },
+                            "sewageConnectionAvailability": "x",
+                            "waterConnectionAvailability": null,
+                            "completed": "2018-02-21Z",
+                            "materialStructure": "4",
+                            "heatingFuel": "4",
+                            "heatingMechanism": "3",
+                            "usageMain": "941",
+                            "materialVeneer": "5",
+                            "area": {
+                                "@type": "Polygon"
+                            },
+                            "realEstate": {
+                                "@type": "RealEstate",
+                                "idOfficial": "091-033-0067-0004"
+                            },
+                            "StreetAddress": {
+                                "@type": "StreetAddress",
+                                "streetAddressLine1": "Pannipolku",
+                                "streetAddressLine2": "1",
+                                "postalCode": "00430"
+                            }
+                        },
+                        {
+                            "@type": "Building",
+                            "idSystemLocal": 793819,
+                            "idOfficial": 5093710,
+                            "idLocal": 5093710,
+                            "idOfficial2": 63133,
+                            "categorizationOfficial": "Asuinrakennus",
+                            "categorizationOfficialCode": 1,
+                            "status": {
+                                "@type": "Status",
+                                "name": "voimassa"
+                            },
+                            "sewageConnectionAvailability": "x",
+                            "waterConnectionAvailability": "x",
+                            "completed": "2018-02-15Z",
+                            "materialStructure": "1",
+                            "heatingFuel": "1",
+                            "heatingMechanism": "1",
+                            "usageMain": "011",
+                            "materialVeneer": "7",
+                            "area": {
+                                "@type": "Polygon"
+                            },
+                            "realEstate": {
+                                "@type": "RealEstate",
+                                "idOfficial": "091-035-0026-0022"
+                            },
+                            "StreetAddress": {
+                                "@type": "StreetAddress",
+                                "streetAddressLine1": "Rakovalkeantie",
+                                "streetAddressLine2": "5b",
+                                "postalCode": "00670"
+                            }
+                        },
+                        {
+                            "@type": "Building",
+                            "idSystemLocal": 793952,
+                            "idOfficial": 5110178,
+                            "idLocal": 5110178,
+                            "idOfficial2": 65564,
+                            "categorizationOfficial": "Asuinrakennus",
+                            "categorizationOfficialCode": 1,
+                            "status": {
+                                "@type": "Status",
+                                "name": "voimassa"
+                            },
+                            "sewageConnectionAvailability": "x",
+                            "waterConnectionAvailability": "x",
+                            "completed": "2018-02-27Z",
+                            "materialStructure": "4",
+                            "heatingFuel": "4",
+                            "heatingMechanism": "1",
+                            "usageMain": "011",
+                            "materialVeneer": "5",
+                            "area": {
+                                "@type": "Polygon"
+                            },
+                            "realEstate": {
+                                "@type": "RealEstate",
+                                "idOfficial": "091-041-0251-0001"
+                            },
+                            "StreetAddress": {
+                                "@type": "StreetAddress",
+                                "streetAddressLine1": "Mehiläistie",
+                                "streetAddressLine2": "18",
+                                "postalCode": "00750"
+                            }
+                        },
+                        {
+                            "@type": "Building",
+                            "idSystemLocal": 794124,
+                            "idOfficial": 5112886,
+                            "idLocal": 5112886,
+                            "idOfficial2": 66070,
+                            "categorizationOfficial": "Asuinrakennus",
+                            "categorizationOfficialCode": 1,
+                            "status": {
+                                "@type": "Status",
+                                "name": "voimassa"
+                            },
+                            "sewageConnectionAvailability": "x",
+                            "waterConnectionAvailability": "x",
+                            "completed": "2018-02-25Z",
+                            "materialStructure": "4",
+                            "heatingFuel": "4",
+                            "heatingMechanism": "1",
+                            "usageMain": "021",
+                            "materialVeneer": "5",
+                            "area": {
+                                "@type": "Polygon"
+                            },
+                            "realEstate": {
+                                "@type": "RealEstate",
+                                "idOfficial": "091-039-0132-0025"
+                            },
+                            "StreetAddress": {
+                                "@type": "StreetAddress",
+                                "streetAddressLine1": "Kotinummentie",
+                                "streetAddressLine2": "37b",
+                                "postalCode": "00730"
+                            }
+                        },
+                        {
+                            "@type": "Building",
+                            "idSystemLocal": 794108,
+                            "idOfficial": 5111637,
+                            "idLocal": 5111637,
+                            "idOfficial2": 65820,
+                            "categorizationOfficial": "Asuinrakennus",
+                            "categorizationOfficialCode": 1,
+                            "status": {
+                                "@type": "Status",
+                                "name": "voimassa"
+                            },
+                            "sewageConnectionAvailability": "x",
+                            "waterConnectionAvailability": "x",
+                            "completed": "2018-02-21Z",
+                            "materialStructure": "4",
+                            "heatingFuel": "1",
+                            "heatingMechanism": "1",
+                            "usageMain": "011",
+                            "materialVeneer": "5",
+                            "area": {
+                                "@type": "Polygon"
+                            },
+                            "realEstate": {
+                                "@type": "RealEstate",
+                                "idOfficial": "091-028-0155-0007"
+                            },
+                            "StreetAddress": {
+                                "@type": "StreetAddress",
+                                "streetAddressLine1": "Kylänvanhimmantie",
+                                "streetAddressLine2": "26",
+                                "postalCode": "00640"
+                            }
+                        },
+                        {
+                            "@type": "Building",
+                            "idSystemLocal": 794100,
+                            "idOfficial": 5112679,
+                            "idLocal": 5112679,
+                            "idOfficial2": 66023,
+                            "categorizationOfficial": "Asuinrakennus",
+                            "categorizationOfficialCode": 1,
+                            "status": {
+                                "@type": "Status",
+                                "name": "voimassa"
+                            },
+                            "sewageConnectionAvailability": "x",
+                            "waterConnectionAvailability": "x",
+                            "completed": "2018-02-27Z",
+                            "materialStructure": "4",
+                            "heatingFuel": "9",
+                            "heatingMechanism": "1",
+                            "usageMain": "011",
+                            "materialVeneer": "5",
+                            "area": {
+                                "@type": "Polygon"
+                            },
+                            "realEstate": {
+                                "@type": "RealEstate",
+                                "idOfficial": "091-028-0301-0010"
+                            },
+                            "StreetAddress": {
+                                "@type": "StreetAddress",
+                                "streetAddressLine1": "Kivipadontie",
+                                "streetAddressLine2": "9",
+                                "postalCode": "00640"
+                            }
+                        },
+                        {
+                            "@type": "Building",
+                            "idSystemLocal": 793893,
+                            "idOfficial": 5107611,
+                            "idLocal": 5107611,
+                            "idOfficial2": 65236,
+                            "categorizationOfficial": "Asuinrakennus",
+                            "categorizationOfficialCode": 1,
+                            "status": {
+                                "@type": "Status",
+                                "name": "voimassa"
+                            },
+                            "sewageConnectionAvailability": "x",
+                            "waterConnectionAvailability": "x",
+                            "completed": "2018-02-28Z",
+                            "materialStructure": "4",
+                            "heatingFuel": "4",
+                            "heatingMechanism": "3",
+                            "usageMain": "011",
+                            "materialVeneer": "5",
+                            "area": {
+                                "@type": "Polygon"
+                            },
+                            "realEstate": {
+                                "@type": "RealEstate",
+                                "idOfficial": "091-033-0038-0002"
+                            },
+                            "StreetAddress": {
+                                "@type": "StreetAddress",
+                                "streetAddressLine1": "Maununnevantie",
+                                "streetAddressLine2": "9",
+                                "postalCode": "00430"
+                            }
+                        },
+                        {
+                            "@type": "Building",
+                            "idSystemLocal": 793610,
+                            "idOfficial": 5099590,
+                            "idLocal": 5099590,
+                            "idOfficial2": 63980,
+                            "categorizationOfficial": "Asuinrakennus",
+                            "categorizationOfficialCode": 1,
+                            "status": {
+                                "@type": "Status",
+                                "name": "voimassa"
+                            },
+                            "sewageConnectionAvailability": "x",
+                            "waterConnectionAvailability": "x",
+                            "completed": "2018-02-12Z",
+                            "materialStructure": "1",
+                            "heatingFuel": "1",
+                            "heatingMechanism": "1",
+                            "usageMain": "021",
+                            "materialVeneer": "2",
+                            "area": {
+                                "@type": "Polygon"
+                            },
+                            "realEstate": {
+                                "@type": "RealEstate",
+                                "idOfficial": "091-047-0295-0003"
+                            },
+                            "StreetAddress": {
+                                "@type": "StreetAddress",
+                                "streetAddressLine1": "Vienankatu",
+                                "streetAddressLine2": "1",
+                                "postalCode": "00920"
+                            }
+                        },
+                        {
+                            "@type": "Building",
+                            "idSystemLocal": 794089,
+                            "idOfficial": 5111360,
+                            "idLocal": 5111360,
+                            "idOfficial2": 65766,
+                            "categorizationOfficial": "Asuinrakennus",
+                            "categorizationOfficialCode": 1,
+                            "status": {
+                                "@type": "Status",
+                                "name": "voimassa"
+                            },
+                            "sewageConnectionAvailability": "x",
+                            "waterConnectionAvailability": "x",
+                            "completed": "2018-02-22Z",
+                            "materialStructure": "4",
+                            "heatingFuel": "1",
+                            "heatingMechanism": "1",
+                            "usageMain": "011",
+                            "materialVeneer": "7",
+                            "area": {
+                                "@type": "Polygon"
+                            },
+                            "realEstate": {
+                                "@type": "RealEstate",
+                                "idOfficial": "091-041-0302-0013"
+                            },
+                            "StreetAddress": {
+                                "@type": "StreetAddress",
+                                "streetAddressLine1": "Pitsinvirkkaajankatu",
+                                "streetAddressLine2": "14",
+                                "postalCode": "00770"
+                            }
+                        },
+                        {
+                            "@type": "Building",
+                            "idSystemLocal": 772531,
+                            "idOfficial": 5110567,
+                            "idLocal": 5110567,
+                            "idOfficial2": 65619,
+                            "categorizationOfficial": "Asuinrakennus",
+                            "categorizationOfficialCode": 1,
+                            "status": {
+                                "@type": "Status",
+                                "name": "voimassa"
+                            },
+                            "sewageConnectionAvailability": "x",
+                            "waterConnectionAvailability": "x",
+                            "completed": "2018-02-26Z",
+                            "materialStructure": "1",
+                            "heatingFuel": "9",
+                            "heatingMechanism": "1",
+                            "usageMain": "011",
+                            "materialVeneer": "7",
+                            "area": {
+                                "@type": "Polygon"
+                            },
+                            "realEstate": {
+                                "@type": "RealEstate",
+                                "idOfficial": "091-045-0473-0010"
+                            },
+                            "StreetAddress": {
+                                "@type": "StreetAddress",
+                                "streetAddressLine1": "Varjakanvalkama",
+                                "streetAddressLine2": "38",
+                                "postalCode": "00950"
+                            }
+                        },
+                        {
+                            "@type": "Building",
+                            "idSystemLocal": 793609,
+                            "idOfficial": 5099588,
+                            "idLocal": 5099588,
+                            "idOfficial2": 63979,
+                            "categorizationOfficial": "Asuinrakennus",
+                            "categorizationOfficialCode": 1,
+                            "status": {
+                                "@type": "Status",
+                                "name": "voimassa"
+                            },
+                            "sewageConnectionAvailability": "x",
+                            "waterConnectionAvailability": "x",
+                            "completed": "2018-02-12Z",
+                            "materialStructure": "1",
+                            "heatingFuel": "1",
+                            "heatingMechanism": "1",
+                            "usageMain": "021",
+                            "materialVeneer": "2",
+                            "area": {
+                                "@type": "Polygon"
+                            },
+                            "realEstate": {
+                                "@type": "RealEstate",
+                                "idOfficial": "091-047-0295-0003"
+                            },
+                            "StreetAddress": {
+                                "@type": "StreetAddress",
+                                "streetAddressLine1": "Vienankatu",
+                                "streetAddressLine2": "1",
+                                "postalCode": "00920"
+                            }
+                        },
+                        {
+                            "@type": "Building",
+                            "idSystemLocal": 794042,
+                            "idOfficial": 5110436,
+                            "idLocal": 5110436,
+                            "idOfficial2": 65596,
+                            "categorizationOfficial": "Asuinrakennus",
+                            "categorizationOfficialCode": 1,
+                            "status": {
+                                "@type": "Status",
+                                "name": "voimassa"
+                            },
+                            "sewageConnectionAvailability": "x",
+                            "waterConnectionAvailability": "x",
+                            "completed": "2018-02-19Z",
+                            "materialStructure": "1",
+                            "heatingFuel": "9",
+                            "heatingMechanism": "1",
+                            "usageMain": "011",
+                            "materialVeneer": "7",
+                            "area": {
+                                "@type": "Polygon"
+                            },
+                            "realEstate": {
+                                "@type": "RealEstate",
+                                "idOfficial": "091-034-0150-0011"
+                            },
+                            "StreetAddress": {
+                                "@type": "StreetAddress",
+                                "streetAddressLine1": "Sysimiehentie",
+                                "streetAddressLine2": "9a",
+                                "postalCode": "00660"
+                            }
+                        },
+                        {
+                            "@type": "Building",
+                            "idSystemLocal": 794058,
+                            "idOfficial": 5110774,
+                            "idLocal": 5110774,
+                            "idOfficial2": 65648,
+                            "categorizationOfficial": "Asuinrakennus",
+                            "categorizationOfficialCode": 1,
+                            "status": {
+                                "@type": "Status",
+                                "name": "voimassa"
+                            },
+                            "sewageConnectionAvailability": "x",
+                            "waterConnectionAvailability": "x",
+                            "completed": "2018-03-01Z",
+                            "materialStructure": "4",
+                            "heatingFuel": "9",
+                            "heatingMechanism": "1",
+                            "usageMain": "011",
+                            "materialVeneer": "5",
+                            "area": {
+                                "@type": "Polygon"
+                            },
+                            "realEstate": {
+                                "@type": "RealEstate",
+                                "idOfficial": "091-034-0140-0006"
+                            },
+                            "StreetAddress": {
+                                "@type": "StreetAddress",
+                                "streetAddressLine1": "Sysimiehentie",
+                                "streetAddressLine2": "8",
+                                "postalCode": "00660"
+                            }
+                        },
+                        {
+                            "@type": "Building",
+                            "idSystemLocal": 793717,
+                            "idOfficial": 5104634,
+                            "idLocal": 5104634,
+                            "idOfficial2": 64775,
+                            "categorizationOfficial": "Asuinrakennus",
+                            "categorizationOfficialCode": 1,
+                            "status": {
+                                "@type": "Status",
+                                "name": "voimassa"
+                            },
+                            "sewageConnectionAvailability": "x",
+                            "waterConnectionAvailability": "x",
+                            "completed": "2018-02-20Z",
+                            "materialStructure": "4",
+                            "heatingFuel": "1",
+                            "heatingMechanism": "1",
+                            "usageMain": "011",
+                            "materialVeneer": "5",
+                            "area": {
+                                "@type": "Polygon"
+                            },
+                            "realEstate": {
+                                "@type": "RealEstate",
+                                "idOfficial": "091-047-0288-0001"
+                            },
+                            "StreetAddress": {
+                                "@type": "StreetAddress",
+                                "streetAddressLine1": "Ranckenintie",
+                                "streetAddressLine2": "23",
+                                "postalCode": "00920"
+                            }
+                        },
+                        {
+                            "@type": "Building",
+                            "idSystemLocal": 794054,
+                            "idOfficial": 5111660,
+                            "idLocal": 5111660,
+                            "idOfficial2": 65824,
+                            "categorizationOfficial": "Asuinrakennus",
+                            "categorizationOfficialCode": 1,
+                            "status": {
+                                "@type": "Status",
+                                "name": "voimassa"
+                            },
+                            "sewageConnectionAvailability": "x",
+                            "waterConnectionAvailability": "x",
+                            "completed": "2018-02-14Z",
+                            "materialStructure": "4",
+                            "heatingFuel": "1",
+                            "heatingMechanism": "1",
+                            "usageMain": "012",
+                            "materialVeneer": "7",
+                            "area": {
+                                "@type": "Polygon"
+                            },
+                            "realEstate": {
+                                "@type": "RealEstate",
+                                "idOfficial": "091-041-0302-0022"
+                            },
+                            "StreetAddress": {
+                                "@type": "StreetAddress",
+                                "streetAddressLine1": "Alppikylänkatu",
+                                "streetAddressLine2": "31a",
+                                "postalCode": "00770"
+                            }
+                        },
+                        {
+                            "@type": "Building",
+                            "idSystemLocal": 794011,
+                            "idOfficial": 5110744,
+                            "idLocal": 5110744,
+                            "idOfficial2": 65640,
+                            "categorizationOfficial": "Asuinrakennus",
+                            "categorizationOfficialCode": 1,
+                            "status": {
+                                "@type": "Status",
+                                "name": "voimassa"
+                            },
+                            "sewageConnectionAvailability": "x",
+                            "waterConnectionAvailability": "x",
+                            "completed": "2018-02-15Z",
+                            "materialStructure": "4",
+                            "heatingFuel": "1",
+                            "heatingMechanism": "1",
+                            "usageMain": "012",
+                            "materialVeneer": "5",
+                            "area": {
+                                "@type": "Polygon"
+                            },
+                            "realEstate": {
+                                "@type": "RealEstate",
+                                "idOfficial": "091-034-0080-0014"
+                            },
+                            "StreetAddress": {
+                                "@type": "StreetAddress",
+                                "streetAddressLine1": "Alkutie",
+                                "streetAddressLine2": "25",
+                                "postalCode": "00660"
+                            }
+                        },
+                        {
+                            "@type": "Building",
+                            "idSystemLocal": 793607,
+                            "idOfficial": 5099583,
+                            "idLocal": 5099583,
+                            "idOfficial2": 63977,
+                            "categorizationOfficial": "Asuinrakennus",
+                            "categorizationOfficialCode": 1,
+                            "status": {
+                                "@type": "Status",
+                                "name": "voimassa"
+                            },
+                            "sewageConnectionAvailability": "x",
+                            "waterConnectionAvailability": "x",
+                            "completed": "2018-02-12Z",
+                            "materialStructure": "1",
+                            "heatingFuel": "1",
+                            "heatingMechanism": "1",
+                            "usageMain": "039",
+                            "materialVeneer": "2",
+                            "area": {
+                                "@type": "Polygon"
+                            },
+                            "realEstate": {
+                                "@type": "RealEstate",
+                                "idOfficial": "091-047-0295-0003"
+                            },
+                            "StreetAddress": {
+                                "@type": "StreetAddress",
+                                "streetAddressLine1": "Vienankatu",
+                                "streetAddressLine2": "1",
+                                "postalCode": "00920"
+                            }
+                        },
+                        {
+                            "@type": "Building",
+                            "idSystemLocal": 793963,
+                            "idOfficial": 5105128,
+                            "idLocal": 5105128,
+                            "idOfficial2": 64835,
+                            "categorizationOfficial": "Asuinrakennus",
+                            "categorizationOfficialCode": 1,
+                            "status": {
+                                "@type": "Status",
+                                "name": "voimassa"
+                            },
+                            "sewageConnectionAvailability": "x",
+                            "waterConnectionAvailability": "x",
+                            "completed": "2018-02-13Z",
+                            "materialStructure": "4",
+                            "heatingFuel": "10",
+                            "heatingMechanism": "1",
+                            "usageMain": "011",
+                            "materialVeneer": "5",
+                            "area": {
+                                "@type": "Polygon"
+                            },
+                            "realEstate": {
+                                "@type": "RealEstate",
+                                "idOfficial": "091-034-0078-0017"
+                            },
+                            "StreetAddress": {
+                                "@type": "StreetAddress",
+                                "streetAddressLine1": "Viidenrajantie",
+                                "streetAddressLine2": "34c",
+                                "postalCode": "00630"
+                            }
+                        },
+                        {
+                            "@type": "Building",
+                            "idSystemLocal": 794429,
+                            "idOfficial": 5110516,
+                            "idLocal": 5110516,
+                            "idOfficial2": 65604,
+                            "categorizationOfficial": "Asuinrakennus",
+                            "categorizationOfficialCode": 1,
+                            "status": {
+                                "@type": "Status",
+                                "name": "voimassa"
+                            },
+                            "sewageConnectionAvailability": "x",
+                            "waterConnectionAvailability": "x",
+                            "completed": "2018-03-07Z",
+                            "materialStructure": "4",
+                            "heatingFuel": "4",
+                            "heatingMechanism": "3",
+                            "usageMain": "011",
+                            "materialVeneer": "5",
+                            "area": {
+                                "@type": "Polygon"
+                            },
+                            "realEstate": {
+                                "@type": "RealEstate",
+                                "idOfficial": "091-041-0028-0012"
+                            },
+                            "StreetAddress": {
+                                "@type": "StreetAddress",
+                                "streetAddressLine1": "Vahakuja",
+                                "streetAddressLine2": "2b",
+                                "postalCode": "00750"
+                            }
+                        },
+                        {
+                            "@type": "Building",
+                            "idSystemLocal": 794130,
+                            "idOfficial": 5110924,
+                            "idLocal": 5110924,
+                            "idOfficial2": 65670,
+                            "categorizationOfficial": "Asuinrakennus",
+                            "categorizationOfficialCode": 1,
+                            "status": {
+                                "@type": "Status",
+                                "name": "voimassa"
+                            },
+                            "sewageConnectionAvailability": "x",
+                            "waterConnectionAvailability": "x",
+                            "completed": "2018-02-27Z",
+                            "materialStructure": "4",
+                            "heatingFuel": "1",
+                            "heatingMechanism": "1",
+                            "usageMain": "021",
+                            "materialVeneer": "7",
+                            "area": {
+                                "@type": "Polygon"
+                            },
+                            "realEstate": {
+                                "@type": "RealEstate",
+                                "idOfficial": "091-041-0304-0005"
+                            },
+                            "StreetAddress": {
+                                "@type": "StreetAddress",
+                                "streetAddressLine1": "Hevosmiehenkatu",
+                                "streetAddressLine2": "4",
+                                "postalCode": "00770"
+                            }
+                        },
+                        {
+                            "@type": "Building",
+                            "idSystemLocal": 873142,
+                            "idOfficial": 5113390,
+                            "idLocal": 5113390,
+                            "idOfficial2": 66149,
+                            "categorizationOfficial": "Asuinrakennus",
+                            "categorizationOfficialCode": 1,
+                            "status": {
+                                "@type": "Status",
+                                "name": "voimassa"
+                            },
+                            "sewageConnectionAvailability": "x",
+                            "waterConnectionAvailability": "x",
+                            "completed": "2018-02-14Z",
+                            "materialStructure": "4",
+                            "heatingFuel": "4",
+                            "heatingMechanism": "3",
+                            "usageMain": "021",
+                            "materialVeneer": "2",
+                            "area": {
+                                "@type": "Polygon"
+                            },
+                            "realEstate": {
+                                "@type": "RealEstate",
+                                "idOfficial": "091-037-0035-0018"
+                            },
+                            "StreetAddress": {
+                                "@type": "StreetAddress",
+                                "streetAddressLine1": "Karhusuontie",
+                                "streetAddressLine2": "7-9",
+                                "postalCode": "00720"
+                            }
+                        },
+                        {
+                            "@type": "Building",
+                            "idSystemLocal": 793956,
+                            "idOfficial": 5101378,
+                            "idLocal": 5101378,
+                            "idOfficial2": 64264,
+                            "categorizationOfficial": "Yleinen tai liikerakennus",
+                            "categorizationOfficialCode": 2,
+                            "status": {
+                                "@type": "Status",
+                                "name": "voimassa"
+                            },
+                            "sewageConnectionAvailability": "x",
+                            "waterConnectionAvailability": "x",
+                            "completed": "2018-02-22Z",
+                            "materialStructure": "4",
+                            "heatingFuel": "1",
+                            "heatingMechanism": "1",
+                            "usageMain": "219",
+                            "materialVeneer": "5",
+                            "area": {
+                                "@type": "Polygon"
+                            },
+                            "realEstate": {
+                                "@type": "RealEstate",
+                                "idOfficial": "091-039-0049-0005"
+                            },
+                            "StreetAddress": {
+                                "@type": "StreetAddress",
+                                "streetAddressLine1": "Rasinkuja",
+                                "streetAddressLine2": "4",
+                                "postalCode": "00780"
+                            }
+                        },
+                        {
+                            "@type": "Building",
+                            "idSystemLocal": 794030,
+                            "idOfficial": 5106276,
+                            "idLocal": 5106276,
+                            "idOfficial2": 65045,
+                            "categorizationOfficial": "Asuinrakennus",
+                            "categorizationOfficialCode": 1,
+                            "status": {
+                                "@type": "Status",
+                                "name": "voimassa"
+                            },
+                            "sewageConnectionAvailability": "x",
+                            "waterConnectionAvailability": "x",
+                            "completed": "2018-02-27Z",
+                            "materialStructure": "4",
+                            "heatingFuel": "9",
+                            "heatingMechanism": "1",
+                            "usageMain": "011",
+                            "materialVeneer": "5",
+                            "area": {
+                                "@type": "Polygon"
+                            },
+                            "realEstate": {
+                                "@type": "RealEstate",
+                                "idOfficial": "091-039-0327-0015"
+                            },
+                            "StreetAddress": {
+                                "@type": "StreetAddress",
+                                "streetAddressLine1": "Rahkatie",
+                                "streetAddressLine2": "3b",
+                                "postalCode": "00730"
+                            }
+                        },
+                        {
+                            "@type": "Building",
+                            "idSystemLocal": 793608,
+                            "idOfficial": 5099585,
+                            "idLocal": 5099585,
+                            "idOfficial2": 63978,
+                            "categorizationOfficial": "Asuinrakennus",
+                            "categorizationOfficialCode": 1,
+                            "status": {
+                                "@type": "Status",
+                                "name": "voimassa"
+                            },
+                            "sewageConnectionAvailability": "x",
+                            "waterConnectionAvailability": "x",
+                            "completed": "2018-02-12Z",
+                            "materialStructure": "1",
+                            "heatingFuel": "1",
+                            "heatingMechanism": "1",
+                            "usageMain": "021",
+                            "materialVeneer": "2",
+                            "area": {
+                                "@type": "Polygon"
+                            },
+                            "realEstate": {
+                                "@type": "RealEstate",
+                                "idOfficial": "091-047-0295-0003"
+                            },
+                            "StreetAddress": {
+                                "@type": "StreetAddress",
+                                "streetAddressLine1": "Vienankatu",
+                                "streetAddressLine2": "1",
+                                "postalCode": "00920"
+                            }
+                        },
+                        {
+                            "@type": "Building",
+                            "idSystemLocal": 794112,
+                            "idOfficial": 5112690,
+                            "idLocal": 5112690,
+                            "idOfficial2": 66026,
+                            "categorizationOfficial": "Asuinrakennus",
+                            "categorizationOfficialCode": 1,
+                            "status": {
+                                "@type": "Status",
+                                "name": "voimassa"
+                            },
+                            "sewageConnectionAvailability": "x",
+                            "waterConnectionAvailability": "x",
+                            "completed": "2018-02-28Z",
+                            "materialStructure": "4",
+                            "heatingFuel": "9",
+                            "heatingMechanism": "1",
+                            "usageMain": "011",
+                            "materialVeneer": "5",
+                            "area": {
+                                "@type": "Polygon"
+                            },
+                            "realEstate": {
+                                "@type": "RealEstate",
+                                "idOfficial": "091-033-0060-0013"
+                            },
+                            "StreetAddress": {
+                                "@type": "StreetAddress",
+                                "streetAddressLine1": "Kimpitie",
+                                "streetAddressLine2": "9b",
+                                "postalCode": "00430"
+                            }
+                        },
+                        {
+                            "@type": "Building",
+                            "idSystemLocal": 793945,
+                            "idOfficial": 5110420,
+                            "idLocal": 5110420,
+                            "idOfficial2": 65591,
+                            "categorizationOfficial": "Asuinrakennus",
+                            "categorizationOfficialCode": 1,
+                            "status": {
+                                "@type": "Status",
+                                "name": "voimassa"
+                            },
+                            "sewageConnectionAvailability": "x",
+                            "waterConnectionAvailability": "x",
+                            "completed": "2018-02-27Z",
+                            "materialStructure": "1",
+                            "heatingFuel": "9",
+                            "heatingMechanism": "1",
+                            "usageMain": "011",
+                            "materialVeneer": "7",
+                            "area": {
+                                "@type": "Polygon"
+                            },
+                            "realEstate": {
+                                "@type": "RealEstate",
+                                "idOfficial": "091-033-0052-0034"
+                            },
+                            "StreetAddress": {
+                                "@type": "StreetAddress",
+                                "streetAddressLine1": "Juoksuhaudantie",
+                                "streetAddressLine2": "23a",
+                                "postalCode": "00430"
+                            }
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "buildings"
+            ]
+        },
+        "signature": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "default": "RsaSignature2018"
+                },
+                "created": {
+                    "type": "string",
+                    "default": "2021-01-18T12:26:13+02:00"
+                },
+                "creator": {
+                    "type": "string",
+                    "default": "http://localhost:8080/translator/v1/public.key"
+                },
+                "signatureValue": {
+                    "type": "string",
+                    "default": "hL0Jia7yodPDY+tiduZknHxGueNp3IkYaaXe2mdzO62KplB9oTjCBUuVmkLlekdCmZGAAO/dLPrRBtupXyojvcCWP8CMvkOyIE2OH0kHhoc6Yhj72wnV5irDL/oQFY6QbgkR/Ao0vVIoxnCbRr502VCk5X13Gnn8EbehXeBobsRLO+d3/vnk4xLMVObuav5Y4RVqQsXVx98W2rwmwBVCI9KehmDCrJ9D9ps4rPBLVaW5z2t9H4GQP3e8RwyFDN4luqXO1ThgV5vHafqt27q/2KI23//17KWUKumRQYuDtIQjf0HZkOamaYgrtziLcLM2vRE1+61Mib38c1qbuVtuDKAPbA9Aqfu7GGnw+dwrFdpx9JBD2LdPdCLmxaJUxD9kfh1Ien+eaWPl+ARQ9MwSbu2a5fiPLxQAL8ksh4alSTTjlMh9NxGcMvAVZGgctXzSjRoME3VOHDeeSG5BdpK2IkFafAFq3Yb9Sb2GyYchJlpJHnl1XaBWjQmWTUu+rOOrJOfyw14jGLcL6UDNxakxKr+Tgcnr0vbaBzYuhHvXDfoPG/pfuBeavz8beMEVGP+4VRcvXLGBge/cLtV6W/gJzLK26qSHuur8IxYjbeAApbbgka1s5dqeUAR5yp8Fz4zdiBr9k+jY3EjYKFA5eYjFjorqnj4VpHC8DjnhsnJQXlw="
+                }
+            },
+            "required": [
+                "created",
+                "creator",
+                "signatureValue",
+                "type"
+            ]
+        }
+    },
+    "required": [
+        "@context",
+        "data",
+        "signature"
+    ]
+}</msg>
+<status status="PASS" starttime="20210118 12:26:13.722" endtime="20210118 12:26:13.775"></status>
+</kw>
+<status status="PASS" starttime="20210118 12:26:10.938" endtime="20210118 12:26:13.776"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>200</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:13.797" endtime="20210118 12:26:13.797"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body @context</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductOutput/BuildingInformation/</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:13.798" endtime="20210118 12:26:13.798"></status>
+</kw>
+<kw name="Object" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON object.*</doc>
+<arguments>
+<arg>response body data</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:13.799" endtime="20210118 12:26:13.804"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data buildings</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:13.804" endtime="20210118 12:26:13.807"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body data buildings 0 @type</arg>
+<arg>Building</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:13.808" endtime="20210118 12:26:13.808"></status>
+</kw>
+<tags>
+<tag>bug-0001</tag>
+</tags>
+<status status="PASS" starttime="20210118 12:26:10.936" endtime="20210118 12:26:13.809" critical="yes"></status>
+</test>
+<test id="s1-t2" name="fetch, 422, Missing data for timestamp required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20210118 12:26:13.811" level="INFO">${body} = {'productCode': 'geo-server-building', 'parameters': {'targetObject': {'idLocal': 'helsinki_rakennukset', 'lowLeftCornerCoordinateAxis2': '60.185', 'lowLeftCornerCoordinateAxis1': '24.829', 'upperRigh...</msg>
+<status status="PASS" starttime="20210118 12:26:13.811" endtime="20210118 12:26:13.811"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20210118 12:26:13.811" level="INFO">${now} = 2021-01-18T10:26:13+00:00</msg>
+<status status="PASS" starttime="20210118 12:26:13.811" endtime="20210118 12:26:13.811"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:13.811" endtime="20210118 12:26:13.812"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:13.812" endtime="20210118 12:26:13.812"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20210118 12:26:13.812" level="INFO">${json_string} = {"productCode": "geo-server-building", "parameters": {"targetObject": {"idLocal": "helsinki_rakennukset", "lowLeftCornerCoordinateAxis2": "60.185", "lowLeftCornerCoordinateAxis1": "24.829", "upperRigh...</msg>
+<status status="PASS" starttime="20210118 12:26:13.812" endtime="20210118 12:26:13.812"></status>
+</kw>
+<msg timestamp="20210118 12:26:13.812" level="INFO">${body} = {'productCode': 'geo-server-building', 'parameters': {'targetObject': {'idLocal': 'helsinki_rakennukset', 'lowLeftCornerCoordinateAxis2': '60.185', 'lowLeftCornerCoordinateAxis1': '24.829', 'upperRigh...</msg>
+<status status="PASS" starttime="20210118 12:26:13.810" endtime="20210118 12:26:13.813"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:13.813" endtime="20210118 12:26:13.813"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20210118 12:26:13.814" level="INFO">${signature} = qLZvNyjmTCSkKuJTMOHoJ68jBpc6Nv6yeEz1/1Nc2JM=</msg>
+<status status="PASS" starttime="20210118 12:26:13.814" endtime="20210118 12:26:13.814"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:13.814" endtime="20210118 12:26:13.814"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:13.814" endtime="20210118 12:26:15.821"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20210118 12:26:15.821" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "timestamp": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "timestamp"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20210118 12:26:15.821" endtime="20210118 12:26:15.823"></status>
+</kw>
+<status status="PASS" starttime="20210118 12:26:13.813" endtime="20210118 12:26:15.823"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:15.824" endtime="20210118 12:26:15.824"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:15.825" endtime="20210118 12:26:15.825"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message timestamp 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:15.825" endtime="20210118 12:26:15.826"></status>
+</kw>
+<tags>
+<tag>bug-0002</tag>
+</tags>
+<status status="PASS" starttime="20210118 12:26:13.810" endtime="20210118 12:26:15.826" critical="yes"></status>
+</test>
+<test id="s1-t3" name="fetch, 422, Missing data for parameters required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20210118 12:26:15.828" level="INFO">${body} = {'productCode': 'geo-server-building', 'parameters': {'targetObject': {'idLocal': 'helsinki_rakennukset', 'lowLeftCornerCoordinateAxis2': '60.185', 'lowLeftCornerCoordinateAxis1': '24.829', 'upperRigh...</msg>
+<status status="PASS" starttime="20210118 12:26:15.828" endtime="20210118 12:26:15.828"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20210118 12:26:15.828" level="INFO">${now} = 2021-01-18T10:26:15+00:00</msg>
+<status status="PASS" starttime="20210118 12:26:15.828" endtime="20210118 12:26:15.828"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:15.828" endtime="20210118 12:26:15.829"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:15.830" endtime="20210118 12:26:15.830"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20210118 12:26:15.830" level="INFO">${json_string} = {"productCode": "geo-server-building", "parameters": {"targetObject": {"idLocal": "helsinki_rakennukset", "lowLeftCornerCoordinateAxis2": "60.185", "lowLeftCornerCoordinateAxis1": "24.829", "upperRigh...</msg>
+<status status="PASS" starttime="20210118 12:26:15.830" endtime="20210118 12:26:15.830"></status>
+</kw>
+<msg timestamp="20210118 12:26:15.830" level="INFO">${body} = {'productCode': 'geo-server-building', 'parameters': {'targetObject': {'idLocal': 'helsinki_rakennukset', 'lowLeftCornerCoordinateAxis2': '60.185', 'lowLeftCornerCoordinateAxis1': '24.829', 'upperRigh...</msg>
+<status status="PASS" starttime="20210118 12:26:15.827" endtime="20210118 12:26:15.830"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>parameters</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:15.831" endtime="20210118 12:26:15.831"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20210118 12:26:15.832" level="INFO">${signature} = +SoCxze7ksc6XUDeNGYJ2wQdiiS69kx87FqHVF2dKh8=</msg>
+<status status="PASS" starttime="20210118 12:26:15.831" endtime="20210118 12:26:15.832"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:15.832" endtime="20210118 12:26:15.832"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:15.832" endtime="20210118 12:26:17.837"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20210118 12:26:17.837" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "parameters": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "parameters"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20210118 12:26:17.837" endtime="20210118 12:26:17.839"></status>
+</kw>
+<status status="PASS" starttime="20210118 12:26:15.831" endtime="20210118 12:26:17.839"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:17.839" endtime="20210118 12:26:17.840"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:17.840" endtime="20210118 12:26:17.840"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message parameters 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:17.841" endtime="20210118 12:26:17.841"></status>
+</kw>
+<tags>
+<tag>bug-0003</tag>
+</tags>
+<status status="PASS" starttime="20210118 12:26:15.827" endtime="20210118 12:26:17.842" critical="yes"></status>
+</test>
+<test id="s1-t4" name="fetch, 422, Missing data for ids required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20210118 12:26:17.844" level="INFO">${body} = {'productCode': 'geo-server-building', 'parameters': {'targetObject': {'idLocal': 'helsinki_rakennukset', 'lowLeftCornerCoordinateAxis2': '60.185', 'lowLeftCornerCoordinateAxis1': '24.829', 'upperRigh...</msg>
+<status status="PASS" starttime="20210118 12:26:17.843" endtime="20210118 12:26:17.844"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20210118 12:26:17.844" level="INFO">${now} = 2021-01-18T10:26:17+00:00</msg>
+<status status="PASS" starttime="20210118 12:26:17.844" endtime="20210118 12:26:17.844"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:17.844" endtime="20210118 12:26:17.844"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:17.845" endtime="20210118 12:26:17.845"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20210118 12:26:17.845" level="INFO">${json_string} = {"productCode": "geo-server-building", "parameters": {"targetObject": {"idLocal": "helsinki_rakennukset", "lowLeftCornerCoordinateAxis2": "60.185", "lowLeftCornerCoordinateAxis1": "24.829", "upperRigh...</msg>
+<status status="PASS" starttime="20210118 12:26:17.845" endtime="20210118 12:26:17.845"></status>
+</kw>
+<msg timestamp="20210118 12:26:17.845" level="INFO">${body} = {'productCode': 'geo-server-building', 'parameters': {'targetObject': {'idLocal': 'helsinki_rakennukset', 'lowLeftCornerCoordinateAxis2': '60.185', 'lowLeftCornerCoordinateAxis1': '24.829', 'upperRigh...</msg>
+<status status="PASS" starttime="20210118 12:26:17.843" endtime="20210118 12:26:17.845"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body["parameters"]}</arg>
+<arg>targetObject</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:17.846" endtime="20210118 12:26:17.846"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20210118 12:26:17.854" level="INFO">${signature} = Ukpz3qP2pc9L+awnsGEp4wbNNNHQ6tOB+oVDc3AZJdA=</msg>
+<status status="PASS" starttime="20210118 12:26:17.854" endtime="20210118 12:26:17.854"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:17.855" endtime="20210118 12:26:17.855"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:17.855" endtime="20210118 12:26:19.861"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20210118 12:26:19.862" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "parameters.targetObject.idLocal": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        },
+                        "parameters.targetObject.lowLeftCornerCoordinateAxis1": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        },
+                        "parameters.targetObject.lowLeftCornerCoordinateAxis2": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        },
+                        "parameters.targetObject.upperRightCornerCoordinateAxis1": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        },
+                        "parameters.targetObject.upperRightCornerCoordinateAxis2": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "parameters.targetObject.idLocal",
+                        "parameters.targetObject.lowLeftCornerCoordinateAxis1",
+                        "parameters.targetObject.lowLeftCornerCoordinateAxis2",
+                        "parameters.targetObject.upperRightCornerCoordinateAxis1",
+                        "parameters.targetObject.upperRightCornerCoordinateAxis2"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20210118 12:26:19.861" endtime="20210118 12:26:19.864"></status>
+</kw>
+<status status="PASS" starttime="20210118 12:26:17.846" endtime="20210118 12:26:19.864"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:19.865" endtime="20210118 12:26:19.865"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:19.866" endtime="20210118 12:26:19.866"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message parameters.targetObject.idLocal 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:19.866" endtime="20210118 12:26:19.867"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message parameters.targetObject.lowLeftCornerCoordinateAxis1 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:19.867" endtime="20210118 12:26:19.867"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message parameters.targetObject.lowLeftCornerCoordinateAxis2 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:19.868" endtime="20210118 12:26:19.868"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message parameters.targetObject.upperRightCornerCoordinateAxis1 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:19.868" endtime="20210118 12:26:19.869"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message parameters.targetObject.upperRightCornerCoordinateAxis2 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:19.869" endtime="20210118 12:26:19.869"></status>
+</kw>
+<tags>
+<tag>bug-0004</tag>
+</tags>
+<status status="PASS" starttime="20210118 12:26:17.843" endtime="20210118 12:26:19.870" critical="yes"></status>
+</test>
+<test id="s1-t5" name="fetch, 200, Empty ids">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20210118 12:26:19.871" level="INFO">${body} = {'productCode': 'geo-server-building', 'parameters': {'targetObject': {'idLocal': 'helsinki_rakennukset', 'lowLeftCornerCoordinateAxis2': '60.185', 'lowLeftCornerCoordinateAxis1': '24.829', 'upperRigh...</msg>
+<status status="PASS" starttime="20210118 12:26:19.871" endtime="20210118 12:26:19.871"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20210118 12:26:19.872" level="INFO">${now} = 2021-01-18T10:26:19+00:00</msg>
+<status status="PASS" starttime="20210118 12:26:19.871" endtime="20210118 12:26:19.872"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:19.872" endtime="20210118 12:26:19.872"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:19.872" endtime="20210118 12:26:19.872"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20210118 12:26:19.872" level="INFO">${json_string} = {"productCode": "geo-server-building", "parameters": {"targetObject": {"idLocal": "helsinki_rakennukset", "lowLeftCornerCoordinateAxis2": "60.185", "lowLeftCornerCoordinateAxis1": "24.829", "upperRigh...</msg>
+<status status="PASS" starttime="20210118 12:26:19.872" endtime="20210118 12:26:19.872"></status>
+</kw>
+<msg timestamp="20210118 12:26:19.873" level="INFO">${body} = {'productCode': 'geo-server-building', 'parameters': {'targetObject': {'idLocal': 'helsinki_rakennukset', 'lowLeftCornerCoordinateAxis2': '60.185', 'lowLeftCornerCoordinateAxis1': '24.829', 'upperRigh...</msg>
+<status status="PASS" starttime="20210118 12:26:19.871" endtime="20210118 12:26:19.873"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body["parameters"]["targetObject"]}</arg>
+<arg>idLocal=NA</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:19.873" endtime="20210118 12:26:19.873"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20210118 12:26:19.874" level="INFO">${signature} = yfELXc/fzpxhtI2NzdLACk8ubyPBGDQ0TB92XxN5Ql8=</msg>
+<status status="PASS" starttime="20210118 12:26:19.874" endtime="20210118 12:26:19.874"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:19.874" endtime="20210118 12:26:19.874"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:19.874" endtime="20210118 12:26:22.149"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20210118 12:26:22.150" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "@context": {
+            "type": "string",
+            "default": "https://standards.oftrust.net/v2/Context/DataProductOutput/BuildingInformation/"
+        },
+        "data": {
+            "type": "object",
+            "properties": {
+                "buildings": {
+                    "type": "array",
+                    "default": []
+                }
+            },
+            "required": [
+                "buildings"
+            ]
+        },
+        "signature": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "default": "RsaSignature2018"
+                },
+                "created": {
+                    "type": "string",
+                    "default": "2021-01-18T12:26:22+02:00"
+                },
+                "creator": {
+                    "type": "string",
+                    "default": "http://localhost:8080/translator/v1/public.key"
+                },
+                "signatureValue": {
+                    "type": "string",
+                    "default": "aTzHTScdmiBCqy8l5trHorH64ZxR7wWg5VVn5m59wlkddXOkNM90IJTUToLk3exV016b7YjZWfyEZWlqgCMcHRfjU5e6yRJv0rVl3cvU/ss4HYRNwGvtaCD+QqpiVezRm5L9Go6yqgDVsvfDmxYp9NL2GMPdXwzJUIricUU4btkU5cdeDyOtTh9T+Q7E7nQNY/zo+dVTAY2DJ0+BbjYPFeU2Zw5YZWeMKUwVUBE+VVWEzAq1Ecdr6x9crg2vvO4+jp7l+DvKqYRM87uxiNRWrw4scG0gnBKvAws3Hgo1A+JjedwBgrb6MRZ7pYD21+fZMMNiwhWfAq4VGo9q+C1J75CwIZ48NaLm1Ipykt1jTlKX06xl1ga4ONh6/i3wzrVqjCaaeYVbuRZmu+J7FSW+c9PniVramXAvxa5RNm4DOsLfcExqlIIrGjdnAEnIghFJ0Dq5OmHTJiLCTG0yT4PuuKdSYXbGnrf1bnwmSb4KQh0MsfJT/KjOpCNbdRG9NrX8UfRqwN6XV0Yc42/JRCBgyTp4aEnGHP8eN2aZV6PQXgNItKZhPutT483w5Fppd8ECQGPTNjYnyP8zpE/u5/fv1yJhvU5hsQ7NMS7b3V1ENtkLe45TqK1gvlaZ7ko1VJwFgWnAFjBeIVrPQlFJj0i5VQxM+1YR7SPZGoOvC5mkhqg="
+                }
+            },
+            "required": [
+                "created",
+                "creator",
+                "signatureValue",
+                "type"
+            ]
+        }
+    },
+    "required": [
+        "@context",
+        "data",
+        "signature"
+    ]
+}</msg>
+<status status="PASS" starttime="20210118 12:26:22.150" endtime="20210118 12:26:22.154"></status>
+</kw>
+<status status="PASS" starttime="20210118 12:26:19.873" endtime="20210118 12:26:22.154"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>200</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:22.155" endtime="20210118 12:26:22.155"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body @context</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductOutput/BuildingInformation/</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:22.156" endtime="20210118 12:26:22.156"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data buildings</arg>
+<arg>maxItems=0</arg>
+</arguments>
+<status status="PASS" starttime="20210118 12:26:22.156" endtime="20210118 12:26:22.157"></status>
+</kw>
+<tags>
+<tag>bug-0005</tag>
+</tags>
+<status status="PASS" starttime="20210118 12:26:19.870" endtime="20210118 12:26:22.158" critical="yes"></status>
+</test>
+<doc>GeoServer Web Feature Service Tests</doc>
+<status status="PASS" starttime="20210118 12:26:10.696" endtime="20210118 12:26:22.159"></status>
+</suite>
+<statistics>
+<total>
+<stat pass="5" fail="0">Critical Tests</stat>
+<stat pass="5" fail="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="1" fail="0">bug-0001</stat>
+<stat pass="1" fail="0">bug-0002</stat>
+<stat pass="1" fail="0">bug-0003</stat>
+<stat pass="1" fail="0">bug-0004</stat>
+<stat pass="1" fail="0">bug-0005</stat>
+</tag>
+<suite>
+<stat pass="5" fail="0" id="s1" name="Connector Tests">Connector Tests</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
