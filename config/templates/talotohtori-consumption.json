@@ -5,11 +5,12 @@
   ],
   "protocol": "rest",
   "authConfig": {
-    "url": "https://identity.talotohtori.fi",
+    "url": "${authUrl}",
     "authPath": "/token",
     "clientId": "${clientId}",
     "clientSecret": "${clientSecret}",
-    "path": "https://betaapi.talotohtori.fi:8080/v2/consumption/timeseries/${id}"
+    "scope": "openid",
+    "path": "${dataUrl}/v2/consumption/timeseries/${id}"
   },
   "dataObjects": [
     "data"
