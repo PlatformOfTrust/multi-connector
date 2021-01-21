@@ -263,8 +263,8 @@ for (let d = 1; d <= numberOfPurchaseOrders; d++) {
 }
 
 const response = async (config, res) => {
-    console.log(config);
-    /** Find by vendor ID */
+    /** Find mockup by vendor ID */
+    /*
     try {
         if (config.authConfig.template === 'c4-cals-purchase-order') {
             return purchaseOrderList.filter(d => d.VendorId === config.parameters.targetObject.VendorId);
@@ -273,7 +273,8 @@ const response = async (config, res) => {
         }
     } catch (e) {
         return [];
-    }
+    }*/
+    return res;
 };
 
 /**

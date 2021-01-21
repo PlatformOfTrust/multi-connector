@@ -1,15 +1,18 @@
 {
-  "template": "c4-cals-demand-supply",
-  "static": {
-    "type": "DemandSupply"
-  },
-  "dynamic": {
-    "authConfig.path": "VendorId",
-    "dataPropertyMappings": "type"
-  },
-  "request": {
-    "ids": [
-      "<id>"
-    ]
-  }
+    "template": "c4-cals-demand-supply",
+    "static": {
+        "type": "DemandSupply",
+        "instance": "<instance>",
+        "apikey": "<apikey>"
+    },
+    "dynamic": {
+        "authConfig.path": "targetObject.VendorId"
+    },
+    "request": {
+        "targetObject": {
+            "VendorId": [
+                "<vendor-id>"
+            ]
+        }
+    }
 }

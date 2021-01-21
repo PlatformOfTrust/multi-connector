@@ -1,11 +1,14 @@
 {
   "plugins": [
-      "c4-cals"
+    "c4-cals"
   ],
-  "protocol": "custom",
+  "protocol": "rest",
   "authConfig": {
-    "url": "${url}",
-    "path": "${VendorId}"
+    "url": "https://c4-prod-apim.azure-api.net/pot",
+    "headers": {
+      "CALS-API-KEY": "${apikey}"
+    },
+    "path": "/instances/${instance}/demandsupplies/${targetObject.VendorId}"
   },
   "dataObjects": [
     ""
