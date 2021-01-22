@@ -10,7 +10,7 @@
     "clientId": "${clientId}",
     "clientSecret": "${clientSecret}",
     "scope": "openid",
-    "path": "${dataUrl}/v2/consumption/timeseries/${id}"
+    "path": "${dataUrl}/v3/consumption/timeseries/${id}"
   },
   "dataObjects": [
     "data"
