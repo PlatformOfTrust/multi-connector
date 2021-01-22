@@ -41,6 +41,20 @@ const promiseRejectWithError = function (code, msg, reference) {
  *    Returns promise resolve if grant was updated successfully.
  */
 const updateToken = async (authConfig, refresh) => {
+    // Create a property for attempt count, which will be used to limit the number of update attempts.
+    if (!Object.hasOwnProperty.call(authConfig, 'attempt')) {
+        authConfig.attempt = 0;
+    }
+
+    authConfig.attempt++;
+
+    // Limit the number of attempts after error to 3 times.
+    if (authConfig.attempt) {
+        if (authConfig.attempt > 3) {
+            return promiseRejectWithError(500, 'Authentication failed.');
+        }
+    }
+
     // Request new token with selected grant type.
     const grant = refresh ? await requestToken(authConfig, true) : await requestToken(authConfig);
     if (!grant) return promiseRejectWithError(500, 'Authentication failed.');
@@ -259,11 +273,11 @@ const requestToken = async (authConfig, refresh) => {
 /**
  * Handles erroneous response.
  *
- * @param {Object} config
+ * @param {Object} authConfig
  * @param {Error} err
  * @return {Promise}
  */
-const onerror = async (config, err) => {
+const onerror = async (authConfig, err) => {
     /** Internal error. */
     if (err.reference) {
         return promiseRejectWithError(err.statusCode, err.message);
@@ -274,14 +288,14 @@ const onerror = async (config, err) => {
         /** 401 - Unauthorized. */
         case 401:
             /** Philips HUE specific response handling. */
-            if (config.authConfig.url === 'https://api.meethue.com') {
-                return updateToken(config.authConfig, true);
+            if (authConfig.url === 'https://api.meethue.com') {
+                return updateToken(authConfig, true);
             } else {
-                return updateToken(config.authConfig, false);
+                return updateToken(authConfig, false);
             }
         /** 403 - Token expired. */
         case 403:
-            return updateToken(config.authConfig, true);
+            return updateToken(authConfig, true);
         /** 400 - Invalid credentials / Access token is missing */
         case 400:
             return promiseRejectWithError(err.statusCode, 'Authentication failed.');

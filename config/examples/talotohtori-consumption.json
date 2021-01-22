@@ -1,6 +1,8 @@
 {
   "template": "talotohtori-consumption",
   "static": {
+    "authUrl": "https://identity.talotohtori.fi",
+    "dataUrl": "https://betaapi.talotohtori.fi:8080",
     "clientId": "<client-id>",
     "clientSecret": "<client-secret>",
     "interval": "hour"

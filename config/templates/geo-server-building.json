@@ -1,0 +1,51 @@
+{
+    "plugins": [
+        "geo-server-building"
+    ],
+    "protocol": "rest",
+    "authConfig": {
+        "url": "${url}",
+        "path": "/geoserver/ogc/features/collections/${targetObject.idLocal}/items"
+    },
+    "dataObjects": [
+        "features"
+    ],
+    "dataPropertyMappings": {
+        "BuildingInformation": ""
+    },
+    "generalConfig": {
+        "query": {
+            "properties": [
+                {
+                    "datetime": "${period}",
+                    "bbox-crs": "${targetObject.bbox-crs}",
+                    "bbox": "${targetObject.lowLeftCornerCoordinateAxis1},${targetObject.lowLeftCornerCoordinateAxis2},${targetObject.upperRightCornerCoordinateAxis1},${targetObject.upperRightCornerCoordinateAxis2}"
+                },
+                "${targetObject.additionalProps}"
+            ]
+        },
+        "hardwareId": {
+            "dataObjectProperty": "id"
+        },
+        "sourceName": {
+            "dataObjectProperty": ""
+        },
+        "timestamp": {
+            "dataObjectProperty": ""
+        }
+    },
+    "input": {
+        "required": [
+            "parameters.targetObject.idLocal",
+            "parameters.targetObject.lowLeftCornerCoordinateAxis1",
+            "parameters.targetObject.lowLeftCornerCoordinateAxis2",
+            "parameters.targetObject.upperRightCornerCoordinateAxis1",
+            "parameters.targetObject.upperRightCornerCoordinateAxis2"
+        ]
+    },
+    "output": {
+        "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/BuildingInformation/",
+        "array": "buildings",
+        "data": "data"
+    }
+}

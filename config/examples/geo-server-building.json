@@ -1,0 +1,33 @@
+{
+  "template": "geo-server-building",
+  "static": {
+    "url": "<url>"
+  },
+  "dynamic": {
+    "generalConfig.query.properties.0.datetime": "period",
+    "generalConfig.query.properties.0.bbox-crs": "targetObject.bbox-crs",
+    "generalConfig.query.properties.0.bbox": [
+      "targetObject.lowLeftCornerCoordinateAxis1",
+      "targetObject.lowLeftCornerCoordinateAxis2",
+      "targetObject.upperRightCornerCoordinateAxis1",
+      "targetObject.upperRightCornerCoordinateAxis2"
+    ],
+    "generalConfig.query.properties.1": "targetObject.additionalProps",
+    "authConfig.path": [
+      "targetObject.idLocal"
+    ]
+  },
+  "request": {
+    "period": "<start>/<end>",
+    "targetObject": {
+      "idLocal": "",
+      "lowLeftCornerCoordinateAxis1": "<bbox[0]>",
+      "lowLeftCornerCoordinateAxis2": "<bbox[1]>",
+      "upperRightCornerCoordinateAxis1": "<bbox[2]>",
+      "upperRightCornerCoordinateAxis2": "<bbox[3]>",
+      "additionalProps": {
+        "additionalProp1": "<value1>"
+      }
+    }
+  }
+}
