@@ -15,6 +15,7 @@ Following data sources are supported out of the box. Example configs can be foun
 - GeoServer Web Feature Service
 - Haltian Thingsee API
 - HubSpot API
+- Trend Controls IQ Vision MQTT
 - Microsoft 365
 - Nuuka Solutions Platform
 - Nysse GTFS RT public API

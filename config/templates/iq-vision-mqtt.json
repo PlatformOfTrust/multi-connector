@@ -19,5 +19,9 @@
     "hardwareId": {
       "dataObjectProperty": "topic"
     }
+  },
+  "output": {
+    "array": "sensors",
+    "data": "measurements"
   }
 }
