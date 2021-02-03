@@ -748,10 +748,11 @@ const handleData = function (config, id, data) {
                 return doc;
             }).filter(doc => !!doc.url && doc.url !== '');
 
-            value.etimFeatureValues = (value.etimFeatureValues || []).map(doc => {
-                doc.type = 'EtimFeature';
-                return doc;
-            });
+            value.etimFeatureValues = (Array.isArray(value.etimFeatureValues) ? value.etimFeatureValues : [])
+                .map(doc => {
+                    doc.type = 'EtimFeature';
+                    return doc;
+                });
 
             result = transformer.transform(value, schema.properties.data);
         }
