@@ -609,6 +609,11 @@ const getData = async (req) => {
     // Store connector URL.
     template.authConfig.connectorURL = req.protocol + '://' + req.get('host');
 
+    // Make sure plugins array exists.
+    if (!Array.isArray(template.plugins)) {
+        template.plugins = [];
+    }
+
     // Execute parameters plugin function.
     for (let i = 0; i < template.plugins.length; i++) {
         if (Object.hasOwnProperty.call(plugins, template.plugins[i])) {

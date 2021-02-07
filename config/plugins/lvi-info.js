@@ -493,6 +493,66 @@ const schema = {
                                 ],
                             },
                         },
+                        'etimFeature': {
+                            '$id': '#/properties/data/properties/product/properties/etimFeature',
+                            'source': 'etimFeatureValues',
+                            'type': 'array',
+                            'title': '',
+                            'description': '',
+                            'items': {
+                                '$id': '#/properties/data/properties/product/properties/etimFeature/items',
+                                'source': null,
+                                'type': 'object',
+                                'required': [],
+                                'properties': {
+                                    '@type': {
+                                        '$id': '#/properties/data/properties/product/properties/etimFeature/items/properties/@type',
+                                        'source': 'type',
+                                        'type': 'string',
+                                        'title': 'Identity type',
+                                        'description': 'Type of identity.',
+                                    },
+                                    'etimFeatureValueId': {
+                                        '$id': '#/properties/data/properties/product/properties/etimFeature/items/properties/etimFeatureValueId',
+                                        'source': 'etimFeatureValueId',
+                                        'type': 'string',
+                                        'title': 'ETIM feature type',
+                                        'description': 'ETIM feature type.',
+                                    },
+                                    'etimFeatureId': {
+                                        '$id': '#/properties/data/properties/product/properties/etimFeature/items/properties/etimFeatureId',
+                                        'source': 'etimFeatureId',
+                                        'type': 'string',
+                                        'title': 'ETIM feature id',
+                                        'description': 'ETIM feature id.',
+                                    },
+                                    'etimClassId': {
+                                        '$id': '#/properties/data/properties/product/properties/etimFeature/items/properties/etimClassId',
+                                        'source': 'etimClassId',
+                                        'type': 'string',
+                                        'title': 'ETIM class id',
+                                        'description': 'ETIM class id.',
+                                    },
+                                    'etimFeatureType': {
+                                        '$id': '#/properties/data/properties/product/properties/etimFeature/items/properties/etimFeatureType',
+                                        'source': 'etimFeatureType',
+                                        'type': 'string',
+                                        'title': 'ETIM feature type',
+                                        'description': 'ETIM feature type.',
+                                    },
+                                    'etimValue': {
+                                        '$id': '#/properties/data/properties/product/properties/etimFeature/items/properties/etimValue',
+                                        'source': 'value1',
+                                        'type': [
+                                            'boolean',
+                                            'string',
+                                        ],
+                                        'title': 'ETIM value',
+                                        'description': 'ETIM value.',
+                                    },
+                                },
+                            },
+                        },
                     },
                 },
             },
@@ -687,6 +747,13 @@ const handleData = function (config, id, data) {
                 doc.url = value[doc.url];
                 return doc;
             }).filter(doc => !!doc.url && doc.url !== '');
+
+            value.etimFeatureValues = (Array.isArray(value.etimFeatureValues) ? value.etimFeatureValues : [])
+                .map(doc => {
+                    doc.type = 'EtimFeature';
+                    return doc;
+                });
+
             result = transformer.transform(value, schema.properties.data);
         }
         return result;

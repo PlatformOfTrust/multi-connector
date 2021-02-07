@@ -1,0 +1,18 @@
+{
+  "template": "iq-vision-mqtt",
+  "static": {
+    "url": "<url>",
+    "topic": "sites/hemso/#",
+    "username": "<username>",
+    "password": "<password>",
+    "type": "MeasureAirTemperatureCelsiusDegree"
+  },
+  "dynamic": {
+    "authConfig.path": "ids"
+  },
+  "request": {
+    "ids": [
+      "<topic>"
+    ]
+  }
+}
