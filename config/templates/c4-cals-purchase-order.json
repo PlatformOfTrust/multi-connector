@@ -1,8 +1,9 @@
 {
   "plugins": [
-    "c4-cals"
+    "c4-cals",
+    "broker"
   ],
-  "protocol": "rest",
+  "protocol": "hook",
   "authConfig": {
     "url": "https://c4-prod-apim.azure-api.net/pot",
     "headers": {
@@ -14,14 +15,14 @@
     ""
   ],
   "dataPropertyMappings": {
-    "${type}": ""
+    "OrderInformation": ""
   },
   "generalConfig": {
     "sourceName": {
-      "dataObjectProperty": "VendorName"
+      "dataObjectProperty": "vendorName"
     },
     "hardwareId": {
-      "dataObjectProperty": "VendorId"
+      "dataObjectProperty": "vendorId"
     }
   },
     "input": {
@@ -30,8 +31,8 @@
         ]
     },
   "output": {
-    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/PurchaseOrder/",
-    "array": "PurchaseOrder",
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/OrderInformation/",
+    "array": "order",
     "data": "data"
   }
 }

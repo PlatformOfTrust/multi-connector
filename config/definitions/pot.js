@@ -26,10 +26,31 @@ const publicKeyURLs = [
     },
 ];
 
+/** URLs of Platform of Trust broker endpoints. */
+const brokerURLs = [
+    {
+        env: 'production',
+        url: 'https://api.oftrust.net/broker/v1/fetch-data-product',
+    },
+    {
+        env: 'sandbox',
+        url: 'https://api-sandbox.oftrust.net/broker/v1/fetch-data-product',
+    },
+    {
+        env: 'staging',
+        url: 'https://api-staging.oftrust.net/broker/v1/fetch-data-product',
+    },
+    {
+        env: 'test',
+        url: 'https://api-test.oftrust.net/broker/v1/fetch-data-product',
+    },
+];
+
 /**
  * Expose definitions.
  */
 module.exports = {
     defaultKeySize,
     publicKeyURLs,
+    brokerURLs,
 };

@@ -635,6 +635,13 @@ const getData = async (req) => {
     // Resolve plugins.
     template = await resolvePlugins(template);
 
+    // Execute template plugin function.
+    for (let i = 0; i < template.plugins.length; i++) {
+        if (template.plugins[i].template) {
+            template = await template.plugins[i].template(template, template);
+        }
+    }
+
     // Compose output payload.
     return Promise.resolve(composeOutput(template));
 };

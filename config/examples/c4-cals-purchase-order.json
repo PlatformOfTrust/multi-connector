@@ -1,7 +1,6 @@
 {
     "template": "c4-cals-purchase-order",
     "static": {
-        "type": "PurchaseOrder",
         "instance": "<instance>",
         "apikey": "<apikey>"
     },

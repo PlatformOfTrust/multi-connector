@@ -72,6 +72,20 @@ module.exports = function (passport) {
      */
     router.use('/plugins/', require('./plugins')(passport));
 
+    /** Hooks.
+     *
+     * @swagger
+     * /translator/v1/hooks:
+     *   post:
+     *     description: Dynamic endpoint for hooks.
+     *     produces:
+     *       - application/json
+     *     responses:
+     *       200:
+     *         description: Action completed.
+     */
+    router.use('/hooks/', require('./hooks')(passport));
+
     // Initialize swagger-jsdoc -> returns validated swagger spec in json format.
     const swaggerSpec = swaggerJSDoc({
         swaggerDefinition: {

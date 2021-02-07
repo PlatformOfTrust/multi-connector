@@ -1,7 +1,6 @@
 {
     "template": "c4-cals-demand-supply",
     "static": {
-        "type": "DemandSupply",
         "instance": "<instance>",
         "apikey": "<apikey>"
     },
