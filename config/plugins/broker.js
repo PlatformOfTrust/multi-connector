@@ -51,11 +51,11 @@ const stream = async (template, data) => {
         // Extract stream endpoint url and output definitions from config.
         const config = template.config;
         const url = config.static.env === 'development' ? config.connectorURL + '/translator/v1/fetch' : brokerURLs.find(i => i.env === (config.env || 'sandbox')).url;
-        const objectKey = template.output.object;
+        const objectKey = template.output.object || 'data';
         const arrayKey = template.output.array;
         data = Array.isArray(data) ? data : [data];
         for (let i = 0; i < data.length; i++) {
-            const productCode = config.static.broker[template.authConfig.path[i]];
+            const productCode = config.static.productCode;
             if (!productCode) continue;
             const result = {
                 productCode,

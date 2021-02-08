@@ -3,7 +3,9 @@
  * Module dependencies.
  */
 const transformer = require('../../app/lib/transformer');
+const connector = require('../../app/lib/connector');
 const router = require('express').Router();
+const winston = require('../../logger.js');
 const cache = require('../../app/cache');
 const rsa = require('../../app/lib/rsa');
 const moment = require('moment');
@@ -13,6 +15,9 @@ const _ = require('lodash');
 /**
  * C4 CALS  plugin.
  */
+
+/** Import Platform of Trust definitions. */
+const {brokerURLs} = require('../../config/definitions/pot');
 
 // Source mapping.
 const schema = {
@@ -436,6 +441,33 @@ const handleData = function (config, id, data) {
 };
 
 /**
+ * Consumes HubSpot API by given method.
+ *
+ * @param {Object} config
+ * @param {Object/String} res
+ * @return {Object}
+ *   Response from HubSpot API
+ */
+const response = async (config, res) => {
+    let response;
+
+    /** Data fetching. */
+    try {
+        // Fetch data from cache.
+        if (Object.hasOwnProperty.call(config.parameters.targetObject, 'vendor')) {
+            console.log('Fetch from cache');
+            const result = cache.getDoc('messages', config.productCode) || {};
+            response = result[res];
+        } else {
+            response = res;
+        }
+    } catch (err) {
+        console.log(err.message);
+    }
+    return response;
+};
+
+/**
  * Transforms output to Platform of Trust context schema.
  *
  * @param {Object} config
@@ -473,12 +505,13 @@ const output = async (config, output) => {
         }
         return result;
     } catch (err) {
+        console.log(err.message);
         return output;
     }
 };
 
 /**
- * Trigger endpoint to fecth new data from CALS.
+ * Trigger endpoint to fetch new data from CALS.
  *
  * @param {Object} req
  * @param {Object} res
@@ -492,8 +525,9 @@ const controller = async (req, res) => {
         // TODO: Place authentication.
         const topic = req.params.topic;
         const parts = req.originalUrl.split('/');
-        const productCode = parts.splice(parts.indexOf('hooks') + 1)[0];
+        const productCode = parts.splice(parts.indexOf('c4-cals') + 1)[0];
         const config = cache.getDoc('configs', productCode) || {};
+        let template = cache.getDoc('templates', config.template) || {};
 
         // Store data.
         host = req.get('host').split(':')[0];
@@ -501,16 +535,85 @@ const controller = async (req, res) => {
             + '://' + req.get('host');
         // result = await handler(productCode, config, topic, req.body);
 
-        // Receives incoming trigger to fetch new data from CALS.
-        // 1. Get new data  from CALS with parameters provided in the body.
-        // 2. Make a broker request to self and take data.
-        // 2. Send data to streamer.
-
-        const result = {
-            output: {
-                data: 'Thank you!',
+        // Parse instance from request body.
+        const triggeredReq = {
+            body: {
+                'productCode' : productCode,
+                'timestamp': moment().format(),
+                'parameters': {
+                    'targetObject': {
+                        'order': {
+                            'idLocal': req.body.instanceId,
+                        },
+                    },
+                },
+            },
+            protocol: 'http',
+            get: function () {
+                return 'localhost:8080';
             },
         };
+
+        // 3. Parse data-product from order and send broker request to produce order.
+
+        /**
+         * "e0c9284c-84a0-425d-8e52-5ffdec39038b": "purchase-order-to-vendor-1"
+         * "d61c39ca-3c7a-42a5-9909-a1a239ae6549": "purchase-order-to-vendor-2"
+         */
+
+        // Receives incoming trigger to fetch new data from CALS.
+        // 1. Get new data from CALS with parameters provided in the body.
+        // 2. Make a broker request to self and take data.
+
+        winston.log('info', '1. Query self with REST path /instances/${instance}/purchaseorders/${instanceId}');
+
+        // Fetch data.
+        result = await connector.getData(triggeredReq);
+
+        let vendorExternalId = 'purchase-order-to-vendor-1';
+        try {
+            vendorExternalId = result.body.vendorExternalId;
+        } catch (e) {
+            winston.log('error', 'Could not parse external id for vendor from response.');
+        }
+
+        winston.log('info', '2. Send data to vendor data product: ' + vendorExternalId);
+
+        const url = config.static.env === 'development' ? config.connectorURL + '/translator/v1/fetch' : brokerURLs.find(i => i.env === (config.env || 'sandbox')).url;
+        winston.log('info', url);
+
+        /*
+        const brokerReq = {
+            body: {
+                'productCode' : vendorExternalId,
+                'timestamp': moment().format(),
+                'parameters': {
+                    'targetObject': {
+                        'order': {
+                            'idLocal': req.body.instanceId,
+                        },
+                    },
+                },
+            },
+            protocol: 'http',
+            get: function () {
+                return 'localhost:8080';
+            },
+        };
+        */
+
+        // 4. Send data to vendor data product.
+
+        config.static.productCode = vendorExternalId;
+        template = await connector.resolvePlugins(template);
+        template.config = config;
+        try {
+            await template.plugins.find(p => p.name === 'broker').stream(template, result.output);
+        } catch (err) {
+            winston.log('error', err.message);
+        }
+
+        // Streamer will send the data to the vendor.
 
         // Initialize signature object.
         const signature = {
@@ -569,17 +672,13 @@ const endpoints = function (passport) {
  */
 const template = async (config, template) => {
     try {
-        if (template.authConfig.headers['CALS-API-KEY'] === '${apikey}') {
-            // Message from hook or API auth not configured.
-            console.log('Connector produces.');
-            // Query CALS.
-            // 1. Trigger fetch with
-            // 2. Get new data
-            // 3. Send new data
-        } else {
-            console.log('Connector consumes.');
-            // Query CALS.
+        if (Object.hasOwnProperty.call(config.parameters.targetObject, 'vendor')) {
+            winston.log('info', 'Connector consumes cache by vendorId.');
+            template.authConfig.path = [template.parameters.targetObject.vendor.idLocal];
+        } else if (Object.hasOwnProperty.call(config.parameters.targetObject, 'order')) {
+            winston.log('info', 'Connector consumes CALS REST API by orderId.');
             template.protocol = 'rest';
+            template.authConfig.path = '/instances/' + template.authConfig.instance + '/purchaseorders/' + template.authConfig.path;
         }
 
         return template;
@@ -588,9 +687,34 @@ const template = async (config, template) => {
     }
 };
 
+/**
+ * Store produced data.
+ *
+ * @param {Object} config
+ * @param {Object} parameters
+ * @return {Object}
+ */
+const parameters = async (config, parameters) => {
+    try {
+        // Detect that new data was produced.
+        if (Object.hasOwnProperty.call(parameters.targetObject, '@type')) {
+            console.log('Store received data to cache by vendorId: ' + parameters.targetObject.vendor.idLocal);
+            const id = parameters.targetObject.vendor.idLocal;
+            const result = cache.getDoc('messages', config.productCode) || {};
+            result[id] = parameters.targetObject;
+            cache.setDoc('messages', config.productCode, result);
+        }
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+    return parameters;
+};
+
 module.exports = {
     name: 'c4-cals',
     endpoints,
     template,
     output,
+    parameters,
+    response,
 };

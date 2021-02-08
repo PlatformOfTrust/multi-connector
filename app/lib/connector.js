@@ -605,6 +605,7 @@ const getData = async (req) => {
     template.authConfig.template = config.template;
     template.authConfig.productCode = productCode;
     template.productCode = productCode;
+    config.productCode = productCode;
 
     // Store connector URL.
     template.authConfig.connectorURL = req.protocol + '://' + req.get('host');

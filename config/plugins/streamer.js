@@ -38,26 +38,26 @@ function request (method, url, headers, body) {
 /**
  * Attempts to stream data to external system.
  *
- * @param {Object} config
+ * @param {Object} template
  * @param {Object} data
  * @return {Object}
  */
-const stream = async (config, data) => {
+const stream = async (template, data) => {
     try {
         // Extract stream endpoint url and output definitions from config.
-        const streamer = config.static.streamer;
-        if (!streamer) return data;
-        console.log('Streamer');
+        const config = template.config;
+        const url = config.static.url;
+        if (!url) return data;
         // console.log(config);
-        const url = config.url;
-        const objectKey = config.output.object;
-        const arrayKey = config.output.array;
+        const objectKey = template.output.object || 'data';
+        const arrayKey = template.output.array;
         // Send data to azure.
         for (const d of (Array.isArray(data) ? data : [data])) {
+            console.log('Produce data to ' + url);
             if (url) await request('POST', url, {}, d[objectKey][arrayKey]);
         }
     } catch (err) {
-        // console.log(err.message);
+        console.log(err.message);
     }
     return data;
 };

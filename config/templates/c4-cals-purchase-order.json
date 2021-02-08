@@ -4,13 +4,14 @@
     "broker",
     "streamer"
   ],
-  "protocol": "hook",
+  "protocol": "custom",
   "authConfig": {
     "url": "https://c4-prod-apim.azure-api.net/pot",
     "headers": {
       "CALS-API-KEY": "${apikey}"
     },
-    "path": "/instances/${instance}/purchaseorders/${targetObject.vendor.idLocal}"
+    "instance": "${instance}",
+    "path": "${targetObject.order.idLocal}"
   },
   "dataObjects": [
     ""
@@ -28,7 +29,7 @@
   },
     "input": {
       "required": [
-        "parameters.targetObject.vendor"
+        "parameters.targetObject"
       ]
     },
   "output": {
