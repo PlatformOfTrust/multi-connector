@@ -416,14 +416,22 @@ const handleData = function (config, id, data) {
         for (let j = 0; j < data.length; j++) {
             const value = data[j][config.output.value];
             if (Object.keys(config.dataPropertyMappings).includes('OrderInformation')) {
-                value.type = 'OrderInformation';
-                value.projectType = 'Project';
-                value.contactType = 'Person';
-                value.customerType = 'Organization';
-                value.vendorType = 'Organization';
-                value.descriptionGeneral = 'Purchase order information.';
-                value.requiredDeliveryDateTime = new Date(value.requiredDeliveryDate + 'T' + value.requiredDeliveryTime);
-                result = transformer.transform(value, schema.properties.data);
+                if (Object.hasOwnProperty.call(value, 'vendor')) {
+                    result = {
+                        order: {
+                            ...value,
+                        },
+                    };
+                } else {
+                    value.type = 'OrderInformation';
+                    value.projectType = 'Project';
+                    value.contactType = 'Person';
+                    value.customerType = 'Organization';
+                    value.vendorType = 'Organization';
+                    value.descriptionGeneral = 'Purchase order information.';
+                    value.requiredDeliveryDateTime = new Date(value.requiredDeliveryDate + 'T' + value.requiredDeliveryTime);
+                    result = transformer.transform(value, schema.properties.data);
+                }
             } else {
                 result = {
                     demandSupply: {
