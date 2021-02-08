@@ -9,7 +9,7 @@
     "headers": {
       "CALS-API-KEY": "${apikey}"
     },
-    "path": "/instances/${instance}/demandsupplies/${targetObject.VendorId}"
+    "path": "/instances/${instance}/demandsupplies/${targetObject.vendor.idLocal}"
   },
   "dataObjects": [
     ""
@@ -25,11 +25,11 @@
       "dataObjectProperty": "vendorId"
     }
   },
-    "input": {
-        "required": [
-            "parameters.targetObject"
-        ]
-    },
+  "input": {
+    "required": [
+      "parameters.targetObject.vendor"
+    ]
+  },
   "output": {
     "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/DemandInformation/",
     "array": "demand",

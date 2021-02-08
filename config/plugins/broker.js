@@ -3,6 +3,7 @@
  * Module dependencies.
  */
 const rp = require('request-promise');
+const moment = require('moment');
 
 /** Import Platform of Trust definitions. */
 const {brokerURLs} = require('../../config/definitions/pot');
@@ -10,8 +11,7 @@ const {brokerURLs} = require('../../config/definitions/pot');
 /**
  * Broker.
  *
- * Sends received data to broker.
- *
+ * Publishes received data to broker.
  */
 
 /**
@@ -42,27 +42,37 @@ function request (method, url, headers, body) {
 /**
  * Attempts to sent data to Platform of Trust broker.
  *
- * @param {Object} config
+ * @param {Object} template
  * @param {Object} data
  * @return {Object}
  */
-const stream = async (config, data) => {
+const stream = async (template, data) => {
     try {
-        const url = brokerURLs.find(i => i.env === config.env).map(j => j.url);
-        console.log('Broker plugin.');
-        // TODO: Broker request.
-        if (config.action === 'consume') console.log('Send data to' + url);
         // Extract stream endpoint url and output definitions from config.
-        const objectKey = config.output.object;
-        const arrayKey = config.output.array;
-        /*
-        // Send data to broker.
-        for (const d of (Array.isArray(data) ? data : [data])) {
-            if (url) await request('POST', url, {}, d[objectKey][arrayKey]);
+        const config = template.config;
+        const url = config.static.env === 'development' ? config.connectorURL + '/translator/v1/fetch' : brokerURLs.find(i => i.env === (config.env || 'sandbox')).url;
+        const objectKey = template.output.object;
+        const arrayKey = template.output.array;
+        data = Array.isArray(data) ? data : [data];
+        for (let i = 0; i < data.length; i++) {
+            const productCode = config.static.broker[template.authConfig.path[i]];
+            if (!productCode) continue;
+            const result = {
+                productCode,
+                timestamp: moment().format(),
+                parameters: {
+                    targetObject: data[i][objectKey][arrayKey],
+                },
+            };
+
+            // Send data to broker.
+            if (url) {
+                console.log('Send data to broker by product code: ' + productCode + ' ' + url);
+                await request('POST', url, {}, result);
+            }
         }
-        */
     } catch (err) {
-        // console.log(err.message);
+        console.log(err.message);
     }
     return data;
 };

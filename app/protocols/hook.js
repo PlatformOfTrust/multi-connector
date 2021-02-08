@@ -145,6 +145,7 @@ const handler = async (productCode, config, topic, message) => {
                     ...template,
                     ...pluginConfig,
                     productCode,
+                    config,
                 },
                 template.plugins[i].stream,
                 );
@@ -176,15 +177,16 @@ const controller = async (req, res) => {
         const config = cache.getDoc('configs', productCode) || {};
 
         // Store data.
-        result = await handler(productCode, config, topic, req.body);
         host = req.get('host').split(':')[0];
+        config.connectorURL = (host === 'localhost' || net.isIP(host) ? 'http' : 'https')
+            + '://' + req.get('host');
+        result = await handler(productCode, config, topic, req.body);
 
         // Initialize signature object.
         const signature = {
             type: 'RsaSignature2018',
             created: moment().format(),
-            creator: (host === 'localhost' || net.isIP(host) ? 'http' : 'https')
-                + '://' + req.get('host') + '/translator/v1/public.key',
+            creator: config.connectorURL + '/translator/v1/public.key',
         };
 
         // Send signed data response.

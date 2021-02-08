@@ -5,11 +5,11 @@
         "apikey": "<apikey>"
     },
     "dynamic": {
-        "authConfig.path": "targetObject.VendorId"
+        "authConfig.path": "targetObject.vendor.idLocal"
     },
     "request": {
         "targetObject": {
-            "VendorId": [
+            "vendorId": [
                 "<vendor-id>"
             ]
         }

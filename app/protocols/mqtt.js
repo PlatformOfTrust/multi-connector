@@ -183,6 +183,7 @@ const callback = async (config, productCode) => {
                             ...template,
                             ...pluginConfig,
                             productCode,
+                            config,
                         },
                         template.plugins[i].stream,
                         );

@@ -3,6 +3,12 @@
  * Module dependencies.
  */
 const transformer = require('../../app/lib/transformer');
+const router = require('express').Router();
+const cache = require('../../app/cache');
+const rsa = require('../../app/lib/rsa');
+const moment = require('moment');
+const net = require('net');
+const _ = require('lodash');
 
 /**
  * C4 CALS  plugin.
@@ -424,6 +430,7 @@ const handleData = function (config, id, data) {
         }
         return result;
     } catch (err) {
+        console.log(err.message);
         return result;
     }
 };
@@ -471,6 +478,89 @@ const output = async (config, output) => {
 };
 
 /**
+ * Trigger endpoint to fecth new data from CALS.
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @return
+ *   The translator data.
+ */
+const controller = async (req, res) => {
+    let result;
+    let host;
+    try {
+        // TODO: Place authentication.
+        const topic = req.params.topic;
+        const parts = req.originalUrl.split('/');
+        const productCode = parts.splice(parts.indexOf('hooks') + 1)[0];
+        const config = cache.getDoc('configs', productCode) || {};
+
+        // Store data.
+        host = req.get('host').split(':')[0];
+        config.connectorURL = (host === 'localhost' || net.isIP(host) ? 'http' : 'https')
+            + '://' + req.get('host');
+        // result = await handler(productCode, config, topic, req.body);
+
+        // Receives incoming trigger to fetch new data from CALS.
+        // 1. Get new data  from CALS with parameters provided in the body.
+        // 2. Make a broker request to self and take data.
+        // 2. Send data to streamer.
+
+        const result = {
+            output: {
+                data: 'Thank you!',
+            },
+        };
+
+        // Initialize signature object.
+        const signature = {
+            type: 'RsaSignature2018',
+            created: moment().format(),
+            creator: config.connectorURL + '/translator/v1/public.key',
+        };
+
+        // Send signed data response.
+        res.status(201).send({
+            ...(result.output || {}),
+            signature: {
+                ...signature,
+                signatureValue: rsa.generateSignature({
+                    __signed__: signature.created,
+                    ...(result.output[result.payloadKey || 'data'] || {}),
+                }),
+            },
+        });
+    } catch (err) {
+        if (!res.finished) {
+            // Compose error response object.
+            result = {
+                error: {
+                    status: err.httpStatusCode || 500,
+                    message: err.message || 'Internal Server Error.',
+                },
+            };
+
+            // Send response.
+            return res.status(err.httpStatusCode || 500).send(result);
+        }
+    }
+};
+
+/**
+ * Returns plugin HTTP endpoints.
+ *
+ * @param {Object} passport
+ * @return {Object}
+ */
+const endpoints = function (passport) {
+    /** Trigger endpoint. */
+    router.post('/:topic*?', controller);
+    router.put('/:topic*?', controller);
+    router.delete('/:topic*?', controller);
+    return router;
+};
+
+/**
  * Switch querying protocol to REST.
  *
  * @param {Object} config
@@ -479,7 +569,19 @@ const output = async (config, output) => {
  */
 const template = async (config, template) => {
     try {
-        template.protocol = 'rest';
+        if (template.authConfig.headers['CALS-API-KEY'] === '${apikey}') {
+            // Message from hook or API auth not configured.
+            console.log('Connector produces.');
+            // Query CALS.
+            // 1. Trigger fetch with
+            // 2. Get new data
+            // 3. Send new data
+        } else {
+            console.log('Connector consumes.');
+            // Query CALS.
+            template.protocol = 'rest';
+        }
+
         return template;
     } catch (e) {
         return template;
@@ -488,6 +590,7 @@ const template = async (config, template) => {
 
 module.exports = {
     name: 'c4-cals',
+    endpoints,
     template,
     output,
 };

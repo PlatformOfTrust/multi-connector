@@ -1,7 +1,8 @@
 {
   "plugins": [
     "c4-cals",
-    "broker"
+    "broker",
+    "streamer"
   ],
   "protocol": "hook",
   "authConfig": {
@@ -9,7 +10,7 @@
     "headers": {
       "CALS-API-KEY": "${apikey}"
     },
-    "path": "/instances/${instance}/purchaseorders/${targetObject.VendorId}"
+    "path": "/instances/${instance}/purchaseorders/${targetObject.vendor.idLocal}"
   },
   "dataObjects": [
     ""
@@ -26,9 +27,9 @@
     }
   },
     "input": {
-        "required": [
-            "parameters.targetObject"
-        ]
+      "required": [
+        "parameters.targetObject.vendor"
+      ]
     },
   "output": {
     "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/OrderInformation/",
