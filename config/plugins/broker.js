@@ -2,6 +2,7 @@
 /**
  * Module dependencies.
  */
+const winston = require('../../logger.js');
 const rp = require('request-promise');
 const moment = require('moment');
 
@@ -55,6 +56,9 @@ const stream = async (template, data) => {
         const arrayKey = template.output.array;
         data = Array.isArray(data) ? data : [data];
         for (let i = 0; i < data.length; i++) {
+
+            // TODO: Change to broker request.
+
             const productCode = config.static.productCode;
             if (!productCode) continue;
             const result = {
@@ -65,14 +69,15 @@ const stream = async (template, data) => {
                 },
             };
 
-            // Send data to broker.
+            // Send data to broker API.
             if (url) {
-                console.log('Send data to broker by product code: ' + productCode + ' ' + url);
+                winston.log('info', 'Broker plugin: Send data to broker by product code ' + productCode + ', ' + url);
                 await request('POST', url, {}, result);
             }
         }
     } catch (err) {
-        console.log(err.message);
+        winston.log('error', err.message);
+        throw err;
     }
     return data;
 };

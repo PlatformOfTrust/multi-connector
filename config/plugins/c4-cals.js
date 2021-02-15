@@ -4,6 +4,7 @@
  */
 const transformer = require('../../app/lib/transformer');
 const connector = require('../../app/lib/connector');
+const validator = require('../../app/lib/validator');
 const router = require('express').Router();
 const winston = require('../../logger.js');
 const cache = require('../../app/cache');
@@ -13,11 +14,8 @@ const net = require('net');
 const _ = require('lodash');
 
 /**
- * C4 CALS  plugin.
+ * C4 CALS multi-purpose plugin for CALS and vendor connectors.
  */
-
-/** Import Platform of Trust definitions. */
-const {brokerURLs} = require('../../config/definitions/pot');
 
 // Source mapping.
 const schema = {
@@ -443,7 +441,7 @@ const handleData = function (config, id, data) {
         }
         return result;
     } catch (err) {
-        console.log(err.message);
+        winston.log('error', err.message);
         return result;
     }
 };
@@ -461,16 +459,16 @@ const response = async (config, res) => {
 
     /** Data fetching. */
     try {
-        // Fetch data from cache.
+        // Fetch data from cache if query is done by vendor id (only for vendor connector).
         if (Object.hasOwnProperty.call(config.parameters.targetObject, 'vendor')) {
-            console.log('Fetch from cache');
+            winston.log('info', 'Fetch from cache ' + config.productCode);
             const result = cache.getDoc('messages', config.productCode) || {};
             response = result[res];
         } else {
             response = res;
         }
     } catch (err) {
-        console.log(err.message);
+        winston.log('error', err.message);
     }
     return response;
 };
@@ -519,7 +517,27 @@ const output = async (config, output) => {
 };
 
 /**
- * Trigger endpoint to fetch new data from CALS.
+ * Local handler to send error response.
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Error} err
+ */
+const errorResponse = async (req, res, err) => {
+    // Compose error response object.
+    const result = {
+        error: {
+            status: err.httpStatusCode || 500,
+            message: err.message || 'Internal Server Error.',
+        },
+    };
+
+    // Send response.
+    return res.status(err.httpStatusCode || 500).send(result);
+};
+
+/**
+ * Endpoint to trigger fetching of new data from CALS.
  *
  * @param {Object} req
  * @param {Object} res
@@ -530,129 +548,125 @@ const controller = async (req, res) => {
     let result;
     let host;
     try {
-        // TODO: Place authentication.
-        const topic = req.params.topic;
-        const parts = req.originalUrl.split('/');
-        const productCode = parts.splice(parts.indexOf('c4-cals') + 1)[0];
-        const config = cache.getDoc('configs', productCode) || {};
-        let template = cache.getDoc('templates', config.template) || {};
-
-        // Store data.
-        host = req.get('host').split(':')[0];
-        config.connectorURL = (host === 'localhost' || net.isIP(host) ? 'http' : 'https')
-            + '://' + req.get('host');
-        // result = await handler(productCode, config, topic, req.body);
-
-        // Parse instance from request body.
-        const triggeredReq = {
-            body: {
-                'productCode' : productCode,
-                'timestamp': moment().format(),
-                'parameters': {
-                    'targetObject': {
-                        'order': {
-                            'idLocal': req.body.instanceId,
-                        },
-                    },
-                },
-            },
-            protocol: 'http',
-            get: function () {
-                return 'localhost:8080';
-            },
-        };
-
-        // 3. Parse data-product from order and send broker request to produce order.
-
-        /**
-         * "e0c9284c-84a0-425d-8e52-5ffdec39038b": "purchase-order-to-vendor-1"
-         * "d61c39ca-3c7a-42a5-9909-a1a239ae6549": "purchase-order-to-vendor-2"
-         */
-
-        // Receives incoming trigger to fetch new data from CALS.
-        // 1. Get new data from CALS with parameters provided in the body.
-        // 2. Make a broker request to self and take data.
-
-        winston.log('info', '1. Query self with REST path /instances/${instance}/purchaseorders/${instanceId}');
-
-        // Fetch data.
-        result = await connector.getData(triggeredReq);
-
-        let vendorExternalId = 'purchase-order-to-vendor-1';
-        try {
-            vendorExternalId = result.body.vendorExternalId;
-        } catch (e) {
-            winston.log('error', 'Could not parse external id for vendor from response.');
+        /** Request header validation */
+        const bearer = req.headers.authorization;
+        if (!bearer) {
+            const err = new Error();
+            err.httpStatusCode = 422;
+            err.message = 'Missing required header \'Authorization\'';
+            return errorResponse(req, res, err);
         }
 
-        winston.log('info', '2. Send data to vendor data product: ' + vendorExternalId);
+        /** Request body validation */
+        const validation = validator.validate(req.body, {
+            instanceId: {
+                required: true,
+            },
+            entityId: {
+                required: true,
+            },
+        });
 
-        const url = config.static.env === 'development' ? config.connectorURL + '/translator/v1/fetch' : brokerURLs.find(i => i.env === (config.env || 'sandbox')).url;
-        winston.log('info', url);
+        if (Object.hasOwnProperty.call(validation, 'error')) {
+            if (validation.error) {
+                const err = new Error();
+                err.httpStatusCode = 422;
+                err.message = validation.error;
+                return errorResponse(req, res, err);
+            }
+        }
 
-        /*
-        const brokerReq = {
-            body: {
-                'productCode' : vendorExternalId,
-                'timestamp': moment().format(),
-                'parameters': {
-                    'targetObject': {
-                        'order': {
-                            'idLocal': req.body.instanceId,
+        // 1. Parse options and authenticate request.
+        let config;
+        let template;
+        let productCode;
+        try {
+            const parts = req.originalUrl.split('/');
+            productCode = parts.splice(parts.indexOf('c4-cals') + 1)[0];
+            config = cache.getDoc('configs', productCode) || {};
+
+            /** Request authentication */
+            if (bearer !== config.static.bearer) {
+                return res.status(401).send('Unauthorized');
+            }
+
+            template = cache.getDoc('templates', config.template) || {};
+            host = req.get('host').split(':')[0];
+            config.connectorURL = (host === 'localhost' || net.isIP(host) ? 'http' : 'https') + '://' + req.get('host');
+        } catch (err) {
+            err.message = 'Failed to parse request.';
+            return errorResponse(req, res, err);
+        }
+
+        // 2. Get new data from CALS with parameters provided in the body.
+        try {
+            // Parse instance and entity id from request body.
+            const instanceId = req.body.instanceId;
+            const idLocal = req.body.entityId;
+            // Compose triggered local connector request.
+            const triggeredReq = {
+                body: {
+                    productCode,
+                    'timestamp': moment().format(),
+                    'parameters': {
+                        instanceId,
+                        'targetObject': {
+                            'order': {
+                                idLocal,
+                            },
                         },
                     },
                 },
-            },
-            protocol: 'http',
-            get: function () {
-                return 'localhost:8080';
-            },
-        };
-        */
+                protocol: 'http',
+                get: function () {
+                    return config.connectorURL;
+                },
+            };
+            winston.log('info', '1. Query self with REST path /instances/${instanceId}/purchaseorders/${purchaseOrderId}');
+            result = await connector.getData(triggeredReq);
+        } catch (err) {
+            winston.log('error', err.message);
+            return errorResponse(req, res, err);
+        }
 
-        // 4. Send data to vendor data product.
-
-        config.static.productCode = vendorExternalId;
-        template = await connector.resolvePlugins(template);
-        template.config = config;
+        // 3. Parse vendor productCode from received order and send broker request to produce order.
+        let vendorProductCode;
         try {
+            vendorProductCode = 'purchase-order-to-vendor-1';
+            vendorProductCode = result.body.vendorExternalId;
+        } catch (err) {
+            winston.log('error', 'Could not parse vendor external id from CALS response.');
+        }
+
+        // 4. Send data to vendor data product with broker plugin.
+        try {
+            config.static.productCode = vendorProductCode;
+            template = await connector.resolvePlugins(template);
+            template.config = config;
+            winston.log('info', '2. Send data to vendor data product: ' + vendorProductCode);
             await template.plugins.find(p => p.name === 'broker').stream(template, result.output);
         } catch (err) {
             winston.log('error', err.message);
+            return errorResponse(req, res, err);
         }
 
-        // Streamer will send the data to the vendor.
-
-        // Initialize signature object.
-        const signature = {
-            type: 'RsaSignature2018',
-            created: moment().format(),
-            creator: config.connectorURL + '/translator/v1/public.key',
-        };
-
-        // Send signed data response.
+        // 5. Send signed data response.
+        const created = moment().format();
         res.status(201).send({
             ...(result.output || {}),
             signature: {
-                ...signature,
+                type: 'RsaSignature2018',
+                created,
+                creator: config.connectorURL + '/translator/v1/public.key',
                 signatureValue: rsa.generateSignature({
-                    __signed__: signature.created,
+                    __signed__: created,
                     ...(result.output[result.payloadKey || 'data'] || {}),
                 }),
             },
         });
     } catch (err) {
         if (!res.finished) {
-            // Compose error response object.
-            result = {
-                error: {
-                    status: err.httpStatusCode || 500,
-                    message: err.message || 'Internal Server Error.',
-                },
-            };
-
-            // Send response.
-            return res.status(err.httpStatusCode || 500).send(result);
+            return errorResponse(req, res, err);
         }
     }
 };
@@ -681,14 +695,15 @@ const endpoints = function (passport) {
 const template = async (config, template) => {
     try {
         if (Object.hasOwnProperty.call(config.parameters.targetObject, 'vendor')) {
+            /** Vendor connector */
             winston.log('info', 'Connector consumes cache by vendorId.');
             template.authConfig.path = [template.parameters.targetObject.vendor.idLocal];
         } else if (Object.hasOwnProperty.call(config.parameters.targetObject, 'order')) {
+            /** CALS connector */
             winston.log('info', 'Connector consumes CALS REST API by orderId.');
             template.protocol = 'rest';
             template.authConfig.path = '/instances/' + template.authConfig.instance + '/purchaseorders/' + template.authConfig.path;
         }
-
         return template;
     } catch (e) {
         return template;
@@ -704,9 +719,11 @@ const template = async (config, template) => {
  */
 const parameters = async (config, parameters) => {
     try {
+        winston.log('info', 'Received broker request by productCode: ' + config.productCode);
         // Detect that new data was produced.
         if (Object.hasOwnProperty.call(parameters.targetObject, '@type')) {
-            console.log('Store received data to cache by vendorId: ' + parameters.targetObject.vendor.idLocal);
+            /** Vendor connector */
+            winston.log('info', 'Store received data to cache by vendorId: ' + parameters.targetObject.vendor.idLocal);
             const id = parameters.targetObject.vendor.idLocal;
             const result = cache.getDoc('messages', config.productCode) || {};
             result[id] = parameters.targetObject;

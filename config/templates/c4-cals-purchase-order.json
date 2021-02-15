@@ -10,7 +10,7 @@
     "headers": {
       "CALS-API-KEY": "${apikey}"
     },
-    "instance": "${instance}",
+    "instance": "${instanceId}",
     "path": "${targetObject.order.idLocal}"
   },
   "dataObjects": [

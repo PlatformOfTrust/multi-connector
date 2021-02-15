@@ -1,5 +1,5 @@
 {
-    "template": "c4-cals-demand-supply",
+    "template": "c4-cals-purchase-order",
     "static": {
         "env": "development",
         "apikey": "<apikey>",

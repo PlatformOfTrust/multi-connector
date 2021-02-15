@@ -1,17 +1,16 @@
 {
     "template": "c4-cals-purchase-order",
     "static": {
-        "instance": "<instance>",
-        "apikey": "<apikey>"
+        "url": "<url>"
     },
     "dynamic": {
         "authConfig.path": "targetObject.vendor.idLocal"
     },
     "request": {
         "targetObject": {
-            "vendorId": [
-                "<vendor-id>"
-            ]
+            "vendor": {
+                "idLocal": "<idLocal>"
+            }
         }
     }
 }

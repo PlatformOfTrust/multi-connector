@@ -1,7 +1,8 @@
 {
   "plugins": [
     "c4-cals",
-    "broker"
+    "broker",
+    "streamer"
   ],
   "protocol": "custom",
   "authConfig": {
@@ -9,8 +10,8 @@
     "headers": {
       "CALS-API-KEY": "${apikey}"
     },
-    "instance": "${instance}",
-    "path": "/instances/${instance}/demandsupplies/${targetObject.vendor.idLocal}"
+    "instance": "${instanceId}",
+    "path": "${targetObject.demand.idLocal}"
   },
   "dataObjects": [
     ""
