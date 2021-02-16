@@ -2,6 +2,7 @@
 /**
  * Module dependencies.
  */
+const winston = require('../../logger.js');
 const rp = require('request-promise');
 
 /**
@@ -43,23 +44,24 @@ function request (method, url, headers, body) {
  * @return {Object}
  */
 const stream = async (template, data) => {
+    const result = [];
     try {
         // Extract stream endpoint url and output definitions from config.
         const config = template.config;
         const url = config.static.url;
         if (!url) return data;
-        // console.log(config);
         const objectKey = template.output.object || 'data';
         const arrayKey = template.output.array;
-        // Send data to azure.
+        // Send data to external system.
         for (const d of (Array.isArray(data) ? data : [data])) {
-            console.log('Produce data to ' + url);
-            if (url) await request('POST', url, {}, d[objectKey][arrayKey]);
+            winston.log('info', 'Produce data to ' + url);
+            if (url) result.push(await request('POST', url, {}, d[objectKey][arrayKey]));
         }
     } catch (err) {
-        console.log(err.message);
+        winston.log('error', err.message);
+        throw err;
     }
-    return data;
+    return result;
 };
 
 /**

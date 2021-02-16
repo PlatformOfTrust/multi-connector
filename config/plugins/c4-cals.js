@@ -551,9 +551,8 @@ const controller = async (req, res) => {
         /** Request header validation */
         const bearer = req.headers.authorization;
         if (!bearer) {
-            const err = new Error();
+            const err = new Error('Missing required header \'Authorization\'');
             err.httpStatusCode = 422;
-            err.message = 'Missing required header \'Authorization\'';
             return errorResponse(req, res, err);
         }
 
@@ -569,9 +568,8 @@ const controller = async (req, res) => {
 
         if (Object.hasOwnProperty.call(validation, 'error')) {
             if (validation.error) {
-                const err = new Error();
+                const err = new Error(validation.error);
                 err.httpStatusCode = 422;
-                err.message = validation.error;
                 return errorResponse(req, res, err);
             }
         }
@@ -585,6 +583,18 @@ const controller = async (req, res) => {
             productCode = parts.splice(parts.indexOf('c4-cals') + 1)[0];
             config = cache.getDoc('configs', productCode) || {};
 
+            if (_.isEmpty(config) || !Object.hasOwnProperty.call(config, 'static')) {
+                const err = new Error('Data product configuration not found.');
+                err.httpStatusCode = 404;
+                return errorResponse(req, res, err);
+            }
+
+            if (!Object.hasOwnProperty.call(config.static, 'bearer')) {
+                const err = new Error('Bearer not found at data product configuration.');
+                err.httpStatusCode = 500;
+                return errorResponse(req, res, err);
+            }
+
             /** Request authentication */
             if (bearer !== config.static.bearer) {
                 return res.status(401).send('Unauthorized');
@@ -594,7 +604,8 @@ const controller = async (req, res) => {
             host = req.get('host').split(':')[0];
             config.connectorURL = (host === 'localhost' || net.isIP(host) ? 'http' : 'https') + '://' + req.get('host');
         } catch (err) {
-            err.message = 'Failed to parse request.';
+            err.httpStatusCode = 500;
+            err.message = 'Failed to handle request.';
             return errorResponse(req, res, err);
         }
 
@@ -633,7 +644,7 @@ const controller = async (req, res) => {
         let vendorProductCode;
         try {
             vendorProductCode = 'purchase-order-to-vendor-1';
-            vendorProductCode = result.body.vendorExternalId;
+            vendorProductCode = result.output.data.order.vendor.idLocal;
         } catch (err) {
             winston.log('error', 'Could not parse vendor external id from CALS response.');
         }
@@ -694,45 +705,38 @@ const endpoints = function (passport) {
  */
 const template = async (config, template) => {
     try {
-        if (Object.hasOwnProperty.call(config.parameters.targetObject, 'vendor')) {
+        if (Object.hasOwnProperty.call(template.parameters.targetObject, 'vendor')) {
             /** Vendor connector */
             winston.log('info', 'Connector consumes cache by vendorId.');
             template.authConfig.path = [template.parameters.targetObject.vendor.idLocal];
-        } else if (Object.hasOwnProperty.call(config.parameters.targetObject, 'order')) {
+        } else if (Object.hasOwnProperty.call(template.parameters.targetObject, 'order')) {
             /** CALS connector */
             winston.log('info', 'Connector consumes CALS REST API by orderId.');
             template.protocol = 'rest';
             template.authConfig.path = '/instances/' + template.authConfig.instance + '/purchaseorders/' + template.authConfig.path;
         }
-        return template;
-    } catch (e) {
-        return template;
-    }
-};
 
-/**
- * Store produced data.
- *
- * @param {Object} config
- * @param {Object} parameters
- * @return {Object}
- */
-const parameters = async (config, parameters) => {
-    try {
-        winston.log('info', 'Received broker request by productCode: ' + config.productCode);
-        // Detect that new data was produced.
-        if (Object.hasOwnProperty.call(parameters.targetObject, '@type')) {
+        // TODO: Come up with a better way to detect that the received data is meant to be produced and not consumed.
+        if (Object.hasOwnProperty.call(template.parameters.targetObject, '@type')) {
             /** Vendor connector */
-            winston.log('info', 'Store received data to cache by vendorId: ' + parameters.targetObject.vendor.idLocal);
-            const id = parameters.targetObject.vendor.idLocal;
-            const result = cache.getDoc('messages', config.productCode) || {};
-            result[id] = parameters.targetObject;
-            cache.setDoc('messages', config.productCode, result);
+            winston.log('info', 'Store received data to cache by vendorId: ' + template.parameters.targetObject.vendor.idLocal);
+            const id = template.parameters.targetObject.vendor.idLocal;
+            const result = cache.getDoc('messages', template.productCode) || {};
+            result[id] = template.parameters.targetObject;
+            cache.setDoc('messages', template.productCode, result);
+            // Stream data to external system.
+            try {
+                await template.plugins.find(p => p.name === 'streamer')
+                    .stream({...template, config}, {data: {order: result[id]}});
+            } catch (err) {
+                return Promise.reject(err);
+            }
         }
+
+        return template;
     } catch (err) {
-        winston.log('error', err.message);
+        return Promise.reject(err);
     }
-    return parameters;
 };
 
 module.exports = {
@@ -740,6 +744,5 @@ module.exports = {
     endpoints,
     template,
     output,
-    parameters,
     response,
 };

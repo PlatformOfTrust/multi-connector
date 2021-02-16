@@ -644,7 +644,7 @@ const getData = async (req) => {
     // Execute template plugin function.
     for (let i = 0; i < template.plugins.length; i++) {
         if (template.plugins[i].template) {
-            template = await template.plugins[i].template(template, template);
+            template = await template.plugins[i].template(config, template);
         }
     }
 
