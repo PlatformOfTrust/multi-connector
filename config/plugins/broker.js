@@ -69,6 +69,9 @@ const stream = async (template, data) => {
                 },
             };
 
+            // Pass own sender product code in the data.
+            result.parameters.targetObject.productCode = config.productCode;
+
             // Send data to broker API.
             if (url) {
                 winston.log('info', 'Broker plugin: Send data to broker by product code ' + productCode + ', ' + url);

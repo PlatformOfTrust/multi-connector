@@ -651,7 +651,11 @@ const controller = async (req, res) => {
 
         // 4. Send data to vendor data product with broker plugin.
         try {
+            /** Sender data product */
+            config.productCode = productCode;
+            /** Receiver data product */
             config.static.productCode = vendorProductCode;
+
             template = await connector.resolvePlugins(template);
             template.config = config;
             winston.log('info', '2. Send data to vendor data product: ' + vendorProductCode);
