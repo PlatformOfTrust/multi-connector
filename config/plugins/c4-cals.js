@@ -61,21 +61,21 @@ const schema = {
                             'source': 'requiredDeliveryDateTime',
                             'type': 'string',
                             'title': 'Required delivery time',
-                            'description': 'Required delivery time initiated typically by the orderer',
+                            'description': 'Required delivery time initiated typically by the orderer.',
                         },
                         'reference': {
                             '$id': '#/properties/data/properties/order/properties/reference',
                             'source': 'ourReference',
                             'type': 'string',
                             'title': 'Reference number/code',
-                            'description': 'Reference number or code',
+                            'description': 'Reference number or code.',
                         },
                         'codeQr': {
                             '$id': '#/properties/data/properties/order/properties/codeQr',
                             'source': 'purchaseOrderQRC',
                             'type': 'string',
-                            'title': 'QR Code',
-                            'description': 'QR Code.',
+                            'title': 'CodeQr',
+                            'description': 'CodeQr.',
                         },
                         'descriptionGeneral': {
                             '$id': '#/properties/data/properties/order/properties/descriptionGeneral',
@@ -144,19 +144,36 @@ const schema = {
                                     'title': 'Name',
                                     'description': 'Name.',
                                 },
-                                'addressEmail': {
-                                    '$id': '#/properties/data/properties/order/properties/contact/properties/addressEmail',
-                                    'source': 'purchaseOrderContactEmail',
-                                    'type': 'string',
-                                    'title': 'Email address',
-                                    'description': 'Email address.',
-                                },
-                                'phoneNumber': {
-                                    '$id': '#/properties/data/properties/order/properties/contact/properties/phoneNumber',
-                                    'source': 'purchaseOrderContactTelephone',
-                                    'type': 'string',
-                                    'title': 'Phone number',
-                                    'description': 'Phone number.',
+                                'contactInformation': {
+                                    '$id': '#/properties/data/properties/order/properties/contact/properties/contactInformation',
+                                    'source': null,
+                                    'type': 'object',
+                                    'title': 'Contact information',
+                                    'description': 'Contact information.',
+                                    'required': [],
+                                    'properties': {
+                                        '@type': {
+                                            '$id': '#/properties/data/properties/order/properties/contact/properties/contactInformation/properties/@type',
+                                            'source': 'contactInformationType',
+                                            'type': 'string',
+                                            'title': 'Identity type',
+                                            'description': 'Type of identity.',
+                                        },
+                                        'addressEmail': {
+                                            '$id': '#/properties/data/properties/order/properties/contact/properties/contactInformation/properties/addressEmail',
+                                            'source': 'purchaseOrderContactEmail',
+                                            'type': 'string',
+                                            'title': 'Email address',
+                                            'description': 'Email address.',
+                                        },
+                                        'phoneNumber': {
+                                            '$id': '#/properties/data/properties/order/properties/contact/properties/contactInformation/properties/phoneNumber',
+                                            'source': 'purchaseOrderContactTelephone',
+                                            'type': 'string',
+                                            'title': 'Phone number',
+                                            'description': 'Phone number.',
+                                        },
+                                    },
                                 },
                             },
                         },
@@ -227,33 +244,49 @@ const schema = {
                                     'title': 'Name',
                                     'description': 'Name.',
                                 },
-                                'streetAddressLine1': {
-                                    '$id': '#/properties/data/properties/order/properties/vendor/properties/streetAddressLine1',
-                                    'source': 'vendorStreetAddress',
-                                    'type': 'string',
-                                    'title': 'Street address line 1',
-                                    'description': 'Street address line 1.',
-                                },
-                                'postalCode': {
-                                    '$id': '#/properties/data/properties/order/properties/vendor/properties/postalCode',
-                                    'source': 'vendorPostalCode',
-                                    'type': 'string',
-                                    'title': 'Postal code',
-                                    'description': 'Postal code.',
-                                },
-                                'postalArea': {
-                                    '$id': '#/properties/data/properties/order/properties/vendor/properties/postalArea',
-                                    'source': 'vendorTown',
-                                    'type': 'string',
-                                    'title': 'Postal area',
-                                    'description': 'Postal area.',
-                                },
-                                'country': {
-                                    '$id': '#/properties/data/properties/order/properties/vendor/properties/country',
-                                    'source': 'vendorCountry',
-                                    'type': 'string',
-                                    'title': 'Country',
-                                    'description': 'Location country name.',
+                                'ContactInformation': {
+                                    '$id': '#/properties/data/properties/order/properties/vendor/properties/ContactInformation',
+                                    'type': 'object',
+                                    'title': 'Contact information',
+                                    'description': 'Contact information.',
+                                    'required': [],
+                                    'properties': {
+                                        '@type': {
+                                            '$id': '#/properties/data/properties/order/properties/vendor/properties/ContactInformation/properties/@type',
+                                            'source': 'contactInformationType',
+                                            'type': 'string',
+                                            'title': 'Identity type',
+                                            'description': 'Type of identity.',
+                                        },
+                                        'streetAddressLine1': {
+                                            '$id': '#/properties/data/properties/order/properties/vendor/properties/ContactInformation/properties/streetAddressLine1',
+                                            'source': 'vendorStreetAddress',
+                                            'type': 'string',
+                                            'title': 'Street address line 1',
+                                            'description': 'Street address line 1.',
+                                        },
+                                        'postalCode': {
+                                            '$id': '#/properties/data/properties/order/properties/vendor/properties/ContactInformation/properties/postalCode',
+                                            'source': 'vendorPostalCode',
+                                            'type': 'string',
+                                            'title': 'Postal code',
+                                            'description': 'Postal code.',
+                                        },
+                                        'postalArea': {
+                                            '$id': '#/properties/data/properties/order/properties/vendor/properties/ContactInformation/properties/postalArea',
+                                            'source': 'vendorTown',
+                                            'type': 'string',
+                                            'title': 'Postal area',
+                                            'description': 'Postal area.',
+                                        },
+                                        'country': {
+                                            '$id': '#/properties/data/properties/order/properties/vendor/properties/ContactInformation/properties/country',
+                                            'source': 'vendorCountry',
+                                            'type': 'string',
+                                            'title': 'Country',
+                                            'description': 'Location country name.',
+                                        },
+                                    },
                                 },
                             },
                         },
@@ -265,6 +298,13 @@ const schema = {
                             'description': 'Shipping address.',
                             'required': [],
                             'properties': {
+                                '@type': {
+                                    '$id': '#/properties/data/properties/order/properties/addressShipping/properties/@type',
+                                    'source': 'addressShippingType',
+                                    'type': 'string',
+                                    'title': 'Identity type',
+                                    'description': 'Type of identity.',
+                                },
                                 'idLocal': {
                                     '$id': '#/properties/data/properties/order/properties/addressShipping/properties/idLocal',
                                     'source': 'shipToId',
@@ -311,11 +351,19 @@ const schema = {
                         },
                         'addressBilling': {
                             '$id': '#/properties/data/properties/order/properties/addressBilling',
+                            'source': null,
                             'type': 'object',
                             'title': 'Billing address',
                             'description': 'Billing address.',
                             'required': [],
                             'properties': {
+                                '@type': {
+                                    '$id': '#/properties/data/properties/order/properties/addressBilling/properties/@type',
+                                    'source': 'addressBillingType',
+                                    'type': 'string',
+                                    'title': 'Identity type',
+                                    'description': 'Type of identity.',
+                                },
                                 'idLocal': {
                                     '$id': '#/properties/data/properties/order/properties/addressBilling/properties/idLocal',
                                     'source': 'billToId',
@@ -349,7 +397,7 @@ const schema = {
                                     'source': 'billToTown',
                                     'type': 'string',
                                     'title': 'Postal area',
-                                    'description': 'Postal area',
+                                    'description': 'Postal area.',
                                 },
                                 'country': {
                                     '$id': '#/properties/data/properties/order/properties/addressBilling/properties/country',
@@ -357,6 +405,108 @@ const schema = {
                                     'type': 'string',
                                     'title': 'Country',
                                     'description': 'Location country name.',
+                                },
+                            },
+                        },
+                        'process': {
+                            '$id': '#/properties/data/properties/order/properties/process',
+                            'type': 'object',
+                            'title': 'Process',
+                            'description': 'Process.',
+                            'required': [],
+                            'properties': {
+                                '@type': {
+                                    '$id': '#/properties/data/properties/order/properties/process/properties/@type',
+                                    'type': 'string',
+                                    'title': 'Identity type',
+                                    'description': 'Type of identity.',
+                                },
+                                'descriptionGeneral': {
+                                    '$id': '#/properties/data/properties/order/properties/process/properties/descriptionGeneral',
+                                    'type': 'string',
+                                    'title': 'Description',
+                                    'description': 'Description.',
+                                },
+                            },
+                        },
+                        'orderLine': {
+                            '$id': '#/properties/data/properties/order/properties/orderLine',
+                            'source': 'purchaseOrderItems',
+                            'type': 'array',
+                            'title': 'Order line',
+                            'description': 'Order line.',
+                            'items': {
+                                '$id': '#/properties/data/properties/order/properties/orderLine/items',
+                                'source': null,
+                                'type': 'object',
+                                'required': [],
+                                'properties': {
+                                    '@type': {
+                                        '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/@type',
+                                        'source': 'orderLineType',
+                                        'type': 'string',
+                                        'title': 'Identity type',
+                                        'description': 'Type of identity.',
+                                    },
+                                    'idLocal': {
+                                        '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/idLocal',
+                                        'source': 'purchaseOrderItemId',
+                                        'type': 'string',
+                                        'title': 'Local identifier',
+                                        'description': 'Locally given identifier.',
+                                    },
+                                    'quantity': {
+                                        '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/quantity',
+                                        'source': 'quantity',
+                                        'type': 'integer',
+                                        'title': 'Quantity',
+                                        'description': 'Quantity of specific objects.',
+                                    },
+                                    'unit': {
+                                        '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/unit',
+                                        'source': 'unitOfMeasure',
+                                        'type': 'string',
+                                        'title': 'Unit',
+                                        'description': 'Unit used (Defines unit which is used).',
+                                    },
+                                    'product': {
+                                        '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product',
+                                        'source': null,
+                                        'type': 'object',
+                                        'title': 'Product',
+                                        'description': 'Product.',
+                                        'required': [],
+                                        'properties': {
+                                            '@type': {
+                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/@type',
+                                                'source': 'productType',
+                                                'type': 'string',
+                                                'title': 'Identity type',
+                                                'description': 'Type of identity.',
+                                            },
+                                            'idLocal': {
+                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/idLocal',
+                                                'source': 'materialPrimaryCode',
+                                                'type': 'string',
+                                                'title': 'Local identifier',
+                                                'description': 'Locally given identifier.',
+                                            },
+                                            'descriptionGeneral': {
+                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/descriptionGeneral',
+                                                'source': 'materialName',
+                                                'type': 'string',
+                                                'title': 'Description',
+                                                'description': 'Description.',
+                                            },
+                                            'gtin': {
+                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/gtin',
+                                                'source': null,
+                                                'type': 'string',
+                                                'title': 'Gtin',
+                                                'description': 'Gtin.',
+                                            },
+                                        },
+                                    },
                                 },
                             },
                         },
@@ -414,20 +564,27 @@ const handleData = function (config, id, data) {
         for (let j = 0; j < data.length; j++) {
             const value = data[j][config.output.value];
             if (Object.keys(config.dataPropertyMappings).includes('OrderInformation')) {
+                // Detect the need for transformation.
                 if (Object.hasOwnProperty.call(value, 'vendor')) {
+                    // Output has already been transformed.
                     result = {
                         order: {
                             ...value,
                         },
                     };
                 } else {
+                    // Transform raw input.
                     value.type = 'OrderInformation';
                     value.projectType = 'Project';
                     value.contactType = 'Person';
+                    value.contactInformationType = 'ContactInformation';
+                    value.addressShippingType = 'ContactInformation';
+                    value.addressBillingType = 'ContactInformation';
                     value.customerType = 'Organization';
                     value.vendorType = 'Organization';
                     value.descriptionGeneral = 'Purchase order information.';
                     value.requiredDeliveryDateTime = new Date(value.requiredDeliveryDate + 'T' + value.requiredDeliveryTime);
+                    value.purchaseOrderItems = value.purchaseOrderItems.map((i) => {return {orderLineType: 'OrderLine', productType: 'Product', ...i};});
                     result = transformer.transform(value, schema.properties.data);
                 }
             } else {
