@@ -681,11 +681,17 @@ const output = async (config, output) => {
  * @param {Error} err
  */
 const errorResponse = async (req, res, err) => {
+    let message;
+    try {
+        message = JSON.parse(err.message);
+    } catch (e) {
+        message = err.message;
+    }
     // Compose error response object.
     const result = {
         error: {
             status: err.httpStatusCode || 500,
-            message: err.message || 'Internal Server Error.',
+            message: message || 'Internal Server Error.',
         },
     };
 
@@ -725,7 +731,7 @@ const controller = async (req, res) => {
 
         if (Object.hasOwnProperty.call(validation, 'error')) {
             if (validation.error) {
-                const err = new Error(validation.error);
+                const err = new Error(JSON.stringify(validation.error));
                 err.httpStatusCode = 422;
                 return errorResponse(req, res, err);
             }
