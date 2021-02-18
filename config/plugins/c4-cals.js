@@ -759,7 +759,7 @@ const controller = async (req, res) => {
             }
 
             /** Request authentication */
-            if (bearer !== config.static.bearer) {
+            if (bearer !== ('Bearer ' + config.static.bearer)) {
                 return res.status(401).send('Unauthorized');
             }
 
