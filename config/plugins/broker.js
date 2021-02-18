@@ -70,7 +70,7 @@ const stream = async (template, data) => {
         data = Array.isArray(data) ? data : [data];
 
         for (let i = 0; i < data.length; i++) {
-            const productCode = 'polku-connector' || config.static.productCode;
+            const productCode = config.static.productCode;
             if (!productCode) continue;
 
             if (url) {
