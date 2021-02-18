@@ -1,7 +1,6 @@
 {
     "template": "c4-cals-purchase-order",
     "static": {
-        "env": "development",
         "apikey": "<apikey>",
         "bearer": "<bearer>",
         "instanceId": "<instance-id>"
@@ -9,6 +8,13 @@
     "dynamic": {
         "authConfig.path": "targetObject.order.idLocal",
         "authConfig.instance": "instanceId"
+    },
+    "plugins": {
+        "broker": {
+            "env": "sandbox",
+            "clientSecret": "<pot-client-secret>",
+            "appAccessToken": "<pot-app-access-secret>"
+        }
     },
     "request": {
         "targetObject": {

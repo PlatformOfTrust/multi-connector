@@ -91,7 +91,11 @@ const sendPublicKey = function (req, res) {
  */
 const sortObject = function (object) {
     if (object instanceof Array || typeof object !== 'object' || object === null) {
-        return object;
+        if (object instanceof Array) {
+            return object.map(o => sortObject(o));
+        } else {
+            return object;
+        }
     }
 
     const sortedObj = {};

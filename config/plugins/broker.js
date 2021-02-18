@@ -3,8 +3,10 @@
  * Module dependencies.
  */
 const winston = require('../../logger.js');
+const rsa = require('../../app/lib/rsa');
 const rp = require('request-promise');
 const moment = require('moment');
+const crypto = require('crypto');
 
 /** Import Platform of Trust definitions. */
 const {brokerURLs} = require('../../config/definitions/pot');
@@ -49,33 +51,87 @@ function request (method, url, headers, body) {
  */
 const stream = async (template, data) => {
     try {
-        // Extract stream endpoint url and output definitions from config.
+        let env = 'sandbox';
         const config = template.config;
-        const url = config.static.env === 'development' ? config.connectorURL + '/translator/v1/fetch' : brokerURLs.find(i => i.env === (config.env || 'sandbox')).url;
+
+        // Try to parse env from the config.
+        try {
+            env = config.plugins.broker.env;
+        } catch (err) {
+            winston.log('error', err.message);
+        }
+
+        // Find env specific broker URL.
+        const url = brokerURLs.find(i => i.env === (env || 'sandbox')).url;
+
+        /** Output definitions from config. */
         const objectKey = template.output.object || 'data';
         const arrayKey = template.output.array;
         data = Array.isArray(data) ? data : [data];
+
         for (let i = 0; i < data.length; i++) {
-
-            // TODO: Change to broker request.
-
-            const productCode = config.static.productCode;
+            const productCode = 'polku-connector' || config.static.productCode;
             if (!productCode) continue;
-            const result = {
-                productCode,
-                timestamp: moment().format(),
-                parameters: {
-                    targetObject: data[i][objectKey][arrayKey],
-                },
-            };
 
-            // Pass own sender product code in the data.
-            result.parameters.targetObject.productCode = config.productCode;
-
-            // Send data to broker API.
             if (url) {
-                winston.log('info', 'Broker plugin: Send data to broker by product code ' + productCode + ', ' + url);
-                await request('POST', url, {}, result);
+                const body = {
+                    productCode,
+                    timestamp: moment().format(),
+                    parameters: {
+                        targetObject: data[i][objectKey][arrayKey],
+                    },
+                };
+
+                // Pass connector product code as sender.
+                body.parameters.targetObject.sender = {
+                    '@type': 'DataProduct',
+                    productCode: config.productCode,
+                };
+
+                // Initialize signature value.
+                let signatureValue;
+
+                // Load PoT credentials from env by default.
+                let clientSecret = process.env.POT_CLIENT_SECRET;
+                let appAccessToken = process.env.POT_APP_ACCESS_TOKEN;
+
+                // Try to parse credentials from the config.
+                try {
+                    clientSecret = config.plugins.broker.clientSecret;
+                    appAccessToken = config.plugins.broker.appAccessToken;
+                } catch (err) {
+                    winston.log('error', err.message);
+                }
+
+                const accessToken = process.env.POT_ACCESS_TOKEN || appAccessToken;
+
+                /** Validate PoT credentials */
+                if (!clientSecret || !appAccessToken) {
+                    const err = new Error('Unauthorized to send broker request. Application credentials not configured properly.');
+                    err.httpStatusCode = 500;
+                    return Promise.reject(err);
+                }
+
+                // Create SHA256 signature in base64 encoded format.
+                try {
+                    signatureValue = crypto
+                        .createHmac('sha256', Buffer.from(clientSecret, 'utf8'))
+                        .update(rsa.stringifyBody(body)).digest('base64');
+                } catch (err) {
+                    winston.log('error', err.message);
+                }
+
+                // Set request headers
+                const headers = {
+                    'X-Pot-Signature': signatureValue,
+                    'X-App-Token': appAccessToken,
+                    'X-User-Token': accessToken,
+                    'Content-Type': 'application/json',
+                };
+
+                // Send broker request .
+                winston.log('info', 'Broker plugin: Send broker request by product code ' + productCode + ', ' + url);
+                await request('POST', url, headers, body);
             }
         }
     } catch (err) {

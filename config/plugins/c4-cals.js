@@ -583,7 +583,7 @@ const handleData = function (config, id, data) {
                     value.customerType = 'Organization';
                     value.vendorType = 'Organization';
                     value.descriptionGeneral = 'Purchase order information.';
-                    value.requiredDeliveryDateTime = new Date(value.requiredDeliveryDate + 'T' + value.requiredDeliveryTime);
+                    value.requiredDeliveryDateTime = new Date(value.requiredDeliveryDate + 'T' + value.requiredDeliveryTime).toISOString();
                     value.purchaseOrderItems = value.purchaseOrderItems.map((i) => {return {orderLineType: 'OrderLine', productType: 'Product', ...i};});
                     result = transformer.transform(value, schema.properties.data);
                 }
@@ -800,7 +800,7 @@ const controller = async (req, res) => {
         // 3. Parse vendor productCode from received order and send broker request to produce order.
         let vendorProductCode;
         try {
-            vendorProductCode = 'purchase-order-to-vendor-1';
+            vendorProductCode = 'vendor-purchase-order';
             vendorProductCode = result.output.data.order.vendor.idLocal;
         } catch (err) {
             winston.log('error', 'Could not parse vendor external id from CALS response.');
