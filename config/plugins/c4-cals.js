@@ -602,72 +602,84 @@ const orderConfirmationSchema = {
                                         },
                                         'name': {
                                             '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/name',
+                                            'source': null,
                                             'type': 'string',
                                             'title': 'Name',
                                             'description': 'Name.',
                                         },
                                         'codeProduct': {
                                             '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/codeProduct',
+                                            'source': null,
                                             'type': 'string',
                                             'title': 'Product code',
                                             'description': 'Unique product code given by manufacturer.',
                                         },
                                         'assemblyControlNumber': {
                                             '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/assemblyControlNumber',
+                                            'source': null,
                                             'type': 'string',
                                             'title': 'ACN number',
                                             'description': 'ACN number.',
                                         },
                                         'locationName': {
                                             '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/locationName',
+                                            'source': null,
                                             'type': 'string',
                                             'title': 'Location name',
                                             'description': 'Location name.',
                                         },
                                         'groupName': {
                                             '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/groupName',
+                                            'source': null,
                                             'type': 'integer',
                                             'title': 'Product group name',
                                             'description': 'Unique product group name given by manufacturer.',
                                         },
                                         'width': {
                                             '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/width',
+                                            'source': null,
                                             'type': 'integer',
                                             'title': 'Width',
                                             'description': 'Object width.',
                                         },
                                         'height': {
                                             '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/height',
+                                            'source': null,
                                             'type': 'integer',
                                             'title': 'Height',
                                             'description': 'Height.',
                                         },
                                         'length': {
                                             '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/length',
+                                            'source': null,
                                             'type': 'integer',
                                             'title': 'Length',
                                             'description': 'Lenght.',
                                         },
                                         'weight': {
                                             '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/weight',
+                                            'source': null,
                                             'type': 'number',
                                             'title': 'Weight',
                                             'description': 'Object weight.',
                                         },
                                         'url': {
                                             '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/url',
+                                            'source': null,
                                             'type': 'string',
                                             'title': 'URL address',
                                             'description': 'URL address.',
                                         },
                                         'ifcUrl': {
                                             '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/ifcUrl',
+                                            'source': null,
                                             'type': 'string',
                                             'title': 'IfcUrl',
                                             'description': 'IfcUrl.',
                                         },
                                         'location': {
                                             '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/location',
+                                            'source': null,
                                             'type': 'object',
                                             'title': 'Location',
                                             'description': 'Location.',
@@ -675,12 +687,14 @@ const orderConfirmationSchema = {
                                             'properties': {
                                                 '@type': {
                                                     '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/location/properties/@type',
+                                                    'source': null,
                                                     'type': 'string',
                                                     'title': 'Identity type',
                                                     'description': 'Type of identity.',
                                                 },
                                                 'name': {
                                                     '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/location/properties/name',
+                                                    'source': null,
                                                     'type': 'string',
                                                     'title': 'Name',
                                                     'description': 'Name.',
@@ -691,6 +705,7 @@ const orderConfirmationSchema = {
                                 },
                                 'processProduction': {
                                     '$id': '#/properties/data/properties/order/properties/orderLine/properties/processProduction',
+                                    'source': null,
                                     'type': 'object',
                                     'title': 'Process Production',
                                     'description': 'Process Production.',
@@ -698,24 +713,28 @@ const orderConfirmationSchema = {
                                     'properties': {
                                         '@type': {
                                             '$id': '#/properties/data/properties/order/properties/orderLine/properties/processProduction/properties/@type',
+                                            'source': null,
                                             'type': 'string',
                                             'title': 'Identity type',
                                             'description': 'Type of identity.',
                                         },
                                         'production': {
                                             '$id': '#/properties/data/properties/order/properties/orderLine/properties/processProduction/properties/production',
+                                            'source': null,
                                             'type': 'string',
                                             'title': 'Production time',
                                             'description': 'Production time.',
                                         },
                                         'carbonDioxide': {
                                             '$id': '#/properties/data/properties/order/properties/orderLine/properties/processProduction/properties/carbonDioxide',
+                                            'source': null,
                                             'type': 'string',
                                             'title': 'Carbon dioxide level',
                                             'description': 'Carbon dioxide level.',
                                         },
                                         'location': {
                                             '$id': '#/properties/data/properties/order/properties/orderLine/properties/processProduction/properties/location',
+                                            'source': null,
                                             'type': 'object',
                                             'title': 'Location',
                                             'description': 'Location.',
@@ -723,12 +742,14 @@ const orderConfirmationSchema = {
                                             'properties': {
                                                 '@type': {
                                                     '$id': '#/properties/data/properties/order/properties/orderLine/properties/processProduction/properties/location/properties/@type',
+                                                    'source': null,
                                                     'type': 'string',
                                                     'title': 'Identity type',
                                                     'description': 'Type of identity.',
                                                 },
                                                 'name': {
                                                     '$id': '#/properties/data/properties/order/properties/orderLine/properties/processProduction/properties/location/properties/name',
+                                                    'source': null,
                                                     'type': 'string',
                                                     'title': 'Name',
                                                     'description': 'Name.',
@@ -739,6 +760,7 @@ const orderConfirmationSchema = {
                                 },
                                 'processDelivery': {
                                     '$id': '#/properties/data/properties/order/properties/orderLine/properties/processDelivery',
+                                    'source': null,
                                     'type': 'object',
                                     'title': 'Process Delivery',
                                     'description': 'Process Delivery.',
@@ -746,30 +768,35 @@ const orderConfirmationSchema = {
                                     'properties': {
                                         '@type': {
                                             '$id': '#/properties/data/properties/order/properties/orderLine/properties/processDelivery/properties/@type',
+                                            'source': null,
                                             'type': 'string',
                                             'title': 'Identity type',
                                             'description': 'Type of identity.',
                                         },
                                         'carbonDioxide': {
                                             '$id': '#/properties/data/properties/order/properties/orderLine/properties/processDelivery/properties/carbonDioxide',
+                                            'source': null,
                                             'type': 'string',
                                             'title': 'Carbon dioxide level',
                                             'description': 'Carbon dioxide level.',
                                         },
                                         'deliveryPlanned': {
                                             '$id': '#/properties/data/properties/order/properties/orderLine/properties/processDelivery/properties/deliveryPlanned',
+                                            'source': null,
                                             'type': 'string',
                                             'title': 'Planned delivery time',
                                             'description': 'Planned delivery time.',
                                         },
                                         'deliveryActual': {
                                             '$id': '#/properties/data/properties/order/properties/orderLine/properties/processDelivery/properties/deliveryActual',
+                                            'source': null,
                                             'type': 'string',
                                             'title': 'Actual delivery time',
                                             'description': 'Actual delivery time.',
                                         },
                                         'deliveryRequired': {
                                             '$id': '#/properties/data/properties/order/properties/orderLine/properties/processDelivery/properties/deliveryRequired',
+                                            'source': null,
                                             'type': 'string',
                                             'title': 'Required delivery time',
                                             'description': 'Required delivery time initiated typically by the orderer.',
@@ -778,6 +805,7 @@ const orderConfirmationSchema = {
                                 },
                                 'processInstallation': {
                                     '$id': '#/properties/data/properties/order/properties/orderLine/properties/processInstallation',
+                                    'source': null,
                                     'type': 'object',
                                     'title': 'Process Installation',
                                     'description': 'Process Installation.',
@@ -785,18 +813,21 @@ const orderConfirmationSchema = {
                                     'properties': {
                                         '@type': {
                                             '$id': '#/properties/data/properties/order/properties/orderLine/properties/processInstallation/properties/@type',
+                                            'source': null,
                                             'type': 'string',
                                             'title': 'Identity type',
                                             'description': 'Type of identity.',
                                         },
                                         'installationPlanned': {
                                             '$id': '#/properties/data/properties/order/properties/orderLine/properties/processInstallation/properties/installationPlanned',
+                                            'source': null,
                                             'type': 'string',
                                             'title': 'Planned installation time',
                                             'description': 'Planned installation time.',
                                         },
                                         'installationActual': {
                                             '$id': '#/properties/data/properties/order/properties/orderLine/properties/processInstallation/properties/installationActual',
+                                            'source': null,
                                             'type': 'string',
                                             'title': 'Installation Actual',
                                             'description': 'Installation Actual.',
@@ -805,6 +836,7 @@ const orderConfirmationSchema = {
                                 },
                                 'processLoading': {
                                     '$id': '#/properties/data/properties/order/properties/orderLine/properties/processLoading',
+                                    'source': null,
                                     'type': 'object',
                                     'title': 'Process Loading',
                                     'description': 'Process Loading.',
@@ -812,18 +844,21 @@ const orderConfirmationSchema = {
                                     'properties': {
                                         '@type': {
                                             '$id': '#/properties/data/properties/order/properties/orderLine/properties/processLoading/properties/@type',
+                                            'source': null,
                                             'type': 'string',
                                             'title': 'Identity type',
                                             'description': 'Type of identity.',
                                         },
                                         'idLocal': {
                                             '$id': '#/properties/data/properties/order/properties/orderLine/properties/processLoading/properties/idLocal',
+                                            'source': null,
                                             'type': 'string',
                                             'title': 'Local identifier',
                                             'description': 'Locally given identifier.',
                                         },
                                         'status': {
                                             '$id': '#/properties/data/properties/order/properties/orderLine/properties/processLoading/properties/status',
+                                            'source': null,
                                             'type': 'object',
                                             'title': 'Life-cycle status',
                                             'description': 'Life-cycle status.',
@@ -831,18 +866,21 @@ const orderConfirmationSchema = {
                                             'properties': {
                                                 '@type': {
                                                     '$id': '#/properties/data/properties/order/properties/orderLine/properties/processLoading/properties/status/properties/@type',
+                                                    'source': null,
                                                     'type': 'string',
                                                     'title': 'Identity type',
                                                     'description': 'Type of identity.',
                                                 },
                                                 'name': {
                                                     '$id': '#/properties/data/properties/order/properties/orderLine/properties/processLoading/properties/status/properties/name',
+                                                    'source': null,
                                                     'type': 'string',
                                                     'title': 'Name',
                                                     'description': 'Name.',
                                                 },
                                                 'statusCode': {
                                                     '$id': '#/properties/data/properties/order/properties/orderLine/properties/processLoading/properties/status/properties/statusCode',
+                                                    'source': null,
                                                     'type': 'integer',
                                                     'title': 'Life-cycle status code',
                                                     'description': 'Life-cycle status code.',
