@@ -10,7 +10,10 @@
     "headers": {
       "CALS-API-KEY": "${apikey}"
     },
-    "instance": "${instanceId}",
+    "eventId": "${eventId}",
+    "entity": "${entity}",
+    "instanceId": "${instanceId}",
+    "isTest": "${isTest}",
     "path": "${targetObject.order.idLocal}"
   },
   "dataObjects": [

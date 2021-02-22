@@ -967,7 +967,6 @@ const response = async (config, res) => {
     try {
         // Fetch data from cache if query is done by vendor id (only for vendor connector).
         if (Object.hasOwnProperty.call(config.parameters.targetObject, 'vendor')) {
-            winston.log('info', 'Fetch from cache ' + config.productCode);
             const result = cache.getDoc('messages', config.productCode) || {};
             response = result[res];
         } else {
@@ -1041,6 +1040,7 @@ const errorResponse = async (req, res, err) => {
         error: {
             status: err.httpStatusCode || 500,
             message: message || 'Internal Server Error.',
+            translator_response: err.translator_response || undefined,
         },
     };
 
@@ -1070,10 +1070,22 @@ const controller = async (req, res) => {
 
         /** Request body validation */
         const validation = validator.validate(req.body, {
+            eventId: {
+                required: true,
+            },
+            entity: {
+                required: true,
+            },
+            method: {
+                required: true,
+            },
             instanceId: {
                 required: true,
             },
             entityId: {
+                required: true,
+            },
+            isTest: {
                 required: true,
             },
         });
@@ -1112,6 +1124,8 @@ const controller = async (req, res) => {
                 return res.status(401).send('Unauthorized');
             }
 
+            winston.log('info', 'Received trigger request from ' + (req.get('origin') || req.socket.remoteAddress));
+
             template = cache.getDoc('templates', config.template) || {};
             host = req.get('host').split(':')[0];
             config.connectorURL = (host === 'localhost' || net.isIP(host) ? 'http' : 'https') + '://' + req.get('host');
@@ -1123,19 +1137,19 @@ const controller = async (req, res) => {
 
         // 2. Get new data from CALS with parameters provided in the body.
         try {
-            // Parse instance and entity id from request body.
-            const instanceId = req.body.instanceId;
-            const idLocal = req.body.entityId;
             // Compose triggered local connector request.
             const triggeredReq = {
                 body: {
                     productCode,
                     'timestamp': moment().format(),
                     'parameters': {
-                        instanceId,
+                        eventId: req.body.eventId,
+                        entity: req.body.entity,
+                        instanceId: req.body.instanceId,
+                        isTest :req.body.isTest,
                         'targetObject': {
                             'order': {
-                                idLocal,
+                                idLocal: req.body.entityId,
                             },
                         },
                     },
@@ -1170,7 +1184,7 @@ const controller = async (req, res) => {
 
             template = await connector.resolvePlugins(template);
             template.config = config;
-            winston.log('info', '2. Send data to vendor data product: ' + vendorProductCode);
+            winston.log('info', '2. Send data to vendor data product ' + vendorProductCode);
             await template.plugins.find(p => p.name === 'broker').stream(template, result.output);
         } catch (err) {
             winston.log('error', err.message);
@@ -1223,25 +1237,34 @@ const template = async (config, template) => {
     try {
         if (Object.hasOwnProperty.call(template.parameters.targetObject, 'vendor')) {
             /** Vendor connector */
-            winston.log('info', 'Connector consumes cache by vendorId.');
             template.authConfig.path = [template.parameters.targetObject.vendor.idLocal];
         } else if (Object.hasOwnProperty.call(template.parameters.targetObject, 'order')) {
             /** CALS connector */
-            winston.log('info', 'Connector consumes CALS REST API by orderId.');
+            const resource = template.authConfig.entity + 's';
+            winston.log('info', 'Connector consumes CALS REST API ' + resource + ' by entityId ' + template.authConfig.path);
             template.protocol = 'rest';
-            template.authConfig.path = '/instances/' + template.authConfig.instance + '/purchaseorders/' + template.authConfig.path;
+            template.authConfig.headers = {
+                ...template.authConfig.headers,
+                'x-event-id': template.authConfig.eventId,
+                'x-is-pot': true,
+                'x-is-test': template.authConfig.isTest === 'true',
+            };
+            template.authConfig.path = '/instances/' + template.authConfig.instanceId + '/' + resource + '/' + template.authConfig.path;
         }
 
-        // TODO: Come up with a better way to detect that the received data is meant to be produced and not consumed.
-        if (Object.hasOwnProperty.call(template.parameters.targetObject, '@type')) {
+        if (Object.hasOwnProperty.call(template.parameters.targetObject, 'sender')) {
             /** Vendor connector */
-            winston.log('info', 'Store received data to cache by vendorId: ' + template.parameters.targetObject.vendor.idLocal);
+            winston.log('info', 'Received produced data from '
+                + template.parameters.targetObject.sender.productCode
+                + ' with vendorId ' + template.parameters.targetObject.vendor.idLocal,
+            );
             const id = template.parameters.targetObject.vendor.idLocal;
             const result = cache.getDoc('messages', template.productCode) || {};
             result[id] = template.parameters.targetObject;
             cache.setDoc('messages', template.productCode, result);
             // Stream data to external system.
             try {
+                winston.log('info', '3. Send data to URL ' + config.static.url);
                 await template.plugins.find(p => p.name === 'streamer')
                     .stream({...template, config}, {data: {order: result[id]}});
             } catch (err) {
