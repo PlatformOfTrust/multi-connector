@@ -138,7 +138,7 @@ const stream = async (template, data) => {
                 };
 
                 // Send broker request .
-                winston.log('info', 'Broker plugin: Send broker request to: ' + url);
+                winston.log('info', 'Broker plugin: Send broker request to ' + url);
                 await request('POST', url, headers, body);
             }
         }

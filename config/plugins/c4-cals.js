@@ -1124,7 +1124,7 @@ const controller = async (req, res) => {
                 return res.status(401).send('Unauthorized');
             }
 
-            winston.log('info', 'Received trigger request from ' + (req.get('origin') || req.socket.remoteAddress));
+            winston.log('info', 'Received trigger request from ' + (req.get('origin') || req.headers['x-forwarded-for'] || req.socket.remoteAddress));
 
             template = cache.getDoc('templates', config.template) || {};
             host = req.get('host').split(':')[0];
@@ -1159,7 +1159,8 @@ const controller = async (req, res) => {
                     return config.connectorURL;
                 },
             };
-            winston.log('info', '1. Query self with REST path /instances/${instanceId}/purchaseorders/${purchaseOrderId}');
+            const resource = (req.body.entity + 's').toLowerCase();
+            winston.log('info', '1. Query self with REST path /instances/${instanceId}/' + resource + '/${entityId}');
             result = await connector.getData(triggeredReq);
         } catch (err) {
             winston.log('error', err.message);
@@ -1184,7 +1185,7 @@ const controller = async (req, res) => {
 
             template = await connector.resolvePlugins(template);
             template.config = config;
-            winston.log('info', '2. Send data to vendor data product ' + vendorProductCode);
+            winston.log('info', '2. Send received data to vendor data product ' + vendorProductCode);
             await template.plugins.find(p => p.name === 'broker').stream(template, result.output);
         } catch (err) {
             winston.log('error', err.message);
@@ -1240,7 +1241,8 @@ const template = async (config, template) => {
             template.authConfig.path = [template.parameters.targetObject.vendor.idLocal];
         } else if (Object.hasOwnProperty.call(template.parameters.targetObject, 'order')) {
             /** CALS connector */
-            const resource = template.authConfig.entity + 's';
+            const resource = (template.authConfig.entity + 's').toLowerCase();
+
             winston.log('info', 'Connector consumes CALS REST API ' + resource + ' by entityId ' + template.authConfig.path);
             template.protocol = 'rest';
             template.authConfig.headers = {
@@ -1249,6 +1251,9 @@ const template = async (config, template) => {
                 'x-is-pot': true,
                 'x-is-test': template.authConfig.isTest === 'true',
             };
+            winston.log('info', 'Include headers from trigger request' + ', '
+                + 'x-event-id: ' + template.authConfig.headers['x-event-id'] + ', '
+                + 'x-is-test: ' + template.authConfig.headers['x-is-test']);
             template.authConfig.path = '/instances/' + template.authConfig.instanceId + '/' + resource + '/' + template.authConfig.path;
         }
 
