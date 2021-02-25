@@ -1085,9 +1085,11 @@ const controller = async (req, res) => {
             entityId: {
                 required: true,
             },
+            /*
             isTest: {
                 required: true,
             },
+            */
         });
 
         if (Object.hasOwnProperty.call(validation, 'error')) {
