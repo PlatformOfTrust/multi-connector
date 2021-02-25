@@ -1146,7 +1146,7 @@ const controller = async (req, res) => {
                         eventId: req.body.eventId,
                         entity: req.body.entity,
                         instanceId: req.body.instanceId,
-                        isTest :req.body.isTest,
+                        isTest: req.body.isTest,
                         'targetObject': {
                             'order': {
                                 idLocal: req.body.entityId,
@@ -1183,10 +1183,18 @@ const controller = async (req, res) => {
             /** Receiver data product */
             config.static.productCode = vendorProductCode;
 
-            template = await connector.resolvePlugins(template);
-            template.config = config;
-            winston.log('info', '2. Send received data to vendor data product ' + vendorProductCode);
-            await template.plugins.find(p => p.name === 'broker').stream(template, result.output);
+            if (req.body.isTest) {
+                /** Test message response */
+                res.setHeader('x-event-id', req.body.eventId);
+                res.setHeader('x-is-pot', true);
+                res.setHeader('x-is-test', req.body.isTest);
+                winston.log('info', '2. Skip sending to ' + vendorProductCode + ', isTest=' + req.body.isTest);
+            } else {
+                template = await connector.resolvePlugins(template);
+                template.config = config;
+                winston.log('info', '2. Send received data to vendor data product ' + vendorProductCode);
+                await template.plugins.find(p => p.name === 'broker').stream(template, result.output);
+            }
         } catch (err) {
             winston.log('error', err.message);
             return errorResponse(req, res, err);
