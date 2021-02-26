@@ -17,6 +17,8 @@ const _ = require('lodash');
  * C4 CALS multi-purpose plugin for CALS and vendor connectors.
  */
 
+const PLUGIN_NAME = 'c4-cals';
+
 // Source mapping.
 const orderInformationSchema = {
     '$schema': 'http://json-schema.org/draft-06/schema#',
@@ -1106,7 +1108,7 @@ const controller = async (req, res) => {
         let productCode;
         try {
             const parts = req.originalUrl.split('/');
-            productCode = parts.splice(parts.indexOf('c4-cals') + 1)[0];
+            productCode = parts.splice(parts.indexOf(PLUGIN_NAME) + 1)[0];
             config = cache.getDoc('configs', productCode) || {};
 
             if (_.isEmpty(config) || !Object.hasOwnProperty.call(config, 'static')) {
@@ -1294,7 +1296,7 @@ const template = async (config, template) => {
 };
 
 module.exports = {
-    name: 'c4-cals',
+    name: PLUGIN_NAME,
     endpoints,
     template,
     output,
