@@ -804,6 +804,8 @@ const controller = async (req, res) => {
             return errorResponse(req, res, err);
         }
 
+        // TODO: Check result status for 404 or 500 etc.
+
         // 3. Parse vendor productCode from received order and send broker request to produce order.
         let vendorProductCode;
         try {
@@ -903,21 +905,50 @@ const template = async (config, template) => {
         }
 
         if (Object.hasOwnProperty.call(template.parameters.targetObject, 'sender')) {
-            /** Vendor connector */
+            /** CALS connector */
             winston.log('info', 'Received produced data from '
                 + template.parameters.targetObject.sender.productCode
-                + ' with vendorId ' + template.parameters.targetObject.vendor.idLocal,
-            );
-            const id = template.parameters.targetObject.vendor.idLocal;
+                + ' with orderId ' + template.parameters.targetObject.idLocal);
+
+            const id = template.parameters.targetObject.idLocal;
             const result = cache.getDoc('messages', template.productCode) || {};
             result[id] = template.parameters.targetObject;
             cache.setDoc('messages', template.productCode, result);
+
+            template.authConfig.path = id;
+
             // Stream data to external system.
             try {
+                // Transform
+                const data = {};
+
+                // 1. Parse PurchaseOrderId - template.parameters.targetObject.idLocal
+                data.PurchaseOrderId = template.parameters.targetObject.idLocal;
+
+                // 2. Parse PurchaseOrderItems - template.parameters.targetObject.orderLine
+                data.PurchaseOrderItems = template.parameters.targetObject.orderLine.map(input => {
+                    const output = {};
+                    output.PurchaseOrderItemId = input.idLocal;
+                    output.ConfirmedDeliveryDate = (input.deliveryRequired || 'T').split('T')[0];
+                    output.ConfirmedDeliveryTime = (input.deliveryRequired || 'T').split('T')[1].substring(0, 4);
+                    return output;
+                });
+
+                config.static.url = 'https://c4-prod-apim.azure-api.net/pot/instances/' + config.static.instanceId + '/confirmpurchaseorder';
+                config.static.headers = {
+                    'CALS-API-KEY': config.static.apikey,
+                    'x-is-test': template.authConfig.isTest === 'true',
+                };
+
+                winston.log('info', 'Include headers from received broker request' + ', '
+                    + 'x-is-test: ' + config.static.headers['x-is-test']);
                 winston.log('info', '3. Send data to URL ' + config.static.url);
+
                 await template.plugins.find(p => p.name === 'streamer')
-                    .stream({...template, config}, {data: {order: result[id]}});
+                    .stream({...template, config}, {data: {order: data}});
+
             } catch (err) {
+                winston.log('info', err.message);
                 return Promise.reject(err);
             }
         }
