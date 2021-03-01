@@ -49,12 +49,13 @@ const stream = async (template, data) => {
         // Extract stream endpoint url and output definitions from config.
         const config = template.config;
         const url = config.static.url;
+        const headers = config.static.headers || {};
         if (!url) return data;
         const objectKey = template.output.object || 'data';
         const arrayKey = template.output.array;
         // Send data to external system.
         for (const d of (Array.isArray(data) ? data : [data])) {
-            if (url) result.push(await request('POST', url, {}, d[objectKey][arrayKey]));
+            if (url) result.push(await request('POST', url, headers, d[objectKey][arrayKey]));
         }
     } catch (err) {
         winston.log('error', err.message);
