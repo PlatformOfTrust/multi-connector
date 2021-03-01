@@ -50,6 +50,14 @@ function request (method, url, headers, body) {
  * @return {Object}
  */
 const stream = async (template, data) => {
+    let parameters;
+    try {
+        // Include parameters defined in config.
+        parameters = template.config.plugins.broker.parameters;
+    } catch (err) {
+        parameters = {};
+    }
+
     try {
         let env = 'sandbox';
         const config = template.config;
@@ -79,6 +87,7 @@ const stream = async (template, data) => {
                     productCode,
                     timestamp: moment().format(),
                     parameters: {
+                        ...parameters,
                         targetObject: data[i][objectKey][arrayKey],
                     },
                 };
