@@ -54,6 +54,7 @@ const transform = function (source, schema) {
                     break;
                 case 'string':
                 case 'boolean':
+                case 'integer':
                 case 'number':
                     if (Object.hasOwnProperty.call(schema, 'source')) {
                         if (schema.source) value = schema.source === '' ? source : _.get(source, schema.source, schema.default);
