@@ -1,0 +1,18 @@
+{
+  "template": "senaatti",
+  "static": {
+    "url": "https://smartwatcher.northeurope.cloudapp.azure.com:4443/",
+    "email" : "",
+    "password" : ""
+
+  },
+  "dynamic": {
+    "authConfig.path": ["ids","startDate","endDate","dataTypes"]
+  },
+  "request": {
+      "ids": [
+      "<id>"
+    ],
+    "dataTypes":["<type>"]
+  }
+}

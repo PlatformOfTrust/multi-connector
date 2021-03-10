@@ -1,0 +1,64 @@
+{
+  "plugins": [
+ "senaatti"
+
+    ],
+  "protocol": "rest",
+  "authConfig": {
+      "url": "${url}",
+      "authPath":"api/auth",
+      "authContentType": "application/json",
+      "email" : "${email}",
+      "password" : "${password}",
+      "headers": {
+        "Authorization": "${token}"
+      },
+    "path":  "api/v3/monitor/room/${id}/${dataTypes}?startDate=${startDate}&endDate=${endDate}"
+   
+  },
+  "dataObjects": [
+  ""
+],
+"dataPropertyMappings": {
+  "${type}": "value",
+  "MeasureAirTemperatureCelsiusDegree": "temperature",
+  "MeasureAirHumidityPercentage": "humidity"
+},
+"generalConfig": {
+  "query": {
+    "start": "${startDate}",
+    "end": "${endDate}"
+    
+  },
+    "sourceName": {
+    "dataObjectProperty": "name"
+  },
+  "hardwareId": {
+          "pathIndex":4
+  },
+  "measurement": {
+    "pathIndex":5
+},
+  "timestamp": {
+    "dataObjectProperty": "timestamp"
+  }
+},
+"input": {
+  "required": [
+   
+    "parameters.startDate",
+    "parameters.endDate",
+    "parameters.dataTypes"
+  ]
+},
+ 
+  "output": {
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/",
+    "timestamp": "timestamp",
+    "array": "rooms",
+    "object": "data",
+    "value": "value",
+    "data": "measurements",
+    "id": "id"
+  }
+}
