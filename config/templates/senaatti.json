@@ -13,21 +13,19 @@
       "headers": {
         "Authorization": "${token}"
       },
-    "path":  "api/v3/monitor/room/${id}/${dataTypes}?startDate=${startDate}&endDate=${endDate}"
+    "path":  "api/v3/monitor/room/${id}/${type}?startDate=${startDate}&endDate=${endDate}"
    
   },
   "dataObjects": [
-  ""
+ 
 ],
 "dataPropertyMappings": {
-  "${type}": "value",
+  "type" : "value",
   "MeasureAirTemperatureCelsiusDegree": "temperature",
   "MeasureAirHumidityPercentage": "humidity"
 },
 "generalConfig": {
   "query": {
-    "start": "${startDate}",
-    "end": "${endDate}"
     
   },
     "sourceName": {
@@ -47,8 +45,8 @@
   "required": [
    
     "parameters.startDate",
-    "parameters.endDate",
-    "parameters.dataTypes"
+    "parameters.endDate"
+    
   ]
 },
  

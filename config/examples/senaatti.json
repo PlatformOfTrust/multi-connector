@@ -7,12 +7,14 @@
 
   },
   "dynamic": {
-    "authConfig.path": ["ids","startDate","endDate","dataTypes"]
+    "authConfig.path": ["ids","startDate","endDate"]
   },
   "request": {
       "ids": [
-      "<id>"
-    ],
-    "dataTypes":["<type>"]
+        {
+        "id" : "<id>","dataTypes":"<dataType>"
+        }
+    ]
+    
   }
 }

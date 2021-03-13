@@ -152,7 +152,7 @@ const handleData = async (config, path, index, data) => {
             // Execute data plugin function.
             for (let i = 0; i < config.plugins.length; i++) {
                 if (config.plugins[i].data) {
-                    measurement.data = await config.plugins[i].data(config, measurement.data);
+                    measurement.data = await config.plugins[i].data(config, measurement.data, path);
                 }
             }
 

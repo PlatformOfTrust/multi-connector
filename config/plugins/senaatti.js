@@ -1,5 +1,7 @@
 'use strict';
-const { response } = require('express');
+const { json } = require('body-parser');
+// const { response } = require('express');
+const { each, forEach } = require('lodash');
 /**
  * Basic authentication plugin.
  */
@@ -13,29 +15,44 @@ const rp = require('request-promise');
  * @return {Object}
  */
 const request = async (config, options) => {
-    var token;
-    const option = {
+        var token;
+        const option = {
         method: 'POST',
         url: config.authConfig.url + config.authConfig.authPath,
         headers: {
             'Content-Type': 'application/json'
         },
         body: {
+            
             email: config.authConfig.email,
             password: config.authConfig.password,
            
         },
         json: true,
-    }; 
-    return rp(option).then(function (response){
-         token = response.token;
+        
+    };
+       
+        return rp(option).then(function (res){
+        const pathType = (options.url.split("?")[0]).split("/")[8];
+        const newpathType = config.dataPropertyMappings[pathType]!= undefined ? config.dataPropertyMappings[pathType]  : pathType
+        options.url=options.url.replace(pathType, newpathType);
+        token = res.token;
          options.headers = {
             Authorization: 'Bearer ' + token,
         };
-         return options;
+        return options;
+     
     });
 
 };
+
+
+const data = async (config,data, path ) => {
+    var  dataType = (path.split("?")[0]).split("/")[5];
+    const tmp = {}
+    tmp[dataType] = data.type; 
+    return tmp;
+}
 
 /**
  * Expose plugin methods.
@@ -43,5 +60,5 @@ const request = async (config, options) => {
 module.exports = {
     name: 'senaatti',
     request,
-    
+    data,
  };

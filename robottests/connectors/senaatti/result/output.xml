@@ -1,0 +1,912 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 3.2.2 (Python 3.9.0 on darwin)" generated="20210313 13:24:18.044" rpa="false">
+<suite id="s1" name="Connector Tests" source="/Volumes/ext_drive/smarthala/04_Eeneman/src/multi-connector/robottests/connectors/senaatti/connector_tests.robot">
+<test id="s1-t1" name="fetch, 200">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20210313 13:24:19.144" level="INFO">${body} = {'productCode': 'senaatti', 'parameters': {'ids': [{'id': '30676c91-7d3f-46d9-81e3-0e91e9341ad3', 'type': 'MeasureAirHumidityPercentage'}, {'id': '63048599-5895-43d5-865a-4de533d24900', 'type': 'Measu...</msg>
+<status status="PASS" starttime="20210313 13:24:19.142" endtime="20210313 13:24:19.144"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20210313 13:24:19.144" level="INFO">${now} = 2021-03-13T11:24:19+00:00</msg>
+<status status="PASS" starttime="20210313 13:24:19.144" endtime="20210313 13:24:19.144"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20210313 13:24:19.145" endtime="20210313 13:24:19.145"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20210313 13:24:19.146" endtime="20210313 13:24:19.147"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20210313 13:24:19.150" level="INFO">${json_string} = {"productCode": "senaatti", "parameters": {"ids": [{"id": "30676c91-7d3f-46d9-81e3-0e91e9341ad3", "type": "MeasureAirHumidityPercentage"}, {"id": "63048599-5895-43d5-865a-4de533d24900", "type": "Measu...</msg>
+<status status="PASS" starttime="20210313 13:24:19.148" endtime="20210313 13:24:19.150"></status>
+</kw>
+<msg timestamp="20210313 13:24:19.151" level="INFO">${body} = {'productCode': 'senaatti', 'parameters': {'ids': [{'id': '30676c91-7d3f-46d9-81e3-0e91e9341ad3', 'type': 'MeasureAirHumidityPercentage'}, {'id': '63048599-5895-43d5-865a-4de533d24900', 'type': 'Measu...</msg>
+<status status="PASS" starttime="20210313 13:24:19.141" endtime="20210313 13:24:19.151"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20210313 13:24:19.153" level="INFO">${signature} = ApMx80x3EuZE9kmD5y6BigVqFYv+U3zN7F45SWckF9k=</msg>
+<status status="PASS" starttime="20210313 13:24:19.152" endtime="20210313 13:24:19.153"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20210313 13:24:19.153" endtime="20210313 13:24:19.154"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20210313 13:24:19.154" endtime="20210313 13:24:21.864"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20210313 13:24:21.867" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "@context": {
+            "type": "string",
+            "default": "https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/"
+        },
+        "data": {
+            "type": "object",
+            "properties": {
+                "rooms": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "measurements": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "@type": {
+                                            "type": "string"
+                                        },
+                                        "timestamp": {
+                                            "type": "string"
+                                        },
+                                        "value": {
+                                            "type": "number"
+                                        }
+                                    },
+                                    "required": [
+                                        "@type",
+                                        "timestamp",
+                                        "value"
+                                    ]
+                                }
+                            }
+                        },
+                        "required": [
+                            "id",
+                            "measurements"
+                        ]
+                    },
+                    "default": [
+                        {
+                            "id": "30676c91-7d3f-46d9-81e3-0e91e9341ad3",
+                            "measurements": [
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:19.736Z",
+                                    "value": 29
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:19.737Z",
+                                    "value": 29
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:19.737Z",
+                                    "value": 29
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:19.737Z",
+                                    "value": 29
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:19.737Z",
+                                    "value": 28.5
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:19.738Z",
+                                    "value": 29.5
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:19.738Z",
+                                    "value": 29.5
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:19.738Z",
+                                    "value": 29.5
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:19.738Z",
+                                    "value": 29.5
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:19.738Z",
+                                    "value": 29.5
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:19.738Z",
+                                    "value": 29
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:19.738Z",
+                                    "value": 29.5
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:19.738Z",
+                                    "value": 29
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:19.738Z",
+                                    "value": 29
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:19.738Z",
+                                    "value": 29
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:19.738Z",
+                                    "value": 29.5
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:19.739Z",
+                                    "value": 29.5
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:19.739Z",
+                                    "value": 29.5
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:19.739Z",
+                                    "value": 29.5
+                                }
+                            ]
+                        },
+                        {
+                            "id": "63048599-5895-43d5-865a-4de533d24900",
+                            "measurements": [
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.120Z",
+                                    "value": 26
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.120Z",
+                                    "value": 26
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.120Z",
+                                    "value": 26
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.120Z",
+                                    "value": 26
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.120Z",
+                                    "value": 26
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.120Z",
+                                    "value": 26
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.120Z",
+                                    "value": 26
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.120Z",
+                                    "value": 26
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.121Z",
+                                    "value": 25.5
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.121Z",
+                                    "value": 25.5
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.121Z",
+                                    "value": 25.5
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.121Z",
+                                    "value": 25.5
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.121Z",
+                                    "value": 26
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.121Z",
+                                    "value": 26
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.121Z",
+                                    "value": 26
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.121Z",
+                                    "value": 26
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.121Z",
+                                    "value": 26
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.121Z",
+                                    "value": 26
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.121Z",
+                                    "value": 26
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.121Z",
+                                    "value": 26
+                                }
+                            ]
+                        },
+                        {
+                            "id": "9cc364b0-acce-494a-9343-06ddc7fe0601",
+                            "measurements": [
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.520Z",
+                                    "value": 25
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.520Z",
+                                    "value": 25
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.521Z",
+                                    "value": 25
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.521Z",
+                                    "value": 25
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.521Z",
+                                    "value": 25
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.521Z",
+                                    "value": 25
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.521Z",
+                                    "value": 25
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.521Z",
+                                    "value": 25
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.521Z",
+                                    "value": 25
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.521Z",
+                                    "value": 25
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.521Z",
+                                    "value": 25
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.521Z",
+                                    "value": 25
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.521Z",
+                                    "value": 25
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.521Z",
+                                    "value": 25
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.521Z",
+                                    "value": 25
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.521Z",
+                                    "value": 25
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.521Z",
+                                    "value": 25
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.521Z",
+                                    "value": 25
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.521Z",
+                                    "value": 25
+                                },
+                                {
+                                    "@type": "MeasureAirHumidityPercentage",
+                                    "timestamp": "2021-03-13T11:24:20.521Z",
+                                    "value": 25
+                                }
+                            ]
+                        },
+                        {
+                            "id": "30676c91-7d3f-46d9-81e3-0e91e9341ad3",
+                            "measurements": [
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:20.898Z",
+                                    "value": 21.15
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:20.898Z",
+                                    "value": 21.14
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:20.898Z",
+                                    "value": 21.13
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:20.898Z",
+                                    "value": 21.11
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:20.898Z",
+                                    "value": 21.06
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:20.898Z",
+                                    "value": 21.05
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:20.898Z",
+                                    "value": 21.04
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:20.898Z",
+                                    "value": 21.02
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:20.898Z",
+                                    "value": 21.02
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:20.899Z",
+                                    "value": 21.28
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:20.899Z",
+                                    "value": 21.28
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:20.899Z",
+                                    "value": 21.26
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:20.899Z",
+                                    "value": 21.26
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:20.899Z",
+                                    "value": 21.25
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:20.899Z",
+                                    "value": 21.24
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:20.899Z",
+                                    "value": 21.22
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:20.899Z",
+                                    "value": 21.21
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:20.899Z",
+                                    "value": 21.19
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:20.899Z",
+                                    "value": 21.18
+                                }
+                            ]
+                        },
+                        {
+                            "id": "63048599-5895-43d5-865a-4de533d24900",
+                            "measurements": [
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.264Z",
+                                    "value": 20.98
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.265Z",
+                                    "value": 20.98
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.265Z",
+                                    "value": 20.97
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.265Z",
+                                    "value": 20.97
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.265Z",
+                                    "value": 20.99
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.265Z",
+                                    "value": 20.99
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.265Z",
+                                    "value": 20.99
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.265Z",
+                                    "value": 20.99
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.265Z",
+                                    "value": 20.99
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.265Z",
+                                    "value": 20.99
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.265Z",
+                                    "value": 20.99
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.265Z",
+                                    "value": 20.99
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.265Z",
+                                    "value": 20.98
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.265Z",
+                                    "value": 20.98
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.265Z",
+                                    "value": 20.98
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.265Z",
+                                    "value": 20.97
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.265Z",
+                                    "value": 20.98
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.266Z",
+                                    "value": 20.98
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.266Z",
+                                    "value": 20.97
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.266Z",
+                                    "value": 20.97
+                                }
+                            ]
+                        },
+                        {
+                            "id": "9cc364b0-acce-494a-9343-06ddc7fe0601",
+                            "measurements": [
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.649Z",
+                                    "value": 20.6
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.649Z",
+                                    "value": 20.59
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.649Z",
+                                    "value": 20.6
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.649Z",
+                                    "value": 20.6
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.650Z",
+                                    "value": 20.61
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.650Z",
+                                    "value": 20.61
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.650Z",
+                                    "value": 20.61
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.650Z",
+                                    "value": 20.61
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.650Z",
+                                    "value": 20.62
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.650Z",
+                                    "value": 20.62
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.650Z",
+                                    "value": 20.62
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.650Z",
+                                    "value": 20.63
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.650Z",
+                                    "value": 20.63
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.650Z",
+                                    "value": 20.63
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.650Z",
+                                    "value": 20.64
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.650Z",
+                                    "value": 20.64
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.650Z",
+                                    "value": 20.65
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.650Z",
+                                    "value": 20.64
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.650Z",
+                                    "value": 20.62
+                                },
+                                {
+                                    "@type": "MeasureAirTemperatureCelsiusDegree",
+                                    "timestamp": "2021-03-13T11:24:21.650Z",
+                                    "value": 20.62
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "rooms"
+            ]
+        },
+        "signature": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "default": "RsaSignature2018"
+                },
+                "created": {
+                    "type": "string",
+                    "default": "2021-03-13T13:24:21+02:00"
+                },
+                "creator": {
+                    "type": "string",
+                    "default": "http://localhost:8080/translator/v1/public.key"
+                },
+                "signatureValue": {
+                    "type": "string",
+                    "default": "HaoAisrNQONqe9yPMFJJUCmxWG/4DbhQWbeeM1F2MuuDL0rGFXhW4aZ0cdv9Ix7mk823ExC+qZkILnYhH/Afp1lDEtiyQz95mB5VtUnIJyzFjHTTgCF7+AFwgerVGVS6MCN+bPn5foXOl0+/AdUrYGmz8x4AyUDtGHHJBxeXZsesrWcz6D3olxuY98kJ9C1LGVpF/f4wvNw1Van260CG6EkDtmcP1KcdDkCgOShyxZ40CNEXCme88rmR1zGgEvjh0xLWgypMriAgvH7c0S5/PJ0nTjt095za0b7klBxlGWLHOwYbNsfSetNeFSgo+b25f+CJdhyxoR4MJPLNu16AZnXYaOWmTm5PPmIULeFlHNBiuG1O+0O7MaVxr71L2IwS4BMzcaR21x7mH5H3iWmzycSkHfMdsVsjfuWFBVJyC4s6NWP95rx0+vo/Qy2qnc+t8TgeffrnbU/EpsCMGqStZVHuadg+64KGGFn0CVhw2SJlbQdYC7pLQ+Ik7t1rDC+ckpEXKovy+Bivo3FEte9f/C/T384w+S++VXEfM23h39c1nhWezy/vtWi+WzhiEPlIDmAznC3cLOgrupHTNs1vIvMwSCUZRMSo1ArnX/p5901Ir2Q+XQjHWuORg6KhhqMX09zzh93tNHEEq9NKxCuSko4CqB6RIluA+/JQyR4dfGI="
+                }
+            },
+            "required": [
+                "created",
+                "creator",
+                "signatureValue",
+                "type"
+            ]
+        }
+    },
+    "required": [
+        "@context",
+        "data",
+        "signature"
+    ]
+}</msg>
+<status status="PASS" starttime="20210313 13:24:21.864" endtime="20210313 13:24:21.944"></status>
+</kw>
+<status status="PASS" starttime="20210313 13:24:19.152" endtime="20210313 13:24:21.945"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>200</arg>
+</arguments>
+<status status="PASS" starttime="20210313 13:24:21.945" endtime="20210313 13:24:21.947"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body @context</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/</arg>
+</arguments>
+<status status="PASS" starttime="20210313 13:24:21.948" endtime="20210313 13:24:21.949"></status>
+</kw>
+<kw name="Object" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON object.*</doc>
+<arguments>
+<arg>response body data</arg>
+</arguments>
+<status status="PASS" starttime="20210313 13:24:21.950" endtime="20210313 13:24:21.960"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data rooms</arg>
+</arguments>
+<status status="PASS" starttime="20210313 13:24:21.960" endtime="20210313 13:24:21.969"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body data rooms 0 id</arg>
+</arguments>
+<status status="PASS" starttime="20210313 13:24:21.969" endtime="20210313 13:24:21.971"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data rooms 0 measurements</arg>
+</arguments>
+<status status="PASS" starttime="20210313 13:24:21.971" endtime="20210313 13:24:21.975"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body data rooms 0 measurements 0 @type</arg>
+</arguments>
+<status status="PASS" starttime="20210313 13:24:21.975" endtime="20210313 13:24:21.977"></status>
+</kw>
+<status status="PASS" starttime="20210313 13:24:19.140" endtime="20210313 13:24:21.978" critical="yes"></status>
+</test>
+<doc>Senaatti - REST</doc>
+<status status="PASS" starttime="20210313 13:24:18.048" endtime="20210313 13:24:21.980"></status>
+</suite>
+<statistics>
+<total>
+<stat pass="1" fail="0">Critical Tests</stat>
+<stat pass="1" fail="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat pass="1" fail="0" id="s1" name="Connector Tests">Connector Tests</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
