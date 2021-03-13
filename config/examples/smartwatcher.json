@@ -1,5 +1,5 @@
 {
-  "template": "senaatti",
+  "template": "smartwatcher",
   "static": {
     "url": "https://smartwatcher.northeurope.cloudapp.azure.com:4443/",
     "email" : "",

@@ -24,6 +24,7 @@ Following data sources are supported out of the box. Example configs can be foun
 - Rakennustieto API
 - Sähkönumerot.fi API
 - Schneider EcoStruxure Cloud
+- Senaatti Smartwatcher
 - Siemens Mindsphere
 - Siemens Navigator
 - Talotohtori API
