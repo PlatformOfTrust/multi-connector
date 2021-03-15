@@ -1,0 +1,62 @@
+{
+  "plugins": [
+ "smartwatcher"
+
+    ],
+  "protocol": "rest",
+  "authConfig": {
+      "url": "${url}",
+      "authPath":"api/auth",
+      "authContentType": "application/json",
+      "email" : "${email}",
+      "password" : "${password}",
+      "headers": {
+        "Authorization": "${token}"
+      },
+    "path":  "api/v3/monitor/room/${id}/${type}?startDate=${startDate}&endDate=${endDate}"
+   
+  },
+  "dataObjects": [
+ 
+],
+"dataPropertyMappings": {
+  "type" : "value",
+  "MeasureAirTemperatureCelsiusDegree": "temperature",
+  "MeasureAirHumidityPercentage": "humidity"
+},
+"generalConfig": {
+  "query": {
+    
+  },
+    "sourceName": {
+    "dataObjectProperty": "name"
+  },
+  "hardwareId": {
+          "pathIndex":4
+  },
+  "measurement": {
+    "pathIndex":5
+},
+  "timestamp": {
+    "dataObjectProperty": "timestamp"
+  }
+},
+"input": {
+  "required": [
+   
+    "parameters.startDate",
+    "parameters.endDate"
+    
+  ]
+},
+ 
+  "output": {
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/",
+    "timestamp": "timestamp",
+    "array": "rooms",
+    "object": "data",
+    "value": "value",
+    "data": "measurements",
+    "id": "id"
+  }
+}
