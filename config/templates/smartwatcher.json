@@ -19,6 +19,7 @@
   "dataObjects": [
  
 ],
+"measurementType" : "",
 "dataPropertyMappings": {
   "type" : "value",
   "MeasureAirTemperatureCelsiusDegree": "temperature",

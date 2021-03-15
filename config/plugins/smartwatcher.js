@@ -36,6 +36,7 @@ const request = async (config, options) => {
         const pathType = (options.url.split("?")[0]).split("/")[8];
         const newpathType = config.dataPropertyMappings[pathType]!= undefined ? config.dataPropertyMappings[pathType]  : pathType
         options.url=options.url.replace(pathType, newpathType);
+        config.measurementType = pathType;
         token = res.token;
          options.headers = {
             Authorization: 'Bearer ' + token,
@@ -47,10 +48,9 @@ const request = async (config, options) => {
 };
 
 
-const data = async (config,data, path ) => {
-    var  dataType = (path.split("?")[0]).split("/")[5];
-    const tmp = {}
-    tmp[dataType] = data.type; 
+const data = async (config,data)  => {
+     const tmp = {}
+     tmp[config.measurementType] = data.type; 
     return tmp;
 }
 
