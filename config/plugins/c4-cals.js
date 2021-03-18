@@ -928,9 +928,23 @@ const template = async (config, template) => {
                 // 2. Parse PurchaseOrderItems - template.parameters.targetObject.orderLine
                 data.PurchaseOrderItems = template.parameters.targetObject.orderLine.map(input => {
                     const output = {};
+                    // Root level delivery datetime by default.
+                    let datetime = template.parameters.targetObject.deliveryRequired;
+                    // Set per order line if available.
+                    if (!datetime) {
+                        datetime = input.deliveryRequired;
+                    }
                     output.PurchaseOrderItemId = input.idLocal;
-                    output.ConfirmedDeliveryDate = (input.deliveryRequired || 'T').split('T')[0];
-                    output.ConfirmedDeliveryTime = (input.deliveryRequired || 'T').split('T')[1].substring(0, 4);
+                    output.ConfirmedDeliveryDate = (datetime || 'T').split('T')[0];
+                    output.ConfirmedDeliveryTime = (datetime || 'T').split('T')[1].substring(0, 5);
+
+                    // Delete unavailable delivery times.
+                    if (output.ConfirmedDeliveryDate === '') {
+                        delete output.ConfirmedDeliveryDate;
+                    }
+                    if (output.ConfirmedDeliveryTime === '') {
+                        delete output.ConfirmedDeliveryTime;
+                    }
                     return output;
                 });
 
