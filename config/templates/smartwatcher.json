@@ -1,6 +1,6 @@
 {
   "plugins": [
- "smartwatcher"
+    "smartwatcher"
 
     ],
   "protocol": "rest",
@@ -11,7 +11,7 @@
       "email" : "${email}",
       "password" : "${password}",
       "headers": {
-        "Authorization": "${token}"
+        "Authorization": ""
       },
     "path":  "api/v3/monitor/room/${id}/${type}?startDate=${startDate}&endDate=${endDate}"
    
