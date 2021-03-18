@@ -169,6 +169,7 @@ const data = async (config,data)  => {
 module.exports = {
     name: 'smartwatcher',
     request: async (config, options) => {
+        console.log("OPTIONS",options)
        // Check for necessary information.
         if (!config.authConfig.authPath || !config.authConfig.url) {
             return promiseRejectWithError(500, 'Insufficient authentication configurations.');

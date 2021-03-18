@@ -16,6 +16,6 @@ module.exports = function (passport) {
 
     /** Platform of Trust fetch endpoint. */
     router.post('', auth, ctrl.fetch);
-
+    
     return router;
 };
