@@ -683,6 +683,9 @@ const errorResponse = async (req, res, err) => {
     return res.status(err.httpStatusCode || 500).send(result);
 };
 
+// TODO: FOR TESTING PURPOSES ONLY.
+const purchaseOrderIdToInstanceId = {};
+
 /**
  * Endpoint to trigger fetching of new data from CALS.
  *
@@ -771,6 +774,9 @@ const controller = async (req, res) => {
             err.message = 'Failed to handle request.';
             return errorResponse(req, res, err);
         }
+
+        // TODO: FOR TESTING PURPOSES ONLY.
+        purchaseOrderIdToInstanceId[req.body.entityId] = req.body.instanceId;
 
         // 2. Get new data from CALS with parameters provided in the body.
         try {
@@ -924,6 +930,10 @@ const template = async (config, template) => {
 
                 // 1. Parse PurchaseOrderId - template.parameters.targetObject.idLocal
                 data.PurchaseOrderId = template.parameters.targetObject.idLocal;
+
+                // TODO: FOR TESTING PURPOSES ONLY.
+                data.InstanceId = (purchaseOrderIdToInstanceId[data.PurchaseOrderId]
+                    || '5301b2df-c562-4736-b15e-89f890a2baf8');
 
                 // 2. Parse PurchaseOrderItems - template.parameters.targetObject.orderLine
                 data.PurchaseOrderItems = template.parameters.targetObject.orderLine.map(input => {
