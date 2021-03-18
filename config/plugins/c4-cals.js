@@ -958,7 +958,7 @@ const template = async (config, template) => {
                     return output;
                 });
 
-                config.static.url = 'https://c4-prod-apim.azure-api.net/pot/instances/' + config.static.instanceId + '/confirmpurchaseorder';
+                config.static.url = 'https://c4-prod-apim.azure-api.net/pot/instances/' + data.InstanceId + '/confirmpurchaseorder';
                 config.static.headers = {
                     'CALS-API-KEY': config.static.apikey,
                     'x-is-test': template.authConfig.isTest === 'true',
