@@ -143,7 +143,7 @@ const onerror = async (authConfig, err) => {
     switch (err.statusCode) {
         /** 401 - Unauthorized. */
         case 401:
-            /** Philips HUE specific response handling. */
+            /** SmartWatcher Senaatti specific response handling. */
             if (authConfig.url === 'https://smartwatcher.northeurope.cloudapp.azure.com:4443/') {
                 return updateToken(authConfig, true);
             } else {
@@ -159,28 +159,26 @@ const onerror = async (authConfig, err) => {
     return promiseRejectWithError(err.statusCode, 'Authentication failed.');
 };
 
-
-const data = async (config,data)  => {
-    const tmp = {}
-    tmp[config.measurementType] = data.type;
-   return tmp;
-}
-
-module.exports = {
-    name: 'smartwatcher',
-    request: async (config, options) => {
-        console.log("OPTIONS",options)
-       // Check for necessary information.
-        if (!config.authConfig.authPath || !config.authConfig.url) {
-            return promiseRejectWithError(500, 'Insufficient authentication configurations.');
-        }
-        // Check for existing grant.
-        let grant = cache.getDoc('grants', config.authConfig.productCode);
-        if (!grant && config.authConfig.headers.Authorization) grant = {token: config.authConfig.headers.Authorization};
-        if (!grant) grant = {};
+/**
+ * Composes authorization header and
+ * includes it to the http request options.
+ *
+ * @param {Object} config
+ * @param {Object} options
+ * @return {Object}
+ */
+const request = async (config, options) => {
+    // Check for necessary information.
+    if (!config.authConfig.authPath || !config.authConfig.url) {
+    return promiseRejectWithError(500, 'Insufficient authentication configurations.');
+    }
+    // Check for existing grant.
+    let grant = cache.getDoc('grants', config.authConfig.productCode);
+    if (!grant && config.authConfig.headers.Authorization) grant = {token: config.authConfig.headers.Authorization};
+    if (!grant) grant = {};
         if (!Object.hasOwnProperty.call(grant, 'token')) {
-            // Request access token.
-            grant = await requestToken(config.authConfig);
+        // Request access token.
+        grant = await requestToken(config.authConfig);
             if (!grant.token) return promiseRejectWithError(500, 'Authentication failed.');
         }
         const pathType = (options.url.split("?")[0]).split("/")[8];
@@ -190,8 +188,24 @@ module.exports = {
         // Authorize request.
         options.headers.Authorization = 'Bearer ' + (grant.token);
         return options;
-    },
-    /** Request error handling. */
+};
+
+/**
+ * Response data Mapping
+ *
+ * @param {Object} config
+ * @param {Object} data
+ * @return {Object}
+ */
+const data = async (config,data)  => {
+    const tmp = {}
+    tmp[config.measurementType] = data.type;
+   return tmp;
+};
+
+module.exports = {
+    name: 'smartwatcher',
+    request,
     onerror,
     data,
 };
