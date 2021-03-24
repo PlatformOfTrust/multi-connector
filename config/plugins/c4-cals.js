@@ -933,7 +933,7 @@ const template = async (config, template) => {
 
                 // TODO: FOR TESTING PURPOSES ONLY.
                 data.InstanceId = (purchaseOrderIdToInstanceId[data.PurchaseOrderId]
-                    || '5301b2df-c562-4736-b15e-89f890a2baf8');
+                    || 'b3bd04e4-2ddf-49dc-832d-c30cb1bf7f16');
 
                 // 2. Parse PurchaseOrderItems - template.parameters.targetObject.orderLine
                 data.PurchaseOrderItems = template.parameters.targetObject.orderLine.map(input => {
