@@ -1,0 +1,34 @@
+{
+  "plugins": [
+    "broker"
+  ],
+  "protocol": "hook",
+  "authConfig": {
+    "url": "",
+    "path": "${targetObject.order.idLocal}"
+  },
+  "dataObjects": [
+    ""
+  ],
+  "dataPropertyMappings": {
+    "OrderInformation": ""
+  },
+  "generalConfig": {
+    "sourceName": {
+      "dataObjectProperty": "vendorName"
+    },
+    "hardwareId": {
+      "dataObjectProperty": "vendorId"
+    }
+  },
+    "input": {
+      "required": [
+        "parameters.targetObject"
+      ]
+    },
+  "output": {
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/OrderInformation/",
+    "array": "order",
+    "data": "data"
+  }
+}
