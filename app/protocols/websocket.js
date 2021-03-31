@@ -144,7 +144,6 @@ const callback = async (config, productCode) => {
 
                 // Store received messages to cache on receive.
                 sockets[productCode].on(topic, async (message) => {
-                    console.log(JSON.stringify(message));
                     let template = cache.getDoc('templates', config.template);
                     try {
                         const result = cache.getDoc('messages', productCode) || {};
