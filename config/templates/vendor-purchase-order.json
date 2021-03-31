@@ -1,19 +1,10 @@
 {
   "plugins": [
-    "c4-cals",
-    "broker",
-    "streamer"
+    "broker"
   ],
-  "protocol": "custom",
+  "protocol": "hook",
   "authConfig": {
-    "url": "https://c4-prod-apim.azure-api.net/pot",
-    "headers": {
-      "CALS-API-KEY": "${apikey}"
-    },
-    "eventId": "${eventId}",
-    "entity": "${entity}",
-    "instanceId": "${instanceId}",
-    "isTest": "${isTest}",
+    "url": "",
     "path": "${targetObject.order.idLocal}"
   },
   "dataObjects": [

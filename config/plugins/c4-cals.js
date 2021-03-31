@@ -17,6 +17,8 @@ const _ = require('lodash');
  * C4 CALS multi-purpose plugin for CALS and vendor connectors.
  */
 
+const PLUGIN_NAME = 'c4-cals';
+
 // Source mapping.
 const orderInformationSchema = {
     '$schema': 'http://json-schema.org/draft-06/schema#',
@@ -56,7 +58,13 @@ const orderInformationSchema = {
                             'title': 'Identity type',
                             'description': 'Type of identity.',
                         },
-                        /** TODO: Missing idLocal? */
+                        'idLocal': {
+                            '$id': '#/properties/data/properties/order/properties/idLocal',
+                            'source': 'purchaseOrderId',
+                            'type': 'string',
+                            'title': 'Local identifier',
+                            'description': 'Locally given identifier.',
+                        },
                         'deliveryRequired': {
                             '$id': '#/properties/data/properties/order/properties/deliveryRequired',
                             'source': 'requiredDeliveryDateTime',
@@ -525,341 +533,6 @@ const orderInformationSchema = {
     },
 };
 
-const orderConfirmationSchema = {
-    '$schema': 'http://json-schema.org/draft-06/schema#',
-    '$id': 'https://standards.oftrust.net/v2/Schema/DataProductOutput/OrderConfirmation?v=2.0',
-    'source': null,
-    'type': 'object',
-    'required': [],
-    'properties': {
-        '@context': {
-            '$id': '#/properties/@context',
-            'source': null,
-            'type': 'string',
-            'const': 'https://standards.oftrust.net/v2/Context/DataProductOutput/OrderConfirmation/?v=2.0',
-            'title': 'JSON-LD context url',
-            'description': 'JSON-LD context url with terms required to understand data product content.',
-        },
-        'data': {
-            '$id': '#/properties/data',
-            'source': null,
-            'type': 'object',
-            'title': 'Data product output',
-            'description': 'Output of data product delivered to customers.',
-            'required': [],
-            'properties': {
-                'order': {
-                    '$id': '#/properties/data/properties/order',
-                    'type': 'object',
-                    'source': null,
-                    'title': 'Order',
-                    'description': 'Order.',
-                    'required': [],
-                    'properties': {
-                        '@type': {
-                            '$id': '#/properties/data/properties/order/properties/@type',
-                            'source': 'type',
-                            'type': 'string',
-                            'title': 'Identity type',
-                            'description': 'Type of identity.',
-                        },
-                        'idLocal': {
-                            '$id': '#/properties/data/properties/order/properties/idLocal',
-                            'source': 'purchaseOrderId',
-                            'type': 'string',
-                            'title': 'Local identifier',
-                            'description': 'Locally given identifier.',
-                        },
-                        /** TODO: Should this be an array? */
-                        'orderLine': {
-                            '$id': '#/properties/data/properties/order/properties/orderLine',
-                            'type': 'object',
-                            'title': 'Order line',
-                            'description': 'Order line.',
-                            'required': [],
-                            'properties': {
-                                'product': {
-                                    '$id': '#/properties/data/properties/order/properties/orderLine/properties/product',
-                                    'source': 'purchaseOrderItems',
-                                    'type': 'object',
-                                    'title': 'Product',
-                                    'description': 'Product.',
-                                    'required': [],
-                                    'properties': {
-                                        '@type': {
-                                            '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/@type',
-                                            'source': 'orderLineType',
-                                            'type': 'string',
-                                            'title': 'Identity type',
-                                            'description': 'Type of identity.',
-                                        },
-                                        'idLocal': {
-                                            '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/idLocal',
-                                            'source': 'purchaseOrderItemId',
-                                            'type': 'string',
-                                            'title': 'Local identifier',
-                                            'description': 'Locally given identifier.',
-                                        },
-                                        'name': {
-                                            '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/name',
-                                            'type': 'string',
-                                            'title': 'Name',
-                                            'description': 'Name.',
-                                        },
-                                        'codeProduct': {
-                                            '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/codeProduct',
-                                            'type': 'string',
-                                            'title': 'Product code',
-                                            'description': 'Unique product code given by manufacturer.',
-                                        },
-                                        'assemblyControlNumber': {
-                                            '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/assemblyControlNumber',
-                                            'type': 'string',
-                                            'title': 'ACN number',
-                                            'description': 'ACN number.',
-                                        },
-                                        'locationName': {
-                                            '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/locationName',
-                                            'type': 'string',
-                                            'title': 'Location name',
-                                            'description': 'Location name.',
-                                        },
-                                        'groupName': {
-                                            '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/groupName',
-                                            'type': 'integer',
-                                            'title': 'Product group name',
-                                            'description': 'Unique product group name given by manufacturer.',
-                                        },
-                                        'width': {
-                                            '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/width',
-                                            'type': 'integer',
-                                            'title': 'Width',
-                                            'description': 'Object width.',
-                                        },
-                                        'height': {
-                                            '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/height',
-                                            'type': 'integer',
-                                            'title': 'Height',
-                                            'description': 'Height.',
-                                        },
-                                        'length': {
-                                            '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/length',
-                                            'type': 'integer',
-                                            'title': 'Length',
-                                            'description': 'Lenght.',
-                                        },
-                                        'weight': {
-                                            '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/weight',
-                                            'type': 'number',
-                                            'title': 'Weight',
-                                            'description': 'Object weight.',
-                                        },
-                                        'url': {
-                                            '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/url',
-                                            'type': 'string',
-                                            'title': 'URL address',
-                                            'description': 'URL address.',
-                                        },
-                                        'ifcUrl': {
-                                            '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/ifcUrl',
-                                            'type': 'string',
-                                            'title': 'IfcUrl',
-                                            'description': 'IfcUrl.',
-                                        },
-                                        'location': {
-                                            '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/location',
-                                            'type': 'object',
-                                            'title': 'Location',
-                                            'description': 'Location.',
-                                            'required': [],
-                                            'properties': {
-                                                '@type': {
-                                                    '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/location/properties/@type',
-                                                    'type': 'string',
-                                                    'title': 'Identity type',
-                                                    'description': 'Type of identity.',
-                                                },
-                                                'name': {
-                                                    '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/location/properties/name',
-                                                    'type': 'string',
-                                                    'title': 'Name',
-                                                    'description': 'Name.',
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                                'processProduction': {
-                                    '$id': '#/properties/data/properties/order/properties/orderLine/properties/processProduction',
-                                    'type': 'object',
-                                    'title': 'Process Production',
-                                    'description': 'Process Production.',
-                                    'required': [],
-                                    'properties': {
-                                        '@type': {
-                                            '$id': '#/properties/data/properties/order/properties/orderLine/properties/processProduction/properties/@type',
-                                            'type': 'string',
-                                            'title': 'Identity type',
-                                            'description': 'Type of identity.',
-                                        },
-                                        'production': {
-                                            '$id': '#/properties/data/properties/order/properties/orderLine/properties/processProduction/properties/production',
-                                            'type': 'string',
-                                            'title': 'Production time',
-                                            'description': 'Production time.',
-                                        },
-                                        'carbonDioxide': {
-                                            '$id': '#/properties/data/properties/order/properties/orderLine/properties/processProduction/properties/carbonDioxide',
-                                            'type': 'string',
-                                            'title': 'Carbon dioxide level',
-                                            'description': 'Carbon dioxide level.',
-                                        },
-                                        'location': {
-                                            '$id': '#/properties/data/properties/order/properties/orderLine/properties/processProduction/properties/location',
-                                            'type': 'object',
-                                            'title': 'Location',
-                                            'description': 'Location.',
-                                            'required': [],
-                                            'properties': {
-                                                '@type': {
-                                                    '$id': '#/properties/data/properties/order/properties/orderLine/properties/processProduction/properties/location/properties/@type',
-                                                    'type': 'string',
-                                                    'title': 'Identity type',
-                                                    'description': 'Type of identity.',
-                                                },
-                                                'name': {
-                                                    '$id': '#/properties/data/properties/order/properties/orderLine/properties/processProduction/properties/location/properties/name',
-                                                    'type': 'string',
-                                                    'title': 'Name',
-                                                    'description': 'Name.',
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                                'processDelivery': {
-                                    '$id': '#/properties/data/properties/order/properties/orderLine/properties/processDelivery',
-                                    'type': 'object',
-                                    'title': 'Process Delivery',
-                                    'description': 'Process Delivery.',
-                                    'required': [],
-                                    'properties': {
-                                        '@type': {
-                                            '$id': '#/properties/data/properties/order/properties/orderLine/properties/processDelivery/properties/@type',
-                                            'type': 'string',
-                                            'title': 'Identity type',
-                                            'description': 'Type of identity.',
-                                        },
-                                        'carbonDioxide': {
-                                            '$id': '#/properties/data/properties/order/properties/orderLine/properties/processDelivery/properties/carbonDioxide',
-                                            'type': 'string',
-                                            'title': 'Carbon dioxide level',
-                                            'description': 'Carbon dioxide level.',
-                                        },
-                                        'deliveryPlanned': {
-                                            '$id': '#/properties/data/properties/order/properties/orderLine/properties/processDelivery/properties/deliveryPlanned',
-                                            'type': 'string',
-                                            'title': 'Planned delivery time',
-                                            'description': 'Planned delivery time.',
-                                        },
-                                        'deliveryActual': {
-                                            '$id': '#/properties/data/properties/order/properties/orderLine/properties/processDelivery/properties/deliveryActual',
-                                            'type': 'string',
-                                            'title': 'Actual delivery time',
-                                            'description': 'Actual delivery time.',
-                                        },
-                                        'deliveryRequired': {
-                                            '$id': '#/properties/data/properties/order/properties/orderLine/properties/processDelivery/properties/deliveryRequired',
-                                            'type': 'string',
-                                            'title': 'Required delivery time',
-                                            'description': 'Required delivery time initiated typically by the orderer.',
-                                        },
-                                    },
-                                },
-                                'processInstallation': {
-                                    '$id': '#/properties/data/properties/order/properties/orderLine/properties/processInstallation',
-                                    'type': 'object',
-                                    'title': 'Process Installation',
-                                    'description': 'Process Installation.',
-                                    'required': [],
-                                    'properties': {
-                                        '@type': {
-                                            '$id': '#/properties/data/properties/order/properties/orderLine/properties/processInstallation/properties/@type',
-                                            'type': 'string',
-                                            'title': 'Identity type',
-                                            'description': 'Type of identity.',
-                                        },
-                                        'installationPlanned': {
-                                            '$id': '#/properties/data/properties/order/properties/orderLine/properties/processInstallation/properties/installationPlanned',
-                                            'type': 'string',
-                                            'title': 'Planned installation time',
-                                            'description': 'Planned installation time.',
-                                        },
-                                        'installationActual': {
-                                            '$id': '#/properties/data/properties/order/properties/orderLine/properties/processInstallation/properties/installationActual',
-                                            'type': 'string',
-                                            'title': 'Installation Actual',
-                                            'description': 'Installation Actual.',
-                                        },
-                                    },
-                                },
-                                'processLoading': {
-                                    '$id': '#/properties/data/properties/order/properties/orderLine/properties/processLoading',
-                                    'type': 'object',
-                                    'title': 'Process Loading',
-                                    'description': 'Process Loading.',
-                                    'required': [],
-                                    'properties': {
-                                        '@type': {
-                                            '$id': '#/properties/data/properties/order/properties/orderLine/properties/processLoading/properties/@type',
-                                            'type': 'string',
-                                            'title': 'Identity type',
-                                            'description': 'Type of identity.',
-                                        },
-                                        'idLocal': {
-                                            '$id': '#/properties/data/properties/order/properties/orderLine/properties/processLoading/properties/idLocal',
-                                            'type': 'string',
-                                            'title': 'Local identifier',
-                                            'description': 'Locally given identifier.',
-                                        },
-                                        'status': {
-                                            '$id': '#/properties/data/properties/order/properties/orderLine/properties/processLoading/properties/status',
-                                            'type': 'object',
-                                            'title': 'Life-cycle status',
-                                            'description': 'Life-cycle status.',
-                                            'required': [],
-                                            'properties': {
-                                                '@type': {
-                                                    '$id': '#/properties/data/properties/order/properties/orderLine/properties/processLoading/properties/status/properties/@type',
-                                                    'type': 'string',
-                                                    'title': 'Identity type',
-                                                    'description': 'Type of identity.',
-                                                },
-                                                'name': {
-                                                    '$id': '#/properties/data/properties/order/properties/orderLine/properties/processLoading/properties/status/properties/name',
-                                                    'type': 'string',
-                                                    'title': 'Name',
-                                                    'description': 'Name.',
-                                                },
-                                                'statusCode': {
-                                                    '$id': '#/properties/data/properties/order/properties/orderLine/properties/processLoading/properties/status/properties/statusCode',
-                                                    'type': 'integer',
-                                                    'title': 'Life-cycle status code',
-                                                    'description': 'Life-cycle status code.',
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-        },
-    },
-};
-
 /**
  * Handles data objects.
  *
@@ -929,7 +602,6 @@ const response = async (config, res) => {
     try {
         // Fetch data from cache if query is done by vendor id (only for vendor connector).
         if (Object.hasOwnProperty.call(config.parameters.targetObject, 'vendor')) {
-            winston.log('info', 'Fetch from cache ' + config.productCode);
             const result = cache.getDoc('messages', config.productCode) || {};
             response = result[res];
         } else {
@@ -1003,12 +675,16 @@ const errorResponse = async (req, res, err) => {
         error: {
             status: err.httpStatusCode || 500,
             message: message || 'Internal Server Error.',
+            translator_response: err.translator_response || undefined,
         },
     };
 
     // Send response.
     return res.status(err.httpStatusCode || 500).send(result);
 };
+
+// TODO: FOR TESTING PURPOSES ONLY.
+const purchaseOrderIdToInstanceId = {};
 
 /**
  * Endpoint to trigger fetching of new data from CALS.
@@ -1032,12 +708,26 @@ const controller = async (req, res) => {
 
         /** Request body validation */
         const validation = validator.validate(req.body, {
+            eventId: {
+                required: true,
+            },
+            entity: {
+                required: true,
+            },
+            method: {
+                required: true,
+            },
             instanceId: {
                 required: true,
             },
             entityId: {
                 required: true,
             },
+            /*
+            isTest: {
+                required: true,
+            },
+            */
         });
 
         if (Object.hasOwnProperty.call(validation, 'error')) {
@@ -1054,7 +744,7 @@ const controller = async (req, res) => {
         let productCode;
         try {
             const parts = req.originalUrl.split('/');
-            productCode = parts.splice(parts.indexOf('c4-cals') + 1)[0];
+            productCode = parts.splice(parts.indexOf(PLUGIN_NAME) + 1)[0];
             config = cache.getDoc('configs', productCode) || {};
 
             if (_.isEmpty(config) || !Object.hasOwnProperty.call(config, 'static')) {
@@ -1074,6 +764,8 @@ const controller = async (req, res) => {
                 return res.status(401).send('Unauthorized');
             }
 
+            winston.log('info', 'Received trigger request from ' + (req.get('origin') || req.headers['x-forwarded-for'] || req.socket.remoteAddress));
+
             template = cache.getDoc('templates', config.template) || {};
             host = req.get('host').split(':')[0];
             config.connectorURL = (host === 'localhost' || net.isIP(host) ? 'http' : 'https') + '://' + req.get('host');
@@ -1083,21 +775,24 @@ const controller = async (req, res) => {
             return errorResponse(req, res, err);
         }
 
+        // TODO: FOR TESTING PURPOSES ONLY.
+        purchaseOrderIdToInstanceId[req.body.entityId] = req.body.instanceId;
+
         // 2. Get new data from CALS with parameters provided in the body.
         try {
-            // Parse instance and entity id from request body.
-            const instanceId = req.body.instanceId;
-            const idLocal = req.body.entityId;
             // Compose triggered local connector request.
             const triggeredReq = {
                 body: {
                     productCode,
                     'timestamp': moment().format(),
                     'parameters': {
-                        instanceId,
+                        eventId: req.body.eventId,
+                        entity: req.body.entity,
+                        instanceId: req.body.instanceId,
+                        isTest: req.body.isTest,
                         'targetObject': {
                             'order': {
-                                idLocal,
+                                idLocal: req.body.entityId,
                             },
                         },
                     },
@@ -1107,12 +802,15 @@ const controller = async (req, res) => {
                     return config.connectorURL;
                 },
             };
-            winston.log('info', '1. Query self with REST path /instances/${instanceId}/purchaseorders/${purchaseOrderId}');
+            const resource = (req.body.entity + 's').toLowerCase();
+            winston.log('info', '1. Query self with REST path /instances/${instanceId}/' + resource + '/${entityId}');
             result = await connector.getData(triggeredReq);
         } catch (err) {
             winston.log('error', err.message);
             return errorResponse(req, res, err);
         }
+
+        // TODO: Check result status for 404 or 500 etc.
 
         // 3. Parse vendor productCode from received order and send broker request to produce order.
         let vendorProductCode;
@@ -1130,10 +828,18 @@ const controller = async (req, res) => {
             /** Receiver data product */
             config.static.productCode = vendorProductCode;
 
-            template = await connector.resolvePlugins(template);
-            template.config = config;
-            winston.log('info', '2. Send data to vendor data product: ' + vendorProductCode);
-            await template.plugins.find(p => p.name === 'broker').stream(template, result.output);
+            if (req.body.isTest) {
+                /** Test message response */
+                res.setHeader('x-event-id', req.body.eventId);
+                res.setHeader('x-is-pot', true);
+                res.setHeader('x-is-test', req.body.isTest);
+                winston.log('info', '2. Skip sending to ' + vendorProductCode + ', isTest=' + req.body.isTest);
+            } else {
+                template = await connector.resolvePlugins(template);
+                template.config = config;
+                winston.log('info', '2. Send received data to vendor data product ' + vendorProductCode);
+                await template.plugins.find(p => p.name === 'broker').stream(template, result.output);
+            }
         } catch (err) {
             winston.log('error', err.message);
             return errorResponse(req, res, err);
@@ -1185,28 +891,88 @@ const template = async (config, template) => {
     try {
         if (Object.hasOwnProperty.call(template.parameters.targetObject, 'vendor')) {
             /** Vendor connector */
-            winston.log('info', 'Connector consumes cache by vendorId.');
             template.authConfig.path = [template.parameters.targetObject.vendor.idLocal];
         } else if (Object.hasOwnProperty.call(template.parameters.targetObject, 'order')) {
             /** CALS connector */
-            winston.log('info', 'Connector consumes CALS REST API by orderId.');
+            const resource = (template.authConfig.entity + 's').toLowerCase();
+
+            winston.log('info', 'Connector consumes CALS REST API ' + resource + ' by entityId ' + template.authConfig.path);
             template.protocol = 'rest';
-            template.authConfig.path = '/instances/' + template.authConfig.instance + '/purchaseorders/' + template.authConfig.path;
+            template.authConfig.headers = {
+                ...template.authConfig.headers,
+                'x-event-id': template.authConfig.eventId,
+                'x-is-pot': true,
+                'x-is-test': template.authConfig.isTest === 'true',
+            };
+            winston.log('info', 'Include headers from trigger request' + ', '
+                + 'x-event-id: ' + template.authConfig.headers['x-event-id'] + ', '
+                + 'x-is-test: ' + template.authConfig.headers['x-is-test']);
+            template.authConfig.path = '/instances/' + template.authConfig.instanceId + '/' + resource + '/' + template.authConfig.path;
         }
 
-        // TODO: Come up with a better way to detect that the received data is meant to be produced and not consumed.
-        if (Object.hasOwnProperty.call(template.parameters.targetObject, '@type')) {
-            /** Vendor connector */
-            winston.log('info', 'Store received data to cache by vendorId: ' + template.parameters.targetObject.vendor.idLocal);
-            const id = template.parameters.targetObject.vendor.idLocal;
+        if (Object.hasOwnProperty.call(template.parameters.targetObject, 'sender')) {
+            /** CALS connector */
+            winston.log('info', 'Received produced data from '
+                + template.parameters.targetObject.sender.productCode
+                + ' with orderId ' + template.parameters.targetObject.idLocal);
+
+            const id = template.parameters.targetObject.idLocal;
             const result = cache.getDoc('messages', template.productCode) || {};
             result[id] = template.parameters.targetObject;
             cache.setDoc('messages', template.productCode, result);
+
+            template.authConfig.path = id;
+
             // Stream data to external system.
             try {
+                // Transform
+                const data = {};
+
+                // 1. Parse PurchaseOrderId - template.parameters.targetObject.idLocal
+                data.PurchaseOrderId = template.parameters.targetObject.idLocal;
+
+                // TODO: FOR TESTING PURPOSES ONLY.
+                data.InstanceId = (purchaseOrderIdToInstanceId[data.PurchaseOrderId]
+                    || 'b3bd04e4-2ddf-49dc-832d-c30cb1bf7f16');
+
+                // 2. Parse PurchaseOrderItems - template.parameters.targetObject.orderLine
+                data.PurchaseOrderItems = template.parameters.targetObject.orderLine.map(input => {
+                    const output = {};
+                    // Root level delivery datetime by default.
+                    let datetime = template.parameters.targetObject.deliveryRequired;
+                    // Set per order line if available.
+                    if (!datetime) {
+                        datetime = input.deliveryRequired;
+                    }
+                    output.PurchaseOrderItemId = input.idLocal;
+                    output.ConfirmedDeliveryDate = (datetime || 'T').split('T')[0];
+                    output.ConfirmedDeliveryTime = (datetime || 'T').split('T')[1].substring(0, 5);
+
+                    // Delete unavailable delivery times.
+                    if (output.ConfirmedDeliveryDate === '') {
+                        delete output.ConfirmedDeliveryDate;
+                    }
+                    if (output.ConfirmedDeliveryTime === '') {
+                        delete output.ConfirmedDeliveryTime;
+                    }
+                    return output;
+                });
+
+                config.static.url = 'https://c4-prod-apim.azure-api.net/pot/instances/' + data.InstanceId + '/confirmpurchaseorder';
+                config.static.headers = {
+                    'CALS-API-KEY': config.static.apikey,
+                    'x-is-test': template.authConfig.isTest === 'true',
+                };
+
+                winston.log('info', 'Include headers from received broker request' + ', '
+                    + 'x-is-test: ' + config.static.headers['x-is-test']);
+                winston.log('info', '3. Send data to URL ' + config.static.url);
+
                 await template.plugins.find(p => p.name === 'streamer')
-                    .stream({...template, config}, {data: {order: result[id]}});
+                    .stream({...template, config}, {data: {order: data}});
+
             } catch (err) {
+                winston.log('info', err.message);
                 return Promise.reject(err);
             }
         }
@@ -1218,7 +984,7 @@ const template = async (config, template) => {
 };
 
 module.exports = {
-    name: 'c4-cals',
+    name: PLUGIN_NAME,
     endpoints,
     template,
     output,

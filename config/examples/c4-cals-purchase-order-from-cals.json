@@ -3,11 +3,15 @@
     "static": {
         "apikey": "<apikey>",
         "bearer": "<bearer>",
-        "instanceId": "<instance-id>"
+        "instanceId": "<instance-id>",
+        "entity": "PurchaseOrder"
     },
     "dynamic": {
         "authConfig.path": "targetObject.order.idLocal",
-        "authConfig.instance": "instanceId"
+        "authConfig.eventId": "eventId",
+        "authConfig.entity": "entity",
+        "authConfig.instanceId": "instanceId",
+        "authConfig.isTest": "isTest"
     },
     "plugins": {
         "broker": {

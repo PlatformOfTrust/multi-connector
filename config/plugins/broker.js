@@ -50,6 +50,14 @@ function request (method, url, headers, body) {
  * @return {Object}
  */
 const stream = async (template, data) => {
+    let parameters;
+    try {
+        // Include parameters defined in config.
+        parameters = template.config.plugins.broker.parameters;
+    } catch (err) {
+        parameters = {};
+    }
+
     try {
         let env = 'sandbox';
         const config = template.config;
@@ -62,7 +70,8 @@ const stream = async (template, data) => {
         }
 
         // Find env specific broker URL.
-        const url = brokerURLs.find(i => i.env === (env || 'sandbox')).url;
+        const url = (brokerURLs.find(i => i.env === (env || 'sandbox'))
+            || {url: 'http://localhost:8080/translator/v1/fetch'}).url;
 
         /** Output definitions from config. */
         const objectKey = template.output.object || 'data';
@@ -78,15 +87,23 @@ const stream = async (template, data) => {
                     productCode,
                     timestamp: moment().format(),
                     parameters: {
+                        ...parameters,
                         targetObject: data[i][objectKey][arrayKey],
                     },
                 };
 
-                // Pass connector product code as sender.
+                // Pass product codes as sender and receiver.
                 body.parameters.targetObject.sender = {
                     '@type': 'DataProduct',
                     productCode: config.productCode,
                 };
+
+                /*
+                body.parameters.targetObject.receiver = {
+                    '@type': 'DataProduct',
+                    productCode: productCode,
+                };
+                */
 
                 // Initialize signature value.
                 let signatureValue;
@@ -130,13 +147,19 @@ const stream = async (template, data) => {
                 };
 
                 // Send broker request .
-                winston.log('info', 'Broker plugin: Send broker request by product code ' + productCode + ', ' + url);
+                winston.log('info', 'Broker plugin: Send broker request to ' + url);
                 await request('POST', url, headers, body);
             }
         }
     } catch (err) {
+        const error = new Error('External translator returns an invalid response.');
+        error.httpStatusCode = 502;
+        error.translator_response = {
+            status: err.statusCode,
+            data: err.error,
+        };
         winston.log('error', err.message);
-        throw err;
+        throw error;
     }
     return data;
 };
