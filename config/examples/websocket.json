@@ -1,0 +1,19 @@
+{
+  "template": "socket-io-generic",
+  "static": {
+    "url": "ws://<url>",
+    "event": "<event>",
+    "query": {
+        "apikey": "<apikey>",
+        "param": "<param>"
+    }
+  },
+  "dynamic": {
+    "authConfig.path": "ids"
+  },
+  "request": {
+    "ids": [
+      "<source-id>"
+    ]
+  }
+}

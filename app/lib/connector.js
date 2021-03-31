@@ -63,10 +63,13 @@ function handleFile (collection, file, data) {
     let object;
     try {
         object = JSON.parse(data);
-        // If config has protocol mqtt, connect to the broker.
+        // If config has protocol mqtt or websocket, connect to the broker/server.
         if (Object.hasOwnProperty.call(object, 'static')) {
             if (Object.hasOwnProperty.call(object.static, 'topic')) {
                 protocols['mqtt'].connect(object, file);
+            }
+            if (Object.hasOwnProperty.call(object.static, 'event')) {
+                protocols['websocket'].connect(object, file);
             }
         }
     } catch (err) {

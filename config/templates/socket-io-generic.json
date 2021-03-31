@@ -1,0 +1,33 @@
+{
+  "plugins": [
+    "data-convert"
+  ],
+  "protocol": "websocket",
+  "authConfig": {
+    "url": "${url}",
+    "path": "${id}",
+    "event": "${event}"
+  },
+  "dataObjects": [
+    "data"
+  ],
+  "dataPropertyMappings": {
+    "MeasureAirTemperatureCelsiusDegree": "temp",
+    "MeasureAirHumidityPercentage": "humidity",
+    "MeasureAirCO2LevelPPM": "co2",
+    "MeasureWaterConsumptionLitre": "water",
+    "MeasureEnergyConsumptionKilowattHour": "energy"
+  },
+  "generalConfig": {
+    "hardwareId": {
+      "dataObjectProperty": "source_id"
+    },
+    "timestamp": {
+      "dataObjectProperty": "timestamp"
+    }
+  },
+  "output": {
+    "array": "sensors",
+    "data": "measurements"
+  }
+}
