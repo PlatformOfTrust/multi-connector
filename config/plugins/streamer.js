@@ -48,8 +48,14 @@ const stream = async (template, data) => {
     try {
         // Extract stream endpoint url and output definitions from config.
         const config = template.config;
-        const url = config.static.url;
-        const headers = config.static.headers || {};
+        let url = config.plugins;
+        url = url ? config.plugins.streamer : null;
+        url = url ? config.plugins.streamer.url : null;
+        url = url || config.static.url;
+        let headers = config.plugins;
+        headers = headers ? config.plugins.streamer : null;
+        headers = headers ? config.plugins.streamer.headers : null;
+        headers = headers || config.static.headers || {};
         if (!url) return data;
         const objectKey = template.output.object || 'data';
         const arrayKey = template.output.array;
