@@ -9,6 +9,7 @@ Following data sources are supported out of the box. Example configs can be foun
 - A-3 Integration API
 - Congrid Public API
 - Digitraffic Live Trains API
+- Digitraffic Port Calls API
 - EnerKey Data API
 - ENTSO-E Transparency Platform
 - Fidelix Pilvivalvomo
