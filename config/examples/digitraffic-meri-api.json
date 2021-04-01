@@ -1,0 +1,13 @@
+{
+  "template": "digitraffic-meri-api",
+  "static": {
+  },
+  "dynamic": {
+    "authConfig.path": "ids"
+  },
+  "request": {
+    "ids": [
+      "<port-to-visit>"
+    ]
+  }
+}
