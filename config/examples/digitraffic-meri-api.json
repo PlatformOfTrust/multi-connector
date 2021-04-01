@@ -3,7 +3,6 @@
   "static": {
   },
   "dynamic": {
-    "authConfig.path": "ids"
   },
   "request": {
     "ids": [

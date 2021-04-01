@@ -18,6 +18,8 @@ const _ = require('lodash');
 const response = async (config, response) => {
     try {
         const ids = (_.get(config, 'parameters.ids') || []).map(object => object.id);
+        // Skip filtering in case ids array is empty.
+        if (ids.length === 0) { return response; }
         const idPath = 'generalConfig.hardwareId.dataObjectProperty';
         const idKey = _.get(config, idPath);
         config['dataObjects'].forEach((path) => {
