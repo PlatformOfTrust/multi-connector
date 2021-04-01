@@ -12,17 +12,21 @@
  */
 const response = async (config, response) => {
     try {
+        const output = Array.isArray(response) ? response : [response];
         // Convert data array.
-        if (Object.hasOwnProperty.call(response, 'data')) {
-            if (Array.isArray(response.data)) {
-                const input = response.data;
-                const output = [];
-                for (let i = 0; i < input.length; i++) {
-                    output.push({[input[i].quality]: input[i].value});
+        for (let i = 0; i < output.length; i++) {
+            if (Object.hasOwnProperty.call(output[i], 'data')) {
+                if (Array.isArray(output[i].data)) {
+                    const input = output[i].data;
+                    const data = {};
+                    for (let j = 0; j < input.length; j++) {
+                        data[input[j].quality] = input[j].value;
+                    }
+                    output[i].data = data;
                 }
-                response.data = output;
             }
         }
+        response = output;
     } catch (err) {
         console.log(err.message);
     }
