@@ -109,6 +109,18 @@ const composeDataObject = async (template, callback) => {
 };
 
 /**
+ * Generates random UUIDv4.
+ *
+ * @return {String}
+ */
+const uuidv4 = () => {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        const r = Math.random() * 16 | 0; const v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+};
+
+/**
  * Connects to broker and listens for updates.
  *
  * @param {Object} config
@@ -128,9 +140,7 @@ const callback = async (config, productCode) => {
             query = config.static.query;
         }
 
-        query.client_id = 'connector-' + Math.floor((1 + Math.random()) * 0x10000)
-            .toString(16)
-            .substring(1);
+        query.client_id = uuidv4();
 
         const topic = options.event || 'message';
 
