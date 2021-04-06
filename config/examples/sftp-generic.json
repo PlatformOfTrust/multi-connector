@@ -1,0 +1,19 @@
+{
+    "template": "sftp-generic",
+    "static": {
+        "url": "<host>",
+        "port": "<port>",
+        "username": "<username>",
+        "password": "<password>",
+        "proxyHost": "[<socks-server-host>]",
+        "proxyPort": "[<socks-server-port>]"
+    },
+    "dynamic": {
+        "authConfig.path": "ids"
+    },
+    "request": {
+        "ids": [
+            "<path>"
+        ]
+    }
+}
