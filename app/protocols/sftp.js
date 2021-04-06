@@ -95,6 +95,9 @@ const getData = async (config= {}, pathArray) => {
         const item = await getFiles(clients[productCode], pathArray[p]);
         if (item) items.push(item);
     }
+
+    await clients[productCode].end();
+
     return items;
 };
 
