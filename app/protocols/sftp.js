@@ -27,8 +27,7 @@ const uuidv4 = () => {
 };
 
 const getFiles = (client, path) => {
-    return client.list(path).then(() => {
-    }).then(data => {
+    return client.list(path).then(data => {
         return Promise.resolve(data);
     }).catch(err => {
         winston.log('error', err.message);
