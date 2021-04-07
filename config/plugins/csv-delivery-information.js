@@ -22,8 +22,9 @@ const CSVToJSON = require('csvtojson');
 
 const PLUGIN_NAME = 'csv-delivery-information';
 const PRIMARY_PRODUCT_CODE = 'C1EC2973-8A0B-4858-BF1E-3A0D0CEFE33A';
-const guidToCALSId = {};
 const orderNumberToCALSId = {};
+const productCodeToCALSId = {};
+const orderNumberToCALSInstanceId = {};
 
 // Source mapping.
 const orderConfirmationSchema = {
@@ -728,12 +729,14 @@ const deliveryInformationSchema = {
                                 },
                                 'quantity': {
                                     '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/quantity',
+                                    'source': 'Toimitusm��r�',
                                     'type': 'string',
                                     'title': 'Quantity',
                                     'description': 'Quantity of specific objects.',
                                 },
                                 'unit': {
                                     '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/unit',
+                                    'source': 'Yksikk�',
                                     'type': 'string',
                                     'title': 'Unit',
                                     'description': 'Unit used (Defines unit which is used).',
@@ -759,6 +762,7 @@ const deliveryInformationSchema = {
                                         },
                                         'codeProduct': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/product/properties/codeProduct',
+                                            'source': 'Tuotekoodi',
                                             'type': 'string',
                                             'title': 'Product code',
                                             'description': 'Unique product code given by manufacturer.',
@@ -771,6 +775,7 @@ const deliveryInformationSchema = {
                                         },
                                         'name': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/product/properties/name',
+                                            'source': 'Myyntinimike',
                                             'type': 'string',
                                             'title': 'Name',
                                             'description': 'Name.',
@@ -1074,21 +1079,8 @@ const deliveryInformationSchema = {
     },
 };
 
-const purchaseOrderIds = {
-    /*
-    '0B179668-895C-40CA-AEA0-523AD9246479': '0fbc0773-e9b4-4bc2-8560-2f9cbd18046e',
-    '540DD08B-B31E-409F-AA84-2CCFE3747F7B': '0fbc0773-e9b4-4bc2-8560-2f9cbd18046e',
-    '7249CEB9-A128-46FC-AF8D-5134A533369C': '0fbc0773-e9b4-4bc2-8560-2f9cbd18046e'
-     */
-};
-
-const purchaseOrderItemIds = {
-    /*
-    '0B179668-895C-40CA-AEA0-523AD9246479': '0fbc0773-e9b4-4bc2-8560-2f9cbd18046e',
-    '540DD08B-B31E-409F-AA84-2CCFE3747F7B': '4cffdf12-6f76-43ed-8fdf-32625a2885be',
-    '7249CEB9-A128-46FC-AF8D-5134A533369C': '81374252-268b-4b73-8297-34db3c4a047c'
-     */
-};
+const purchaseOrderIds = {};
+const purchaseOrderItemIds = {};
 
 /**
  * Sends http request.
@@ -1187,7 +1179,7 @@ const handleData = function (config, id, data) {
  */
 const response = async (config, response) => {
     try {
-        response = CSVToJSON().fromString(response);
+        if (typeof response === 'string' || response instanceof String) response = CSVToJSON().fromString(response);
         return response;
     } catch (e) {
         return response;
@@ -1343,7 +1335,7 @@ const controller = async (req, res) => {
             return errorResponse(req, res, err);
         }
 
-        // 2. Get new data from Betset with parameters provided in the body.
+        // 2. Get new data from vendor with parameters provided in the body.
         try {
             // Compose triggered local connector request.
             const triggeredReq = {
@@ -1362,7 +1354,7 @@ const controller = async (req, res) => {
                 },
             };
 
-            winston.log('info', '1. Query self with REST path ${targetObject.idLocal}');
+            winston.log('info', '1. Query self with path ${targetObject.idLocal} as ' + req.body.filename);
             result = await connector.getData(triggeredReq);
         } catch (err) {
             winston.log('error', err.message);
@@ -1389,19 +1381,30 @@ const controller = async (req, res) => {
             template.config = config;
             winston.log('info', '2. Send received data to receiver data product ' + receiverProductCode + ', isTest=' + req.body.is_test);
 
+            try {
+                // Resolve ids.
+                result.output.data.order.map((order) => {
+                    if (!Array.isArray(order.deliveryLine)) {
+                        order.deliveryLine = [order.deliveryLine];
+                    }
+                    order.deliveryLine = order.deliveryLine.map((l) => {
+                        winston.log('info', 'Changed ' + l.product.codeProduct + ' to ' + productCodeToCALSId[l.product.codeProduct]);
+                        return {
+                            ...l,
+                            idLocal: productCodeToCALSId[l.product.codeProduct],
+                        };
+                    });
+                    return order;
+                });
+            } catch (e) {
+                console.log(e.message);
+            }
+
             if (template.plugins.find(p => p.name === 'broker') && template.config.plugins.broker) {
                 // Set isTest.
                 template.config.plugins.broker.parameters = {
                     isTest: req.body.is_test,
                 };
-
-                // Resolve ids.
-                result.output.data.order.orderLine = result.output.data.order.orderLine.map((l) => {
-                    return {
-                        ...l,
-                        idLocal: guidToCALSId[l.product.codeProduct],
-                    };
-                });
 
                 await template.plugins.find(p => p.name === 'broker').stream(template, result.output);
             }
@@ -1454,6 +1457,46 @@ const endpoints = function (passport) {
  */
 const template = async (config, template) => {
     try {
+        if (Object.hasOwnProperty.call(template.parameters.targetObject, 'sender')) {
+            /** Vendor connector */
+            winston.log('info', 'Received produced data from '
+                + template.parameters.targetObject.sender.productCode
+                + ' with vendorId ' + template.parameters.targetObject.vendor.idLocal,
+            );
+            const id = template.parameters.targetObject.vendor.idLocal;
+            const result = cache.getDoc('messages', template.productCode) || {};
+            result[id] = template.parameters.targetObject;
+
+            // TODO: Store received order to cache?
+            cache.setDoc('messages', template.productCode, result);
+
+            // Stream data to external system.
+            try {
+                orderNumberToCALSId[result[id].idLocal] = result[id].idSystemLocal;
+                for (let i = 0; i < result[id].orderLine.length; i++) {
+                    // Store id mappings.
+                    productCodeToCALSId[result[id].orderLine[i].product.codeProduct] = result[id].orderLine[i].idSystemLocal;
+                }
+
+                console.log('Store CALS identifiers from received order.');
+                console.log('orderNumberToCALSId: ' + JSON.stringify(orderNumberToCALSId));
+                console.log('productCodeToCALSId: ' + JSON.stringify(productCodeToCALSId));
+
+                /*
+
+                winston.log('info', '3. Send data to URL ' + config.static.url);
+                await template.plugins.find(p => p.name === 'streamer')
+                    .stream({...template, config}, {data: {order: body}});
+                 */
+
+                template.protocol = 'hook';
+                template.authConfig.path = id;
+                template.generalConfig.hardwareId.dataObjectProperty = 'idLocal';
+                template.output.contextValue = 'https://standards.oftrust.net/v2/Context/DataProductOutput/OrderInformation/';
+            } catch (err) {
+                return Promise.reject(err);
+            }
+        }
         return template;
     } catch (err) {
         return Promise.reject(err);
