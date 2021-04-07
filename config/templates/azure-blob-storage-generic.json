@@ -1,0 +1,33 @@
+{
+    "plugins": [
+    ],
+    "protocol": "azure-blob-storage",
+    "authConfig": {
+        "account": "${account}",
+        "accountKey": "${accountKey}",
+        "container": "${container}",
+        "path": "${id}"
+    },
+    "dataObjects": [
+        ""
+    ],
+    "dataPropertyMappings": {
+        "${type}": ""
+    },
+    "generalConfig": {
+        "hardwareId": {
+            "dataObjectProperty": ""
+        },
+        "sourceName": {
+            "dataObjectProperty": ""
+        },
+        "timestamp": {
+            "dataObjectProperty": ""
+        }
+    },
+    "output": {
+        "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/DeliveryConfirmation/",
+        "array": "order",
+        "data": "data"
+    }
+}

@@ -1,0 +1,16 @@
+{
+  "template": "azure-blob-storage-generic",
+  "static": {
+    "account": "<account>",
+    "accountKey": "<account-key>",
+    "container": "<container-name>"
+  },
+  "dynamic": {
+    "authConfig.path": "ids"
+  },
+  "request": {
+    "ids": [
+      "<path>"
+    ]
+  }
+}
