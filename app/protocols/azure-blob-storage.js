@@ -3,8 +3,8 @@
 /**
  * Module dependencies.
  */
+const response = require('../lib/response');
 const {BlobServiceClient, StorageSharedKeyCredential} = require('@azure/storage-blob');
-const CSVToJSON = require('csvtojson');
 
 /**
  * Azure Blob Storage library.
@@ -84,8 +84,8 @@ const getData = async (config= {authConfig: {}}, pathArray) => {
             const blockBlobClient = containerClient.getBlockBlobClient(pathArray[p]);
             try {
                 const downloadBlockBlobResponse  = await blockBlobClient.download(0);
-                const r = (await streamToBuffer(downloadBlockBlobResponse.readableStreamBody)).toString();
-                const item = await CSVToJSON().fromString(r);
+                const blob = (await streamToBuffer(downloadBlockBlobResponse.readableStreamBody)).toString();
+                const item = await response.handleData(config, pathArray[p], p, blob);
                 if (item) items.push(item);
             } catch (e) {
                 // Blob was not found.

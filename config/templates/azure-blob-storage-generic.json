@@ -1,12 +1,13 @@
 {
     "plugins": [
+        "csv-delivery-information"
     ],
     "protocol": "azure-blob-storage",
     "authConfig": {
         "account": "${account}",
         "accountKey": "${accountKey}",
         "container": "${container}",
-        "path": "${id}"
+        "path": "${targetObject.idLocal}"
     },
     "dataObjects": [
         ""
@@ -16,17 +17,22 @@
     },
     "generalConfig": {
         "hardwareId": {
-            "dataObjectProperty": ""
+            "dataObjectProperty": "${hardwareId}"
         },
         "sourceName": {
-            "dataObjectProperty": ""
+            "dataObjectProperty": "${sourceName}"
         },
         "timestamp": {
-            "dataObjectProperty": ""
+            "dataObjectProperty": "${timestamp}"
         }
     },
+    "input": {
+        "required": [
+            "parameters.targetObject"
+        ]
+    },
     "output": {
-        "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/DeliveryConfirmation/",
+        "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/DeliveryInformation/",
         "array": "order",
         "data": "data"
     }
