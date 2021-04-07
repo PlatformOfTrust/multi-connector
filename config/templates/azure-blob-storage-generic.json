@@ -1,6 +1,7 @@
 {
     "plugins": [
-        "csv-delivery-information"
+        "csv-delivery-information",
+        "broker"
     ],
     "protocol": "azure-blob-storage",
     "authConfig": {

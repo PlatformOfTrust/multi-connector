@@ -114,8 +114,8 @@ const stream = async (template, data) => {
 
                 // Try to parse credentials from the config.
                 try {
-                    clientSecret = config.plugins.broker.clientSecret;
-                    appAccessToken = config.plugins.broker.appAccessToken;
+                    clientSecret = config.plugins.broker.clientSecret || clientSecret;
+                    appAccessToken = config.plugins.broker.appAccessToken || appAccessToken;
                 } catch (err) {
                     winston.log('error', err.message);
                 }
