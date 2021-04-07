@@ -1171,7 +1171,6 @@ const handleData = function (config, id, data) {
                 object = result;
             }
         }
-        console.log(object);
         return object;
     } catch (err) {
         winston.log('error', err.message);
