@@ -1382,6 +1382,9 @@ const controller = async (req, res) => {
             winston.log('info', '2. Send received data to receiver data product ' + receiverProductCode + ', isTest=' + req.body.is_test);
 
             try {
+                if (!Array.isArray(result.output.data.order)) {
+                    result.output.data.order = [result.output.data.order];
+                }
                 // Resolve ids.
                 result.output.data.order.map((order) => {
                     if (!Array.isArray(order.deliveryLine)) {
