@@ -884,6 +884,12 @@ const template = async (config, template) => {
             // Stream data to external system.
             try {
                 orderNumberToCALSId[result[id].idLocal] = result[id].idSystemLocal;
+                // TODO: Test customer.
+                if (!Object.hasOwnProperty.call(result[id], 'customer')) {
+                    result[id].customer = {};
+                }
+                result[id].customer.idLocal = '00327641393';
+
                 for (let i = 0; i < result[id].orderLine.length; i++) {
                     // Store id mappings.
                     productCodeToCALSId[result[id].orderLine[i].product.codeProduct] = result[id].orderLine[i].idSystemLocal;
