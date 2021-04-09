@@ -968,11 +968,13 @@ const stream = async (template, data) => {
                                 idLocal: productCodeToCALSId[l.product.codeProduct],
                             };
                         });
+                        /*
                         // Set sender.
                         order.sender = {
                             '@type': 'Product',
                             productCode: template.productCode,
                         };
+                        */
                         return order;
                     });
                     if (result.data.order.length === 1) {

@@ -1393,11 +1393,13 @@ const controller = async (req, res) => {
                             idLocal: productCodeToCALSId[l.product.codeProduct],
                         };
                     });
+                    /*
                     // Set sender.
                     order.sender = {
                         '@type': 'Product',
                         productCode: template.productCode,
                     };
+                    */
                     return order;
                 });
                 if (result.output.data.order.length === 1) {
