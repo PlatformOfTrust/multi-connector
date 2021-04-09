@@ -18,6 +18,9 @@ const _ = require('lodash');
  */
 
 const PLUGIN_NAME = 'c4-cals';
+const orderIdToCALSInstanceId = {};
+const orderNumberToCALSId = {};
+const materialSecondaryCodeToCALSId = {};
 
 // Source mapping.
 const orderInformationSchema = {
@@ -60,10 +63,17 @@ const orderInformationSchema = {
                         },
                         'idLocal': {
                             '$id': '#/properties/data/properties/order/properties/idLocal',
-                            'source': 'purchaseOrderId',
+                            'source': 'purchaseOrderNumber',
                             'type': 'string',
                             'title': 'Local identifier',
                             'description': 'Locally given identifier.',
+                        },
+                        'idSystemLocal': {
+                            '$id': '#/properties/data/properties/order/properties/idSystemLocal',
+                            'source': 'purchaseOrderId',
+                            'type': 'string',
+                            'title': 'Local system identifier',
+                            'description': 'Locally given system identifier.',
                         },
                         'deliveryRequired': {
                             '$id': '#/properties/data/properties/order/properties/deliveryRequired',
@@ -204,6 +214,13 @@ const orderInformationSchema = {
                                 'idLocal': {
                                     '$id': '#/properties/data/properties/order/properties/customer/properties/idLocal',
                                     'source': 'customerId',
+                                    'type': 'string',
+                                    'title': 'Local identifier',
+                                    'description': 'Locally given identifier.',
+                                },
+                                'idOfficial': {
+                                    '$id': '#/properties/data/properties/order/properties/customer/properties/idOfficial',
+                                    'source': 'customerBusinessId',
                                     'type': 'string',
                                     'title': 'Local identifier',
                                     'description': 'Locally given identifier.',
@@ -373,12 +390,12 @@ const orderInformationSchema = {
                                     'title': 'Identity type',
                                     'description': 'Type of identity.',
                                 },
-                                'idLocal': {
-                                    '$id': '#/properties/data/properties/order/properties/addressBilling/properties/idLocal',
+                                'idSystemLocal': {
+                                    '$id': '#/properties/data/properties/order/properties/addressBilling/properties/idSystemLocal',
                                     'source': 'billToId',
                                     'type': 'string',
-                                    'title': 'Local identifier',
-                                    'description': 'Locally given identifier.',
+                                    'title': 'Local system identifier',
+                                    'description': 'Locally given system identifier.',
                                 },
                                 'name': {
                                     '$id': '#/properties/data/properties/order/properties/addressBilling/properties/name',
@@ -459,10 +476,17 @@ const orderInformationSchema = {
                                     },
                                     'idLocal': {
                                         '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/idLocal',
-                                        'source': 'purchaseOrderItemId',
+                                        'source': 'purchaseOrderItemNumber',
                                         'type': 'string',
                                         'title': 'Local identifier',
                                         'description': 'Locally given identifier.',
+                                    },
+                                    'idSystemLocal': {
+                                        '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/idSystemLocal',
+                                        'source': 'purchaseOrderItemId',
+                                        'type': 'string',
+                                        'title': 'Local system identifier',
+                                        'description': 'Locally given system identifier.',
                                     },
                                     'quantity': {
                                         '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/quantity',
@@ -568,7 +592,27 @@ const handleData = function (config, id, data) {
                     value.vendorType = 'Organization';
                     value.descriptionGeneral = 'Purchase order information.';
                     value.requiredDeliveryDateTime = new Date(value.requiredDeliveryDate + 'T' + value.requiredDeliveryTime).toISOString();
-                    value.purchaseOrderItems = value.purchaseOrderItems.map((i) => {return {orderLineType: 'OrderLine', productType: 'Product', ...i};});
+                    try {
+                        orderNumberToCALSId[value.purchaseOrderNumber] = value.purchaseOrderId;
+                        orderIdToCALSInstanceId[value.purchaseOrderId] = value.instanceId;
+                        for (let i = 0; i < value.purchaseOrderItems.length; i++) {
+                            if (!Object.hasOwnProperty.call(materialSecondaryCodeToCALSId, value.purchaseOrderId)) {
+                                materialSecondaryCodeToCALSId[value.purchaseOrderId] = {};
+                            }
+                            materialSecondaryCodeToCALSId[value.purchaseOrderId][value.purchaseOrderItems[i].materialSecondaryCode] = value.purchaseOrderItems[i].purchaseOrderItemId;
+                            value.purchaseOrderItems[i] = {
+                                orderLineType: 'OrderLine',
+                                productType: 'Product',
+                                ...value.purchaseOrderItems[i],
+                                purchaseOrderItemNumber: i + '0',
+                            };
+                        }
+                        console.log('Store CALS identifiers from sent order.');
+                        console.log('orderNumberToCALSId: ' + JSON.stringify(orderNumberToCALSId));
+                        console.log('orderIdToCALSInstanceId: ' + JSON.stringify(orderIdToCALSInstanceId));
+                    } catch (e) {
+                        console.log(e.message);
+                    }
                     result = transformer.transform(value, orderInformationSchema.properties.data);
                 }
             } else {
@@ -683,9 +727,6 @@ const errorResponse = async (req, res, err) => {
     return res.status(err.httpStatusCode || 500).send(result);
 };
 
-// TODO: FOR TESTING PURPOSES ONLY.
-const purchaseOrderIdToInstanceId = {};
-
 /**
  * Endpoint to trigger fetching of new data from CALS.
  *
@@ -776,7 +817,7 @@ const controller = async (req, res) => {
         }
 
         // TODO: FOR TESTING PURPOSES ONLY.
-        purchaseOrderIdToInstanceId[req.body.entityId] = req.body.instanceId;
+        // purchaseOrderIdToInstanceId[req.body.entityId] = req.body.instanceId;
 
         // 2. Get new data from CALS with parameters provided in the body.
         try {
@@ -929,11 +970,12 @@ const template = async (config, template) => {
                 const data = {};
 
                 // 1. Parse PurchaseOrderId - template.parameters.targetObject.idLocal
-                data.PurchaseOrderId = template.parameters.targetObject.idLocal;
+                data.PurchaseOrderNumber = template.parameters.targetObject.idLocal;
+                data.PurchaseOrderId = orderNumberToCALSId[data.PurchaseOrderNumber];
+                data.InstanceId = orderIdToCALSInstanceId[data.PurchaseOrderId];
 
-                // TODO: FOR TESTING PURPOSES ONLY.
-                data.InstanceId = (purchaseOrderIdToInstanceId[data.PurchaseOrderId]
-                    || 'b3bd04e4-2ddf-49dc-832d-c30cb1bf7f16');
+                winston.log('info', 'Resolved ' + data.PurchaseOrderNumber + ' to PurchaseOrderId ' + data.PurchaseOrderId);
+                winston.log('info', 'Resolved ' + data.PurchaseOrderId + ' to InstanceId ' + data.InstanceId);
 
                 // 2. Parse PurchaseOrderItems - template.parameters.targetObject.orderLine
                 data.PurchaseOrderItems = template.parameters.targetObject.orderLine.map(input => {
@@ -944,7 +986,16 @@ const template = async (config, template) => {
                     if (!datetime) {
                         datetime = input.deliveryRequired;
                     }
-                    output.PurchaseOrderItemId = input.idLocal;
+                    // Resolve CALSId.
+                    try {
+                        output.PurchaseOrderItemId = materialSecondaryCodeToCALSId[data.PurchaseOrderId][input.idLocal];
+                    } catch (e) {
+                        output.PurchaseOrderItemId = input.idSystemLocal;
+                        winston.log('info', 'Couldn\'t resolve orderLine id. Error: ' + e.message);
+                    }
+
+                    datetime = new Date(datetime).toISOString();
+
                     output.ConfirmedDeliveryDate = (datetime || 'T').split('T')[0];
                     output.ConfirmedDeliveryTime = (datetime || 'T').split('T')[1].substring(0, 5);
 
@@ -958,7 +1009,10 @@ const template = async (config, template) => {
                     return output;
                 });
 
-                config.static.url = 'https://c4-prod-apim.azure-api.net/pot/instances/' + data.InstanceId + '/confirmpurchaseorder';
+                // TODO: ONLY FOR TESTING.
+                const fallbackInstanceId = 'b3bd04e4-2ddf-49dc-832d-c30cb1bf7f16';
+
+                config.static.url = 'https://c4-prod-apim.azure-api.net/pot/instances/' + (data.InstanceId || fallbackInstanceId) + '/confirmpurchaseorder';
                 config.static.headers = {
                     'CALS-API-KEY': config.static.apikey,
                     'x-is-test': template.authConfig.isTest === 'true',

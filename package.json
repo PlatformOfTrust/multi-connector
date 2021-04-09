@@ -29,6 +29,7 @@
     "csvtojson": "^2.0.10",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "express-xml-bodyparser": "^0.3.0",
     "fast-xml-parser": "^3.17.4",
     "fs": "0.0.1-security",
     "greenlock-express": "^4.0.3",

@@ -2,6 +2,7 @@
 /**
  * Module dependencies.
  */
+const xmlparser = require('express-xml-bodyparser');
 const connector = require('../lib/connector');
 const router = require('express').Router();
 const response = require('../lib/response');
@@ -171,7 +172,7 @@ const controller = async (req, res) => {
     let host;
     try {
         // TODO: Place authentication.
-        const topic = req.params.topic;
+        const topic = req.params.topic || 'latest';
         const parts = req.originalUrl.split('/');
         const productCode = parts.splice(parts.indexOf('hooks') + 1)[0];
         const config = cache.getDoc('configs', productCode) || {};
@@ -224,7 +225,17 @@ const controller = async (req, res) => {
  */
 const endpoints = function (passport) {
     /** Hook endpoint. */
-    router.post('/:topic*?', controller);
+    router.post('/:topic*?', (req, res, next) => req.headers['content-type'].endsWith('xml') ? next('route') : next(), controller);
+    router.post('/:topic*?', xmlparser({
+        explicitArray: false,
+        normalize: false,
+        normalizeTags: false,
+        trim: true,
+        mergeAttrs: true,
+        ignoreAttrs: true,
+        explicitRoot: false,
+        stripPrefix: true,
+    }), controller);
     return router;
 };
 

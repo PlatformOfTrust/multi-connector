@@ -1,0 +1,38 @@
+{
+    "plugins": [
+        "kiilto",
+        "broker",
+        "streamer"
+    ],
+    "protocol": "hook",
+    "authConfig": {
+        "path": "${targetObject.idLocal}"
+    },
+    "dataObjects": [
+        ""
+    ],
+    "dataPropertyMappings": {
+        "OrderConfirmation": ""
+    },
+    "generalConfig": {
+        "hardwareId": {
+            "dataObjectProperty": "cbc:ID"
+        },
+        "sourceName": {
+            "dataObjectProperty": "cbc:Note"
+        },
+        "timestamp": {
+            "dataObjectProperty": "cbc:IssueDate"
+        }
+    },
+    "input": {
+        "required": [
+            "parameters.targetObject"
+        ]
+    },
+    "output": {
+        "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/OrderConfirmation/",
+        "array": "order",
+        "data": "data"
+    }
+}
