@@ -971,7 +971,7 @@ const template = async (config, template) => {
 
                 // 1. Parse PurchaseOrderId - template.parameters.targetObject.idLocal
                 data.PurchaseOrderNumber = template.parameters.targetObject.idLocal;
-                data.PurchaseOrderId = orderNumberToCALSId[data.PurchaseOrderNumber];
+                data.PurchaseOrderId = orderNumberToCALSId[data.PurchaseOrderNumber] || template.parameters.targetObject.idSystemLocal;
                 data.InstanceId = orderIdToCALSInstanceId[data.PurchaseOrderId];
 
                 winston.log('info', 'Resolved ' + data.PurchaseOrderNumber + ' to PurchaseOrderId ' + data.PurchaseOrderId);
@@ -986,12 +986,13 @@ const template = async (config, template) => {
                     if (!datetime) {
                         datetime = input.deliveryRequired;
                     }
+
                     // Resolve CALSId.
+                    // TODO: Check quantity.
                     try {
                         output.PurchaseOrderItemId = materialSecondaryCodeToCALSId[data.PurchaseOrderId][input.idLocal];
                     } catch (e) {
                         output.PurchaseOrderItemId = input.idSystemLocal;
-                        winston.log('info', 'Couldn\'t resolve orderLine id. Error: ' + e.message);
                     }
 
                     datetime = new Date(datetime).toISOString();
