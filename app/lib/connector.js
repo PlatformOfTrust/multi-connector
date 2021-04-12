@@ -156,7 +156,7 @@ function loadJSON (collection, string) {
         const object = JSON.parse(Buffer.from(string, 'base64').toString('utf8'));
         for (let i = 0; i < Object.keys(object).length; i++) {
             const filename = Object.keys(object)[i];
-            handleFile(collection, filename, JSON.stringify(object[filename]));
+            handleFile(collection, filename, collection === 'resources' ? Buffer.from(object[filename], 'base64').toString('utf8') : JSON.stringify(object[filename]));
             winston.log('info', 'Loaded from environment ' + collection + '/' + filename + '.');
         }
     } catch (err) {
