@@ -16,13 +16,13 @@
     },
     "generalConfig": {
         "hardwareId": {
-            "dataObjectProperty": "cbc:ID"
+            "dataObjectProperty": "OrderHed.PONum"
         },
         "sourceName": {
-            "dataObjectProperty": "cbc:Note"
+            "dataObjectProperty": "OrderHed.OrderNum"
         },
         "timestamp": {
-            "dataObjectProperty": "cbc:IssueDate"
+            "dataObjectProperty": "OrderHed.OrderDate"
         }
     },
     "input": {
