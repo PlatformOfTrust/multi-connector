@@ -144,6 +144,13 @@ const orderConfirmationSchema = {
                                         'title': 'Local identifier',
                                         'description': 'Locally given identifier.',
                                     },
+                                    'idSystemLocal': {
+                                        '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/idSystemLocal',
+                                        'source': 'idSystemLocal',
+                                        'type': 'string',
+                                        'title': 'Local System identifier',
+                                        'description': 'Locally given system identifier.',
+                                    },
                                     'deliveryRequired': {
                                         '$id': '#/properties/data/properties/order/properties/deliveryRequired',
                                         'source': 'NeedByDate',
@@ -189,7 +196,7 @@ const orderConfirmationSchema = {
                                             },
                                             'idSystemLocal': {
                                                 '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/idSystemLocal',
-                                                'source': 'idSystemLocal',
+                                                'source': 'productIdSystemLocal',
                                                 'type': 'string',
                                                 'title': 'Local System identifier',
                                                 'description': 'Locally given system identifier.',
