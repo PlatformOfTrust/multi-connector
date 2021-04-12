@@ -174,7 +174,7 @@ const getData = async (config, pathArray) => {
         winston.log('info', 'Closed SOAP connection ' + config.productCode);
     } else {
         winston.log('info', 'Started downloading WDSL file...');
-        let downloadedWSDLFile = cache.getDoc('resources', config.productCode + '.xml');
+        let downloadedWSDLFile = cache.getDoc('resources', encodeURI(config.productCode) + '.xml');
         if (!downloadedWSDLFile) downloadedWSDLFile = await getWSDL(config);
         winston.log('info', 'Download finished.');
 
