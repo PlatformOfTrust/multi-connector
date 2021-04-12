@@ -5,6 +5,7 @@
 const winston = require('../../logger.js');
 const httpntlm = require('httpntlm');
 const request = require('request');
+const cache = require('../cache');
 const response = require('../lib/response');
 const soap = require('soap');
 const _ = require('lodash');
@@ -173,7 +174,8 @@ const getData = async (config, pathArray) => {
         winston.log('info', 'Closed SOAP connection ' + config.productCode);
     } else {
         winston.log('info', 'Started downloading WDSL file...');
-        const downloadedWSDLFile = await getWSDL(config);
+        let downloadedWSDLFile = cache.getDoc('resources', config.productCode + '.xml');
+        if (!downloadedWSDLFile) downloadedWSDLFile = await getWSDL(config);
         winston.log('info', 'Download finished.');
 
         await writeSOAPFile(WSDLFile, downloadedWSDLFile);
