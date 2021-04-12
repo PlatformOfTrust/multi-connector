@@ -263,6 +263,13 @@ const orderInformationSchema = {
                                     'title': 'System Local identifier',
                                     'description': 'Locally given system identifier.',
                                 },
+                                'idOfficial': {
+                                    '$id': '#/properties/data/properties/order/properties/vendor/properties/idOfficial',
+                                    'source': 'vendorBusinessId',
+                                    'type': 'string',
+                                    'title': 'Local identifier',
+                                    'description': 'Locally given identifier.',
+                                },
                                 'name': {
                                     '$id': '#/properties/data/properties/order/properties/vendor/properties/name',
                                     'source': 'vendorName',
