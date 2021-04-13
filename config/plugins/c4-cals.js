@@ -614,9 +614,9 @@ const handleData = function (config, id, data) {
                                 purchaseOrderItemNumber: i + '0',
                             };
                         }
-                        console.log('Store CALS identifiers from sent order.');
-                        console.log('orderNumberToCALSId: ' + JSON.stringify(orderNumberToCALSId));
-                        console.log('orderIdToCALSInstanceId: ' + JSON.stringify(orderIdToCALSInstanceId));
+                        winston.log('info', 'Store CALS identifiers from sent order.');
+                        winston.log('info', 'orderNumberToCALSId: ' + JSON.stringify(orderNumberToCALSId));
+                        winston.log('info', 'orderIdToCALSInstanceId: ' + JSON.stringify(orderIdToCALSInstanceId));
                     } catch (e) {
                         console.log(e.message);
                     }
