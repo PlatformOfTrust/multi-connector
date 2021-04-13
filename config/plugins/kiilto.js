@@ -821,8 +821,14 @@ const controller = async (req, res) => {
                     if (!Array.isArray(order.deliveryLine)) {
                         order.deliveryLine = [order.deliveryLine];
                     }
+
                     order.idLocal = order.idLocal || 'Unknown';
-                    order.idSystemLocal = orderNumberToCALSId[order.idSystemLocal] || 'Unknown';
+                    order.idSystemLocal = orderNumberToCALSId[order.idLocal];
+                    order.idSystemLocal = order.idSystemLocal || 'Unknown';
+
+                    if (!Object.hasOwnProperty.call(productCodeToCALSId, order.idSystemLocal)) {
+                        productCodeToCALSId[order.idSystemLocal] = {};
+                    }
 
                     order.deliveryLine = order.deliveryLine.map((l) => {
                         if (!Object.hasOwnProperty.call(productCodeToCALSId, order.idSystemLocal)) {
@@ -1008,14 +1014,21 @@ const stream = async (template, data) => {
                         if (!Array.isArray(order.orderLine)) {
                             order.deliveryLine = [order.orderLine];
                         }
+                        order.idLocal = order.idLocal || 'Unknown';
+                        order.idSystemLocal = orderNumberToCALSId[order.idLocal];
+                        order.idSystemLocal = order.idSystemLocal || 'Unknown';
+
+                        if (!Object.hasOwnProperty.call(productCodeToCALSId, order.idSystemLocal)) {
+                            productCodeToCALSId[order.idSystemLocal] = {};
+                        }
+
                         order.orderLine = order.orderLine.map((l) => {
-                            winston.log('info', 'Changed ' + l.product.codeProduct + ' to ' + productCodeToCALSId[l.product.codeProduct]);
+                            winston.log('info', 'Changed ' + l.product.codeProduct + ' to ' + productCodeToCALSId[order.idSystemLocal][l.product.codeProduct]);
                             return {
                                 ...l,
-                                idSystemLocal: productCodeToCALSId[l.product.codeProduct],
+                                idSystemLocal: productCodeToCALSId[order.idSystemLocal][l.product.codeProduct],
                             };
                         });
-                        order.idSystemLocal = orderNumberToCALSId[order.idLocal];
                         return order;
                     });
                     if (result.data.order.length === 1) {
