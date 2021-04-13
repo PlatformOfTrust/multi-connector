@@ -997,7 +997,7 @@ const template = async (config, template) => {
                     // Resolve CALSId.
                     // TODO: Check quantity.
                     try {
-                        output.PurchaseOrderItemId = materialSecondaryCodeToCALSId[data.PurchaseOrderId][input.codeProduct];
+                        output.PurchaseOrderItemId = materialSecondaryCodeToCALSId[data.PurchaseOrderId][input.product.codeProduct];
                     } catch (e) {
                         output.PurchaseOrderItemId = input.idSystemLocal;
                     }
