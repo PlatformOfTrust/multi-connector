@@ -24,7 +24,6 @@ const PLUGIN_NAME = 'kiilto';
 const PRIMARY_PRODUCT_CODE = 'C1EC2973-8A0B-4858-BF1E-3A0D0CEFE33A';
 const orderNumberToCALSId = {};
 const productCodeToCALSId = {};
-const orderNumberToCALSInstanceId = {};
 
 // Source mapping.
 const orderConfirmationSchema = {
@@ -558,15 +557,16 @@ const handleData = function (config, id, data) {
 
                     try {
                         const orderNumber = _.get(value, 'OrderHed.PONum');
-                        if (!Object.hasOwnProperty.call(productCodeToCALSId, orderNumber)) {
-                            productCodeToCALSId[orderNumber] = {};
+                        value.idSystemLocal = orderNumberToCALSId[orderNumber];
+
+                        if (!Object.hasOwnProperty.call(productCodeToCALSId, value.idSystemLocal)) {
+                            productCodeToCALSId[value.idSystemLocal] = {};
                         }
                         value['OrderDtl'] = value['OrderDtl'].map((i) => {
                             return {
-                                orderLineType: 'OrderLine', productType: 'Product', ...i, idSystemLocal: productCodeToCALSId[orderNumber][i['PartNum']], NeedByDate: new Date(i.NeedByDate).toISOString(),
+                                orderLineType: 'OrderLine', productType: 'Product', ...i, idSystemLocal: productCodeToCALSId[value.idSystemLocal][i['PartNum']], NeedByDate: new Date(i.NeedByDate).toISOString(),
                             };
                         });
-                        value.idSystemLocal = orderNumberToCALSId[orderNumber];
                     } catch (e) {
                         console.log(e.message);
                     }
@@ -822,17 +822,18 @@ const controller = async (req, res) => {
                         order.deliveryLine = [order.deliveryLine];
                     }
                     order.idLocal = order.idLocal || 'Unknown';
+                    order.idSystemLocal = orderNumberToCALSId[order.idSystemLocal] || 'Unknown';
+
                     order.deliveryLine = order.deliveryLine.map((l) => {
-                        if (!Object.hasOwnProperty.call(productCodeToCALSId, order.idLocal)) {
-                            productCodeToCALSId[order.idLocal] = {};
+                        if (!Object.hasOwnProperty.call(productCodeToCALSId, order.idSystemLocal)) {
+                            productCodeToCALSId[order.idSystemLocal] = {};
                         }
-                        winston.log('info', 'Changed ' + l.product.codeProduct + ' to ' + productCodeToCALSId[order.idLocal][l.product.codeProduct]);
+                        winston.log('info', 'Changed ' + l.product.codeProduct + ' to ' + productCodeToCALSId[order.idSystemLocal][l.product.codeProduct]);
                         return {
                             ...l,
-                            idSystemLocal: productCodeToCALSId[order.idLocal][l.product.codeProduct],
+                            idSystemLocal: productCodeToCALSId[order.idSystemLocal][l.product.codeProduct],
                         };
                     });
-                    order.idSystemLocal = orderNumberToCALSId[order.idLocal];
                     return order;
                 });
             } catch (e) {
@@ -898,6 +899,7 @@ const template = async (config, template) => {
             // Stream data to external system.
             try {
                 result[id].idLocal = result[id].idLocal || 'Unknown';
+                result[id].idSystemLocal = result[id].idSystemLocal || 'Unknown';
                 orderNumberToCALSId[result[id].idLocal] = result[id].idSystemLocal;
                 // TODO: Test customer.
                 if (!Object.hasOwnProperty.call(result[id], 'customer')) {
@@ -906,13 +908,13 @@ const template = async (config, template) => {
                 // Customer idLocal 00327641393.
                 result[id].customer.idLocal = '003727641393';
 
-                if (!Object.hasOwnProperty.call(productCodeToCALSId, result[id].idLocal)) {
-                    productCodeToCALSId[result[id].idLocal] = {};
+                if (!Object.hasOwnProperty.call(productCodeToCALSId, result[id].idSystemLocal)) {
+                    productCodeToCALSId[result[id].idSystemLocal] = {};
                 }
 
                 for (let i = 0; i < result[id].orderLine.length; i++) {
                     // Store id mappings.
-                    productCodeToCALSId[result[id].idLocal][result[id].orderLine[i].product.codeProduct] = result[id].orderLine[i].idSystemLocal;
+                    productCodeToCALSId[result[id].idSystemLocal][result[id].orderLine[i].product.codeProduct] = result[id].orderLine[i].idSystemLocal;
                 }
 
                 winston.log('info', 'Store CALS identifiers from received order.');
