@@ -934,7 +934,7 @@ const template = async (config, template) => {
                 // Compose a signed data response.
                 const created = moment().format();
                 const output = {
-                    '@context': template.output.context,
+                    '@context': template.output.contextValue,
                     data: {
                         order: result[id],
                     },
@@ -944,7 +944,7 @@ const template = async (config, template) => {
                     signature: {
                         type: 'RsaSignature2018',
                         created,
-                        creator: config.connectorURL + '/translator/v1/public.key',
+                        creator: template.authConfig.connectorURL + '/translator/v1/public.key',
                         signatureValue: rsa.generateSignature({
                             __signed__: created,
                             ...(output['data'] || {}),
