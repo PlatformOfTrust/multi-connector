@@ -894,7 +894,7 @@ const template = async (config, template) => {
                     result[id].customer = {};
                 }
                 // Customer idLocal 00327641393.
-                result[id].customer.idLocal = '00327641393';
+                result[id].customer.idLocal = '003727641393';
 
                 for (let i = 0; i < result[id].orderLine.length; i++) {
                     // Store id mappings.
