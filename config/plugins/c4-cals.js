@@ -1017,6 +1017,8 @@ const template = async (config, template) => {
                     return output;
                 });
 
+                winston.log('info', 'Body: ' + JSON.stringify(data));
+
                 // TODO: ONLY FOR TESTING.
                 const fallbackInstanceId = 'b3bd04e4-2ddf-49dc-832d-c30cb1bf7f16';
 
