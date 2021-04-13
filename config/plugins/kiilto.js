@@ -555,13 +555,18 @@ const handleData = function (config, id, data) {
                     value.projectType = 'Project';
                     value.descriptionGeneral = 'Purchase order confirmation.';
                     value.locationType = 'Location';
+
                     try {
+                        const orderNumber = _.get(value, 'OrderHed.PONum');
+                        if (!Object.hasOwnProperty.call(productCodeToCALSId, orderNumber)) {
+                            productCodeToCALSId[orderNumber] = {};
+                        }
                         value['OrderDtl'] = value['OrderDtl'].map((i) => {
                             return {
-                                orderLineType: 'OrderLine', productType: 'Product', ...i, idSystemLocal: productCodeToCALSId[i['PartNum']], NeedByDate: new Date(i.NeedByDate).toISOString(),
+                                orderLineType: 'OrderLine', productType: 'Product', ...i, idSystemLocal: productCodeToCALSId[orderNumber][i['PartNum']], NeedByDate: new Date(i.NeedByDate).toISOString(),
                             };
                         });
-                        value.idSystemLocal = orderNumberToCALSId[_.get(value, 'OrderHed.PONum')];
+                        value.idSystemLocal = orderNumberToCALSId[orderNumber];
                     } catch (e) {
                         console.log(e.message);
                     }
@@ -816,11 +821,15 @@ const controller = async (req, res) => {
                     if (!Array.isArray(order.deliveryLine)) {
                         order.deliveryLine = [order.deliveryLine];
                     }
+                    order.idLocal = order.idLocal || 'Unknown';
                     order.deliveryLine = order.deliveryLine.map((l) => {
-                        winston.log('info', 'Changed ' + l.product.codeProduct + ' to ' + productCodeToCALSId[l.product.codeProduct]);
+                        if (!Object.hasOwnProperty.call(productCodeToCALSId, order.idLocal)) {
+                            productCodeToCALSId[order.idLocal] = {};
+                        }
+                        winston.log('info', 'Changed ' + l.product.codeProduct + ' to ' + productCodeToCALSId[order.idLocal][l.product.codeProduct]);
                         return {
                             ...l,
-                            idLocal: productCodeToCALSId[l.product.codeProduct],
+                            idSystemLocal: productCodeToCALSId[order.idLocal][l.product.codeProduct],
                         };
                     });
                     order.idSystemLocal = orderNumberToCALSId[order.idLocal];
@@ -881,13 +890,14 @@ const template = async (config, template) => {
             );
             const id = template.parameters.targetObject.vendor.idLocal;
             const result = cache.getDoc('messages', template.productCode) || {};
-            result[id] = template.parameters.targetObject;
+            result[id] = template.parameters.targetObject || {};
 
             // TODO: Store received order to cache?
             cache.setDoc('messages', template.productCode, result);
 
             // Stream data to external system.
             try {
+                result[id].idLocal = result[id].idLocal || 'Unknown';
                 orderNumberToCALSId[result[id].idLocal] = result[id].idSystemLocal;
                 // TODO: Test customer.
                 if (!Object.hasOwnProperty.call(result[id], 'customer')) {
@@ -896,9 +906,13 @@ const template = async (config, template) => {
                 // Customer idLocal 00327641393.
                 result[id].customer.idLocal = '003727641393';
 
+                if (!Object.hasOwnProperty.call(productCodeToCALSId, result[id].idLocal)) {
+                    productCodeToCALSId[result[id].idLocal] = {};
+                }
+
                 for (let i = 0; i < result[id].orderLine.length; i++) {
                     // Store id mappings.
-                    productCodeToCALSId[result[id].orderLine[i].product.codeProduct] = result[id].orderLine[i].idSystemLocal;
+                    productCodeToCALSId[result[id].idLocal][result[id].orderLine[i].product.codeProduct] = result[id].orderLine[i].idSystemLocal;
                 }
 
                 winston.log('info', 'Store CALS identifiers from received order.');
