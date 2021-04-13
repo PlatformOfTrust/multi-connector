@@ -98,7 +98,7 @@ const orderInformationSchema = {
                         },
                         'descriptionGeneral': {
                             '$id': '#/properties/data/properties/order/properties/descriptionGeneral',
-                            'source': 'descriptionGeneral',
+                            'source': 'purchaseOrderInfo',
                             'type': 'string',
                             'title': 'Description',
                             'description': 'Description.',
@@ -597,7 +597,7 @@ const handleData = function (config, id, data) {
                     value.addressBillingType = 'ContactInformation';
                     value.customerType = 'Organization';
                     value.vendorType = 'Organization';
-                    value.descriptionGeneral = 'Purchase order information.';
+                    // value.descriptionGeneral = 'Purchase order information.';
                     value.requiredDeliveryDateTime = new Date(value.requiredDeliveryDate + 'T' + value.requiredDeliveryTime).toISOString();
                     try {
                         orderNumberToCALSId[value.purchaseOrderNumber] = value.purchaseOrderId;
