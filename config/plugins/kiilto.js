@@ -24,7 +24,6 @@ const PLUGIN_NAME = 'kiilto';
 const PRIMARY_PRODUCT_CODE = 'C1EC2973-8A0B-4858-BF1E-3A0D0CEFE33A';
 const orderNumberToCALSId = {};
 const productCodeToCALSId = {};
-const orderNumberToCALSInstanceId = {};
 
 // Source mapping.
 const orderConfirmationSchema = {
@@ -67,14 +66,14 @@ const orderConfirmationSchema = {
                         },
                         'idLocal': {
                             '$id': '#/properties/data/properties/order/properties/idLocal',
-                            'source': 'cac:OrderReference.cbc:ID',
+                            'source': 'OrderHed.PONum',
                             'type': 'string',
                             'title': 'Local identifier',
                             'description': 'Locally given identifier.',
                         },
                         'idSystemLocal': {
                             '$id': '#/properties/data/properties/order/properties/idSystemLocal',
-                            'source': 'cbc:ID',
+                            'source': 'idSystemLocal',
                             'type': 'string',
                             'title': 'Local System identifier',
                             'description': 'Locally given system identifier.',
@@ -119,7 +118,7 @@ const orderConfirmationSchema = {
                         },
                         'orderLine': {
                             '$id': '#/properties/data/properties/order/properties/orderLine',
-                            'source': 'cac:OrderLine',
+                            'source': 'OrderDtl',
                             'type': 'array',
                             'title': 'Order line',
                             'description': 'Order line.',
@@ -139,28 +138,35 @@ const orderConfirmationSchema = {
                                     },
                                     'idLocal': {
                                         '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/idLocal',
-                                        'source': 'cac:LineItem.cbc:ID',
+                                        'source': 'OrderLine',
                                         'type': 'string',
                                         'title': 'Local identifier',
                                         'description': 'Locally given identifier.',
                                     },
+                                    'idSystemLocal': {
+                                        '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/idSystemLocal',
+                                        'source': 'idSystemLocal',
+                                        'type': 'string',
+                                        'title': 'Local System identifier',
+                                        'description': 'Locally given system identifier.',
+                                    },
                                     'deliveryRequired': {
                                         '$id': '#/properties/data/properties/order/properties/deliveryRequired',
-                                        'source': 'cac:LineItem.cac:Delivery.cac:RequestedDeliveryPeriod.cbc:EndDate',
+                                        'source': 'NeedByDate',
                                         'type': 'string',
                                         'title': 'Required delivery time',
                                         'description': 'Required delivery time initiated typically by the orderer.',
                                     },
                                     'quantity': {
                                         '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/quantity',
-                                        'source': 'cac:LineItem.cac:Delivery.cbc:Quantity',
+                                        'source': 'OrderQty',
                                         'type': 'integer',
                                         'title': 'Quantity',
                                         'description': 'Quantity of specific objects.',
                                     },
                                     'unit': {
                                         '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/unit',
-                                        'source': null,
+                                        'source': 'SalesUM',
                                         'type': 'string',
                                         'title': 'Unit',
                                         'description': 'Unit used (Defines unit which is used).',
@@ -182,28 +188,28 @@ const orderConfirmationSchema = {
                                             },
                                             'idLocal': {
                                                 '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/idLocal',
-                                                'source': 'null',
+                                                'source': null,
                                                 'type': 'string',
                                                 'title': 'Local identifier',
                                                 'description': 'Locally given identifier.',
                                             },
                                             'idSystemLocal': {
                                                 '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/idSystemLocal',
-                                                'source': 'idSystemLocal',
+                                                'source': 'productIdSystemLocal',
                                                 'type': 'string',
                                                 'title': 'Local System identifier',
                                                 'description': 'Locally given system identifier.',
                                             },
                                             'name': {
                                                 '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/name',
-                                                'source': 'cac:LineItem.cac:Item.cbc:Description',
+                                                'source': 'LineDesc',
                                                 'type': 'string',
                                                 'title': 'Name',
                                                 'description': 'Name.',
                                             },
                                             'codeProduct': {
                                                 '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/codeProduct',
-                                                'source': 'cac:LineItem.cac:Item.cac:SellersItemIdentification.cbc:ID',
+                                                'source': 'PartNum',
                                                 'type': 'string',
                                                 'title': 'Product code',
                                                 'description': 'Unique product code given by manufacturer.',
@@ -493,9 +499,6 @@ const orderConfirmationSchema = {
     },
 };
 
-const purchaseOrderIds = {};
-const purchaseOrderItemIds = {};
-
 /**
  * Sends http request.
  *
@@ -551,13 +554,19 @@ const handleData = function (config, id, data) {
                     value.projectType = 'Project';
                     value.descriptionGeneral = 'Purchase order confirmation.';
                     value.locationType = 'Location';
+
                     try {
-                        value['cac:OrderLine'] = value['cac:OrderLine'].map((i) => {
+                        const orderNumber = _.get(value, 'OrderHed.PONum');
+                        value.idSystemLocal = orderNumberToCALSId[orderNumber];
+
+                        if (!Object.hasOwnProperty.call(productCodeToCALSId, value.idSystemLocal)) {
+                            productCodeToCALSId[value.idSystemLocal] = {};
+                        }
+                        value['OrderDtl'] = value['OrderDtl'].map((i) => {
                             return {
-                                orderLineType: 'OrderLine', productType: 'Product', ...i, idSystemLocal: productCodeToCALSId[i['cac:LineItem']['cac:Item']['cac:SellersItemIdentification']['cbc:ID']],
+                                orderLineType: 'OrderLine', productType: 'Product', ...i, idSystemLocal: productCodeToCALSId[value.idSystemLocal][i['PartNum']], NeedByDate: new Date(i.NeedByDate).toISOString(),
                             };
                         });
-                        value.idSystemLocal = orderNumberToCALSId[value['cac:OrderReference']['cbc:ID']];
                     } catch (e) {
                         console.log(e.message);
                     }
@@ -677,7 +686,7 @@ const errorResponse = async (req, res, err) => {
     return res.status(err.httpStatusCode || 500).send(result);
 };
 
-// TODO: Not used.
+// TODO: Not in use.
 /**
  * Endpoint to trigger fetching of new data from CALS.
  *
@@ -746,7 +755,7 @@ const controller = async (req, res) => {
             }
             */
 
-            winston.log('info', 'Received trigger request from ' + (req.get('origin') || req.headers['x-forwarded-for'] || req.socket.remoteAddress));
+            winston.log('info', 'Received trigger request from ' + (req.get('x-real-ip') || req.get('origin') || req.socket.remoteAddress));
 
             template = cache.getDoc('templates', config.template) || {};
             host = req.get('host').split(':')[0];
@@ -812,11 +821,23 @@ const controller = async (req, res) => {
                     if (!Array.isArray(order.deliveryLine)) {
                         order.deliveryLine = [order.deliveryLine];
                     }
+
+                    order.idLocal = order.idLocal || 'Unknown';
+                    order.idSystemLocal = orderNumberToCALSId[order.idLocal];
+                    order.idSystemLocal = order.idSystemLocal || 'Unknown';
+
+                    if (!Object.hasOwnProperty.call(productCodeToCALSId, order.idSystemLocal)) {
+                        productCodeToCALSId[order.idSystemLocal] = {};
+                    }
+
                     order.deliveryLine = order.deliveryLine.map((l) => {
-                        winston.log('info', 'Changed ' + l.product.codeProduct + ' to ' + productCodeToCALSId[l.product.codeProduct]);
+                        if (!Object.hasOwnProperty.call(productCodeToCALSId, order.idSystemLocal)) {
+                            productCodeToCALSId[order.idSystemLocal] = {};
+                        }
+                        winston.log('info', 'Changed ' + l.product.codeProduct + ' to ' + productCodeToCALSId[order.idSystemLocal][l.product.codeProduct]);
                         return {
                             ...l,
-                            idLocal: productCodeToCALSId[l.product.codeProduct],
+                            idSystemLocal: productCodeToCALSId[order.idSystemLocal][l.product.codeProduct],
                         };
                     });
                     return order;
@@ -876,41 +897,67 @@ const template = async (config, template) => {
             );
             const id = template.parameters.targetObject.vendor.idLocal;
             const result = cache.getDoc('messages', template.productCode) || {};
-            result[id] = template.parameters.targetObject;
+            result[id] = template.parameters.targetObject || {};
 
             // TODO: Store received order to cache?
             cache.setDoc('messages', template.productCode, result);
 
             // Stream data to external system.
             try {
+                result[id].idLocal = result[id].idLocal || 'Unknown';
+                result[id].idSystemLocal = result[id].idSystemLocal || 'Unknown';
                 orderNumberToCALSId[result[id].idLocal] = result[id].idSystemLocal;
                 // TODO: Test customer.
                 if (!Object.hasOwnProperty.call(result[id], 'customer')) {
                     result[id].customer = {};
                 }
-                result[id].customer.idLocal = '00327641393';
+                // Customer idLocal 00327641393.
+                result[id].customer.idLocal = '003727641393';
+
+                if (!Object.hasOwnProperty.call(productCodeToCALSId, result[id].idSystemLocal)) {
+                    productCodeToCALSId[result[id].idSystemLocal] = {};
+                }
 
                 for (let i = 0; i < result[id].orderLine.length; i++) {
                     // Store id mappings.
-                    productCodeToCALSId[result[id].orderLine[i].product.codeProduct] = result[id].orderLine[i].idSystemLocal;
+                    productCodeToCALSId[result[id].idSystemLocal][result[id].orderLine[i].product.codeProduct] = result[id].orderLine[i].idSystemLocal;
                 }
 
-                console.log('Store CALS identifiers from received order.');
-                console.log('orderNumberToCALSId: ' + JSON.stringify(orderNumberToCALSId));
-                console.log('productCodeToCALSId: ' + JSON.stringify(productCodeToCALSId));
-
-                // Customer idLocal 00327641393
+                winston.log('info', 'Store CALS identifiers from received order.');
+                winston.log('info', 'orderNumberToCALSId: ' + JSON.stringify(orderNumberToCALSId));
+                winston.log('info', 'productCodeToCALSId: ' + JSON.stringify(productCodeToCALSId));
 
                 // Pick Kiilto endpoint from config.
                 config.static.url = config.static.endpoint;
 
+                // Send a complete PoT broker response instead of just the targetObject.
+                // Compose a signed data response.
+                const created = moment().format();
+                const output = {
+                    '@context': template.output.contextValue,
+                    data: {
+                        order: result[id],
+                    },
+                };
+                const brokerResponse = {
+                    ...(output || {}),
+                    signature: {
+                        type: 'RsaSignature2018',
+                        created,
+                        creator: template.authConfig.connectorURL + '/translator/v1/public.key',
+                        signatureValue: rsa.generateSignature({
+                            __signed__: created,
+                            ...(output['data'] || {}),
+                        }),
+                    },
+                };
+
                 winston.log('info', '3. Send data to URL ' + config.static.url);
-                await template.plugins.find(p => p.name === 'streamer')
-                    .stream({...template, config}, {data: {order: result[id]}});
+                await template.plugins.find(p => p.name === 'streamer').stream({...template, config}, {data: {order: brokerResponse}});
 
                 template.protocol = 'hook';
                 template.authConfig.path = id;
-                template.generalConfig.hardwareId.dataObjectProperty = 'idLocal';
+                // template.generalConfig.hardwareId.dataObjectProperty = 'idLocal';
                 template.output.contextValue = 'https://standards.oftrust.net/v2/Context/DataProductOutput/OrderInformation/';
             } catch (err) {
                 return Promise.reject(err);
@@ -967,20 +1014,21 @@ const stream = async (template, data) => {
                         if (!Array.isArray(order.orderLine)) {
                             order.deliveryLine = [order.orderLine];
                         }
+                        order.idLocal = order.idLocal || 'Unknown';
+                        order.idSystemLocal = orderNumberToCALSId[order.idLocal];
+                        order.idSystemLocal = order.idSystemLocal || 'Unknown';
+
+                        if (!Object.hasOwnProperty.call(productCodeToCALSId, order.idSystemLocal)) {
+                            productCodeToCALSId[order.idSystemLocal] = {};
+                        }
+
                         order.orderLine = order.orderLine.map((l) => {
-                            winston.log('info', 'Changed ' + l.product.codeProduct + ' to ' + productCodeToCALSId[l.product.codeProduct]);
+                            winston.log('info', 'Changed ' + l.product.codeProduct + ' to ' + productCodeToCALSId[order.idSystemLocal][l.product.codeProduct]);
                             return {
                                 ...l,
-                                idLocal: productCodeToCALSId[l.product.codeProduct],
+                                idSystemLocal: productCodeToCALSId[order.idSystemLocal][l.product.codeProduct],
                             };
                         });
-                        /*
-                        // Set sender.
-                        order.sender = {
-                            '@type': 'Product',
-                            productCode: template.productCode,
-                        };
-                        */
                         return order;
                     });
                     if (result.data.order.length === 1) {
@@ -991,19 +1039,16 @@ const stream = async (template, data) => {
                             }
                         }
                     }
-
                 } catch (e) {
                     console.log(e.message);
                 }
-
-                // template.config.static.productCode = template.productCode;
-
                 if (template.plugins.find(p => p.name === 'broker') && template.config.plugins.broker) {
                     // TODO: Set isTest.
                     template.config.plugins.broker.parameters = {
                         isTest: false,
                     };
-
+                    // Configure sender productCode.
+                    template.config.productCode = template.productCode;
                     await template.plugins.find(p => p.name === 'broker').stream(template, result);
                 }
             } catch (err) {
@@ -1016,32 +1061,6 @@ const stream = async (template, data) => {
     }
 
     return responses;
-
-/*
-
-    try {
-        // Extract stream endpoint url and output definitions from config.
-
-        let url = config.plugins;
-        url = url ? config.plugins.streamer : null;
-        url = url ? config.plugins.streamer.url : null;
-        url = url || config.static.url;
-        let headers = config.plugins;
-        headers = headers ? config.plugins.streamer : null;
-        headers = headers ? config.plugins.streamer.headers : null;
-        headers = headers || config.static.headers || {};
-        if (!url) return data;
-        const objectKey = template.output.object || 'data';
-        const arrayKey = template.output.array;
-        // Send data to external system.
-        for (const d of (Array.isArray(data) ? data : [data])) {
-            // if (url) result.push(await request('POST', url, headers, d[objectKey][arrayKey]));
-        }
-    } catch (err) {
-        winston.log('error', err.message);
-        throw err;
-    }
-    return result;*/
 };
 
 module.exports = {
@@ -1049,5 +1068,5 @@ module.exports = {
     template,
     output,
     response,
-    stream
+    stream,
 };

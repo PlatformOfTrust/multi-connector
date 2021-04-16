@@ -98,7 +98,7 @@ const orderInformationSchema = {
                         },
                         'descriptionGeneral': {
                             '$id': '#/properties/data/properties/order/properties/descriptionGeneral',
-                            'source': 'descriptionGeneral',
+                            'source': 'purchaseOrderInfo',
                             'type': 'string',
                             'title': 'Description',
                             'description': 'Description.',
@@ -262,6 +262,13 @@ const orderInformationSchema = {
                                     'type': 'string',
                                     'title': 'System Local identifier',
                                     'description': 'Locally given system identifier.',
+                                },
+                                'idOfficial': {
+                                    '$id': '#/properties/data/properties/order/properties/vendor/properties/idOfficial',
+                                    'source': 'vendorBusinessId',
+                                    'type': 'string',
+                                    'title': 'Local identifier',
+                                    'description': 'Locally given identifier.',
                                 },
                                 'name': {
                                     '$id': '#/properties/data/properties/order/properties/vendor/properties/name',
@@ -590,7 +597,7 @@ const handleData = function (config, id, data) {
                     value.addressBillingType = 'ContactInformation';
                     value.customerType = 'Organization';
                     value.vendorType = 'Organization';
-                    value.descriptionGeneral = 'Purchase order information.';
+                    // value.descriptionGeneral = 'Purchase order information.';
                     value.requiredDeliveryDateTime = new Date(value.requiredDeliveryDate + 'T' + value.requiredDeliveryTime).toISOString();
                     try {
                         orderNumberToCALSId[value.purchaseOrderNumber] = value.purchaseOrderId;
@@ -607,9 +614,9 @@ const handleData = function (config, id, data) {
                                 purchaseOrderItemNumber: i + '0',
                             };
                         }
-                        console.log('Store CALS identifiers from sent order.');
-                        console.log('orderNumberToCALSId: ' + JSON.stringify(orderNumberToCALSId));
-                        console.log('orderIdToCALSInstanceId: ' + JSON.stringify(orderIdToCALSInstanceId));
+                        winston.log('info', 'Store CALS identifiers from sent order.');
+                        winston.log('info', 'orderNumberToCALSId: ' + JSON.stringify(orderNumberToCALSId));
+                        winston.log('info', 'orderIdToCALSInstanceId: ' + JSON.stringify(orderIdToCALSInstanceId));
                     } catch (e) {
                         console.log(e.message);
                     }
@@ -805,7 +812,7 @@ const controller = async (req, res) => {
                 return res.status(401).send('Unauthorized');
             }
 
-            winston.log('info', 'Received trigger request from ' + (req.get('origin') || req.headers['x-forwarded-for'] || req.socket.remoteAddress));
+            winston.log('info', 'Received trigger request from ' + (req.get('x-real-ip') || req.get('origin') || req.socket.remoteAddress));
 
             template = cache.getDoc('templates', config.template) || {};
             host = req.get('host').split(':')[0];
@@ -971,7 +978,7 @@ const template = async (config, template) => {
 
                 // 1. Parse PurchaseOrderId - template.parameters.targetObject.idLocal
                 data.PurchaseOrderNumber = template.parameters.targetObject.idLocal;
-                data.PurchaseOrderId = orderNumberToCALSId[data.PurchaseOrderNumber];
+                data.PurchaseOrderId = orderNumberToCALSId[data.PurchaseOrderNumber] || template.parameters.targetObject.idSystemLocal;
                 data.InstanceId = orderIdToCALSInstanceId[data.PurchaseOrderId];
 
                 winston.log('info', 'Resolved ' + data.PurchaseOrderNumber + ' to PurchaseOrderId ' + data.PurchaseOrderId);
@@ -986,12 +993,13 @@ const template = async (config, template) => {
                     if (!datetime) {
                         datetime = input.deliveryRequired;
                     }
+
                     // Resolve CALSId.
+                    // TODO: Check quantity.
                     try {
-                        output.PurchaseOrderItemId = materialSecondaryCodeToCALSId[data.PurchaseOrderId][input.idLocal];
+                        output.PurchaseOrderItemId = materialSecondaryCodeToCALSId[data.PurchaseOrderId][input.product.codeProduct];
                     } catch (e) {
                         output.PurchaseOrderItemId = input.idSystemLocal;
-                        winston.log('info', 'Couldn\'t resolve orderLine id. Error: ' + e.message);
                     }
 
                     datetime = new Date(datetime).toISOString();
@@ -1008,6 +1016,8 @@ const template = async (config, template) => {
                     }
                     return output;
                 });
+
+                winston.log('info', 'Body: ' + JSON.stringify(data));
 
                 // TODO: ONLY FOR TESTING.
                 const fallbackInstanceId = 'b3bd04e4-2ddf-49dc-832d-c30cb1bf7f16';

@@ -1320,7 +1320,7 @@ const controller = async (req, res) => {
             }
             */
 
-            winston.log('info', 'Received trigger request from ' + (req.get('origin') || req.headers['x-forwarded-for'] || req.socket.remoteAddress));
+            winston.log('info', 'Received trigger request from ' + (req.get('x-real-ip') || req.get('origin') || req.socket.remoteAddress));
 
             template = cache.getDoc('templates', config.template) || {};
             host = req.get('host').split(':')[0];

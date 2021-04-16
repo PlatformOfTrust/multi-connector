@@ -172,10 +172,20 @@ const controller = async (req, res) => {
     let host;
     try {
         // TODO: Place authentication.
-        const topic = req.params.topic || 'latest';
+        let topic = req.params.topic;
         const parts = req.originalUrl.split('/');
         const productCode = parts.splice(parts.indexOf('hooks') + 1)[0];
         const config = cache.getDoc('configs', productCode) || {};
+
+        try {
+            // Pick topic/id from body (important with XML converted to JSON).
+            if (!topic) {
+                const template = cache.getDoc('templates', config.template) || {};
+                topic = _.get(req.body, template.generalConfig.hardwareId.dataObjectProperty);
+            }
+        } catch (err) {
+            console.log(err.message);
+        }
 
         // Store data.
         host = req.get('host').split(':')[0];
