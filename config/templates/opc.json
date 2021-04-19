@@ -1,0 +1,20 @@
+{
+  "plugins": [
+  ],
+  "protocol": "opc",
+  "authConfig": {
+    "url": "${ipAddress}",
+    "path": "${id}"
+  },
+  "dataObjects": [
+    ""
+  ],
+  "dataPropertyMappings": {
+    "${type}": "data"
+  },
+  "generalConfig": {
+    "hardwareId": {
+      "dataObjectProperty": "hardwareId"
+    }
+  }
+}
