@@ -152,7 +152,7 @@ const orderConfirmationSchema = {
                                     },
                                     'deliveryRequired': {
                                         '$id': '#/properties/data/properties/order/properties/deliveryRequired',
-                                        'source': 'NeedByDate',
+                                        'source': 'requiredDelivery',
                                         'type': 'string',
                                         'title': 'Required delivery time',
                                         'description': 'Required delivery time initiated typically by the orderer.',
@@ -396,7 +396,7 @@ const orderConfirmationSchema = {
                                             },
                                             'deliveryRequired': {
                                                 '$id': '#/properties/data/properties/order/properties/orderLineitems//properties/processDelivery/properties/deliveryRequired',
-                                                'source': null,
+                                                'source': 'requiredDelivery',
                                                 'type': 'string',
                                                 'title': 'Required delivery time',
                                                 'description': 'Required delivery time initiated typically by the orderer.',
@@ -562,9 +562,20 @@ const handleData = function (config, id, data) {
                         if (!Object.hasOwnProperty.call(productCodeToCALSId, value.idSystemLocal)) {
                             productCodeToCALSId[value.idSystemLocal] = {};
                         }
+
+                        let requiredDelivery = value['NeedByDate'];
+                        if (requiredDelivery) {
+                            requiredDelivery = value['NeedByTime'] ? new Date(requiredDelivery + 'T' + value['NeedByTime']).toISOString() : new Date(requiredDelivery).toISOString();
+                        }
+                        value.requiredDelivery = requiredDelivery;
+
                         value['OrderDtl'] = value['OrderDtl'].map((i) => {
+                            let itemRequiredDelivery = i['NeedByDate'];
+                            if (itemRequiredDelivery) {
+                                itemRequiredDelivery = i['NeedByTime'] ? new Date(itemRequiredDelivery + 'T' + i['NeedByTime']).toISOString() : new Date(itemRequiredDelivery).toISOString();
+                            }
                             return {
-                                orderLineType: 'OrderLine', productType: 'Product', ...i, idSystemLocal: productCodeToCALSId[value.idSystemLocal][i['PartNum']], NeedByDate: new Date(i.NeedByDate).toISOString(),
+                                orderLineType: 'OrderLine', productType: 'Product', ...i, idSystemLocal: productCodeToCALSId[value.idSystemLocal][i['PartNum']], requiredDelivery: itemRequiredDelivery || requiredDelivery,
                             };
                         });
                     } catch (e) {
