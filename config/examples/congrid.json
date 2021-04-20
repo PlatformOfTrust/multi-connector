@@ -5,10 +5,13 @@
     "version": "v2",
     "resource": "notes",
     "token": "<congrid-api-token>",
-    "type": "Observation"
+    "type": "Note",
+    "outputArray": "note",
+    "idProperty": "projectId",
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Note/"
   },
   "dynamic": {
-    "authConfig.path": "ids",
+    "authConfig.path": "targetObject.idLocal",
     "dataPropertyMappings": "type"
   },
   "request": {

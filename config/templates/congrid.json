@@ -1,5 +1,7 @@
 {
-  "plugins": [],
+  "plugins": [
+      "congrid-note"
+  ],
   "protocol": "rest",
   "authConfig": {
     "url": "https://${api}.congrid.com",
@@ -19,15 +21,21 @@
       "dataObjectProperty": "description"
     },
     "hardwareId": {
-      "dataObjectProperty": "projectId"
+      "dataObjectProperty": "${idProperty}"
     },
     "timestamp": {
       "dataObjectProperty": "createdAt"
     }
   },
+  "input": {
+    "required": [
+      "parameters.targetObject"
+    ],
+    "ids": "parameters.targetObject.idLocal"
+  },
   "output": {
-    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Observation/",
-    "array": "observations",
+    "contextValue": "${contextValue}",
+    "array": "${outputArray}",
     "data": "data"
   }
 }
