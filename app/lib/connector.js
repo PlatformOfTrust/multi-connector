@@ -319,7 +319,7 @@ function replacePlaceholders (config, template, params) {
                     if (Array.isArray(_.get(params, placeholder))) {
                         // Transform placeholder to array, if given parameters are in an array.
                         const array = [];
-                        params[placeholder].forEach(function (element) {
+                        _.get(params, placeholder).forEach(function (element) {
                             array.push(replacer(templateValue, placeholder, element));
                         });
                         _.set(template, path, array);
