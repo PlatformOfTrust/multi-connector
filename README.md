@@ -28,6 +28,7 @@ Following data sources are supported out of the box. Example configs can be foun
 - Schneider EcoStruxure Cloud
 - Siemens Mindsphere
 - Siemens Navigator
+- Smartwatcher API
 - Talotohtori API
 - Trackinno Service API
 - Vastuu Group Company API
