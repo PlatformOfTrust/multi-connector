@@ -55,6 +55,7 @@ module.exports.fetch = async (req, res) => {
             error: {
                 status: err.httpStatusCode || 500,
                 message: err.message || 'Internal Server Error.',
+                translator_response: err.translator_response || undefined,
             },
         };
 

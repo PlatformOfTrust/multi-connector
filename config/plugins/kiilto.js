@@ -989,9 +989,12 @@ const template = async (config, template) => {
  */
 const stream = async (template, data) => {
     const responses = [];
+    const errors = [];
+
     if (!Array.isArray(data)) {
         data = [data];
     }
+
     for (let i = 0; i < data.length; i++) {
         try {
             const config = template.config;
@@ -1005,70 +1008,66 @@ const stream = async (template, data) => {
             }
 
             // 2. Send data to vendor data product with broker plugin.
-            try {
-                /** Sender data product */
-                // config.productCode = productCode;
-                winston.log('info', '1. From: ' + template.productCode);
-                /** Receiver data product */
-                config.static.productCode = receiverProductCode;
+            /** Sender data product */
+            // config.productCode = productCode;
+            winston.log('info', '1. From: ' + template.productCode);
+            /** Receiver data product */
+            config.static.productCode = receiverProductCode;
 
-                winston.log('info', '2. Send received data to receiver data product ' + receiverProductCode + ', isTest=' + false);
+            winston.log('info', '2. Send received data to receiver data product ' + receiverProductCode + ', isTest=' + false);
 
-                const result = data[i];
+            const result = data[i];
 
-                try {
-                    if (!Array.isArray(result.data.order)) {
-                        result.data.order = [result.data.order];
-                    }
-                    // Resolve ids.
-                    result.data.order.map((order) => {
-                        if (!Array.isArray(order.orderLine)) {
-                            order.deliveryLine = [order.orderLine];
-                        }
-                        order.idLocal = order.idLocal || 'Unknown';
-                        order.idSystemLocal = orderNumberToCALSId[order.idLocal];
-                        order.idSystemLocal = order.idSystemLocal || 'Unknown';
+            if (!Array.isArray(result.data.order)) {
+                result.data.order = [result.data.order];
+            }
+            // Resolve ids.
+            result.data.order.map((order) => {
+                if (!Array.isArray(order.orderLine)) {
+                    order.deliveryLine = [order.orderLine];
+                }
+                order.idLocal = order.idLocal || 'Unknown';
+                order.idSystemLocal = orderNumberToCALSId[order.idLocal];
+                order.idSystemLocal = order.idSystemLocal || 'Unknown';
 
-                        if (!Object.hasOwnProperty.call(productCodeToCALSId, order.idSystemLocal)) {
-                            productCodeToCALSId[order.idSystemLocal] = {};
-                        }
+                if (!Object.hasOwnProperty.call(productCodeToCALSId, order.idSystemLocal)) {
+                    productCodeToCALSId[order.idSystemLocal] = {};
+                }
 
-                        order.orderLine = order.orderLine.map((l) => {
-                            winston.log('info', 'Changed ' + l.product.codeProduct + ' to ' + productCodeToCALSId[order.idSystemLocal][l.product.codeProduct]);
-                            return {
-                                ...l,
-                                idSystemLocal: productCodeToCALSId[order.idSystemLocal][l.product.codeProduct],
-                            };
-                        });
-                        return order;
-                    });
+                order.orderLine = order.orderLine.map((l) => {
+                    winston.log('info', 'Changed ' + l.product.codeProduct + ' to ' + productCodeToCALSId[order.idSystemLocal][l.product.codeProduct]);
+                    return {
+                        ...l,
+                        idSystemLocal: productCodeToCALSId[order.idSystemLocal][l.product.codeProduct],
+                    };
+                });
+                return order;
+            });
+            if (result.data.order.length === 1) {
+                result.data.order = result.data.order[0];
+                if (Array.isArray(result.data.order)) {
                     if (result.data.order.length === 1) {
                         result.data.order = result.data.order[0];
-                        if (Array.isArray(result.data.order)) {
-                            if (result.data.order.length === 1) {
-                                result.data.order = result.data.order[0];
-                            }
-                        }
                     }
-                } catch (e) {
-                    console.log(e.message);
                 }
-                if (template.plugins.find(p => p.name === 'broker') && template.config.plugins.broker) {
-                    // TODO: Set isTest.
-                    template.config.plugins.broker.parameters = {
-                        isTest: false,
-                    };
-                    // Configure sender productCode.
-                    template.config.productCode = template.productCode;
-                    await template.plugins.find(p => p.name === 'broker').stream(template, result);
-                }
-            } catch (err) {
-                winston.log('error', err.message);
+            }
+            if (template.plugins.find(p => p.name === 'broker') && template.config.plugins.broker) {
+                // TODO: Set isTest.
+                template.config.plugins.broker.parameters = {
+                    isTest: false,
+                };
+                // Configure sender productCode.
+                template.config.productCode = template.productCode;
+                responses.push(await template.plugins.find(p => p.name === 'broker').stream(template, result));
             }
         } catch (err) {
-            winston.log('error', err.message);
-            throw err;
+            errors.push(err);
         }
+    }
+
+    // Detect errors.
+    if (errors.length > 0) {
+        throw errors[0];
     }
 
     return responses;

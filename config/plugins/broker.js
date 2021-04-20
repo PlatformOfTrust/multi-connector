@@ -153,11 +153,8 @@ const stream = async (template, data) => {
         }
     } catch (err) {
         const error = new Error('External translator returns an invalid response.');
-        error.httpStatusCode = 502;
-        error.translator_response = {
-            status: err.statusCode,
-            data: err.error,
-        };
+        error.httpStatusCode = 500;
+        error.translator_response = err.error;
         winston.log('error', err.message);
         throw error;
     }

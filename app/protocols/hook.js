@@ -101,13 +101,8 @@ const getData = async (config, pathArray) => {
  * @param {Function} callback
  */
 const composeDataObject = async (template, callback) => {
-    let result;
-    try {
-        result = await connector.composeOutput(template);
-        await callback(template, _.flatten([result.output]));
-    } catch (err) {
-        winston.log('error', err.message);
-    }
+    const result = await connector.composeOutput(template);
+    await callback(template, _.flatten([result.output]));
     return result;
 };
 
@@ -154,6 +149,7 @@ const handler = async (productCode, config, topic, message) => {
         }
     } catch (err) {
         winston.log('error', err.message);
+        throw err;
     }
     return output;
 };
@@ -218,6 +214,7 @@ const controller = async (req, res) => {
                 error: {
                     status: err.httpStatusCode || 500,
                     message: err.message || 'Internal Server Error.',
+                    translator_response: err.translator_response || undefined,
                 },
             };
 
