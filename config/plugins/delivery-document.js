@@ -13,6 +13,7 @@ const rp = require('request-promise');
 const moment = require('moment');
 const net = require('net');
 const _ = require('lodash');
+const FileType = require('file-type');
 
 const CSVToJSON = require('csvtojson');
 
@@ -1124,7 +1125,7 @@ const handleData = function (config, id, data) {
             if (Object.keys(config.dataPropertyMappings).includes('DeliveryInformation')) {
                 // Detect the need for transformation.
                 // TODO: Detect order confirmation.
-                if (Object.hasOwnProperty.call(value, 'project')) {
+                if (Object.hasOwnProperty.call(value, 'project') || Object.hasOwnProperty.call(value, 'data')) {
                     // Output has already been transformed.
                     result = {
                         order: {
@@ -1175,7 +1176,15 @@ const handleData = function (config, id, data) {
  */
 const response = async (config, response) => {
     try {
-        if (typeof response === 'string' || response instanceof String) response = CSVToJSON().fromString(response);
+        if (typeof response === 'string' || response instanceof String) {
+            const fileType = await FileType.fromBuffer(new Buffer(response));
+            response = {data: response, extension: fileType.ext, mimetype: fileType.mime, encoding: 'base64'};
+            if (response.extension === 'csv') {
+                response.data = CSVToJSON().fromString(response.data);
+            } else {
+                response.data = {value: new Buffer(response.data, 'utf-8').toString('base64')};
+            }
+        }
         return response;
     } catch (e) {
         return response;

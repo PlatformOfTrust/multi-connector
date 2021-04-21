@@ -1,6 +1,6 @@
 {
     "plugins": [
-        "csv-delivery-information",
+        "delivery-document",
         "broker"
     ],
     "protocol": "azure-blob-storage",
@@ -14,7 +14,7 @@
         ""
     ],
     "dataPropertyMappings": {
-        "${type}": ""
+        "${type}": "data"
     },
     "generalConfig": {
         "hardwareId": {

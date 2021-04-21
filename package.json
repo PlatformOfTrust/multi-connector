@@ -31,6 +31,7 @@
     "express": "^4.17.1",
     "express-xml-bodyparser": "^0.3.0",
     "fast-xml-parser": "^3.17.4",
+    "file-type": "^16.3.0",
     "fs": "0.0.1-security",
     "greenlock-express": "^4.0.3",
     "gtfs-realtime-bindings": "0.0.5",
