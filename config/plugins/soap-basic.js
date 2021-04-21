@@ -17,7 +17,7 @@ const soap = require('soap');
 const request = async (config, options) => {
     // Authorize request.
     try {
-        options.setSecurity(new soap.BasicAuthSecurity(config.authConfig.username, authConfig.password));
+        options.setSecurity(new soap.BasicAuthSecurity(config.authConfig.username, config.authConfig.password));
     } catch (err) {
         console.log(err.message);
     }

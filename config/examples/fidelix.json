@@ -3,7 +3,8 @@
   "static": {
     "ipAddress": "<ip-address>",
     "username": "<username>",
-    "password": "<password>"
+    "password": "<password>",
+    "type": "MeasureAirTemperatureCelsiusDegree"
   },
   "dynamic": {
     "authConfig.path": "ids",
