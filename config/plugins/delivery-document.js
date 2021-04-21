@@ -21,7 +21,7 @@ const CSVToJSON = require('csvtojson');
  * C4 CALS multi-purpose plugin for CALS and vendor connectors.
  */
 
-const PLUGIN_NAME = 'csv-delivery-information';
+const PLUGIN_NAME = 'delivery-document';
 const PRIMARY_PRODUCT_CODE = 'C1EC2973-8A0B-4858-BF1E-3A0D0CEFE33A';
 const orderNumberToCALSId = {};
 const productCodeToCALSId = {};
