@@ -806,8 +806,10 @@ const controller = async (req, res) => {
         // 3. Parse receiver productCode from received confirmation and send broker request to produce confirmation.
         let receiverProductCode;
         try {
+            // Fallback.
             receiverProductCode = 'purchase-order-from-cals';
-            // TODO: Get receiver from config.
+            // Get receiver from config.
+            receiverProductCode = config.plugins.broker.receiver;
         } catch (err) {
             winston.log('info', 'Set receiver data product as ' + receiverProductCode + '.');
         }
