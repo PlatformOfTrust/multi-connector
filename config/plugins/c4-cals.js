@@ -579,7 +579,6 @@ const handleData = function (config, id, data) {
             const value = data[j][config.output.value];
             if (Object.keys(config.dataPropertyMappings).includes('OrderInformation')) {
                 // Detect the need for transformation.
-                // TODO: Detect order confirmation.
                 if (Object.hasOwnProperty.call(value, 'vendor')) {
                     // Output has already been transformed.
                     result = {
@@ -615,8 +614,8 @@ const handleData = function (config, id, data) {
                             };
                         }
                         winston.log('info', 'Store CALS identifiers from sent order.');
-                        winston.log('info', 'orderNumberToCALSId: ' + JSON.stringify(orderNumberToCALSId));
-                        winston.log('info', 'orderIdToCALSInstanceId: ' + JSON.stringify(orderIdToCALSInstanceId));
+                        // winston.log('info', 'orderNumberToCALSId: ' + JSON.stringify(orderNumberToCALSId));
+                        // winston.log('info', 'orderIdToCALSInstanceId: ' + JSON.stringify(orderIdToCALSInstanceId));
                     } catch (e) {
                         console.log(e.message);
                     }
@@ -853,12 +852,23 @@ const controller = async (req, res) => {
             const resource = (req.body.entity + 's').toLowerCase();
             winston.log('info', '1. Query self with REST path /instances/${instanceId}/' + resource + '/${entityId}');
             result = await connector.getData(triggeredReq);
+            // Check that an order was found in the response.
+            try {
+                if (JSON.stringify(result.output[result.payloadKey].order) === '[]') {
+                    const err = new Error('Purchase order with entityId ' + req.body.entityId + ' with instance ID ' + req.body.instanceId + ' not found.');
+                    err.httpStatusCode = 400;
+                    return errorResponse(req, res, err);
+                }
+            } catch (err) {
+                winston.log('error', err.message);
+                const validationFailed = new Error('Failed to process CALS response.');
+                validationFailed.httpStatusCode = 500;
+                return errorResponse(req, res, validationFailed);
+            }
         } catch (err) {
             winston.log('error', err.message);
             return errorResponse(req, res, err);
         }
-
-        // TODO: Check result status for 404 or 500 etc.
 
         // 3. Parse vendor productCode from received order and send broker request to produce order.
         let vendorProductCode;
@@ -866,7 +876,9 @@ const controller = async (req, res) => {
             vendorProductCode = 'vendor-purchase-order';
             vendorProductCode = result.output.data.order.vendor.idLocal;
         } catch (err) {
-            winston.log('error', 'Could not parse vendor external id from CALS response.');
+            const message = 'Could not parse vendor external id from CALS response.';
+            winston.log('error', message);
+            return errorResponse(req, res, new Error(message));
         }
 
         // 4. Send data to vendor data product with broker plugin.
@@ -995,7 +1007,6 @@ const template = async (config, template) => {
                     }
 
                     // Resolve CALSId.
-                    // TODO: Check quantity.
                     try {
                         output.PurchaseOrderItemId = materialSecondaryCodeToCALSId[data.PurchaseOrderId][input.product.codeProduct];
                     } catch (e) {
@@ -1019,10 +1030,14 @@ const template = async (config, template) => {
 
                 winston.log('info', 'Body: ' + JSON.stringify(data));
 
-                // TODO: ONLY FOR TESTING.
-                const fallbackInstanceId = 'b3bd04e4-2ddf-49dc-832d-c30cb1bf7f16';
+                // ONLY FOR TESTING.
+                // const fallbackInstanceId = 'b3bd04e4-2ddf-49dc-832d-c30cb1bf7f16';
 
-                config.static.url = 'https://c4-prod-apim.azure-api.net/pot/instances/' + (data.InstanceId || fallbackInstanceId) + '/confirmpurchaseorder';
+                if (!data.InstanceId) {
+                    return Promise.reject(new Error('Could resolve CALS instance ID. Resending the order from CALS is required.'));
+                }
+
+                config.static.url = 'https://c4-prod-apim.azure-api.net/pot/instances/' + data.InstanceId + '/confirmpurchaseorder';
                 config.static.headers = {
                     'CALS-API-KEY': config.static.apikey,
                     'x-is-test': template.authConfig.isTest === 'true',
