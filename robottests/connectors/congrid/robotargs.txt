@@ -1,0 +1,3 @@
+--pythonpath lib
+--outputdir connectors/congrid/result
+connectors/congrid/connector_tests.robot

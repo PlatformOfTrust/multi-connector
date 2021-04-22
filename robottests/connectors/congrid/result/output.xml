@@ -1,0 +1,1399 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 3.2.1 (Python 3.8.3 on win32)" generated="20210422 08:34:15.953" rpa="false">
+<suite id="s1" name="Connector Tests" source="C:\Users\artor\WebstormProjects\multi-connector\robottests\connectors\congrid\connector_tests.robot">
+<test id="s1-t1" name="fetch, 200">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20210422 08:34:16.201" level="INFO">${body} = {'productCode': 'congrid', 'parameters': {'targetObject': {'idLocal': ['qdFHadMFYwiedDHmP4lWdErTjLFUMlrD']}}}</msg>
+<status status="PASS" starttime="20210422 08:34:16.201" endtime="20210422 08:34:16.201"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20210422 08:34:16.202" level="INFO">${now} = 2021-04-22T05:34:16+00:00</msg>
+<status status="PASS" starttime="20210422 08:34:16.201" endtime="20210422 08:34:16.202"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:16.202" endtime="20210422 08:34:16.202"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:16.202" endtime="20210422 08:34:16.202"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20210422 08:34:16.202" level="INFO">${json_string} = {"productCode": "congrid", "parameters": {"targetObject": {"idLocal": ["qdFHadMFYwiedDHmP4lWdErTjLFUMlrD"]}}, "timestamp": "2021-04-22T05:34:16+00:00"}</msg>
+<status status="PASS" starttime="20210422 08:34:16.202" endtime="20210422 08:34:16.202"></status>
+</kw>
+<msg timestamp="20210422 08:34:16.203" level="INFO">${body} = {'productCode': 'congrid', 'parameters': {'targetObject': {'idLocal': ['qdFHadMFYwiedDHmP4lWdErTjLFUMlrD']}}, 'timestamp': '2021-04-22T05:34:16+00:00'}</msg>
+<status status="PASS" starttime="20210422 08:34:16.201" endtime="20210422 08:34:16.203"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20210422 08:34:16.203" level="INFO">${signature} = mdNENG7HH5PofOKF4Ao4wYCdzP6MWeEAsiAupp+dGFY=</msg>
+<status status="PASS" starttime="20210422 08:34:16.203" endtime="20210422 08:34:16.203"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:16.204" endtime="20210422 08:34:16.204"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:16.204" endtime="20210422 08:34:19.150"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20210422 08:34:19.151" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "@context": {
+            "type": "string",
+            "default": "https://standards.oftrust.net/v2/Context/DataProductOutput/Note/"
+        },
+        "data": {
+            "type": "object",
+            "properties": {
+                "note": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "@type": {
+                                "type": "string"
+                            },
+                            "idSystemLocal": {
+                                "type": "string"
+                            },
+                            "idLocal": {
+                                "type": "string"
+                            },
+                            "header": {
+                                "type": [
+                                    "null",
+                                    "string"
+                                ]
+                            },
+                            "descriptionGeneral": {
+                                "type": "null"
+                            },
+                            "categorizationLocal": {
+                                "type": [
+                                    "null",
+                                    "string"
+                                ]
+                            },
+                            "actionRequired": {
+                                "type": "null"
+                            },
+                            "completionRequired": {
+                                "type": "null"
+                            },
+                            "status": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "@type": {
+                                            "type": "string"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "@type",
+                                        "name"
+                                    ]
+                                }
+                            },
+                            "categorizationLocal2": {
+                                "type": "string"
+                            },
+                            "categorizationLocal3": {
+                                "type": "string"
+                            },
+                            "categorizationseverity": {
+                                "type": "integer"
+                            },
+                            "categorizationLocalPriority": {
+                                "type": "integer"
+                            },
+                            "visibleStart": {
+                                "type": "null"
+                            },
+                            "visibleEnd": {
+                                "type": "null"
+                            },
+                            "validFrom": {
+                                "type": "null"
+                            },
+                            "validTo": {
+                                "type": "null"
+                            },
+                            "actual": {
+                                "type": "string"
+                            },
+                            "created": {
+                                "type": "string"
+                            },
+                            "updated": {
+                                "type": "string"
+                            },
+                            "project": {
+                                "type": "object",
+                                "properties": {
+                                    "@type": {
+                                        "type": "string"
+                                    },
+                                    "idLocal": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "@type",
+                                    "idLocal"
+                                ]
+                            },
+                            "contractor": {
+                                "type": "object",
+                                "properties": {
+                                    "@type": {
+                                        "type": "string"
+                                    },
+                                    "idLocal": {
+                                        "type": [
+                                            "null",
+                                            "string"
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "@type",
+                                    "idLocal"
+                                ]
+                            },
+                            "process": {
+                                "type": "object",
+                                "properties": {
+                                    "@type": {
+                                        "type": "string"
+                                    },
+                                    "idLocal": {
+                                        "type": "null"
+                                    },
+                                    "idGroup": {
+                                        "type": "null"
+                                    }
+                                },
+                                "required": [
+                                    "@type",
+                                    "idGroup",
+                                    "idLocal"
+                                ]
+                            },
+                            "location": {
+                                "type": "object",
+                                "properties": {
+                                    "@type": {
+                                        "type": "string"
+                                    },
+                                    "ifcGuid": {
+                                        "type": [
+                                            "null",
+                                            "string"
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "@type",
+                                    "ifcGuid"
+                                ]
+                            },
+                            "creator": {
+                                "type": "object",
+                                "properties": {
+                                    "@type": {
+                                        "type": "string"
+                                    },
+                                    "idLocal": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "@type",
+                                    "idLocal"
+                                ]
+                            },
+                            "updater": {
+                                "type": "object",
+                                "properties": {
+                                    "@type": {
+                                        "type": "string"
+                                    },
+                                    "idLocal": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "@type",
+                                    "idLocal"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "@type",
+                            "actionRequired",
+                            "actual",
+                            "categorizationLocal",
+                            "categorizationLocal2",
+                            "categorizationLocal3",
+                            "categorizationLocalPriority",
+                            "categorizationseverity",
+                            "completionRequired",
+                            "contractor",
+                            "created",
+                            "creator",
+                            "descriptionGeneral",
+                            "header",
+                            "idLocal",
+                            "idSystemLocal",
+                            "location",
+                            "process",
+                            "project",
+                            "status",
+                            "updated",
+                            "updater",
+                            "validFrom",
+                            "validTo",
+                            "visibleEnd",
+                            "visibleStart"
+                        ]
+                    },
+                    "default": [
+                        {
+                            "@type": "Note",
+                            "idSystemLocal": "414569",
+                            "idLocal": "1",
+                            "header": "Ongelma korjattavana",
+                            "descriptionGeneral": null,
+                            "categorizationLocal": null,
+                            "actionRequired": null,
+                            "completionRequired": null,
+                            "status": [
+                                {
+                                    "@type": "Status",
+                                    "name": "PENDING"
+                                }
+                            ],
+                            "categorizationLocal2": "PUNCH",
+                            "categorizationLocal3": "TASK",
+                            "categorizationseverity": 1,
+                            "categorizationLocalPriority": 0,
+                            "visibleStart": null,
+                            "visibleEnd": null,
+                            "validFrom": null,
+                            "validTo": null,
+                            "actual": "2020-11-26T06:42:11.119000Z",
+                            "created": "2020-11-26T06:42:11.119000Z",
+                            "updated": "2020-11-26T06:43:00.429780Z",
+                            "project": {
+                                "@type": "Project",
+                                "idLocal": "qdFHadMFYwiedDHmP4lWdErTjLFUMlrD"
+                            },
+                            "contractor": {
+                                "@type": "Organization",
+                                "idLocal": "jhT33AWOxnNWgiNTbfZP9hqMBoKrtW1a"
+                            },
+                            "process": {
+                                "@type": "Process",
+                                "idLocal": null,
+                                "idGroup": null
+                            },
+                            "location": {
+                                "@type": "Location",
+                                "ifcGuid": "IUb5ckJl94SAwOHhqkY0pTxwkeD2tu7n"
+                            },
+                            "creator": {
+                                "@type": "Person",
+                                "idLocal": "1823"
+                            },
+                            "updater": {
+                                "@type": "Person",
+                                "idLocal": "1823"
+                            }
+                        },
+                        {
+                            "@type": "Note",
+                            "idSystemLocal": "414570",
+                            "idLocal": "1",
+                            "header": null,
+                            "descriptionGeneral": null,
+                            "categorizationLocal": "Sähkö ja valaistus",
+                            "actionRequired": null,
+                            "completionRequired": null,
+                            "status": [
+                                {
+                                    "@type": "Status",
+                                    "name": "PENDING"
+                                }
+                            ],
+                            "categorizationLocal2": "TR",
+                            "categorizationLocal3": "TASK",
+                            "categorizationseverity": 1,
+                            "categorizationLocalPriority": 0,
+                            "visibleStart": null,
+                            "visibleEnd": null,
+                            "validFrom": null,
+                            "validTo": null,
+                            "actual": "2020-11-26T06:43:42.007000Z",
+                            "created": "2020-11-26T06:43:42.007000Z",
+                            "updated": "2020-11-26T06:43:58.507856Z",
+                            "project": {
+                                "@type": "Project",
+                                "idLocal": "qdFHadMFYwiedDHmP4lWdErTjLFUMlrD"
+                            },
+                            "contractor": {
+                                "@type": "Organization",
+                                "idLocal": null
+                            },
+                            "process": {
+                                "@type": "Process",
+                                "idLocal": null,
+                                "idGroup": null
+                            },
+                            "location": {
+                                "@type": "Location",
+                                "ifcGuid": null
+                            },
+                            "creator": {
+                                "@type": "Person",
+                                "idLocal": "1823"
+                            },
+                            "updater": {
+                                "@type": "Person",
+                                "idLocal": "1823"
+                            }
+                        },
+                        {
+                            "@type": "Note",
+                            "idSystemLocal": "414571",
+                            "idLocal": "2",
+                            "header": "Kaivannon aluerajaus puutteellinen",
+                            "descriptionGeneral": null,
+                            "categorizationLocal": "Putoamissuojat",
+                            "actionRequired": null,
+                            "completionRequired": null,
+                            "status": [
+                                {
+                                    "@type": "Status",
+                                    "name": "PENDING"
+                                }
+                            ],
+                            "categorizationLocal2": "TR",
+                            "categorizationLocal3": "TASK",
+                            "categorizationseverity": 1,
+                            "categorizationLocalPriority": 0,
+                            "visibleStart": null,
+                            "visibleEnd": null,
+                            "validFrom": null,
+                            "validTo": null,
+                            "actual": "2020-11-26T06:43:42.715000Z",
+                            "created": "2020-11-26T06:43:42.715000Z",
+                            "updated": "2020-11-26T06:43:59.797540Z",
+                            "project": {
+                                "@type": "Project",
+                                "idLocal": "qdFHadMFYwiedDHmP4lWdErTjLFUMlrD"
+                            },
+                            "contractor": {
+                                "@type": "Organization",
+                                "idLocal": "jhT33AWOxnNWgiNTbfZP9hqMBoKrtW1a"
+                            },
+                            "process": {
+                                "@type": "Process",
+                                "idLocal": null,
+                                "idGroup": null
+                            },
+                            "location": {
+                                "@type": "Location",
+                                "ifcGuid": "IUb5ckJl94SAwOHhqkY0pTxwkeD2tu7n"
+                            },
+                            "creator": {
+                                "@type": "Person",
+                                "idLocal": "1823"
+                            },
+                            "updater": {
+                                "@type": "Person",
+                                "idLocal": "1823"
+                            }
+                        },
+                        {
+                            "@type": "Note",
+                            "idSystemLocal": "414572",
+                            "idLocal": "3",
+                            "header": "Sähköjohtoja kulkutiellä",
+                            "descriptionGeneral": null,
+                            "categorizationLocal": "Sähkö ja valaistus",
+                            "actionRequired": null,
+                            "completionRequired": null,
+                            "status": [
+                                {
+                                    "@type": "Status",
+                                    "name": "PENDING"
+                                }
+                            ],
+                            "categorizationLocal2": "TR",
+                            "categorizationLocal3": "TASK",
+                            "categorizationseverity": 1,
+                            "categorizationLocalPriority": 0,
+                            "visibleStart": null,
+                            "visibleEnd": null,
+                            "validFrom": null,
+                            "validTo": null,
+                            "actual": "2020-11-26T06:43:52.556000Z",
+                            "created": "2020-11-26T06:43:52.556000Z",
+                            "updated": "2020-11-26T06:44:04.813287Z",
+                            "project": {
+                                "@type": "Project",
+                                "idLocal": "qdFHadMFYwiedDHmP4lWdErTjLFUMlrD"
+                            },
+                            "contractor": {
+                                "@type": "Organization",
+                                "idLocal": "jhT33AWOxnNWgiNTbfZP9hqMBoKrtW1a"
+                            },
+                            "process": {
+                                "@type": "Process",
+                                "idLocal": null,
+                                "idGroup": null
+                            },
+                            "location": {
+                                "@type": "Location",
+                                "ifcGuid": "kHz6DnBUS9tHnhXCxi8k2rSXLwUFsfdH"
+                            },
+                            "creator": {
+                                "@type": "Person",
+                                "idLocal": "1823"
+                            },
+                            "updater": {
+                                "@type": "Person",
+                                "idLocal": "1823"
+                            }
+                        },
+                        {
+                            "@type": "Note",
+                            "idSystemLocal": "414573",
+                            "idLocal": "4",
+                            "header": null,
+                            "descriptionGeneral": null,
+                            "categorizationLocal": "Järjestys ja jätehuolto",
+                            "actionRequired": null,
+                            "completionRequired": null,
+                            "status": [
+                                {
+                                    "@type": "Status",
+                                    "name": "PENDING"
+                                }
+                            ],
+                            "categorizationLocal2": "TR",
+                            "categorizationLocal3": "TASK",
+                            "categorizationseverity": 1,
+                            "categorizationLocalPriority": 0,
+                            "visibleStart": null,
+                            "visibleEnd": null,
+                            "validFrom": null,
+                            "validTo": null,
+                            "actual": "2020-11-26T06:44:02.957000Z",
+                            "created": "2020-11-26T06:44:02.957000Z",
+                            "updated": "2020-11-26T06:44:06.171752Z",
+                            "project": {
+                                "@type": "Project",
+                                "idLocal": "qdFHadMFYwiedDHmP4lWdErTjLFUMlrD"
+                            },
+                            "contractor": {
+                                "@type": "Organization",
+                                "idLocal": null
+                            },
+                            "process": {
+                                "@type": "Process",
+                                "idLocal": null,
+                                "idGroup": null
+                            },
+                            "location": {
+                                "@type": "Location",
+                                "ifcGuid": null
+                            },
+                            "creator": {
+                                "@type": "Person",
+                                "idLocal": "1823"
+                            },
+                            "updater": {
+                                "@type": "Person",
+                                "idLocal": "1823"
+                            }
+                        },
+                        {
+                            "@type": "Note",
+                            "idSystemLocal": "414574",
+                            "idLocal": "5",
+                            "header": "Roskalava täynnä",
+                            "descriptionGeneral": null,
+                            "categorizationLocal": "Järjestys ja jätehuolto",
+                            "actionRequired": null,
+                            "completionRequired": null,
+                            "status": [
+                                {
+                                    "@type": "Status",
+                                    "name": "PENDING"
+                                }
+                            ],
+                            "categorizationLocal2": "TR",
+                            "categorizationLocal3": "TASK",
+                            "categorizationseverity": 1,
+                            "categorizationLocalPriority": 0,
+                            "visibleStart": null,
+                            "visibleEnd": null,
+                            "validFrom": null,
+                            "validTo": null,
+                            "actual": "2020-11-26T06:44:04.020000Z",
+                            "created": "2020-11-26T06:44:04.020000Z",
+                            "updated": "2020-11-26T06:44:19.888393Z",
+                            "project": {
+                                "@type": "Project",
+                                "idLocal": "qdFHadMFYwiedDHmP4lWdErTjLFUMlrD"
+                            },
+                            "contractor": {
+                                "@type": "Organization",
+                                "idLocal": "wybcy4C5spqaioQOdcK8Leum3a0luX8J"
+                            },
+                            "process": {
+                                "@type": "Process",
+                                "idLocal": null,
+                                "idGroup": null
+                            },
+                            "location": {
+                                "@type": "Location",
+                                "ifcGuid": "RYib8wGlKNQ5AuCv2hk094TMz090yAbP"
+                            },
+                            "creator": {
+                                "@type": "Person",
+                                "idLocal": "1823"
+                            },
+                            "updater": {
+                                "@type": "Person",
+                                "idLocal": "1823"
+                            }
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "note"
+            ]
+        },
+        "signature": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "default": "RsaSignature2018"
+                },
+                "created": {
+                    "type": "string",
+                    "default": "2021-04-22T08:34:19+03:00"
+                },
+                "creator": {
+                    "type": "string",
+                    "default": "http://localhost:8080/translator/v1/public.key"
+                },
+                "signatureValue": {
+                    "type": "string",
+                    "default": "uvw4UjDxTRRZnZLK7ni7xF6Mn1DkPBpkpRnCIFehkced/2XTNISE/hKYzKFw1nu9V4F78+YuxizQaat1t2UWB6A2liovxLUNq54Prooydj1ZheIkFw/mjPBH+9iiQ2ocTzRYO3V3Y+ytZSu6MbZjLboklJVbm9Q2EyqQvLt7U2UFwlReNjpAA7Tm4Mcxo3x53rM0pF6byAZHztniiUFR4P0Fm0F0aO2VqM7moGeMQJyh+wMNPpd9IlHTWX8kEtpCs7b3LjejUVYelwq4QKi1klcd5aepmzHH0lOql+P6tviVxdwSVrBE3XlIEUDlwOFShEsoQ0J+pDD7cUGrn+DK3JNa7vIulHXwe7n975l+lTSPPd0wc6FgUU3BQsuHe+5aA7zbvwpvlLT0QIHKGmMrhQcsj3/NbpB8SntNoeiI+XwIlBMrCBujy6s+zP+T6lAB/XQCPPoP7yu4Sca10mfRQX5WFi6n3d+fSuTnwD/gsPi6/WNk0Lh37xs5voJ7hl/OBzmSVq9lx2FI5qagpnBT0F5WqAqrKuGvebFQP8TxODoq5swP+33537wGxRIxqkQUXiD4QWOfPWgpJrWnGb7ESWfaKRnI8J1q8L6/ztRGh/8jlarUdJ79D56xlWr0tHNLWk4sRFujiZ+P7sOVh/gXxcimKD4ymC50oZxRd+/1Pf0="
+                }
+            },
+            "required": [
+                "created",
+                "creator",
+                "signatureValue",
+                "type"
+            ]
+        }
+    },
+    "required": [
+        "@context",
+        "data",
+        "signature"
+    ]
+}</msg>
+<status status="PASS" starttime="20210422 08:34:19.150" endtime="20210422 08:34:19.185"></status>
+</kw>
+<status status="PASS" starttime="20210422 08:34:16.203" endtime="20210422 08:34:19.186"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>200</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:19.200" endtime="20210422 08:34:19.201"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body @context</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductOutput/Note/</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:19.201" endtime="20210422 08:34:19.202"></status>
+</kw>
+<kw name="Object" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON object.*</doc>
+<arguments>
+<arg>response body data</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:19.202" endtime="20210422 08:34:19.205"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data note</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:19.205" endtime="20210422 08:34:19.209"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body data note 0 @type</arg>
+<arg>Note</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:19.209" endtime="20210422 08:34:19.210"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body data note 0 idLocal</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:19.211" endtime="20210422 08:34:19.212"></status>
+</kw>
+<kw name="Object" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON object.*</doc>
+<arguments>
+<arg>response body data note 0 project</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:19.213" endtime="20210422 08:34:19.214"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body data note 0 project idLocal</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:19.215" endtime="20210422 08:34:19.216"></status>
+</kw>
+<tags>
+<tag>bug-0001</tag>
+</tags>
+<status status="PASS" starttime="20210422 08:34:16.200" endtime="20210422 08:34:19.216" critical="yes"></status>
+</test>
+<test id="s1-t2" name="fetch, 422, Missing data for parameters required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20210422 08:34:19.219" level="INFO">${body} = {'productCode': 'congrid', 'parameters': {'targetObject': {'idLocal': ['qdFHadMFYwiedDHmP4lWdErTjLFUMlrD']}}}</msg>
+<status status="PASS" starttime="20210422 08:34:19.218" endtime="20210422 08:34:19.219"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20210422 08:34:19.219" level="INFO">${now} = 2021-04-22T05:34:19+00:00</msg>
+<status status="PASS" starttime="20210422 08:34:19.219" endtime="20210422 08:34:19.219"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:19.219" endtime="20210422 08:34:19.219"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:19.219" endtime="20210422 08:34:19.219"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20210422 08:34:19.220" level="INFO">${json_string} = {"productCode": "congrid", "parameters": {"targetObject": {"idLocal": ["qdFHadMFYwiedDHmP4lWdErTjLFUMlrD"]}}, "timestamp": "2021-04-22T05:34:19+00:00"}</msg>
+<status status="PASS" starttime="20210422 08:34:19.220" endtime="20210422 08:34:19.220"></status>
+</kw>
+<msg timestamp="20210422 08:34:19.220" level="INFO">${body} = {'productCode': 'congrid', 'parameters': {'targetObject': {'idLocal': ['qdFHadMFYwiedDHmP4lWdErTjLFUMlrD']}}, 'timestamp': '2021-04-22T05:34:19+00:00'}</msg>
+<status status="PASS" starttime="20210422 08:34:19.218" endtime="20210422 08:34:19.220"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>parameters</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:19.221" endtime="20210422 08:34:19.221"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20210422 08:34:19.222" level="INFO">${signature} = nPasnmaH3tiTUqqV/hrRLdfLMnlLFfNs4MWJEpr1lck=</msg>
+<status status="PASS" starttime="20210422 08:34:19.222" endtime="20210422 08:34:19.223"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:19.223" endtime="20210422 08:34:19.223"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:19.223" endtime="20210422 08:34:21.270"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20210422 08:34:21.271" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "parameters": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "parameters"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20210422 08:34:21.271" endtime="20210422 08:34:21.273"></status>
+</kw>
+<status status="PASS" starttime="20210422 08:34:19.222" endtime="20210422 08:34:21.273"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:21.273" endtime="20210422 08:34:21.274"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:21.274" endtime="20210422 08:34:21.275"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message parameters 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:21.275" endtime="20210422 08:34:21.275"></status>
+</kw>
+<tags>
+<tag>bug-0002</tag>
+</tags>
+<status status="PASS" starttime="20210422 08:34:19.218" endtime="20210422 08:34:21.276" critical="yes"></status>
+</test>
+<test id="s1-t3" name="fetch, 422, Missing data for targetObject required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20210422 08:34:21.278" level="INFO">${body} = {'productCode': 'congrid', 'parameters': {'targetObject': {'idLocal': ['qdFHadMFYwiedDHmP4lWdErTjLFUMlrD']}}}</msg>
+<status status="PASS" starttime="20210422 08:34:21.278" endtime="20210422 08:34:21.278"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20210422 08:34:21.278" level="INFO">${now} = 2021-04-22T05:34:21+00:00</msg>
+<status status="PASS" starttime="20210422 08:34:21.278" endtime="20210422 08:34:21.278"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:21.278" endtime="20210422 08:34:21.279"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:21.279" endtime="20210422 08:34:21.279"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20210422 08:34:21.279" level="INFO">${json_string} = {"productCode": "congrid", "parameters": {"targetObject": {"idLocal": ["qdFHadMFYwiedDHmP4lWdErTjLFUMlrD"]}}, "timestamp": "2021-04-22T05:34:21+00:00"}</msg>
+<status status="PASS" starttime="20210422 08:34:21.279" endtime="20210422 08:34:21.279"></status>
+</kw>
+<msg timestamp="20210422 08:34:21.279" level="INFO">${body} = {'productCode': 'congrid', 'parameters': {'targetObject': {'idLocal': ['qdFHadMFYwiedDHmP4lWdErTjLFUMlrD']}}, 'timestamp': '2021-04-22T05:34:21+00:00'}</msg>
+<status status="PASS" starttime="20210422 08:34:21.277" endtime="20210422 08:34:21.279"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body["parameters"]}</arg>
+<arg>targetObject</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:21.280" endtime="20210422 08:34:21.280"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20210422 08:34:21.280" level="INFO">${signature} = GrEWAGFmVBvmrnXKxkqenXI9/sR1wA10j7XMIcZoKsk=</msg>
+<status status="PASS" starttime="20210422 08:34:21.280" endtime="20210422 08:34:21.280"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:21.280" endtime="20210422 08:34:21.281"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:21.281" endtime="20210422 08:34:23.327"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20210422 08:34:23.327" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "parameters.targetObject": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "parameters.targetObject"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20210422 08:34:23.327" endtime="20210422 08:34:23.329"></status>
+</kw>
+<status status="PASS" starttime="20210422 08:34:21.280" endtime="20210422 08:34:23.329"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:23.330" endtime="20210422 08:34:23.330"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:23.330" endtime="20210422 08:34:23.331"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message parameters.targetObject 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:23.331" endtime="20210422 08:34:23.331"></status>
+</kw>
+<tags>
+<tag>bug-0003</tag>
+</tags>
+<status status="PASS" starttime="20210422 08:34:21.277" endtime="20210422 08:34:23.331" critical="yes"></status>
+</test>
+<test id="s1-t4" name="fetch, 200, Unknown idLocal">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20210422 08:34:23.333" level="INFO">${body} = {'productCode': 'congrid', 'parameters': {'targetObject': {'idLocal': ['qdFHadMFYwiedDHmP4lWdErTjLFUMlrD']}}}</msg>
+<status status="PASS" starttime="20210422 08:34:23.333" endtime="20210422 08:34:23.333"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20210422 08:34:23.334" level="INFO">${now} = 2021-04-22T05:34:23+00:00</msg>
+<status status="PASS" starttime="20210422 08:34:23.333" endtime="20210422 08:34:23.334"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:23.334" endtime="20210422 08:34:23.334"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:23.334" endtime="20210422 08:34:23.334"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20210422 08:34:23.335" level="INFO">${json_string} = {"productCode": "congrid", "parameters": {"targetObject": {"idLocal": ["qdFHadMFYwiedDHmP4lWdErTjLFUMlrD"]}}, "timestamp": "2021-04-22T05:34:23+00:00"}</msg>
+<status status="PASS" starttime="20210422 08:34:23.334" endtime="20210422 08:34:23.335"></status>
+</kw>
+<msg timestamp="20210422 08:34:23.335" level="INFO">${body} = {'productCode': 'congrid', 'parameters': {'targetObject': {'idLocal': ['qdFHadMFYwiedDHmP4lWdErTjLFUMlrD']}}, 'timestamp': '2021-04-22T05:34:23+00:00'}</msg>
+<status status="PASS" starttime="20210422 08:34:23.333" endtime="20210422 08:34:23.335"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body["parameters"]}</arg>
+<arg>targetObject=${TARGET_OBJECT_2}</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:23.335" endtime="20210422 08:34:23.335"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20210422 08:34:23.336" level="INFO">${signature} = vlfb3o0M4uNf6RcWLQedUKv1stWQwMhAr7lJR0p4THw=</msg>
+<status status="PASS" starttime="20210422 08:34:23.336" endtime="20210422 08:34:23.336"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:23.336" endtime="20210422 08:34:23.337"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:23.337" endtime="20210422 08:34:26.149"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20210422 08:34:26.150" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "@context": {
+            "type": "string",
+            "default": "https://standards.oftrust.net/v2/Context/DataProductOutput/Note/"
+        },
+        "data": {
+            "type": "object",
+            "properties": {
+                "note": {
+                    "type": "array",
+                    "default": []
+                }
+            },
+            "required": [
+                "note"
+            ]
+        },
+        "signature": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "default": "RsaSignature2018"
+                },
+                "created": {
+                    "type": "string",
+                    "default": "2021-04-22T08:34:26+03:00"
+                },
+                "creator": {
+                    "type": "string",
+                    "default": "http://localhost:8080/translator/v1/public.key"
+                },
+                "signatureValue": {
+                    "type": "string",
+                    "default": "Zb9loxAZcvfQNVKNNEyBlb4XPAM3lWiX2s/V1mvx034l2YAqyJBAG2OSTYSsm1gYa2UomgPN+TVHsuDTYdnJdXQN8YS5jvwBkPSGjMv0Y0ZyfBUn390nZ0xgxDuWlwnaZXUoLqMybgrtKBAFrIMcjt5HJfNaq+Jdg/0bSPULTtPJX2Z3TdMbOQF5PvShNkqGh0VPXyN+Ti8lhYszvR2cyWLtFeShqbLigp6jFjdqehrwLdwcSOD6j5WnVO3J18ARHRG4URj9M7s4O6xyFFRJkvGz3Nk+m7BBvXC1rxQEsMIr6182FPsJ5DTtmX8Hu/222wMxzA5f9+6IdbxOzyXa7WXuRwX/ng7214h2veIuwq51TeZH1l58KMkWQAGEADVzMf00aQ19Cd1nbNnAL1TAv/Ir9DqsPuiGfFwyfOBv/mmUV1blOZdc4M6e874o3UExQLV0CgtTQ7C1FQfS+2I5j8upqiBtK/wv9UPFQkiruw02RqPG3H2/u587FbA3cT/gywmNlh6KNOH/HAYgBrPYlXQ6uWZ5Js9ByEUh+kLNA48MAsNLJOPMwmBYNiyB/cYiWuGLG7ixcIHi7d6C1u5amIZnNOkI/K1YZr5bLvjk091MeHOsbVOsadI8/3n1zmY8EtvkMG5O/PpefuLbdcw0q0F2MtRGLJVD2XHaUaRS8kE="
+                }
+            },
+            "required": [
+                "created",
+                "creator",
+                "signatureValue",
+                "type"
+            ]
+        }
+    },
+    "required": [
+        "@context",
+        "data",
+        "signature"
+    ]
+}</msg>
+<status status="PASS" starttime="20210422 08:34:26.150" endtime="20210422 08:34:26.152"></status>
+</kw>
+<status status="PASS" starttime="20210422 08:34:23.336" endtime="20210422 08:34:26.152"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>200</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:26.152" endtime="20210422 08:34:26.152"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body @context</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductOutput/Note/</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:26.153" endtime="20210422 08:34:26.153"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data note</arg>
+<arg>maxItems=0</arg>
+</arguments>
+<status status="PASS" starttime="20210422 08:34:26.153" endtime="20210422 08:34:26.154"></status>
+</kw>
+<tags>
+<tag>bug-0004</tag>
+</tags>
+<status status="PASS" starttime="20210422 08:34:23.332" endtime="20210422 08:34:26.155" critical="yes"></status>
+</test>
+<doc>Congrid Public API</doc>
+<status status="PASS" starttime="20210422 08:34:15.954" endtime="20210422 08:34:26.159"></status>
+</suite>
+<statistics>
+<total>
+<stat pass="4" fail="0">Critical Tests</stat>
+<stat pass="4" fail="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="1" fail="0">bug-0001</stat>
+<stat pass="1" fail="0">bug-0002</stat>
+<stat pass="1" fail="0">bug-0003</stat>
+<stat pass="1" fail="0">bug-0004</stat>
+</tag>
+<suite>
+<stat pass="4" fail="0" id="s1" name="Connector Tests">Connector Tests</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
