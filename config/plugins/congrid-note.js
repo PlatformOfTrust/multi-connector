@@ -409,6 +409,8 @@ const schema = {
 const handleData = function (config, id, data) {
     let object = {};
     try {
+        const key = Object.keys(schema.properties.data.properties)[0];
+
         for (let j = 0; j < data.length; j++) {
             // Filter by id.
             const ids = config.parameters.ids.map(o => o.id);
@@ -429,7 +431,6 @@ const handleData = function (config, id, data) {
             value.updaterType = 'Person';
             value.processType = 'Process';
 
-            const key = Object.keys(schema.properties.data.properties)[0];
             result = transformer.transform(value, schema.properties.data);
 
             // Merge all to same result.
@@ -441,6 +442,9 @@ const handleData = function (config, id, data) {
             } else {
                 object = result;
             }
+        }
+        if (JSON.stringify(object)==='{}') {
+            object = {[key]: []};
         }
         return object;
     } catch (err) {
