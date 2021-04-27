@@ -92,19 +92,6 @@ const stream = async (template, data) => {
                     },
                 };
 
-                // Pass product codes as sender and receiver.
-                body.parameters.targetObject.sender = {
-                    '@type': 'DataProduct',
-                    productCode: config.productCode,
-                };
-
-                /*
-                body.parameters.targetObject.receiver = {
-                    '@type': 'DataProduct',
-                    productCode: productCode,
-                };
-                */
-
                 // Initialize signature value.
                 let signatureValue;
 
@@ -146,9 +133,37 @@ const stream = async (template, data) => {
                     'Content-Type': 'application/json',
                 };
 
-                // Send broker request .
-                winston.log('info', 'Broker plugin: Send broker request to ' + url);
-                await request('POST', url, headers, body);
+                let requests = Array.isArray(body.parameters.targetObject) ? body.parameters.targetObject.map((o) => {
+                    return {
+                        ...body,
+                        parameters: {
+                            ...body.parameters,
+                            targetObject: o,
+                        },
+                    };
+                },
+                ) : [body];
+
+                requests = requests.map((o) => {
+                    // Pass product codes as sender and receiver.
+                    body.parameters.targetObject.sender = {
+                        '@type': 'DataProduct',
+                        productCode: config.productCode,
+                    };
+                    /*
+                    body.parameters.targetObject..receiver = {
+                        '@type': 'DataProduct',
+                        productCode: productCode,
+                    };
+                    */
+                    return o;
+                });
+
+                for (let r = 0; r < requests.length; r++) {
+                    // Send broker request .
+                    winston.log('info', 'Broker plugin: Send broker request to ' + url);
+                    await request('POST', url, headers, requests[r]);
+                }
             }
         }
     } catch (err) {
