@@ -996,8 +996,10 @@ const template = async (config, template) => {
                 winston.log('info', 'Resolved ' + data.PurchaseOrderNumber + ' to PurchaseOrderId ' + data.PurchaseOrderId);
                 winston.log('info', 'Resolved ' + data.PurchaseOrderId + ' to InstanceId ' + data.InstanceId);
 
-                // 2. Parse PurchaseOrderItems - template.parameters.targetObject.orderLine
-                data.PurchaseOrderItems = template.parameters.targetObject.orderLine.map(input => {
+                const items = template.parameters.targetObject.orderLine || template.parameters.targetObject.deliveryLine || [];
+
+                // 2. Parse PurchaseOrderItems - template.parameters.targetObject.orderLine or -.deliveryLine
+                data.PurchaseOrderItems = items.map(input => {
                     const output = {};
                     // Root level delivery datetime by default.
                     let datetime = template.parameters.targetObject.deliveryRequired;
