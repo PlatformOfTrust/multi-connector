@@ -1466,11 +1466,8 @@ const handleData = function (config, id, data) {
                     } else {
                         // Detect if document can be transformed to delivery information or delivery document.
                         if (Object.hasOwnProperty.call(value, 'mimetype')) {
-                            value.content = '123';
-
                             // Transform raw input.
                             value.type = 'Document';
-
                             result = transformer.transform(value, documentSchema.properties.data);
                             key = Object.keys(documentSchema.properties.data.properties)[0];
                         } else {
