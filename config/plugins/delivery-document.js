@@ -25,7 +25,6 @@ const PLUGIN_NAME = 'delivery-document';
 const PRIMARY_PRODUCT_CODE = 'C1EC2973-8A0B-4858-BF1E-3A0D0CEFE33A';
 const orderNumberToCALSId = {};
 const productCodeToCALSId = {};
-const orderNumberToCALSInstanceId = {};
 
 // Source mapping.
 const orderConfirmationSchema = {
@@ -483,7 +482,7 @@ const orderConfirmationSchema = {
 // Source mapping.
 const deliveryInformationSchema = {
     '$schema': 'http://json-schema.org/draft-06/schema#',
-    '$id': 'https://standards-ontotest.oftrust.net/v2/Schema/DataProductOutput/DeliveryInformation?v=2.0',
+    '$id': 'https://standards.oftrust.net/v2/Schema/DataProductOutput/DeliveryInformation?v=2.0',
     'source': null,
     'type': 'object',
     'required': [],
@@ -492,7 +491,7 @@ const deliveryInformationSchema = {
             '$id': '#/properties/@context',
             'source': null,
             'type': 'string',
-            'const': 'https://standards-ontotest.oftrust.net/v2/Context/DataProductOutput/DeliveryInformation/?v=2.0',
+            'const': 'https://standards.oftrust.net/v2/Context/DataProductOutput/DeliveryInformation/?v=2.0',
             'title': 'JSON-LD context url',
             'description': 'JSON-LD context url with terms required to understand data product content.',
         },
@@ -521,6 +520,7 @@ const deliveryInformationSchema = {
                         },
                         'idSystemLocal': {
                             '$id': '#/properties/data/properties/order/properties/idSystemLocal',
+                            'source': 'Tilausnumero',
                             'type': 'string',
                             'title': 'Source system id',
                             'description': 'Id given by source system.',
@@ -556,13 +556,14 @@ const deliveryInformationSchema = {
                                 },
                                 'idSystemLocal': {
                                     '$id': '#/properties/data/properties/order/properties/salesOrder/properties/idSystemLocal',
+                                    'source': 'Tilausnumero',
                                     'type': 'string',
                                     'title': 'Source system id',
                                     'description': 'Id given by source system.',
                                 },
                                 'idLocal': {
                                     '$id': '#/properties/data/properties/order/properties/salesOrder/properties/idLocal',
-                                    'source': 'Tilausnumero',
+                                    'source': 'Asiakkaantilausnumero',
                                     'type': 'string',
                                     'title': 'Local identifier',
                                     'description': 'Locally given identifier.',
@@ -648,6 +649,7 @@ const deliveryInformationSchema = {
                             'properties': {
                                 '@type': {
                                     '$id': '#/properties/data/properties/order/properties/addressDelivery/properties/@type',
+                                    'source': 'addressDeliveryType',
                                     'type': 'string',
                                     'title': 'Identity type',
                                     'description': 'Type of identity.',
@@ -661,24 +663,28 @@ const deliveryInformationSchema = {
                                 },
                                 'streetaddressLine2': {
                                     '$id': '#/properties/data/properties/order/properties/addressDelivery/properties/streetaddressLine2',
+                                    'source': 'Toimitusosoite',
                                     'type': 'string',
                                     'title': 'Street Address Line 2',
                                     'description': 'Street Address Line 2',
                                 },
                                 'postalArea': {
                                     '$id': '#/properties/data/properties/order/properties/addressDelivery/properties/postalArea',
+                                    'source': null,
                                     'type': 'string',
                                     'title': 'Postal Area',
                                     'description': 'Postal Area.',
                                 },
                                 'postalCode': {
                                     '$id': '#/properties/data/properties/order/properties/addressDelivery/properties/postalCode',
+                                    'source': null,
                                     'type': 'string',
                                     'title': 'Postal Code',
                                     'description': 'Postal Code.',
                                 },
                                 'country': {
                                     '$id': '#/properties/data/properties/order/properties/addressDelivery/properties/country',
+                                    'source': null,
                                     'type': 'string',
                                     'title': 'Country',
                                     'description': 'Location country name.',
@@ -695,6 +701,7 @@ const deliveryInformationSchema = {
                             'properties': {
                                 '@type': {
                                     '$id': '#/properties/data/properties/order/properties/invoice/properties/@type',
+                                    'source': 'invoiceType',
                                     'type': 'string',
                                     'title': 'Identity type',
                                     'description': 'Type of identity.',
@@ -724,6 +731,7 @@ const deliveryInformationSchema = {
                             'properties': {
                                 '@type': {
                                     '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/@type',
+                                    'source': 'deliveryLineType',
                                     'type': 'string',
                                     'title': 'Identity type',
                                     'description': 'Type of identity.',
@@ -751,12 +759,14 @@ const deliveryInformationSchema = {
                                     'properties': {
                                         '@type': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/product/properties/@type',
+                                            'source': 'productType',
                                             'type': 'string',
                                             'title': 'Identity type',
                                             'description': 'Type of identity.',
                                         },
                                         'groupName': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/product/properties/groupName',
+                                            'source': 'Tuoteryhm�',
                                             'type': 'string',
                                             'title': 'Product group name',
                                             'description': 'Unique product group name given by manufacturer.',
@@ -770,6 +780,7 @@ const deliveryInformationSchema = {
                                         },
                                         'codeProduct2': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/product/properties/codeProduct2',
+                                            'source': null,
                                             'type': 'string',
                                             'title': 'Product code 2',
                                             'description': 'Additional unique product code given by manufacturer.',
@@ -790,30 +801,35 @@ const deliveryInformationSchema = {
                                             'properties': {
                                                 '@type': {
                                                     '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/product/properties/concrete/properties/@type',
+                                                    'source': 'concreteType',
                                                     'type': 'string',
                                                     'title': 'Identity type',
                                                     'description': 'Type of identity.',
                                                 },
                                                 'categorizationLocal': {
                                                     '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/product/properties/concrete/properties/categorizationLocal',
+                                                    'source': 'Betonityyppi',
                                                     'type': 'string',
                                                     'title': 'Local category',
                                                     'description': 'Categorisation name given locally.',
                                                 },
                                                 'strengthCode': {
                                                     '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/product/properties/concrete/properties/strengthCode',
+                                                    'source': 'Lujuuskoodi',
                                                     'type': 'integer',
                                                     'title': 'Strenght code',
                                                     'description': 'Strenght code.',
                                                 },
                                                 'sizeGrain': {
                                                     '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/product/properties/concrete/properties/sizeGrain',
+                                                    'source': 'Raekoko',
                                                     'type': 'string',
                                                     'title': 'Grain size',
                                                     'description': 'Grain size.',
                                                 },
                                                 'flexibilityCode': {
                                                     '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/product/properties/concrete/properties/flexibilityCode',
+                                                    'source': 'Notkeusluokka',
                                                     'type': 'string',
                                                     'title': 'Flexibility class',
                                                     'description': 'Flexibility class.',
@@ -827,12 +843,14 @@ const deliveryInformationSchema = {
                                                     'properties': {
                                                         '@type': {
                                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/product/properties/concrete/properties/cement/properties/@type',
+                                                            'source': 'cementType',
                                                             'type': 'string',
                                                             'title': 'Identity type',
                                                             'description': 'Type of identity.',
                                                         },
                                                         'categorizationLocal': {
                                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/product/properties/concrete/properties/cement/properties/categorizationLocal',
+                                                            'source': 'SuhtKoodi1',
                                                             'type': 'string',
                                                             'title': 'Local category',
                                                             'description': 'Categorisation name given locally.',
@@ -852,24 +870,28 @@ const deliveryInformationSchema = {
                                     'properties': {
                                         '@type': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/vehicle/properties/@type',
+                                            'source': 'vehicleType',
                                             'type': 'string',
                                             'title': 'Identity type',
                                             'description': 'Type of identity.',
                                         },
                                         'idLocal': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/vehicle/properties/idLocal',
+                                            'source': 'Auto',
                                             'type': 'string',
                                             'title': 'Local identifier',
                                             'description': 'Locally given identifier.',
                                         },
                                         'categorizationCode': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/vehicle/properties/categorizationCode',
+                                            'source': 'Autotyyppitunnus',
                                             'type': 'string',
                                             'title': 'Category code',
                                             'description': 'Code of the categorization class/type.',
                                         },
                                         'categorizationName': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/vehicle/properties/categorizationName',
+                                            'source': 'Autotyyppi',
                                             'type': 'string',
                                             'title': 'Category name',
                                             'description': 'Name of the categorization class/type.',
@@ -885,18 +907,21 @@ const deliveryInformationSchema = {
                                     'properties': {
                                         '@type': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/Production/properties/@type',
+                                            'source': 'productionType',
                                             'type': 'string',
                                             'title': 'Identity type',
                                             'description': 'Type of identity.',
                                         },
                                         'idLocal': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/Production/properties/idLocal',
+                                            'source': 'TehdasID',
                                             'type': 'string',
                                             'title': 'Local identifier',
                                             'description': 'Locally given identifier.',
                                         },
                                         'locationName': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/Production/properties/locationName',
+                                            'source': 'Tehdas',
                                             'type': 'string',
                                             'title': 'Location name',
                                             'description': 'Location name.',
@@ -912,36 +937,42 @@ const deliveryInformationSchema = {
                                     'properties': {
                                         '@type': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/Delivery/properties/@type',
+                                            'source': 'deliveryType',
                                             'type': 'string',
                                             'title': 'Identity type',
                                             'description': 'Type of identity.',
                                         },
                                         'idLocal': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/Delivery/properties/idLocal',
+                                            'source': 'Kuormakirjanumero',
                                             'type': 'string',
                                             'title': 'Local identifier',
                                             'description': 'Locally given identifier.',
                                         },
                                         'categorizationLocal': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/Delivery/properties/categorizationLocal',
+                                            'source': 'Toimitustapa',
                                             'type': 'string',
                                             'title': 'Local category',
                                             'description': 'Categorisation name given locally.',
                                         },
                                         'startDateTime': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/Delivery/properties/startDateTime',
+                                            'source': 'L�hetysaika',
                                             'type': 'string',
                                             'title': 'Start time',
                                             'description': 'Start time.',
                                         },
                                         'endDateTime': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/Delivery/properties/endDateTime',
+                                            'source': 'Tehtaalle_l�ht�aika',
                                             'type': 'string',
                                             'title': 'End time',
                                             'description': 'End time.',
                                         },
                                         'deliveryPlanned': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/Delivery/properties/deliveryPlanned',
+                                            'source': null,
                                             'type': 'string',
                                             'title': 'Planned delivery time',
                                             'description': 'Planned delivery time.',
@@ -950,6 +981,7 @@ const deliveryInformationSchema = {
                                 },
                                 'loading': {
                                     '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/loading',
+                                    'source': null,
                                     'type': 'object',
                                     'title': 'Loading',
                                     'description': 'Loading process.',
@@ -957,12 +989,14 @@ const deliveryInformationSchema = {
                                     'properties': {
                                         '@type': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/Loading/properties/@type',
+                                            'source': 'loadingType',
                                             'type': 'string',
                                             'title': 'Identity type',
                                             'description': 'Type of identity.',
                                         },
                                         'startDateTime': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/Loading/properties/startDateTime',
+                                            'source': 'Kuorman_lastausaika',
                                             'type': 'string',
                                             'title': 'Start time',
                                             'description': 'Start time.',
@@ -971,6 +1005,7 @@ const deliveryInformationSchema = {
                                 },
                                 'transportation': {
                                     '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/transportation',
+                                    'source': null,
                                     'type': 'object',
                                     'title': 'Transportation',
                                     'description': 'The action of transporting someone or something or the process of being transported.',
@@ -978,18 +1013,21 @@ const deliveryInformationSchema = {
                                     'properties': {
                                         '@type': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/Transportation/properties/@type',
+                                            'source': 'transportationType',
                                             'type': 'string',
                                             'title': 'Identity type',
                                             'description': 'Type of identity.',
                                         },
                                         'startDateTime': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/Transportation/properties/startDateTime',
+                                            'source': 'Ty�maalle_l�ht�aika',
                                             'type': 'string',
                                             'title': 'Start time',
                                             'description': 'Start time.',
                                         },
                                         'endDateTime': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/Transportation/properties/endDateTime',
+                                            'source': 'Ty�maalle_saapumisaika',
                                             'type': 'string',
                                             'title': 'End time',
                                             'description': 'End time.',
@@ -998,6 +1036,7 @@ const deliveryInformationSchema = {
                                 },
                                 'unloading': {
                                     '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/unloading',
+                                    'source': null,
                                     'type': 'object',
                                     'title': 'Unloading',
                                     'description': 'Unloading (for example unloading shipment/delivery).',
@@ -1005,12 +1044,14 @@ const deliveryInformationSchema = {
                                     'properties': {
                                         '@type': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/Unloading/properties/@type',
+                                            'source': 'unloadingType',
                                             'type': 'string',
                                             'title': 'Identity type',
                                             'description': 'Type of identity.',
                                         },
                                         'startDateTime': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/Unloading/properties/startDateTime',
+                                            'source': 'Purkualoitusaika',
                                             'type': 'string',
                                             'title': 'Start time',
                                             'description': 'Start time.',
@@ -1019,6 +1060,7 @@ const deliveryInformationSchema = {
                                 },
                                 'washing': {
                                     '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/washing',
+                                    'source': null,
                                     'type': 'object',
                                     'title': 'Washing',
                                     'description': 'Washing.',
@@ -1026,12 +1068,14 @@ const deliveryInformationSchema = {
                                     'properties': {
                                         '@type': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/Washing/properties/@type',
+                                            'source': 'washingType',
                                             'type': 'string',
                                             'title': 'Identity type',
                                             'description': 'Type of identity.',
                                         },
                                         'startDateTime': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/Washing/properties/startDateTime',
+                                            'source': 'Pesuaika',
                                             'type': 'string',
                                             'title': 'Start time',
                                             'description': 'Start time.',
@@ -1080,8 +1124,292 @@ const deliveryInformationSchema = {
     },
 };
 
-const purchaseOrderIds = {};
-const purchaseOrderItemIds = {};
+const documentSchema = {
+    '$schema': 'http://json-schema.org/draft-06/schema#',
+    '$id': 'https://standards.oftrust.net/v2/Schema/DataProductOutput/Document?v=3.0',
+    'source': null,
+    'type': 'object',
+    'required': [],
+    'properties': {
+        '@context': {
+            '$id': '#/properties/@context',
+            'source': null,
+            'type': 'string',
+            'const': 'https://standards.oftrust.net/v2/Context/DataProductOutput/Document/?v=3.0',
+            'title': 'JSON-LD context url',
+            'description': 'JSON-LD context url with terms required to understand data product content.',
+        },
+        'data': {
+            '$id': '#/properties/data',
+            'source': null,
+            'type': 'object',
+            'title': 'Data product output',
+            'description': 'Output of data product delivered to customers.',
+            'required': [],
+            'properties': {
+                'document': {
+                    '$id': '#/properties/data/properties/document',
+                    'source': '',
+                    'type': 'array',
+                    'title': 'Document',
+                    'description': 'An original or official paper (or other format) relied on as the basis, proof, or support of something.',
+                    'items': {
+                        '$id': '#/properties/data/properties/document/items',
+                        'source': null,
+                        'type': 'object',
+                        'required': [],
+                        'properties': {
+                            '@type': {
+                                '$id': '#/properties/data/properties/document/items/properties/@type',
+                                'source': 'type',
+                                'type': 'string',
+                                'title': 'Identity type',
+                                'description': 'Type of identity.',
+                            },
+                            'name': {
+                                '$id': '#/properties/data/properties/document/items/properties/name',
+                                'source': 'filename',
+                                'type': 'string',
+                                'title': 'Name',
+                                'description': 'Name.',
+                            },
+                            'nameExtension': {
+                                '$id': '#/properties/data/properties/document/items/properties/nameExtension',
+                                'source': 'extension',
+                                'type': 'string',
+                                'title': 'File extension',
+                                'description': 'File name extension.',
+                            },
+                            'url': {
+                                '$id': '#/properties/data/properties/document/items/properties/url',
+                                'source': null,
+                                'type': 'string',
+                                'title': 'URL address',
+                                'description': 'URL address.',
+                            },
+                            'status': {
+                                '$id': '#/properties/data/properties/document/items/properties/status',
+                                'source': null,
+                                'type': 'string',
+                                'title': 'Life-cycle status',
+                                'description': 'Life-cycle status.',
+                            },
+                            'content': {
+                                '$id': '#/properties/data/properties/document/items/properties/content',
+                                'source': 'content',
+                                'type': 'string',
+                                'title': 'Content',
+                                'description': 'Content is "full description" of something.',
+                            },
+                            'categorizationInternetMediaType': {
+                                '$id': '#/properties/data/properties/document/items/properties/categorizationInternetMediaType',
+                                'source': 'mimetype',
+                                'type': 'string',
+                                'title': 'MIME type',
+                                'description': 'A media type (also known as a Multipurpose Internet Mail Extensions or MIME type) is a standard that indicates the nature and format of a document, file, or assortment of bytes. It is defined and standardized in IETF\'s RFC 6838.',
+                            },
+                            'categorizationEncoding': {
+                                '$id': '#/properties/data/properties/document/items/properties/categorizationEncoding',
+                                'source': 'encoding',
+                                'type': 'string',
+                                'title': 'Encoding category (type)',
+                                'description': 'Categorization based on encoding type (related to information technology).',
+                            },
+                            'sizeByte': {
+                                '$id': '#/properties/data/properties/document/items/properties/sizeByte',
+                                'source': 'filesize',
+                                'type': 'integer',
+                                'title': 'Byte size',
+                                'description': 'Size of file in bytes.',
+                            },
+                            'party': {
+                                '$id': '#/properties/data/properties/document/items/properties/party',
+                                'source': null,
+                                'type': 'array',
+                                'title': 'Party',
+                                'description': 'Party',
+                                'items': {
+                                    '$id': '#/properties/data/properties/document/items/properties/party/items',
+                                    'source': null,
+                                    'type': 'object',
+                                    'required': [],
+                                    'properties': {
+                                        '@type': {
+                                            '$id': '#/properties/data/properties/document/items/properties/party/items/properties/@type',
+                                            'source': null,
+                                            'type': 'string',
+                                            'title': 'Identity type',
+                                            'description': 'Type of identity.',
+                                        },
+                                        'name': {
+                                            '$id': '#/properties/data/properties/document/items/properties/party/items/properties/name',
+                                            'source': null,
+                                            'type': 'string',
+                                            'title': 'Name',
+                                            'description': 'Name.',
+                                        },
+                                    },
+                                },
+                            },
+                            'updated': {
+                                '$id': '#/properties/data/properties/document/items/properties/updated',
+                                'source': null,
+                                'type': 'string',
+                                'title': 'Update time',
+                                'description': 'Last update time.',
+                            },
+                            'created': {
+                                '$id': '#/properties/data/properties/document/items/properties/created',
+                                'source': null,
+                                'type': 'string',
+                                'title': 'Created',
+                                'description': 'Creation time.',
+                            },
+                            'idSource': {
+                                '$id': '#/properties/data/properties/document/items/properties/idSource',
+                                'source': null,
+                                'type': 'string',
+                                'title': 'Id source',
+                                'description': 'Id in the source system.',
+                            },
+                            'digitalSignature': {
+                                '$id': '#/properties/data/properties/document/items/properties/digitalSignature',
+                                'source': null,
+                                'type': 'array',
+                                'title': 'Digital signature',
+                                'description': 'Digital signature.',
+                                'items': {
+                                    '$id': '#/properties/data/properties/document/items/properties/digitalSignature/items',
+                                    'source': null,
+                                    'type': 'object',
+                                    'required': [],
+                                    'properties': {
+                                        '@type': {
+                                            '$id': '#/properties/data/properties/document/items/properties/digitalSignature/items/properties/@type',
+                                            'source': null,
+                                            'type': 'string',
+                                            'title': 'Identity type',
+                                            'description': 'Type of identity.',
+                                        },
+                                        'executor': {
+                                            '$id': '#/properties/data/properties/document/items/properties/digitalSignature/items/properties/executor',
+                                            'source': null,
+                                            'type': 'string',
+                                            'title': 'Process executor',
+                                            'description': 'Executor of the process (source of the data).',
+                                        },
+                                        'timestamp': {
+                                            '$id': '#/properties/data/properties/document/items/properties/digitalSignature/items/properties/timestamp',
+                                            'source': null,
+                                            'type': 'string',
+                                            'title': 'System time stamp',
+                                            'description': 'System time stamp deriving typically from computer system.  Time when record (file) was created.',
+                                        },
+                                    },
+                                },
+                            },
+                            'creator': {
+                                '$id': '#/properties/data/properties/document/items/properties/creator',
+                                'source': null,
+                                'type': 'object',
+                                'title': 'Creator',
+                                'description': 'Party who has created the file or information.',
+                                'required': [],
+                                'properties': {
+                                    '@type': {
+                                        '$id': '#/properties/data/properties/document/items/properties/creator/properties/@type',
+                                        'source': null,
+                                        'type': 'string',
+                                        'title': 'Identity type',
+                                        'description': 'Type of identity.',
+                                    },
+                                    'name': {
+                                        '$id': '#/properties/data/properties/document/items/properties/creator/properties/name',
+                                        'source': null,
+                                        'type': 'string',
+                                        'title': 'Name',
+                                        'description': 'Name.',
+                                    },
+                                    'idLocal': {
+                                        '$id': '#/properties/data/properties/document/items/properties/creator/properties/idLocal',
+                                        'source': null,
+                                        'type': 'string',
+                                        'title': 'Local identifier',
+                                        'description': 'Locally given identifier.',
+                                    },
+                                },
+                            },
+                            'updater': {
+                                '$id': '#/properties/data/properties/document/items/properties/updater',
+                                'source': null,
+                                'type': 'object',
+                                'title': 'Updater',
+                                'description': 'Updater (updates file or information).  Same as modifier.',
+                                'required': [],
+                                'properties': {
+                                    '@type': {
+                                        '$id': '#/properties/data/properties/document/items/properties/updater/properties/@type',
+                                        'source': null,
+                                        'type': 'string',
+                                        'title': 'Identity type',
+                                        'description': 'Type of identity.',
+                                    },
+                                    'name': {
+                                        '$id': '#/properties/data/properties/document/items/properties/updater/properties/name',
+                                        'source': null,
+                                        'type': 'string',
+                                        'title': 'Name',
+                                        'description': 'Name.',
+                                    },
+                                    'idLocal': {
+                                        '$id': '#/properties/data/properties/document/items/properties/updater/properties/idLocal',
+                                        'source': null,
+                                        'type': 'string',
+                                        'title': 'Local identifier',
+                                        'description': 'Locally given identifier.',
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+        'signature': {
+            '$id': '#/properties/signature',
+            'type': 'object',
+            'title': 'Signature',
+            'description': 'Signature.',
+            'required': [],
+            'properties': {
+                'type': {
+                    '$id': '#/properties/signature/properties/type',
+                    'type': 'string',
+                    'title': 'Type',
+                    'description': 'Type.',
+                },
+                'created': {
+                    '$id': '#/properties/signature/properties/created',
+                    'type': 'string',
+                    'title': 'Created',
+                    'description': 'Creation time.',
+                },
+                'creator': {
+                    '$id': '#/properties/signature/properties/creator',
+                    'type': 'string',
+                    'title': 'Creator',
+                    'description': 'Party who has created the file or information.',
+                },
+                'signatureValue': {
+                    '$id': '#/properties/signature/properties/signatureValue',
+                    'type': 'string',
+                    'title': 'Signature value',
+                    'description': 'Signature value.',
+                },
+            },
+        },
+    },
+};
 
 /**
  * Sends http request.
@@ -1121,43 +1449,80 @@ const handleData = function (config, id, data) {
     try {
         for (let j = 0; j < data.length; j++) {
             let result = {};
-            const value = data[j][config.output.value];
-            if (Object.keys(config.dataPropertyMappings).includes('DeliveryInformation')) {
-                // Detect the need for transformation.
-                // TODO: Detect order confirmation.
-                if (Object.hasOwnProperty.call(value, 'project') || Object.hasOwnProperty.call(value, 'data')) {
-                    // Output has already been transformed.
+            const values = Array.isArray(data[j][config.output.value]) ? data[j][config.output.value] : [data[j][config.output.value]];
+            for (let k = 0; k < values.length; k++) {
+                const value = values[k];
+                let key;
+                if (Object.keys(config.dataPropertyMappings).includes('DeliveryInformation')) {
+                    // Detect the need for transformation.
+                    // TODO: Detect order confirmation.
+                    if (Object.hasOwnProperty.call(value, 'project') || Object.hasOwnProperty.call(value, 'data')) {
+                        // Output has already been transformed.
+                        result = {
+                            order: {
+                                ...value,
+                            },
+                        };
+                    } else {
+                        // Detect if document can be transformed to delivery information or delivery document.
+                        if (Object.hasOwnProperty.call(value, 'mimetype')) {
+                            value.content = '123';
+
+                            // Transform raw input.
+                            value.type = 'Document';
+
+                            result = transformer.transform(value, documentSchema.properties.data);
+                            key = Object.keys(documentSchema.properties.data.properties)[0];
+                        } else {
+                            // Transform raw input.
+                            value.type = 'DeliveryInformation';
+                            value.projectType = 'Project';
+                            value.locationType = 'Location';
+                            value.salesOrderType = 'SalesOrder';
+                            value.customerType = 'Organization';
+                            value.addressDeliveryType = 'ContactInformation';
+                            value.invoiceType = 'Invoice';
+                            value.deliveryLineType = 'DeliveryLine';
+                            value.productType = 'Product';
+                            value.concreteType = 'Concrete';
+                            value.deliveryType = 'Delivery';
+                            value.loadingType = 'Loading';
+                            value.unloadingType = 'Unloading';
+                            value.transportationType = 'Transportation';
+                            value.washingType = 'Washing';
+                            value.vehicleType = 'Vehicle';
+                            value.productionType = 'Production';
+                            value.cementType = 'cementType';
+
+                            if (Object.hasOwnProperty.call(value, 'Purku aloitusaika')) {
+                                value['Purkualoitusaika'] = value['Purku aloitusaika'];
+                            }
+
+                            result = transformer.transform(value, deliveryInformationSchema.properties.data);
+                            key = Object.keys(deliveryInformationSchema.properties.data.properties)[0];
+                        }
+                    }
+                } else {
                     result = {
-                        order: {
+                        demandSupply: {
+                            'type': 'SupplyInformation',
                             ...value,
                         },
                     };
+                }
+
+                // Merge all to same result.
+                if (Object.hasOwnProperty.call(object, key)) {
+                    if (!Array.isArray(object[key])) {
+                        object[key] = [object[key]];
+                    }
+                    if (!Array.isArray(result[key])) {
+                        result[key] = [result[key]];
+                    }
+                    object[key].push(...result[key]);
                 } else {
-                    // Transform raw input.
-                    value.type = 'DeliveryInformation';
-                    value.projectType = 'Project';
-                    value.locationType = 'Location';
-
-                    result = transformer.transform(value, deliveryInformationSchema.properties.data);
+                    object = result;
                 }
-            } else {
-                result = {
-                    demandSupply: {
-                        'type': 'SupplyInformation',
-                        ...value,
-                    },
-                };
-            }
-
-
-            // Merge all to same result.
-            if (Object.hasOwnProperty.call(object, 'order')) {
-                if (!Array.isArray(object.order)) {
-                    object.order = [object.order];
-                }
-                object.order.push(...result.order);
-            } else {
-                object = result;
             }
         }
         return object;
@@ -1178,15 +1543,25 @@ const response = async (config, response) => {
     try {
         if (typeof response === 'string' || response instanceof String) {
             const fileType = await FileType.fromBuffer(new Buffer(response));
-            response = {data: response, extension: fileType.ext, mimetype: fileType.mime, encoding: 'base64'};
-            if (response.extension === 'csv') {
-                response.data = CSVToJSON().fromString(response.data);
+            if (!fileType) {
+                // File is .txt, .csv, .svg, etc (not a binary-based file format).
+                response = {
+                    data: await CSVToJSON().fromString(response),
+                };
             } else {
-                response.data = {value: new Buffer(response.data, 'utf-8').toString('base64')};
+                response = {
+                    data: {
+                        content: new Buffer(response, 'utf-8').toString('base64'),
+                        extension: fileType.ext,
+                        mimetype: fileType.mime,
+                        encoding: 'base64',
+                    },
+                };
             }
         }
         return response;
     } catch (e) {
+        console.log(e.message);
         return response;
     }
 };
@@ -1381,19 +1756,32 @@ const controller = async (req, res) => {
         try {
             /** Sender data product */
             config.productCode = productCode;
-            /** Receiver data product */
-            config.static.productCode = receiverProductCode;
 
             template = await connector.resolvePlugins(template);
             template.config = config;
-            winston.log('info', '2. Send received data to receiver data product ' + receiverProductCode + ', isTest=' + req.body.is_test);
+
+            const keys = Object.keys(result.output.data);
+
+            if (keys.length === 0) {
+                const noData = new Error();
+                noData.httpStatusCode = 404;
+                noData.message = 'Not found.';
+                return errorResponse(req, res, noData);
+            }
+
+            const key = keys[0];
+
+            template.output.array = key;
 
             try {
-                if (!Array.isArray(result.output.data.order)) {
-                    result.output.data.order = [result.output.data.order];
+                if (!Array.isArray(result.output.data[keys[0]])) {
+                    result.output.data[key] = [result.output.data[key]];
                 }
                 // Resolve ids.
-                result.output.data.order.map((order) => {
+                result.output.data[key].map((order) => {
+                    if (!Object.hasOwnProperty.call(order, 'deliveryLine')) {
+                        return order;
+                    }
                     if (!Array.isArray(order.deliveryLine)) {
                         order.deliveryLine = [order.deliveryLine];
                     }
@@ -1404,20 +1792,13 @@ const controller = async (req, res) => {
                             idLocal: productCodeToCALSId[l.product.codeProduct],
                         };
                     });
-                    /*
-                    // Set sender.
-                    order.sender = {
-                        '@type': 'Product',
-                        productCode: template.productCode,
-                    };
-                    */
                     return order;
                 });
-                if (result.output.data.order.length === 1) {
-                    result.output.data.order = result.output.data.order[0];
-                    if (Array.isArray(result.output.data.order)) {
-                        if (result.output.data.order.length === 1) {
-                            result.output.data.order = result.output.data.order[0];
+                if (result.output.data[key].length === 1) {
+                    result.output.data[key] = result.output.data[key][0];
+                    if (Array.isArray(result.output.data[key])) {
+                        if (result.output.data[key].length === 1) {
+                            result.output.data[key] = result.output.data[key][0];
                         }
                     }
                 }
@@ -1431,6 +1812,20 @@ const controller = async (req, res) => {
                     isTest: req.body.is_test,
                 };
 
+                /** Sender data product */
+                template.config.productCode = productCode;
+
+                // Check for mapped receiver.
+                if (_.isObject(receiverProductCode)) {
+                    if (Object.hasOwnProperty.call(receiverProductCode, key)) {
+                        receiverProductCode = receiverProductCode[key];
+                    }
+                }
+
+                /** Receiver data product */
+                config.static.productCode = receiverProductCode;
+
+                winston.log('info', '2. Send received data to receiver data product ' + config.static.productCode + ', isTest=' + req.body.is_test);
                 await template.plugins.find(p => p.name === 'broker').stream(template, result.output);
             }
         } catch (err) {
@@ -1482,6 +1877,13 @@ const endpoints = function (passport) {
  */
 const template = async (config, template) => {
     try {
+        if (Object.hasOwnProperty.call(template.parameters.targetObject, 'idLocal')) {
+            const ids = Array.isArray(template.parameters.targetObject.idLocal) ? template.parameters.targetObject.idLocal : [template.parameters.targetObject.idLocal];
+            // Set context url based on filename. (document schema is used for format that are not CSV)
+            if (ids.some(id => !id.includes('.csv'))) {
+                template.output.contextValue = 'https://standards.oftrust.net/v2/Context/DataProductOutput/Document/';
+            }
+        }
         if (Object.hasOwnProperty.call(template.parameters.targetObject, 'sender')) {
             /** Vendor connector */
             winston.log('info', 'Received produced data from '
