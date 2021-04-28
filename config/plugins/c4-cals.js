@@ -1003,6 +1003,12 @@ const template = async (config, template) => {
                     const output = {};
                     // Root level delivery datetime by default.
                     let datetime = template.parameters.targetObject.deliveryRequired;
+
+                    // Catch delivery time from delivery information.
+                    if (!datetime && Object.hasOwnProperty.call(template.parameters.targetObject, 'delivery')) {
+                        datetime = template.parameters.targetObject.delivery.deliveryPlanned;
+                    }
+
                     // Set per order line if available.
                     if (!datetime) {
                         datetime = input.deliveryRequired;
@@ -1015,28 +1021,35 @@ const template = async (config, template) => {
                         output.PurchaseOrderItemId = input.idSystemLocal;
                     }
 
-                    datetime = new Date(datetime).toISOString();
+                    try {
 
-                    output.ConfirmedDeliveryDate = (datetime || 'T').split('T')[0];
-                    output.ConfirmedDeliveryTime = (datetime || 'T').split('T')[1].substring(0, 5);
+                        datetime = new Date(datetime).toISOString();
 
-                    // Delete unavailable delivery times.
-                    if (output.ConfirmedDeliveryDate === '') {
-                        delete output.ConfirmedDeliveryDate;
+                        output.ConfirmedDeliveryDate = (datetime || 'T').split('T')[0];
+                        output.ConfirmedDeliveryTime = (datetime || 'T').split('T')[1].substring(0, 5);
+
+                        // Delete unavailable delivery times.
+                        if (output.ConfirmedDeliveryDate === '') {
+                            delete output.ConfirmedDeliveryDate;
+                        }
+                        if (output.ConfirmedDeliveryTime === '') {
+                            delete output.ConfirmedDeliveryTime;
+                        }
+                    } catch (e) {
+                        // Attach meta.
+                        if (Object.hasOwnProperty.call(input, 'product')) {
+                            output.materialSecondaryCode = input.product.codeProduct;
+                            output.materialName = input.product.name;
+                        }
                     }
-                    if (output.ConfirmedDeliveryTime === '') {
-                        delete output.ConfirmedDeliveryTime;
-                    }
+
                     return output;
                 });
 
                 winston.log('info', 'Body: ' + JSON.stringify(data));
 
-                // ONLY FOR TESTING.
-                // const fallbackInstanceId = 'b3bd04e4-2ddf-49dc-832d-c30cb1bf7f16';
-
                 if (!data.InstanceId) {
-                    return Promise.reject(new Error('Could resolve CALS instance ID. Resending the order from CALS is required.'));
+                    return Promise.reject(new Error('Could not resolve CALS instance ID. Resending the order from CALS is required.'));
                 }
 
                 config.static.url = 'https://c4-prod-apim.azure-api.net/pot/instances/' + data.InstanceId + '/confirmpurchaseorder';
