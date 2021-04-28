@@ -1005,14 +1005,16 @@ const template = async (config, template) => {
                     let datetime = template.parameters.targetObject.deliveryRequired;
 
                     // Catch transportation/delivery time from delivery information.
-                    if (!datetime && Object.hasOwnProperty.call(template.parameters.targetObject, 'transportation')) {
-                        if (template.parameters.targetObject.transportation.endDateTime !== '') {
-                            datetime = template.parameters.targetObject.transportation.endDateTime;
+                    if (!datetime && Object.hasOwnProperty.call(input, 'transportation')) {
+                        if (input.transportation.endDateTime !== '') {
+                            datetime = input.transportation.endDateTime;
+                            output.ActualDelivery = [];
                         }
                     }
-                    if (!datetime && Object.hasOwnProperty.call(template.parameters.targetObject, 'delivery')) {
-                        if (template.parameters.targetObject.delivery.startDateTime !== '') {
-                            datetime = template.parameters.targetObject.delivery.startDateTime;
+                    if (!datetime && Object.hasOwnProperty.call(input, 'delivery')) {
+                        if (input.delivery.startDateTime !== '') {
+                            datetime = input.delivery.startDateTime;
+                            output.ActualDelivery = [];
                         }
                     }
 
@@ -1029,9 +1031,7 @@ const template = async (config, template) => {
                     }
 
                     try {
-
                         datetime = new Date(datetime).toISOString();
-
                         output.ConfirmedDeliveryDate = (datetime || 'T').split('T')[0];
                         output.ConfirmedDeliveryTime = (datetime || 'T').split('T')[1].substring(0, 5);
 
@@ -1043,11 +1043,29 @@ const template = async (config, template) => {
                             delete output.ConfirmedDeliveryTime;
                         }
                     } catch (e) {
+                        winston.log('error', e.message);
+                    }
+
+                    if (!output.PurchaseOrderItemId) {
                         // Attach meta.
                         if (Object.hasOwnProperty.call(input, 'product')) {
                             output.materialSecondaryCode = input.product.codeProduct;
                             output.materialName = input.product.name;
                         }
+                    }
+
+                    // Compose actual delivery array.
+                    if (Object.hasOwnProperty.call(output, 'ActualDelivery')) {
+                        output.ActualDelivery.push(
+                            {
+                                ID: (input.delivery || {}).idLocal,
+                                Quantity: input.quantity,
+                                ActualDeliveryDate: output.ConfirmedDeliveryDate,
+                                ActualDeliveryTime: output.ConfirmedDeliveryTime,
+                            },
+                        );
+                        delete output.ConfirmedDeliveryDate;
+                        delete output.ConfirmedDeliveryTime;
                     }
 
                     return output;
@@ -1076,6 +1094,12 @@ const template = async (config, template) => {
                 winston.log('info', err.message);
                 return Promise.reject(err);
             }
+        }
+
+        if (!template.authConfig.path) {
+            const error = new Error('Bad request. Could not recognize supported query. Bad parameters or missing sender data product.');
+            error.httpStatusCode = 400;
+            return Promise.reject(error);
         }
 
         return template;
