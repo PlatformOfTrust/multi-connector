@@ -146,12 +146,12 @@ const stream = async (template, data) => {
 
                 requests = requests.map((o) => {
                     // Pass product codes as sender and receiver.
-                    body.parameters.targetObject.sender = {
+                    o.parameters.targetObject.sender = {
                         '@type': 'DataProduct',
                         productCode: config.productCode,
                     };
                     /*
-                    body.parameters.targetObject..receiver = {
+                    o.parameters.targetObject.receiver = {
                         '@type': 'DataProduct',
                         productCode: productCode,
                     };
@@ -160,7 +160,7 @@ const stream = async (template, data) => {
                 });
 
                 for (let r = 0; r < requests.length; r++) {
-                    // Send broker request .
+                    // Send broker request.
                     winston.log('info', 'Broker plugin: Send broker request to ' + url);
                     await request('POST', url, headers, requests[r]);
                 }
