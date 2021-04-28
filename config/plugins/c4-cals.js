@@ -1006,7 +1006,7 @@ const template = async (config, template) => {
 
                     // Catch delivery time from delivery information.
                     if (!datetime && Object.hasOwnProperty.call(template.parameters.targetObject, 'delivery')) {
-                        datetime = template.parameters.targetObject.delivery.deliveryPlanned;
+                        datetime = template.parameters.targetObject.delivery.startDateTime;
                     }
 
                     // Set per order line if available.
