@@ -438,6 +438,9 @@ const handleData = function (config, id, data) {
                 if (!Array.isArray(object[key])) {
                     object[key] = [object[key]];
                 }
+                if (!Array.isArray(result[key])) {
+                    result[key] = [result[key]];
+                }
                 object[key].push(...result[key]);
             } else {
                 object = result;

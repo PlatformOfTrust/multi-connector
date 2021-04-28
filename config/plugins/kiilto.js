@@ -598,6 +598,9 @@ const handleData = function (config, id, data) {
                 if (!Array.isArray(object.order)) {
                     object.order = [object.order];
                 }
+                if (!Array.isArray(result.order)) {
+                    result.order = [result.order];
+                }
                 object.order.push(...result.order);
             } else {
                 object = result;

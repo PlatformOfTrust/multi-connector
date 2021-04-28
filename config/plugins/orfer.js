@@ -1216,6 +1216,9 @@ const handleData = function (config, id, data) {
                 if (!Array.isArray(object.process)) {
                     object.process = [object.process];
                 }
+                if (!Array.isArray(result.process)) {
+                    result.process = [result.process];
+                }
                 object.process.push(...result.process);
             } else {
                 object = result;
