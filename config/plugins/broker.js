@@ -92,9 +92,6 @@ const stream = async (template, data) => {
                     },
                 };
 
-                // Initialize signature value.
-                let signatureValue;
-
                 // Load PoT credentials from env by default.
                 let clientSecret = process.env.POT_CLIENT_SECRET;
                 let appAccessToken = process.env.POT_APP_ACCESS_TOKEN;
@@ -115,23 +112,6 @@ const stream = async (template, data) => {
                     err.httpStatusCode = 500;
                     return Promise.reject(err);
                 }
-
-                // Create SHA256 signature in base64 encoded format.
-                try {
-                    signatureValue = crypto
-                        .createHmac('sha256', Buffer.from(clientSecret, 'utf8'))
-                        .update(rsa.stringifyBody(body)).digest('base64');
-                } catch (err) {
-                    winston.log('error', err.message);
-                }
-
-                // Set request headers
-                const headers = {
-                    'X-Pot-Signature': signatureValue,
-                    'X-App-Token': appAccessToken,
-                    'X-User-Token': accessToken,
-                    'Content-Type': 'application/json',
-                };
 
                 let requests = Array.isArray(body.parameters.targetObject) ? body.parameters.targetObject.map((o) => {
                     return {
@@ -162,6 +142,27 @@ const stream = async (template, data) => {
                 for (let r = 0; r < requests.length; r++) {
                     // Send broker request.
                     winston.log('info', 'Broker plugin: Send broker request to ' + url);
+
+                    // Initialize signature value.
+                    let signatureValue;
+
+                    // Create SHA256 signature in base64 encoded format.
+                    try {
+                        signatureValue = crypto
+                            .createHmac('sha256', Buffer.from(clientSecret, 'utf8'))
+                            .update(rsa.stringifyBody(requests[r])).digest('base64');
+                    } catch (err) {
+                        winston.log('error', err.message);
+                    }
+
+                    // Set request headers
+                    const headers = {
+                        'X-Pot-Signature': signatureValue,
+                        'X-App-Token': appAccessToken,
+                        'X-User-Token': accessToken,
+                        'Content-Type': 'application/json',
+                    };
+
                     await request('POST', url, headers, requests[r]);
                 }
             }
