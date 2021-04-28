@@ -1004,29 +1004,27 @@ const stream = async (template, data) => {
             let receiverProductCode;
             try {
                 receiverProductCode = 'purchase-order-from-cals';
-                // TODO: Get receiver from config.
+                // Get receiver from config.
+                receiverProductCode = config.plugins.broker.receiver;
             } catch (err) {
                 winston.log('info', 'Set receiver data product as ' + receiverProductCode + '.');
             }
 
-            // 2. Send data to vendor data product with broker plugin.
-            /** Sender data product */
-            // config.productCode = productCode;
             winston.log('info', '1. From: ' + template.productCode);
-            /** Receiver data product */
-            config.static.productCode = receiverProductCode;
-
-            winston.log('info', '2. Send received data to receiver data product ' + receiverProductCode + ', isTest=' + false);
 
             const result = data[i];
+            const keys = Object.keys(result.data);
+            const key = keys[0];
+            template.output.array = key;
 
-            if (!Array.isArray(result.data.order)) {
-                result.data.order = [result.data.order];
+            if (!Array.isArray(result.data[key])) {
+                result.data[key] = [result.data[key]];
             }
+
             // Resolve ids.
-            result.data.order.map((order) => {
+            result.data[key].map((order) => {
                 if (!Array.isArray(order.orderLine)) {
-                    order.deliveryLine = [order.orderLine];
+                    order.orderLine = [order.orderLine];
                 }
                 order.idLocal = order.idLocal || 'Unknown';
                 order.idSystemLocal = orderNumberToCALSId[order.idLocal];
@@ -1045,21 +1043,36 @@ const stream = async (template, data) => {
                 });
                 return order;
             });
-            if (result.data.order.length === 1) {
-                result.data.order = result.data.order[0];
-                if (Array.isArray(result.data.order)) {
-                    if (result.data.order.length === 1) {
-                        result.data.order = result.data.order[0];
+            if (result.data[key].length === 1) {
+                result.data[key] = result.data[key][0];
+                if (Array.isArray(result.data[key])) {
+                    if (result.data[key].length === 1) {
+                        result.data[key] = result.data[key][0];
                     }
                 }
             }
+
+            // 2. Send data to vendor data product with broker plugin.
             if (template.plugins.find(p => p.name === 'broker') && template.config.plugins.broker) {
-                // TODO: Set isTest.
+                // Set isTest.
                 template.config.plugins.broker.parameters = {
                     isTest: false,
                 };
-                // Configure sender productCode.
+
+                /** Sender data product */
                 template.config.productCode = template.productCode;
+
+                // Check for mapped receiver.
+                if (_.isObject(receiverProductCode)) {
+                    if (Object.hasOwnProperty.call(receiverProductCode, key)) {
+                        receiverProductCode = receiverProductCode[key];
+                    }
+                }
+
+                /** Receiver data product */
+                config.static.productCode = receiverProductCode;
+
+                winston.log('info', '2. Send received data to receiver data product ' + receiverProductCode + ', isTest=' + false);
                 responses.push(await template.plugins.find(p => p.name === 'broker').stream(template, result));
             }
         } catch (err) {
