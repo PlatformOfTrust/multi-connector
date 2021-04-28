@@ -1004,7 +1004,7 @@ const template = async (config, template) => {
                     // Root level delivery datetime by default.
                     let datetime = template.parameters.targetObject.deliveryRequired;
 
-                    // Catch /transportation/delivery time from delivery information.
+                    // Catch transportation/delivery time from delivery information.
                     if (!datetime && Object.hasOwnProperty.call(template.parameters.targetObject, 'transportation')) {
                         if (template.parameters.targetObject.transportation.endDateTime !== '') {
                             datetime = template.parameters.targetObject.transportation.endDateTime;
