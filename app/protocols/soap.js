@@ -130,14 +130,44 @@ const createSOAPClient = async (config, url, pathArray) => {
                 }
 
                 let data;
-                for (let i = 0; i < pathArray.length; i++) {
-                    data = await executeRemoteFunction(client, SOAPFunction, pathArray[i]);
-                    if (data) {
-                        if (_.isObject(data)) {
-                            if (Object.keys(data).length > 0) {
-                                if (data[Object.keys(data)[0]]) {
-                                    data.hardwareId = pathArray[i][Object.keys(pathArray[i])[0]];
-                                    receivedData.push(await response.handleData(config, '', i, data));
+                if (SOAPFunction.includes('getPointDataList')) {
+                    const valueKey = 'getPointDataResult';
+                    // Option 1. Multiple ids with 1 request.
+                    const args = {'point_ids': pathArray.map(o => o.point_id).map((id) => {return {string: id};})};
+                    const list = await executeRemoteFunction(client, 'getPointDataList', args);
+                    if (list) {
+                        if (_.isObject(list)) {
+                            const r = 'getPointDataListResult';
+                            if (Object.hasOwnProperty.call(list, r)) {
+                                const d = 'PointData';
+                                if (Object.hasOwnProperty.call(list[r], d)) {
+                                    if (Array.isArray(list[r][d])) {
+                                        for (let i = 0; i < list[r][d].length; i++) {
+                                            if (Object.hasOwnProperty.call(list[r][d][i], 'Id')) {
+                                                const data = {
+                                                    hardwareId: list[r][d][i]['Id'],
+                                                    [valueKey]: list[r][d][i]['Value'],
+                                                };
+                                                const index = pathArray.findIndex(o => o.point_id === data.hardwareId);
+                                                if (index !== null) receivedData.push(await response.handleData(config, '', index, data));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    // Option 2. Single id per request.
+                    for (let i = 0; i < pathArray.length; i++) {
+                        data = await executeRemoteFunction(client, SOAPFunction, pathArray[i]);
+                        if (data) {
+                            if (_.isObject(data)) {
+                                if (Object.keys(data).length > 0) {
+                                    if (data[Object.keys(data)[0]]) {
+                                        data.hardwareId = pathArray[i][Object.keys(pathArray[i])[0]];
+                                        receivedData.push(await response.handleData(config, '', i, data));
+                                    }
                                 }
                             }
                         }

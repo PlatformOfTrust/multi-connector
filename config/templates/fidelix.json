@@ -7,7 +7,7 @@
     "url": "http://${ipAddress}/WebServices/Fidelix.asmx?WSDL",
     "username": "${username}",
     "password": "${password}",
-    "function": "Fidelix.FidelixSoap.getPointData",
+    "function": "Fidelix.FidelixSoap.getPointDataList",
     "path": {
       "point_id": "${id}"
     }
