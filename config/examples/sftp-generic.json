@@ -3,6 +3,8 @@
     "static": {
         "url": "<host>",
         "port": "<port>",
+        "fromPath": "[<from-path>]",
+        "toPath": "[<to-path>]",
         "username": "<username>",
         "password": "<password>",
         "proxyHost": "[<socks-server-host>]",

@@ -5,6 +5,8 @@
     "authConfig": {
         "url": "${url}",
         "port": "${port}",
+        "fromPath": "${fromPath}",
+        "toPath": "${toPath}",
         "proxyHost": "${proxyHost}",
         "proxyPort": "${proxyPort}",
         "username": "${username}",
