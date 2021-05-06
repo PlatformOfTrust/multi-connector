@@ -1,6 +1,7 @@
 {
   "plugins": [
-      "soap-ntlm"
+    "soap-ntlm",
+    "fidelix"
   ],
   "protocol": "soap",
   "authConfig": {

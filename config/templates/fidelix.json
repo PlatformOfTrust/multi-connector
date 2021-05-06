@@ -1,6 +1,7 @@
 {
   "plugins": [
-      "soap-basic"
+    "soap-basic",
+    "fidelix"
   ],
   "protocol": "soap",
   "authConfig": {
@@ -21,6 +22,9 @@
   "generalConfig": {
     "hardwareId": {
       "dataObjectProperty": "hardwareId"
+    },
+    "timestamp": {
+      "dataObjectProperty": "timestamp"
     }
   }
 }
