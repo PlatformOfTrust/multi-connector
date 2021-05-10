@@ -433,11 +433,12 @@ const interpretMode = function (config, parameters) {
 const resolvePlugins = async (template) => {
     // Attach plugins.
     if (Object.hasOwnProperty.call(template, 'plugins')) {
-        if (template.plugins.length !== Object.keys(plugins).filter(p => template.plugins.includes(p)).length) {
-            return rest.promiseRejectWithError(500, 'Missing required plugins.');
-        } else {
-            template.plugins = Object.keys(plugins).filter(n => template.plugins.includes(n)).map(n => plugins[n]);
+        const found = Object.keys(plugins).filter(p => template.plugins.includes(p));
+        const missing = template.plugins.filter(p => !found.includes(p));
+        if (missing.length > 0) {
+            return rest.promiseRejectWithError(500, 'Missing required plugins: ' + missing);
         }
+        template.plugins = found.map(n => plugins[n]);
     } else {
         template.plugins = [];
     }
