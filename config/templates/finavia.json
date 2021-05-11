@@ -1,0 +1,42 @@
+{
+    "plugins": [
+      "xml-parser"
+    ],
+    "protocol": "rest",
+    "authConfig": {
+      "url": "https://api.finavia.fi",
+      "headers": {
+          "app_id": "${applicationId}",
+          "app_key": "${applicationKey}"
+        },
+      "path": "/flights/public/v0/flights/${flightType}/${targetObject.idLocal}"
+    },
+    "dataObjects": [
+      "flights.dep.body.flight",
+      "flights.arr.body.flight"
+    ],
+    "dataPropertyMappings": {
+      "${type}": ""
+    },
+    "generalConfig": {
+      "sourceName": {
+        "dataObjectProperty": ""
+      },
+      "hardwareId": {
+        "dataObjectProperty": "h_apt"
+      },
+      "timestamp": {
+        "dataObjectProperty": "sdt"
+      }
+    },
+    "input": {
+        "required": [
+            "parameters.targetObject"
+        ]
+    },
+    "output": {
+        "contextValue": "https://standards-ontotest.oftrust.net/v2/Context/DataProductContext/Flight/",
+        "array": "flight",
+        "data": "data"
+    }
+  }
