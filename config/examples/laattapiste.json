@@ -11,11 +11,11 @@
     "proxyPort": "[<socks-server-port>]"
   },
   "dynamic": {
-    "authConfig.path": "ids"
+    "authConfig.path": "targetObject.idLocal"
   },
   "request": {
-    "ids": [
-      "<path>"
-    ]
+    "targetObject": {
+      "idLocal": "<filename>"
+    }
   }
 }

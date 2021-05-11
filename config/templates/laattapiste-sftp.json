@@ -12,7 +12,7 @@
         "proxyPort": "${proxyPort}",
         "username": "${username}",
         "password": "${password}",
-        "path": "${id}"
+        "path": "${targetObject.idLocal}"
     },
     "dataObjects": [
         ""

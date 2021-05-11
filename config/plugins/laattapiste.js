@@ -448,6 +448,8 @@ const output = async (config, output) => {
         },
     };
 
+    return output;
+
     // Hand over data objects to transformer.
     try {
         const array = output.data[config.output.array];
