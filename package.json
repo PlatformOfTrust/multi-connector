@@ -60,7 +60,8 @@
     "util": "^0.12.2",
     "websocket-stream": "^5.5.2",
     "winston": "^3.2.1",
-    "winston-daily-rotate-file": "^4.4.2"
+    "winston-daily-rotate-file": "^4.4.2",
+    "xml2js": "^0.4.23"
   },
   "nodemonConfig": {
     "ignore": [
