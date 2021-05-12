@@ -1,7 +1,6 @@
 {
     "plugins": [
-      "xml-parser",
-      "finavia-flight"
+      "finavia-security-queue"
     ],
     "protocol": "rest",
     "authConfig": {
@@ -10,11 +9,10 @@
           "app_id": "${applicationId}",
           "app_key": "${applicationKey}"
         },
-      "path": "/flights/public/v0/flights/${flightType}/${targetObject.idLocal}"
+      "path": "/queues/v1.2/queues"
     },
     "dataObjects": [
-      "flights.dep.body.flight",
-      "flights.arr.body.flight"
+      "data.securityQueues"
     ],
     "dataPropertyMappings": {
       "${type}": ""
@@ -24,10 +22,10 @@
         "dataObjectProperty": ""
       },
       "hardwareId": {
-        "dataObjectProperty": "h_apt"
+        "dataObjectProperty": "airport"
       },
       "timestamp": {
-        "dataObjectProperty": "sdt"
+        "dataObjectProperty": "lastUpdate"
       }
     },
     "input": {
@@ -36,8 +34,8 @@
         ]
     },
     "output": {
-        "contextValue": "https://standards-ontotest.oftrust.net/v2/Context/DataProductContext/Flight/",
-        "array": "flight",
+        "contextValue": "https://standards-ontotest.oftrust.net/v2/Context/DataProductContext/Process/",
+        "array": "process",
         "data": "data"
     }
   }

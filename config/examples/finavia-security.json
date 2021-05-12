@@ -1,9 +1,9 @@
 {
-  "template": "finavia",
+  "template": "finavia-security",
   "static": {
     "applicationId": "<application-id>",
     "applicationKey": "<application-key>",
-    "flightType": "all"
+    "type": "Process"
   },
   "dynamic": {
     "authConfig.path": "targetObject.idLocal"
