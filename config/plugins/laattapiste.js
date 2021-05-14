@@ -347,6 +347,7 @@ const template = async (config, template) => {
                 const xml = json2xml(result[id]);
                 const path = '/' + result[id].idSystemLocal + '.xml';
                 const to = DOWNLOAD_DIR + template.productCode + (template.authConfig.fromPath || '/from') + path;
+                await sftp.checkDir(to);
                 await fs.writeFile(to, xml);
 
                 winston.log('info', '3. Send data to URL ' + to);

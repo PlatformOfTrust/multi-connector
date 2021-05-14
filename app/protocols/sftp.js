@@ -214,4 +214,5 @@ const sendData = async (config= {}, pathArray) => {
 module.exports = {
     getData,
     sendData,
+    checkDir,
 };
