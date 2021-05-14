@@ -1,0 +1,21 @@
+{
+  "template": "laattapiste-sftp",
+  "static": {
+    "url": "ow1.ows.fi",
+    "port": "2234",
+    "fromPath": "[<from-path>]",
+    "toPath": "[<to-path>]",
+    "username": "<username>",
+    "password": "<password>",
+    "proxyHost": "[<socks-server-host>]",
+    "proxyPort": "[<socks-server-port>]"
+  },
+  "dynamic": {
+    "authConfig.path": "targetObject.idLocal"
+  },
+  "request": {
+    "targetObject": {
+      "idLocal": "<filename>"
+    }
+  }
+}

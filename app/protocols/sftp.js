@@ -5,6 +5,7 @@
 const fs = require('fs');
 const winston = require('../../logger.js');
 const Client = require('ssh2-sftp-client');
+const response = require('../lib/response');
 const SocksClient = require('socks').SocksClient;
 
 /**
@@ -176,7 +177,7 @@ const getData = async (config= {}, pathArray) => {
     const toPath = config.authConfig.toPath || '';
 
     for (let p = 0; p < pathArray.length; p++) {
-        const item = await downloadFiles(client, toPath + pathArray[p], productCode);
+        const item = await response.handleData(config, pathArray[p], p, await downloadFiles(client, toPath + pathArray[p], productCode));
         if (item) items.push(item);
     }
 
@@ -199,7 +200,7 @@ const sendData = async (config= {}, pathArray) => {
     const fromPath = config.authConfig.fromPath || '';
 
     for (let p = 0; p < pathArray.length; p++) {
-        const item = await uploadFile(client, fromPath, productCode + fromPath + pathArray[p]);
+        const item = await uploadFile(client, fromPath + pathArray[p], productCode + fromPath + pathArray[p]);
         if (item) items.push(item);
     }
 
