@@ -209,7 +209,7 @@ const requestData = async (config, path, index) => {
         return Promise.resolve(result);
     }).catch(function (err) {
         if (Object.hasOwnProperty.call(err, 'statusCode')) {
-            if (err.statusCode === 404 || err.statusCode === 400) {
+            if (err.statusCode === 404) {
                 return Promise.resolve([]);
             }
         }
