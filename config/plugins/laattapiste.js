@@ -3,12 +3,15 @@
  * Module dependencies.
  */
 const transformer = require('../../app/lib/transformer');
+const sftp = require('../../app/protocols/sftp');
 const winston = require('../../logger.js');
 const cache = require('../../app/cache');
 const xml2js = require('xml2js');
 const _ = require('lodash');
+const fs = require('fs').promises;
 
 const PLUGIN_NAME = 'laattapiste';
+const DOWNLOAD_DIR = './temp/';
 const orderNumberToCALSId = {};
 const productCodeToCALSId = {};
 
@@ -341,15 +344,13 @@ const template = async (config, template) => {
                 // Pick Kiilto endpoint from config.
                 config.static.url = config.static.endpoint;
 
-                // TODO: Send xml order information to Kiilto SFTP server.
                 const xml = json2xml(result[id]);
+                const path = '/' + result[id].idSystemLocal + '.xml';
+                const to = DOWNLOAD_DIR + template.productCode + (template.authConfig.fromPath || '/from') + path;
+                await fs.writeFile(to, xml);
 
-                console.log(xml);
-
-                /*
-                winston.log('info', '3. Send data to URL ' + config.static.url);
-                await template.plugins.find(p => p.name === 'streamer').stream({...template, config}, {data: {order: brokerResponse}});
-                */
+                winston.log('info', '3. Send data to URL ' + to);
+                await sftp.sendData(template, [path]);
 
                 template.protocol = 'hook';
                 template.authConfig.path = id;
