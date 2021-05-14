@@ -139,23 +139,25 @@ const createClient = async (config= {}, productCode) => {
     }
 
     if (Object.hasOwnProperty.call(config.authConfig, 'proxyHost')) {
-        const proxy = {
-            host: config.authConfig.proxyHost, // Proxy hostname.
-            port: Number.parseInt(config.authConfig.proxyPort || '1080'), // Proxy port.
-            type: 5, // for SOCKS v5.
-        };
+        if (config.authConfig.proxyHost !== '${proxyHost}') {
+            const proxy = {
+                host: config.authConfig.proxyHost, // Proxy hostname.
+                port: Number.parseInt(config.authConfig.proxyPort || '1080'), // Proxy port.
+                type: 5, // for SOCKS v5.
+            };
 
-        // Connect to SOCKS 5 proxy.
-        const instance = await SocksClient.createConnection({
-            proxy,
-            command: 'connect',
-            destination: {
-                // Remote SFTP server.
-                host: options.host,
-                port: options.port,
-            },
-        });
-        options.sock = instance.socket;
+            // Connect to SOCKS 5 proxy.
+            const instance = await SocksClient.createConnection({
+                proxy,
+                command: 'connect',
+                destination: {
+                    // Remote SFTP server.
+                    host: options.host,
+                    port: options.port,
+                },
+            });
+            options.sock = instance.socket;
+        }
     }
 
     await clients[productCode].connect(options);
