@@ -535,6 +535,8 @@ function request (method, url, headers, body) {
 const handleData = function (config, id, data) {
     let object = {};
     try {
+        const key = Object.keys(orderConfirmationSchema.properties.data.properties)[0];
+
         for (let j = 0; j < data.length; j++) {
             let result = {};
             const value = data[j][config.output.value];
@@ -544,7 +546,7 @@ const handleData = function (config, id, data) {
                 if (Object.hasOwnProperty.call(value, 'project')) {
                     // Output has already been transformed.
                     result = {
-                        order: {
+                        [key]: {
                             ...value,
                         },
                     };
@@ -594,17 +596,20 @@ const handleData = function (config, id, data) {
             }
 
             // Merge all to same result.
-            if (Object.hasOwnProperty.call(object, 'order')) {
-                if (!Array.isArray(object.order)) {
-                    object.order = [object.order];
+            if (Object.hasOwnProperty.call(object, key)) {
+                if (!Array.isArray(object[key])) {
+                    object[key] = [object[key]];
                 }
-                if (!Array.isArray(result.order)) {
-                    result.order = [result.order];
+                if (!Array.isArray(result[key])) {
+                    result[key] = [result[key]];
                 }
-                object.order.push(...result.order);
+                object[key].push(...result[key]);
             } else {
                 object = result;
             }
+        }
+        if (JSON.stringify(object) === '{}') {
+            object = {[key]: []};
         }
         return object;
     } catch (err) {
@@ -923,12 +928,10 @@ const template = async (config, template) => {
                 result[id].idLocal = result[id].idLocal || 'Unknown';
                 result[id].idSystemLocal = result[id].idSystemLocal || 'Unknown';
                 orderNumberToCALSId[result[id].idLocal] = result[id].idSystemLocal;
-                // TODO: Test customer.
+
                 if (!Object.hasOwnProperty.call(result[id], 'customer')) {
                     result[id].customer = {};
                 }
-                // Customer idLocal 00327641393.
-                result[id].customer.idLocal = '003727641393';
 
                 if (!Object.hasOwnProperty.call(productCodeToCALSId, result[id].idSystemLocal)) {
                     productCodeToCALSId[result[id].idSystemLocal] = {};

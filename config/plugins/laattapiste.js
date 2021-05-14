@@ -5,15 +5,25 @@
 const transformer = require('../../app/lib/transformer');
 const winston = require('../../logger.js');
 const cache = require('../../app/cache');
-const moment = require('moment');
 const xml2js = require('xml2js');
+const _ = require('lodash');
 
 const PLUGIN_NAME = 'laattapiste';
 const orderNumberToCALSId = {};
 const productCodeToCALSId = {};
 
 // Source mapping.
-const orderInformationSchema = {
+const orderConfirmationSchema = {
+    properties: {
+        data: {
+            properties: {
+                order: {},
+            },
+        },
+    },
+};
+
+const OrderInformationSchema = {
     'source': null,
     'type': 'object',
     'properties': {
@@ -56,7 +66,7 @@ const orderInformationSchema = {
                                     'type': 'string',
                                 },
                                 'CustomerContractNumber': {
-                                    'source': 'idLocal',
+                                    'source': 'project.idLocal',
                                     'type': 'string',
                                 },
                                 'FreeText': {
@@ -84,19 +94,19 @@ const orderInformationSchema = {
                                                     'type': 'string',
                                                 },
                                                 'BuyerPartyStreet': {
-                                                    'source': 'emptyString',
+                                                    'source': 'customer.contactInformation.streetAddressLine1',
                                                     'type': 'string',
                                                 },
                                                 'BuyerPartyCity': {
-                                                    'source': 'emptyString',
+                                                    'source': 'customer.contactInformation.postalArea',
                                                     'type': 'string',
                                                 },
                                                 'BuyerPartyZIP': {
-                                                    'source': 'emptyString',
+                                                    'source': 'customer.contactInformation.postalCode',
                                                     'type': 'string',
                                                 },
                                                 'BuyerPartyCountryCode': {
-                                                    'source': 'emptyString',
+                                                    'source': 'customer.contactInformation.country',
                                                     'type': 'string',
                                                 },
                                                 'BuyerPartyContact': {
@@ -124,27 +134,27 @@ const orderInformationSchema = {
                                             'type': 'object',
                                             'properties': {
                                                 'SellerPartyID': {
-                                                    'source': 'emptyString',
+                                                    'source': 'vendor.idOfficial',
                                                     'type': 'string',
                                                 },
                                                 'SellerPartyName': {
-                                                    'source': 'emptyString',
+                                                    'source': 'vendor.name',
                                                     'type': 'string',
                                                 },
                                                 'SellerPartyStreet': {
-                                                    'source': 'emptyString',
+                                                    'source': 'vendor.contactInformation.streetAddressLine1',
                                                     'type': 'string',
                                                 },
                                                 'SellerPartyCity': {
-                                                    'source': 'emptyString',
+                                                    'source': 'vendor.contactInformation.postalArea',
                                                     'type': 'string',
                                                 },
                                                 'SellerPartyZIP': {
-                                                    'source': 'emptyString',
+                                                    'source': 'vendor.contactInformation.postalCode',
                                                     'type': 'string',
                                                 },
                                                 'SellerPartyCountryCode': {
-                                                    'source': 'emptyString',
+                                                    'source': 'vendor.contactInformation.country',
                                                     'type': 'string',
                                                 },
                                             },
@@ -154,27 +164,27 @@ const orderInformationSchema = {
                                             'type': 'object',
                                             'properties': {
                                                 'InvoiceRecipientPartyID': {
-                                                    'source': 'emptyString',
+                                                    'source': 'addressBilling.idLocal',
                                                     'type': 'string',
                                                 },
                                                 'InvoiceRecipientPartyName': {
-                                                    'source': 'emptyString',
+                                                    'source': 'addressBilling.name',
                                                     'type': 'string',
                                                 },
                                                 'InvoiceRecipientPartyStreet': {
-                                                    'source': 'emptyString',
+                                                    'source': 'addressBilling.streetAddressLine1',
                                                     'type': 'string',
                                                 },
                                                 'InvoiceRecipientPartyCity': {
-                                                    'source': 'emptyString',
+                                                    'source': 'addressBilling.postalArea',
                                                     'type': 'string',
                                                 },
                                                 'InvoiceRecipientPartyZIP': {
-                                                    'source': 'emptyString',
+                                                    'source': 'addressBilling.postalCode',
                                                     'type': 'string',
                                                 },
                                                 'InvoiceRecipientPartyCountryCode': {
-                                                    'source': 'emptyString',
+                                                    'source': 'addressBilling.country',
                                                     'type': 'string',
                                                 },
                                             },
@@ -184,27 +194,27 @@ const orderInformationSchema = {
                                             'type': 'object',
                                             'properties': {
                                                 'DeliveryPartyID': {
-                                                    'source': 'emptyString',
+                                                    'source': 'addressShipping.idLocal',
                                                     'type': 'string',
                                                 },
                                                 'DeliveryPartyName': {
-                                                    'source': 'emptyString',
+                                                    'source': 'addressShipping.name',
                                                     'type': 'string',
                                                 },
                                                 'DeliveryPartyStreet': {
-                                                    'source': 'emptyString',
+                                                    'source': 'addressShipping.streetAddressLine1',
                                                     'type': 'string',
                                                 },
                                                 'DeliveryPartyCity': {
-                                                    'source': 'emptyString',
+                                                    'source': 'addressShipping.postalArea',
                                                     'type': 'string',
                                                 },
                                                 'DeliveryPartyZIP': {
-                                                    'source': 'emptyString',
+                                                    'source': 'addressShipping.postalCode',
                                                     'type': 'string',
                                                 },
                                                 'DeliveryPartyCountryCode': {
-                                                    'source': 'emptyString',
+                                                    'source': 'addressShipping.country',
                                                     'type': 'string',
                                                 },
                                             },
@@ -214,43 +224,45 @@ const orderInformationSchema = {
                             },
                         },
                         'Lines': {
-                            'source': 'orderLine',
-                            'type': 'array',
-                            'items': {
-                                'source': null,
-                                'type': 'object',
-                                'properties': {
-                                    'text': {
-                                        'source': 'lineText',
-                                        'type': 'string',
-                                    },
-                                    'CustomerOrderLineNumber': {
-                                        'source': 'emptyString',
-                                        'type': 'string',
-                                    },
-                                    'ItemEAN': {
-                                        'source': 'product.idLocal',
-                                        'type': 'string',
-                                    },
-                                    'ItemIDSeller': {
-                                        'source': 'emptyString',
-                                        'type': 'string',
-                                    },
-                                    'ItemName': {
-                                        'source': 'emptyString',
-                                        'type': 'string',
-                                    },
-                                    'OrderQuantity': {
-                                        'source': 'emptyString',
-                                        'type': 'string',
-                                    },
-                                    'OrderUnit': {
-                                        'source': 'emptyString',
-                                        'type': 'string',
-                                    },
-                                    'RequestedDeliveryDate': {
-                                        'source': 'emptyString',
-                                        'type': 'string',
+                            'source': null,
+                            'type': 'object',
+                            'properties': {
+                                'Line': {
+                                    'source': 'orderLine',
+                                    'type': 'array',
+                                    'items': {
+                                        'source': null,
+                                        'type': 'object',
+                                        'properties': {
+                                            'CustomerOrderLineNumber': {
+                                                'source': 'idLocal',
+                                                'type': 'string',
+                                            },
+                                            'ItemEAN': {
+                                                'source': 'product.idLocal',
+                                                'type': 'string',
+                                            },
+                                            'ItemIDSeller': {
+                                                'source': 'product.codeProduct',
+                                                'type': 'string',
+                                            },
+                                            'ItemName': {
+                                                'source': 'product.descriptionGeneral',
+                                                'type': 'string',
+                                            },
+                                            'OrderQuantity': {
+                                                'source': 'quantity',
+                                                'type': 'string',
+                                            },
+                                            'OrderUnit': {
+                                                'source': 'unit',
+                                                'type': 'string',
+                                            },
+                                            'RequestedDeliveryDate': {
+                                                'source': 'deliveryRequired',
+                                                'type': 'string',
+                                            },
+                                        },
                                     },
                                 },
                             },
@@ -263,6 +275,15 @@ const orderInformationSchema = {
 };
 
 const json2xml = (input = {}) => {
+    input.addressShipping.idLocal = input.addressShipping.idLocal || '';
+    input.addressBilling.idLocal = input.addressBilling.idLocal || '';
+    input.vendor.idOfficial = input.vendor.idOfficial || '';
+    input.customer.contactInformation = input.customer.contactInformation || {};
+    input.customer.contactInformation.streetAddressLine1 = input.customer.contactInformation.streetAddressLine1 || '';
+    input.customer.contactInformation.postalCode = input.customer.contactInformation.postalCode || '';
+    input.customer.contactInformation.postalArea = input.customer.contactInformation.postalArea || '';
+    input.customer.contactInformation.country = input.customer.contactInformation.country || '';
+
     const output = transformer.transform({
         ...input,
         '$': {
@@ -270,8 +291,7 @@ const json2xml = (input = {}) => {
             'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
         },
         emptyString: '',
-        lineText: 'Line',
-    }, orderInformationSchema);
+    }, OrderInformationSchema);
 
     const builder = new xml2js.Builder();
     const xml = builder.buildObject(output);
@@ -323,6 +343,7 @@ const template = async (config, template) => {
 
                 // TODO: Send xml order information to Kiilto SFTP server.
                 const xml = json2xml(result[id]);
+
                 console.log(xml);
 
                 /*
@@ -354,6 +375,8 @@ const template = async (config, template) => {
 const handleData = function (config, id, data) {
     let object = {};
     try {
+        const key = Object.keys(orderConfirmationSchema.properties.data.properties)[0];
+
         for (let j = 0; j < data.length; j++) {
             let result = {};
             const value = data[j][config.output.value];
@@ -363,7 +386,7 @@ const handleData = function (config, id, data) {
                 if (Object.hasOwnProperty.call(value, 'project')) {
                     // Output has already been transformed.
                     result = {
-                        order: {
+                        [key]: {
                             ...value,
                         },
                     };
@@ -375,33 +398,17 @@ const handleData = function (config, id, data) {
                     value.locationType = 'Location';
 
                     try {
-                        const orderNumber = _.get(value, 'OrderHed.PONum');
+                        const orderNumber = _.get(value, 'idLocal');
                         value.idSystemLocal = orderNumberToCALSId[orderNumber];
 
                         if (!Object.hasOwnProperty.call(productCodeToCALSId, value.idSystemLocal)) {
                             productCodeToCALSId[value.idSystemLocal] = {};
                         }
-
-                        let requiredDelivery = value['NeedByDate'];
-                        if (requiredDelivery) {
-                            requiredDelivery = value['NeedByTime'] ? new Date(requiredDelivery + 'T' + value['NeedByTime']).toISOString() : new Date(requiredDelivery).toISOString();
-                        }
-                        value.requiredDelivery = requiredDelivery;
-
-                        value['OrderDtl'] = value['OrderDtl'].map((i) => {
-                            let itemRequiredDelivery = i['NeedByDate'];
-                            if (itemRequiredDelivery) {
-                                itemRequiredDelivery = i['NeedByTime'] ? new Date(itemRequiredDelivery + 'T' + i['NeedByTime']).toISOString() : new Date(itemRequiredDelivery).toISOString();
-                            }
-                            return {
-                                orderLineType: 'OrderLine', productType: 'Product', ...i, idSystemLocal: productCodeToCALSId[value.idSystemLocal][i['PartNum']], requiredDelivery: itemRequiredDelivery || requiredDelivery,
-                            };
-                        });
                     } catch (e) {
                         console.log(e.message);
                     }
 
-                    // result = transformer.transform(value, orderConfirmationSchema.properties.data);
+                    result = transformer.transform(value, orderConfirmationSchema.properties.data);
                 }
             } else {
                 result = {
@@ -413,17 +420,20 @@ const handleData = function (config, id, data) {
             }
 
             // Merge all to same result.
-            if (Object.hasOwnProperty.call(object, 'order')) {
-                if (!Array.isArray(object.order)) {
-                    object.order = [object.order];
+            if (Object.hasOwnProperty.call(object, key)) {
+                if (!Array.isArray(object[key])) {
+                    object[key] = [object[key]];
                 }
-                if (!Array.isArray(result.order)) {
-                    result.order = [result.order];
+                if (!Array.isArray(result[key])) {
+                    result[key] = [result[key]];
                 }
-                object.order.push(...result.order);
+                object[key].push(...result[key]);
             } else {
                 object = result;
             }
+        }
+        if (JSON.stringify(object) === '{}') {
+            object = {[key]: []};
         }
         return object;
     } catch (err) {
@@ -447,8 +457,6 @@ const output = async (config, output) => {
             [config.output.array]: [],
         },
     };
-
-    return output;
 
     // Hand over data objects to transformer.
     try {
