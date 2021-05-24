@@ -9,13 +9,13 @@ const _ = require('lodash');
  */
 
 /**
- * Convert date object to date string.
+ * Convert date object to date string (format supported by fidelix).
  *
  * @param {Date} datetime
  * @param {Date} [fallback]
  * @return {String}
  */
-const getDate = (datetime, fallback = new Date()) => {
+const convertDate = (datetime, fallback = new Date()) => {
     let input = new Date();
     if (Object.prototype.toString.call(datetime) === '[object Date]') {
         input = datetime;
@@ -36,7 +36,7 @@ const getDate = (datetime, fallback = new Date()) => {
  * @param {Date} [end]
  * @return {Array}
  */
-const filterByRange = (data, start = new Date(new Date().getTime() - 24 * 60 * 60 * 1000), end = new Date()) => {
+const filterByRange = (data= [], start = new Date(new Date().getTime() - 24 * 60 * 60 * 1000), end = new Date()) => {
     const result = [];
     try {
         const cut = data.filter(m => m.timestamp >= start && m.timestamp <= end);
@@ -64,17 +64,24 @@ const template = async (config, template) => {
     }
 
     if (template.mode === 'history' && groupIds.length > 0) {
+        // 1. History data.
+        // Switch to function which returns history by groupId.
         template.authConfig.function = 'Fidelix.FidelixSoap.GetHistoryValuesForGroup';
 
         // Convert start and end date times, set fallback as -24h to start.
-        const start = getDate(template.parameters.start, new Date(new Date().getTime() - 24 * 60 * 60 * 1000));
-        const end = getDate(template.parameters.end, new Date());
+        const start = convertDate(template.parameters.start, new Date(new Date().getTime() - 24 * 60 * 60 * 1000));
+        const end = convertDate(template.parameters.end, new Date());
 
         // Query by groupIds and filter output by point ids.
         template.authConfig.path = groupIds.map(id => { return {'groupId': id, start, end};});
     } else {
+        // 2. Latest data.
         if (template.authConfig.function.includes('getPointDataList')) {
+            // Multiple values per request.
             template.authConfig.path = {'point_ids': template.authConfig.path.map((id) => {return {string: id};})};
+        } else {
+            // One value per request (getPointData).
+            template.authConfig.path = {'point_ids': template.authConfig.path.map((id) => {return {point_id: id};})};
         }
     }
     return template;
