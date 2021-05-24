@@ -9,9 +9,7 @@
     "username": "${username}",
     "password": "${password}",
     "function": "Fidelix.FidelixSoap.getPointDataList",
-    "path": {
-      "point_id": "${id}"
-    }
+    "path": "${id}"
   },
   "dataObjects": [
     ""

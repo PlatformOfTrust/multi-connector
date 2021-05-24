@@ -9,6 +9,26 @@ const _ = require('lodash');
  */
 
 /**
+ * Convert date object to date string.
+ *
+ * @param {Date} datetime
+ * @param {Date} [fallback]
+ * @return {String}
+ */
+const getDate = (datetime, fallback = new Date()) => {
+    let input = new Date();
+    if (Object.prototype.toString.call(datetime) === '[object Date]') {
+        input = datetime;
+    } else if (Object.prototype.toString.call(fallback) === '[object Date]') {
+        input = fallback;
+    }
+    const date = input.getUTCDate();
+    const month = input.getUTCMonth() + 1; // Since getUTCMonth() returns month from 0-11 not 1-12.
+    const year = input.getUTCFullYear();
+    return date + '.' + month + '.' + year;
+};
+
+/**
  * Composes request arguments.
  *
  * @param {Object} config
@@ -16,23 +36,28 @@ const _ = require('lodash');
  * @return {Object}
  */
 const template = async (config, template) => {
-
-    /** Test parameters. */
-
-    // template.authConfig.function = 'Fidelix.FidelixSoap.getPointData';
-
-    // template.mode = 'history';
-    // template.authConfig.path = {'groupId': 'PoTTest', start: '04.05.2021', end: '05.05.2021'};
-
-    if (template.mode === 'history') {
-        template.authConfig.function = 'Fidelix.FidelixSoap.GetHistoryValuesForGroup';
-        // TODO: Compose history query arguments.
-    } else {
-        if (template.authConfig.function.includes('getPointDataList')) {
-            template.authConfig.path = {'point_ids': template.authConfig.path.map(o => o.point_id).map((id) => {return {string: id};})};
-        }
+    const groupIds = [];
+    try {
+        // Pick group ids.
+        groupIds.push(..._.uniq(template.parameters.ids.filter(id => Object.hasOwnProperty.call(id, 'groupId')).map(id => id.groupId)));
+    } catch (e) {
+        console.log(e.message);
     }
 
+    if (template.mode === 'history' && groupIds.length > 0) {
+        template.authConfig.function = 'Fidelix.FidelixSoap.GetHistoryValuesForGroup';
+
+        // Convert start and end date times, set fallback as -24h to start.
+        const start = getDate(template.parameters.start, new Date(new Date().getTime() - 24 * 60 * 60 * 1000));
+        const end = getDate(template.parameters.end, new Date());
+
+        // Query by groupIds and filter output by point ids.
+        template.authConfig.path = groupIds.map(id => { return {'groupId': id, start, end};});
+    } else {
+        if (template.authConfig.function.includes('getPointDataList')) {
+            template.authConfig.path = {'point_ids': template.authConfig.path.map((id) => {return {string: id};})};
+        }
+    }
     return template;
 };
 
@@ -97,7 +122,15 @@ const response = async (config, response) => {
                                 timestamp: measurement['Time'],
                             };
                         });
-                        result.push(...data);
+                        // Obey given start and end date times.
+                        try {
+                            const start = config.parameters.start;
+                            const end = config.parameters.end;
+                            const cut = data.filter(m => m.timestamp >= start && m.timestamp <= end);
+                            result.push(...cut);
+                        } catch (e) {
+                            result.push(...data);
+                        }
                     });
                 }
             }
@@ -111,10 +144,29 @@ const response = async (config, response) => {
 };
 
 /**
+ * Filters data by point ids.
+ *
+ * @param {Object} config
+ * @param {Object} output
+ * @return {Object}
+ */
+const output = async (config, output) => {
+    const ids = [];
+    try {
+        ids.push(...config.parameters.ids.map(entry => entry.id).flat());
+        output[config.output.object][config.output.array] = output[config.output.object][config.output.array].filter(d => ids.includes(d[config.output.id]));
+        return output;
+    } catch (err) {
+        return output;
+    }
+};
+
+/**
  * Expose plugin methods.
  */
 module.exports = {
     name: 'fidelix',
     template,
     response,
+    output,
 };
