@@ -1,6 +1,7 @@
 {
   "plugins": [
-      "soap-basic"
+    "soap-basic",
+    "fidelix"
   ],
   "protocol": "soap",
   "authConfig": {
@@ -8,9 +9,7 @@
     "username": "${username}",
     "password": "${password}",
     "function": "Fidelix.FidelixSoap.getPointDataList",
-    "path": {
-      "point_id": "${id}"
-    }
+    "path": "${id}"
   },
   "dataObjects": [
     ""
@@ -21,6 +20,9 @@
   "generalConfig": {
     "hardwareId": {
       "dataObjectProperty": "hardwareId"
+    },
+    "timestamp": {
+      "dataObjectProperty": "timestamp"
     }
   }
 }
