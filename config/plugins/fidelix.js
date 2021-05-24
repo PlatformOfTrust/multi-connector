@@ -29,6 +29,25 @@ const getDate = (datetime, fallback = new Date()) => {
 };
 
 /**
+ * Filter data by date range.
+ *
+ * @param {Array} data
+ * @param {Date} [start]
+ * @param {Date} [end]
+ * @return {Array}
+ */
+const filterByRange = (data, start = new Date(new Date().getTime() - 24 * 60 * 60 * 1000), end = new Date()) => {
+    const result = [];
+    try {
+        const cut = data.filter(m => m.timestamp >= start && m.timestamp <= end);
+        result.push(...cut);
+    } catch (e) {
+        result.push(...data);
+    }
+    return result;
+};
+
+/**
  * Composes request arguments.
  *
  * @param {Object} config
@@ -122,20 +141,17 @@ const response = async (config, response) => {
                                 timestamp: measurement['Time'],
                             };
                         });
-                        // Obey given start and end date times.
-                        try {
-                            const start = config.parameters.start;
-                            const end = config.parameters.end;
-                            const cut = data.filter(m => m.timestamp >= start && m.timestamp <= end);
-                            result.push(...cut);
-                        } catch (e) {
-                            result.push(...data);
-                        }
+                        result.push(...data);
                     });
                 }
             }
         } else {
             result = response;
+        }
+
+        // Obey history query range.
+        if (Array.isArray(result) && config.mode === 'history') {
+            result = filterByRange(result, config.parameters.start, config.parameters.end);
         }
         return result;
     } catch (e) {
@@ -154,7 +170,7 @@ const output = async (config, output) => {
     const ids = [];
     try {
         ids.push(...config.parameters.ids.map(entry => entry.id).flat());
-        output[config.output.object][config.output.array] = output[config.output.object][config.output.array].filter(d => ids.includes(d[config.output.id]));
+        output[config.output.object][config.output.array] = output[config.output.object][config.output.array].filter(i => !!i).filter(d => ids.includes(d[config.output.id]));
         return output;
     } catch (err) {
         return output;
