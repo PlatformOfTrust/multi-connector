@@ -341,7 +341,7 @@ const template = async (config, template) => {
                 // winston.log('info', 'orderNumberToCALSId: ' + JSON.stringify(orderNumberToCALSId));
                 // winston.log('info', 'productCodeToCALSId: ' + JSON.stringify(productCodeToCALSId));
 
-                // Pick Kiilto endpoint from config.
+                // Pick Laattapiste endpoint from config.
                 config.static.url = config.static.endpoint;
 
                 const xml = json2xml(result[id]);

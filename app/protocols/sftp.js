@@ -3,6 +3,7 @@
  * Module dependencies.
  */
 const fs = require('fs');
+const _ = require('lodash');
 const winston = require('../../logger.js');
 const Client = require('ssh2-sftp-client');
 const response = require('../lib/response');
@@ -79,7 +80,7 @@ const downloadFiles = async (client, path, productCode) => {
             // Download file.
             filePath = await client.get(from, to);
             // Read file content.
-            files[i].data = fs.readFileSync(filePath, 'utf8');
+            files[i].data = fs.readFileSync(filePath, 'base64');
         } catch (err) {
             winston.log('error', err.message);
         }
@@ -179,8 +180,16 @@ const getData = async (config= {}, pathArray) => {
     const toPath = config.authConfig.toPath || '';
 
     for (let p = 0; p < pathArray.length; p++) {
-        const item = await response.handleData(config, pathArray[p], p, await downloadFiles(client, toPath + pathArray[p], productCode));
-        if (item) items.push(item);
+        let files = await downloadFiles(client, toPath + pathArray[p], productCode);
+        if (!files) continue;
+        files = Array.isArray(files) ? files : [files];
+        for (let f = 0; f < files.length; f++) {
+            if (_.isObject(files[f])) {
+                files[f].id = files[f].name;
+            }
+            const item = await response.handleData(config, pathArray[p], p, files[f]);
+            if (item) items.push(item);
+        }
     }
 
     await client.end();

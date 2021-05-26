@@ -1,5 +1,7 @@
 {
     "plugins": [
+        "document",
+        "download-link"
     ],
     "protocol": "sftp",
     "authConfig": {
@@ -14,7 +16,7 @@
         "path": "${id}"
     },
     "dataObjects": [
-        ""
+        "data"
     ],
     "dataPropertyMappings": {
         "${type}": ""
@@ -31,8 +33,8 @@
         }
     },
     "output": {
-        "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/OrderInformation/",
-        "array": "order",
+        "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Document/",
+        "array": "document",
         "data": "data"
     }
 }
