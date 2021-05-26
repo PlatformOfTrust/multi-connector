@@ -31,7 +31,7 @@ const cache = {
  * @return {String}
  */
 const getDoc = function (collection, id) {
-    if (cache.hasOwnProperty(collection) && !!id) return cache[collection].cache.get(id.toString());
+    if (Object.hasOwnProperty.call(cache, collection) && !!id) return cache[collection].cache.get(id.toString());
     else return undefined;
 };
 
@@ -70,10 +70,11 @@ const getKeys = function (collection) {
  * @param {String} collection
  * @param {String} id
  * @param {Object/Array/String} doc
+ * @param {Number} [TTL]
  */
-const setDoc = function (collection, id, doc) {
+const setDoc = function (collection, id, doc, TTL = defaultTTL) {
     doc = JSON.parse(JSON.stringify(doc));
-    if (!Object.hasOwnProperty.call(cache, collection)) cache[collection] = {cache: new NodeCache(), TTL: defaultTTL};
+    if (!Object.hasOwnProperty.call(cache, collection)) cache[collection] = {cache: new NodeCache(), TTL};
     if (cache[collection].TTL) {
         if (Object.hasOwnProperty.call(cache, collection)) cache[collection].cache.set(id, doc, cache[collection].TTL);
     } else {
