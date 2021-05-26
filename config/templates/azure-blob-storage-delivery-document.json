@@ -1,7 +1,8 @@
 {
     "plugins": [
         "delivery-document",
-        "broker"
+        "broker",
+        "download-link"
     ],
     "protocol": "azure-blob-storage",
     "authConfig": {

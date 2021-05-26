@@ -1538,17 +1538,18 @@ const handleData = function (config, id, data) {
  */
 const response = async (config, response) => {
     try {
-        if (typeof response === 'string' || response instanceof String) {
-            const fileType = await FileType.fromBuffer(new Buffer(response));
+        if (typeof response.data === 'string' || response.data instanceof String) {
+            const fileType = await FileType.fromBuffer(new Buffer(response.data, 'base64'));
             if (!fileType) {
                 // File is .txt, .csv, .svg, etc (not a binary-based file format).
                 response = {
-                    data: await CSVToJSON().fromString(response),
+                    data: await CSVToJSON().fromString(new Buffer(response.data, 'base64').toString('utf-8')),
                 };
             } else {
                 response = {
                     data: {
-                        content: new Buffer(response, 'utf-8').toString('base64'),
+                        filename: response.id,
+                        content: response.data,
                         extension: fileType.ext,
                         mimetype: fileType.mime,
                         encoding: 'base64',
@@ -1879,6 +1880,7 @@ const template = async (config, template) => {
             // Set context url based on filename. (document schema is used for format that are not CSV)
             if (ids.some(id => !id.includes('.csv'))) {
                 template.output.contextValue = 'https://standards.oftrust.net/v2/Context/DataProductOutput/Document/';
+                template.output.array = 'document';
             }
         }
         if (Object.hasOwnProperty.call(template.parameters.targetObject, 'sender')) {
