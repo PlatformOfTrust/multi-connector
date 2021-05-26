@@ -84,8 +84,8 @@ const getData = async (config= {authConfig: {}}, pathArray) => {
             const blockBlobClient = containerClient.getBlockBlobClient(pathArray[p]);
             try {
                 const downloadBlockBlobResponse  = await blockBlobClient.download(0);
-                const blob = (await streamToBuffer(downloadBlockBlobResponse.readableStreamBody)).toString();
-                const item = await response.handleData(config, pathArray[p], p, blob);
+                const data = (await streamToBuffer(downloadBlockBlobResponse.readableStreamBody)).toString('base64');
+                const item = await response.handleData(config, pathArray[p], p, {data, id: pathArray[p]});
                 if (item) items.push(item);
             } catch (e) {
                 // Blob was not found.

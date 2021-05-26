@@ -2,6 +2,8 @@
 /**
  * Module dependencies.
  */
+const crypto = require('crypto');
+const cache = require('../../app/cache');
 const router = require('express').Router();
 
 /**
@@ -9,6 +11,8 @@ const router = require('express').Router();
  *
  * Generates url for downloading the output data.
  */
+const PLUGIN_NAME = 'download-link';
+const LINK_EXPIRATION_TIME = 5 * 60; // 5 min.
 
 /**
  * Local handler to send error response.
@@ -24,6 +28,7 @@ const errorResponse = async (req, res, err) => {
     } catch (e) {
         message = err.message;
     }
+
     // Compose error response object.
     const result = {
         error: {
@@ -42,15 +47,36 @@ const errorResponse = async (req, res, err) => {
  *
  * @param {Object} req
  * @param {Object} res
+ * @param {Function} next
  * @return
  *   The translator data.
  */
-const controller = async (req, res) => {
-    const data = '';
+const controller = async (req, res, next) => {
     try {
-        const filename = 'name.ext';
-        res.setHeader('Content-type', 'application/octet-stream');
-        res.setHeader('Content-disposition', 'attachment; filename=' + filename);
+        // Validate parameters.
+        const id = req.params[0].split('/')[0];
+        const filename = req.params[0].split('/')[1];
+        if (filename === '' || !filename) {
+            /** Missing filename. */
+            return next();
+        }
+
+        // Fetch file from cache.
+        const doc = cache.getDoc('documents', id);
+        if (!doc) {
+            /** File not found. */
+            return next();
+        }
+
+        // Validate filename.
+        if (doc.name !== filename) {
+            /** Bad filename. */
+            return next();
+        }
+
+        // Send file in response.
+        const data = new Buffer(doc.content, 'base64');
+        res.contentType(doc.categorizationInternetMediaType);
         res.send(data);
     } catch (err) {
         if (!res.finished) {
@@ -67,25 +93,36 @@ const controller = async (req, res) => {
  */
 const endpoints = function (passport) {
     /** Download endpoint. */
-    router.get('/:topic*?', controller);
+    router.get('/*', controller);
     return router;
 };
 
 /**
- * Handles link generation.
+ * Handles link generation and document caching.
  *
  * @param {Object} config
  * @param {Object} output
  * @return {Object}
  */
 const output = async (config, output) => {
-    // Hand over data objects to transformer.
     try {
-        // TODO:
-        // 1. Store file to local filesystem or cache.
-        // 2. Generate links (with expires fields).
-        // 3. Attach links to output objects.
-        // 4. Remove files after expiration.
+        const ttl = LINK_EXPIRATION_TIME;
+        output[config.output.object][config.output.array] = output[config.output.object][config.output.array].map(doc => {
+            // Generate random id.
+            // 2^160 (256^20) unique output values.
+            const id = crypto.randomBytes(20).toString('hex');
+
+            // Save document to cache.
+            cache.setDoc('documents', id, doc, ttl);
+
+            // Attach url.
+            doc.url = config.authConfig.connectorURL + '/translator/v1/plugins/'+ PLUGIN_NAME + '/' + id + '/' + encodeURI(doc.name);
+            doc.expires = new Date(new Date().getTime() + ttl * 1000).toISOString();
+
+            // Remove content from response.
+            delete doc.content;
+            return doc;
+        });
         return output;
     } catch (err) {
         return output;
@@ -96,7 +133,7 @@ const output = async (config, output) => {
  * Expose plugin methods.
  */
 module.exports = {
-    name: 'download-link',
+    name: PLUGIN_NAME,
     endpoints,
     output,
 };
