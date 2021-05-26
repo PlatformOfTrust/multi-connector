@@ -5,6 +5,7 @@
 const transformer = require('../../app/lib/transformer');
 const winston = require('../../logger.js');
 const FileType = require('file-type');
+const mime = require('mime');
 
 /**
  * Multi-purpose plugin for document connectors.
@@ -344,6 +345,20 @@ const handleData = function (config, id, data) {
 };
 
 /**
+ * Detect JSON data.
+ *
+ * @param {String} data
+ * @return {Boolean}
+ */
+const isJSON = (data) => {
+    try {
+        return !!JSON.parse(data);
+    } catch (e) {
+        return false;
+    }
+};
+
+/**
  * Converts CSV to JSON.
  *
  * @param {Object} config
@@ -355,15 +370,25 @@ const response = async (config, response) => {
         if (typeof response.data === 'string' || response.data instanceof String) {
             const fileType = await FileType.fromBuffer(new Buffer(response.data, 'base64'));
             const filenameParts = response.id.split('.');
+            const ext = filenameParts[filenameParts.length - 1];
             response = {
                 data: {
                     filename: response.id,
                     content: response.data,
-                    extension: fileType ? fileType.ext : filenameParts[filenameParts.length - 1],
-                    mimetype: fileType ? fileType.mime : 'text/plain',
+                    extension: fileType ? fileType.ext : ext,
+                    mimetype: fileType ? fileType.mime : mime.getType(ext),
                     encoding: 'base64',
                 },
             };
+            // Convert text content to plain data.
+            if (!fileType) {
+                response.data.content = new Buffer(response.data.content, 'base64').toString('utf-8');
+                response.data.encoding = 'utf-8';
+                if (isJSON(response.data.content)) {
+                    response.data.mimetype = 'application/json';
+                    // response.data.content = JSON.parse(response.data.content);
+                }
+            }
         }
         return response;
     } catch (e) {

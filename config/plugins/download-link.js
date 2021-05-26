@@ -120,7 +120,10 @@ const output = async (config, output) => {
             doc.expires = new Date(new Date().getTime() + ttl * 1000).toISOString();
 
             // Remove content from response.
-            delete doc.content;
+            if (doc.categorizationEncoding === 'base64') {
+                delete doc.categorizationEncoding;
+                delete doc.content;
+            }
             return doc;
         });
         return output;
