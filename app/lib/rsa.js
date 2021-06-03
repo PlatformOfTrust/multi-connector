@@ -4,7 +4,7 @@
  */
 const crypto = require('crypto');
 const cache = require('../cache');
-const request = require('request');
+const rp = require('request-promise');
 const winston = require('../../logger.js');
 
 /**
@@ -51,19 +51,20 @@ if (!privateKey || !publicKey) {
 /**
  * Reads public keys from Platform of Trust resources.
  */
-const readPublicKeys = function () {
+const readPublicKeys = async () => {
     for (let i = 0; i < publicKeyURLs.length; i++) {
-        request(publicKeyURLs[i].url, function (err, response, body) {
-            if (err) {
-                winston.log('error', err.message);
-            } else {
+        try {
+            const body = await rp({method: 'GET', url: publicKeyURLs[i].url});
+            if (body) {
                 cache.setDoc('publicKeys', i, {
                     priority: i,
                     ...publicKeyURLs[i],
                     key: body.toString(),
                 });
             }
-        });
+        } catch (err) {
+            winston.log('error', err.message);
+        }
     }
 };
 
@@ -80,6 +81,16 @@ const sendPublicKey = function (req, res) {
     res.setHeader('Content-type', 'application/octet-stream');
     res.setHeader('Content-disposition', 'attachment; filename=public.key');
     res.send(publicKey);
+};
+
+/**
+ * Returns current public key.
+ *
+ * @return {String}
+ *   Public key.
+ */
+const getPublicKey = function () {
+    return publicKey;
 };
 
 /**
@@ -221,4 +232,5 @@ module.exports = {
     generateSignature,
     verifySignature,
     sendPublicKey,
+    getPublicKey,
 };
