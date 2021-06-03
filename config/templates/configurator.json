@@ -1,0 +1,46 @@
+{
+  "plugins": [
+    "configurator",
+    "oauth2",
+    "rsa"
+  ],
+  "protocol": "custom",
+  "authConfig": {
+    "url": "${url}",
+    "authPath": "${authPath}",
+    "path": "${path}${targetObject.productCode}",
+    "callbackPath": "${callbackPath}",
+    "username": "${username}",
+    "password": "${password}",
+    "clientId": "${clientId}",
+    "clientSecret": "${clientSecret}"
+  },
+  "dataObjects": [
+    "${dataObject}"
+  ],
+  "dataPropertyMappings": {
+    "Config": ""
+  },
+  "generalConfig": {
+    "hardwareId": {
+      "dataObjectProperty": "productCode"
+    },
+    "sourceName": {
+      "dataObjectProperty": "name"
+    },
+    "timestamp": {
+      "dataObjectProperty": "updatedAt"
+    }
+  },
+  "input": {
+    "required": [
+      "parameters.targetObject"
+    ]
+  },
+  "output": {
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/DataProduct/",
+    "array": "dataProduct",
+    "data": "config",
+    "value": "config"
+  }
+}

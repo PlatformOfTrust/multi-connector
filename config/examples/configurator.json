@@ -1,0 +1,19 @@
+{
+  "template": "configurator",
+  "static": {
+    "publicKeyURLs": ["https://<domain>/keys/public.key"],
+    "dataObject": "message",
+    "grantType": "password",
+    "url": "https://<domain>",
+    "authPath": "/oauth/token",
+    "callbackPath": "/api/v1/callbacks/",
+    "path": "/api/v1/connectors/",
+    "username": "<username>",
+    "password": "<password>",
+    "clientId": "<client-id>",
+    "clientSecret": "<client-secret>"
+  },
+  "dynamic": {
+    "authConfig.path": "targetObject.productCode"
+  }
+}
