@@ -533,6 +533,11 @@ module.exports = {
             if (!grant.access_token && !grant.token) return promiseRejectWithError(500, 'Authentication failed.');
         }
 
+        // Initialize headers if required.
+        if (!Object.hasOwnProperty.call(options, 'headers')) {
+            options.headers = {};
+        }
+
         // Authorize request.
         options.headers.Authorization = 'Bearer ' + (grant.access_token || grant.token);
 
