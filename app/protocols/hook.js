@@ -179,11 +179,20 @@ const controller = async (req, res) => {
     let result;
     let host;
     try {
-        // TODO: Place authentication.
         let topic = req.params.topic;
         const parts = req.originalUrl.split('/');
         const productCode = parts.splice(parts.indexOf('hooks') + 1)[0];
         const config = cache.getDoc('configs', productCode) || {};
+
+        if (!Object.hasOwnProperty.call(config, 'static')) {
+            config.static = {};
+        }
+
+        /** Request authentication */
+        const bearer = req.headers.authorization;
+        if (Object.hasOwnProperty.call(config.static, 'bearer') && bearer !== ('Bearer ' + config.static.bearer)) {
+            return res.status(401).send('Unauthorized');
+        }
 
         try {
             // Pick topic/id from body (important with XML converted to JSON).
