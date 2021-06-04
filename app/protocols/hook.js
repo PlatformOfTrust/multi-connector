@@ -102,8 +102,19 @@ const getData = async (config, pathArray) => {
  */
 const composeDataObject = async (template, callback) => {
     const result = await connector.composeOutput(template);
-    await callback(template, _.flatten([result.output]));
+    if (callback) await callback(template, _.flatten([result.output]));
     return result;
+};
+
+const getId = (template, message, topic) => {
+    const path = template.generalConfig.hardwareId.dataObjectProperty;
+    let id;
+    if (Object.hasOwnProperty.call(message, path)) {
+        id = message[path];
+    } else {
+        id = topic || 'latest';
+    }
+    return id;
 };
 
 const handler = async (productCode, config, topic, message) => {
@@ -115,21 +126,13 @@ const handler = async (productCode, config, topic, message) => {
     } catch (err) {
         winston.log('error', err.message);
     }
-
     // Handle data and stream.
     try {
         let template = cache.getDoc('templates', config.template);
         template = await connector.resolvePlugins(template);
         if (template.plugins.filter(p => !!p.stream).length > 0) {
             // Replace resource path.
-            const path = template.generalConfig.hardwareId.dataObjectProperty;
-            let id;
-            if (Object.hasOwnProperty.call(message, path)) {
-                id = message[path];
-            } else {
-                id = topic || 'latest';
-            }
-            template.authConfig.path = [id];
+            template.authConfig.path = [getId(template, message, topic)];
         }
 
         // Execute stream plugin function.
@@ -146,6 +149,15 @@ const handler = async (productCode, config, topic, message) => {
                 template.plugins[i].stream,
                 );
             }
+        }
+        if (!output) {
+            // Replace resource path.
+            template.authConfig.path = [getId(template, message, topic)];
+            output = await composeDataObject({
+                ...template,
+                productCode,
+                config,
+            }, null);
         }
     } catch (err) {
         winston.log('error', err.message);
@@ -187,26 +199,33 @@ const controller = async (req, res) => {
         host = req.get('host').split(':')[0];
         config.connectorURL = (host === 'localhost' || net.isIP(host) ? 'http' : 'https')
             + '://' + req.get('host');
+
         result = await handler(productCode, config, topic, req.body);
 
-        // Initialize signature object.
-        const signature = {
-            type: 'RsaSignature2018',
-            created: moment().format(),
-            creator: config.connectorURL + '/translator/v1/public.key',
-        };
+        if (config.signature === false) {
+            res.status(201).send(Object.values(result.output).filter(v => _.isObject(v)).reduce((acc, val) => {
+                return {...acc, ...val};
+            }, {}));
+        } else {
+            // Initialize signature object.
+            const signature = {
+                type: 'RsaSignature2018',
+                created: moment().format(),
+                creator: config.connectorURL + '/translator/v1/public.key',
+            };
 
-        // Send signed data response.
-        res.status(201).send({
-            ...(result.output || {}),
-            signature: {
-                ...signature,
-                signatureValue: rsa.generateSignature({
-                    __signed__: signature.created,
-                    ...(result.output[result.payloadKey || 'data'] || {}),
-                }),
-            },
-        });
+            // Send signed data response.
+            res.status(201).send({
+                ...(result.output || {}),
+                signature: {
+                    ...signature,
+                    signatureValue: rsa.generateSignature({
+                        __signed__: signature.created,
+                        ...(result.output[result.payloadKey || 'data'] || {}),
+                    }),
+                },
+            });
+        }
     } catch (err) {
         if (!res.finished) {
             // Compose error response object.
