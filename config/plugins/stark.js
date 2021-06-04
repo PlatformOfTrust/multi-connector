@@ -48,6 +48,28 @@ const OrderInformationSchema = {
                         },
                     },
                 },
+				"Control": {
+					"source": null,
+                    "type": "object",
+                    "properties": {
+						"C_Msg_OriginalID": {
+                            "source": "timetamp",
+                            "type": "string",
+                        },
+                        "C_Msg_Sender": {
+                            "source": "customer.id",
+                            "type": "string",
+                        },
+						"C_Msg_Receiver": {
+                            "source": "vendor.id",
+                            "type": "string",
+                        },
+                        "C_Msg_Type": {
+                            "source": "externalMessageType",
+                            "type": "string",
+                        },
+                    },
+				},
                 "Msg": {
                     "source": '',
                     "type": "array",
@@ -55,118 +77,214 @@ const OrderInformationSchema = {
                         "source": null,
                         "type": "object",
                         "properties": {
+							"Control": {
+								"source": null,
+								"type": "object",
+								"properties": {
+									"C_Msg_Sender": {
+										"source": "customer.id",
+										"type": "string",
+									},
+									"C_Msg_Receiver": {
+										"source": "vendor.id",
+										"type": "string",
+									},
+									"C_Msg_Type": {
+										"source": "externalMessageType",
+										"type": "string",
+									},
+								},
+							},
                             "Hdr": {
                                 "source": null,
                                 "type": "object",
                                 "properties": {
-                                    "Date_Delivery_Latest": {
-                                        "source": "deliveryRequired",
+									"H_DocType_Code": {
+                                        "source": "externalDocType",
                                         "type": "string",
                                     },
-                                    "Time_Delivery_Latest": {
-                                        "source": "deliveryRequired",
+									"H_Date_Order_Delivery": {
+                                        "source": "dateOrderDelivery",
                                         "type": "string",
                                     },
-                                    "Freetext_Gen": {
+                                    "H_Time_Order_Delivery": {
+                                        "source": "timeOrderDelivery",
+                                        "type": "string",
+                                    },
+                                    "H_Freetext_Gen": {
                                         "source": "descriptionGeneral",
                                         "type": "string",
                                     },
-                                    "Ref_CustNum": {
+                                    "H_Ref_CustNum": {
                                         "source": "customer.ifOfficial",
                                         "type": "string",
                                     },
-                                    "Ref_VendorNum": {
+                                    "H_Ref_VendorNum": {
                                         "source": "vendor.idLocal",
                                         "type": "string",
                                     },
-                                    "Ref_ProjNum": {
+                                    "H_Ref_ProjNum": {
                                         "source": "project.idLocal",
                                         "type": "string",
                                     },
-                                    "Ref_OrderNum": {
+                                    "H_DocNumber_ID": {
                                         "source": "idLocal",
                                         "type": "string",
                                     },
-                                    "BuyerParty": {
+                                    "H_BuyerParty": {
                                         "source": null,
                                         "type": "object",
                                         "properties": {
+											"ID_Code": {
+                                                "source": "externalIdType",
+                                                "type": "string",
+                                            },
+											"ID": {
+                                                "source": "contact.id",
+                                                "type": "string",
+                                            },
                                             "Ref_VATNum": {
-                                                "source": "",
+                                                "source": "contact.idOfficial",
                                                 "type": "string",
                                             },
-                                            "Contact_Name": {
-                                                "source": "contact.contactInformation.name",
+                                            "Name": {
+                                                "source": "contact.name",
                                                 "type": "string",
                                             },
-                                            "Contact_Email": {
+                                            "Email": {
                                                 "source": "contact.contactInformation.addressEmail",
                                                 "type": "string",
                                             },
-                                            "Contact_Phone": {
+                                            "Phone": {
                                                 "source": "contact.contactInformation.phoneNumber",
                                                 "type": "string",
                                             },
                                         },
                                     },
-                                    "SellerParty": {
+                                    "H_SellerParty": {
                                         "source": null,
                                         "type": "object",
                                         "properties": {
-                                            "Contact_Name": {
-                                                "source": "vendor.name",
+											"ID_Code": {
+                                                "source": "externalIdType",
                                                 "type": "string",
                                             },
+											"ID": {
+												"source": "vendor.id",
+												"type": "string",
+											},
+											"Ref_VATNum": {
+                                                "source": "vendor.idOfficial",
+                                                "type": "string",
+                                            },
+											"Name": {
+												"source": "vendor.name",
+												"type": "string",
+											},
+											"Street": {
+												"source": "vendor.contactInformation.streetAddressLine1",
+												"type": "string",
+											},
+											"Zip": {
+												"source": "vendor.contactInformation.postalCode",
+												"type": "string",
+											},
+											"Zip_PO": {
+												"source": "vendor.contactInformation.postalArea",
+												"type": "string",
+											},
+											"Country_Name": {
+												"source": "vendor.contactInformation.country",
+												"type": "string",
+											},
+											"Country_Code": {
+												"source": "vendor.countryCode",
+												"type": "string",
+											},
                                         },
                                     },
-                                    "UltimateParty": {
+                                    "H_UltimateParty": {
                                         "source": null,
                                         "type": "object",
                                         "properties": {
+											"ID_Code": {
+                                                "source": "externalIdType",
+                                                "type": "string",
+                                            },
+											"ID": {
+                                                "source": "customer.id",
+                                                "type": "string",
+                                            },
                                             "Ref_VATNum": {
                                                 "source": "customer.idOfficial",
                                                 "type": "string",
                                             },
-                                            "Contact_Name": {
+                                            "Name": {
                                                 "source": "customer.name",
                                                 "type": "string",
                                             },
+											"Street": {
+												"source": "addressBilling.streetAddressLine1",
+												"type": "string",
+											},
+											"Zip": {
+												"source": "addressBilling.postalCode",
+												"type": "string",
+											},
+											"Zip_PO": {
+												"source": "addressBilling.postalArea",
+												"type": "string",
+											},
+											"Country_Name": {
+												"source": "addressBilling.country",
+												"type": "string",
+											},
+											"Country_Code": {
+												"source": "addressBilling.countryCode",
+												"type": "string",
+											},
                                         },
                                     },
-                                    "ConsigneeParty": {
+                                    "H_ConsigneeParty": {
                                         "source": null,
                                         "type": "object",
                                         "properties": {
-                                            "Contact_Name": {
-                                                "source": "addressShipping.name",
+											"ID_Code": {
+                                                "source": "externalIdType",
                                                 "type": "string",
                                             },
-                                            "Location": {
-                                                "source": null,
-                                                "type": "object",
-                                                "properties": {
-                                                    "Location_Name": {
-                                                        "source": "addressShipping.name",
-                                                        "type": "string",
-                                                    },
-                                                    "Location_Code": {
-                                                        "source": "addressShipping.postalCode",
-                                                        "type": "string",
-                                                    },
-                                                    "Location_Place": {
-                                                        "source": "addressShipping.postalArea",
-                                                        "type": "string",
-                                                    },
-                                                    "Location_Street": {
-                                                        "source": "addressShipping.streetAddressLine1",
-                                                        "type": "string",
-                                                    },
-                                                    "Location_Country_Code": {
-                                                        "source": "addressShipping.country",
-                                                        "type": "string",
-                                                    },
-                                                },
+											"ID": {
+												"source": "addressShipping.id",
+												"type": "string",
+											},
+											"Ref_VATNum": {
+                                                "source": "addressShipping.idOfficial",
+                                                "type": "string",
                                             },
+											"Name": {
+												"source": "addressShipping.name",
+												"type": "string",
+											},
+											"Street": {
+												"source": "addressShipping.streetAddressLine1",
+												"type": "string",
+											},
+											"Zip": {
+												"source": "addressShipping.postalCode",
+												"type": "string",
+											},
+											"Zip_PO": {
+												"source": "addressShipping.postalArea",
+												"type": "string",
+											},
+											"Country_Name": {
+												"source": "addressShipping.country",
+												"type": "string",
+											},
+											"Country_Code": {
+												"source": "addressShipping.countryCode",
+												"type": "string",
+											},
                                         },
                                     },
                                 },
@@ -178,27 +296,31 @@ const OrderInformationSchema = {
                                     "source": null,
                                     "type": "object",
                                     "properties": {
-                                        "LineItem_Num": {
+                                        "R_LineItem_Num": {
                                             "source": "idLocal",
                                             "type": "string",
                                         },
-                                        "Item_Num_Universal": {
+										"R_Item_Num_EAN": {
                                             "source": "product.idLocal",
                                             "type": "string",
                                         },
-                                        "Item_Num_Sup": {
-                                            "source": "",
+                                        "R_Item_Num_Sup": {
+                                            "source": "product.codeProduct",
                                             "type": "string",
                                         },
-                                        "Item_Desc": {
+                                        "R_Item_Desc": {
                                             "source": "product.descriptionGeneral",
                                             "type": "string",
                                         },
-                                        "Quantity_OrdPcs": {
+										"R_LineItem_Type": {
+                                            "source": "unit",
+                                            "type": "string",
+                                        },
+                                        "R_Quantity_OrdPcs": {
                                             "source": "quantity",
                                             "type": "string",
                                         },
-                                        "Quantity_OrdUnit": {
+                                        "R_Quantity_OrdUnit": {
                                             "source": "unit",
                                             "type": "string",
                                         },
@@ -216,14 +338,39 @@ const OrderInformationSchema = {
 
 
 const json2xml = (input = {}) => {
-    input.addressShipping.idLocal = input.addressShipping.idLocal || '';
+    input.externalMessageType = 'ORDERS';
+    input.externalDocType = 'ORD';
+    input.externalIdType = 'EDI'
+    input.timestamp = new Date().getTime();
+    input.dateOrderDelivery = input.deliveryRequired ? input.deliveryRequired.slice(0, 10) : ''
+    input.timeOrderDelivery = input.deliveryRequired ? input.deliveryRequired.slice(11, 23) : ''
+
     input.addressBilling.idLocal = input.addressBilling.idLocal || '';
+    input.addressBilling.countryCode = input.addressBilling.country.slice(0, 2).toUpperCase()
+    
+    input.contact.idOfficial = input.contact.idOfficial || '';
+    input.contact.id = input.contact.idOfficial ? '0037' + input.contact.idOfficial.replace('-', '').replace('FI', '') : ''
+    
     input.vendor.idOfficial = input.vendor.idOfficial || '';
+    input.vendor.id = input.vendor.idOfficial ? '0037' + input.vendor.idOfficial.replace('-', '').replace('FI', '') : ''
+    
+    input.addressShipping.idLocal = input.addressShipping.idLocal || '';
+    input.addressShipping.idOfficial = input.addressShipping.idOfficial || '';
+    input.addressShipping.id = input.addressShipping.idOfficial ? '0037' + input.addressShipping.idOfficial.replace('-', '').replace('FI', '') : ''
+    input.addressShipping.countryCode = input.addressShipping.country.slice(0, 2).toUpperCase()
+    
+    input.customer.idOfficial = input.customer.idOfficial || '';
+    input.customer.id = input.customer.idOfficial ? '0037' + input.customer.idOfficial.replace('-', '').replace('FI', '') : ''
     input.customer.contactInformation = input.customer.contactInformation || {};
     input.customer.contactInformation.streetAddressLine1 = input.customer.contactInformation.streetAddressLine1 || '';
     input.customer.contactInformation.postalCode = input.customer.contactInformation.postalCode || '';
     input.customer.contactInformation.postalArea = input.customer.contactInformation.postalArea || '';
     input.customer.contactInformation.country = input.customer.contactInformation.country || '';
+
+    input.orderLine = input.orderLine.map(o => {
+        o.unit = o.unit.toUpperCase()
+        return o
+    });
 
     const output = transformer.transform({
         ...input,
