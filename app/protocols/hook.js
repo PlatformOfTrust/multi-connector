@@ -211,7 +211,7 @@ const controller = async (req, res) => {
 
         result = await handler(productCode, config, topic, req.body);
 
-        if (config.signature === false) {
+        if (config.signature === false || config.signature === 'false') {
             res.status(201).send(Object.values(result.output).filter(v => _.isObject(v)).reduce((acc, val) => {
                 return {...acc, ...val};
             }, {}));

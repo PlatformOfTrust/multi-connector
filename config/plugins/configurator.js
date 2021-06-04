@@ -435,9 +435,7 @@ const updateConfigs = async (dataProducts) => {
                     winston.log('info', 'Update ' + productCode);
                     cache.setDoc('configs', productCode, {
                         template,
-                        static: config.static,
-                        dynamic: config.dynamic,
-                        plugins: config.plugins,
+                        ...config,
                     });
                     result.push({
                         productCode,
