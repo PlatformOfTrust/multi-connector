@@ -432,6 +432,7 @@ const updateConfigs = async (dataProducts) => {
                         ? errors.push(productCode + ' - Missing required template: ' + template)
                         : errors.push(productCode + ' - Missing required field: template');
                 } else {
+                    winston.log('info', 'Update ' + productCode);
                     cache.setDoc('configs', productCode, {
                         template,
                         static: config.static,
@@ -441,9 +442,7 @@ const updateConfigs = async (dataProducts) => {
                     result.push({
                         productCode,
                         name: items[i].name,
-                        config: {
-                            template,
-                        },
+                        template,
                     });
                     lastUpdate = new Date().getTime();
                 }
