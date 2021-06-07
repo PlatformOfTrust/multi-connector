@@ -1,6 +1,7 @@
 {
     "plugins": [
-        "airwits"
+        "airwits",
+        "streamer"
     ],
     "protocol": "hook",
     "authConfig": {

@@ -61,7 +61,12 @@ const stream = async (template, data) => {
         const arrayKey = template.output.array;
         // Send data to external system.
         for (const d of (Array.isArray(data) ? data : [data])) {
-            if (url) result.push(await request('POST', url, headers, d[objectKey][arrayKey]));
+            if (Array.isArray(d[objectKey][arrayKey])) {
+                if (d[objectKey][arrayKey].length === 0) continue;
+            }
+            if (url && d[objectKey][arrayKey]) {
+                result.push(await request('POST', url, headers, d[objectKey][arrayKey]));
+            }
         }
     } catch (err) {
         winston.log('error', err.message);
