@@ -103,6 +103,10 @@ const OrderInformationSchema = {
                                         "source": "externalDocType",
                                         "type": "string",
                                     },
+									"H_DocNumber_ID": {
+                                        "source": "idLocal",
+                                        "type": "string",
+                                    },
 									"H_Date_Order_Delivery": {
                                         "source": "dateOrderDelivery",
                                         "type": "string",
@@ -127,7 +131,7 @@ const OrderInformationSchema = {
                                         "source": "project.idLocal",
                                         "type": "string",
                                     },
-                                    "H_DocNumber_ID": {
+									"H_Ref_OrderNum": {
                                         "source": "idLocal",
                                         "type": "string",
                                     },
@@ -140,18 +144,38 @@ const OrderInformationSchema = {
                                                 "type": "string",
                                             },
 											"ID": {
-                                                "source": "contact.id",
+                                                "source": "customer.id",
                                                 "type": "string",
                                             },
                                             "Ref_VATNum": {
-                                                "source": "contact.idOfficial",
+                                                "source": "customer.idOfficial",
                                                 "type": "string",
                                             },
                                             "Name": {
-                                                "source": "contact.name",
+                                                "source": "customer.name",
                                                 "type": "string",
                                             },
-                                            "Email": {
+											"Street": {
+												"source": "addressBilling.streetAddressLine1",
+												"type": "string",
+											},
+											"Zip": {
+												"source": "addressBilling.postalCode",
+												"type": "string",
+											},
+											"City": {
+												"source": "addressBilling.postalArea",
+												"type": "string",
+											},
+											"Country_Name": {
+												"source": "addressBilling.country",
+												"type": "string",
+											},
+											"Country_Code": {
+												"source": "addressBilling.countryCode",
+												"type": "string",
+											},
+											"Email": {
                                                 "source": "contact.contactInformation.addressEmail",
                                                 "type": "string",
                                             },
@@ -189,7 +213,7 @@ const OrderInformationSchema = {
 												"source": "vendor.contactInformation.postalCode",
 												"type": "string",
 											},
-											"Zip_PO": {
+											"City": {
 												"source": "vendor.contactInformation.postalArea",
 												"type": "string",
 											},
@@ -199,48 +223,6 @@ const OrderInformationSchema = {
 											},
 											"Country_Code": {
 												"source": "vendor.countryCode",
-												"type": "string",
-											},
-                                        },
-                                    },
-                                    "H_UltimateParty": {
-                                        "source": null,
-                                        "type": "object",
-                                        "properties": {
-											"ID_Code": {
-                                                "source": "externalIdType",
-                                                "type": "string",
-                                            },
-											"ID": {
-                                                "source": "customer.id",
-                                                "type": "string",
-                                            },
-                                            "Ref_VATNum": {
-                                                "source": "customer.idOfficial",
-                                                "type": "string",
-                                            },
-                                            "Name": {
-                                                "source": "customer.name",
-                                                "type": "string",
-                                            },
-											"Street": {
-												"source": "addressBilling.streetAddressLine1",
-												"type": "string",
-											},
-											"Zip": {
-												"source": "addressBilling.postalCode",
-												"type": "string",
-											},
-											"Zip_PO": {
-												"source": "addressBilling.postalArea",
-												"type": "string",
-											},
-											"Country_Name": {
-												"source": "addressBilling.country",
-												"type": "string",
-											},
-											"Country_Code": {
-												"source": "addressBilling.countryCode",
 												"type": "string",
 											},
                                         },
@@ -273,7 +255,7 @@ const OrderInformationSchema = {
 												"source": "addressShipping.postalCode",
 												"type": "string",
 											},
-											"Zip_PO": {
+											"City": {
 												"source": "addressShipping.postalArea",
 												"type": "string",
 											},
@@ -312,10 +294,6 @@ const OrderInformationSchema = {
                                             "source": "product.descriptionGeneral",
                                             "type": "string",
                                         },
-										"R_LineItem_Type": {
-                                            "source": "unit",
-                                            "type": "string",
-                                        },
                                         "R_Quantity_OrdPcs": {
                                             "source": "quantity",
                                             "type": "string",
@@ -343,7 +321,7 @@ const json2xml = (input = {}) => {
     input.externalIdType = 'EDI'
     input.timestamp = new Date().getTime();
     input.dateOrderDelivery = input.deliveryRequired ? input.deliveryRequired.slice(0, 10) : ''
-    input.timeOrderDelivery = input.deliveryRequired ? input.deliveryRequired.slice(11, 23) : ''
+    input.timeOrderDelivery = input.deliveryRequired ? input.deliveryRequired.slice(11, 19) : ''
 
     input.addressBilling.idLocal = input.addressBilling.idLocal || '';
     input.addressBilling.countryCode = input.addressBilling.country.slice(0, 2).toUpperCase()
