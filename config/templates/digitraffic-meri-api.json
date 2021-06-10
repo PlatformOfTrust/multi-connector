@@ -12,7 +12,7 @@
     "portCalls"
   ],
   "dataPropertyMappings": {
-    "PortCall": ""
+    "PortCallReport": ""
   },
   "generalConfig": {
     "hardwareId": {
@@ -26,11 +26,9 @@
     }
   },
   "output": {
-    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/PortCall/",
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/VehicleInformation/PortCallReport/",
     "timestamp": "timestamp",
-    "data": "portCalls",
-    "value": "data",
-    "array": "ports",
-    "id": "id"
+    "data": "data",
+    "array": "portCallReport"
   }
 }

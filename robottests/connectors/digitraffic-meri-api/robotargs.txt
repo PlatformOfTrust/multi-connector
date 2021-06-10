@@ -1,0 +1,3 @@
+--pythonpath lib
+--outputdir connectors/digitraffic-meri-api/result
+connectors/digitraffic-meri-api/connector_tests.robot
