@@ -140,15 +140,11 @@ const OrderInformationSchema = {
                                         "type": "object",
                                         "properties": {
 											"ID_Code": {
-                                                "source": "externalIdType",
+                                                "source": "externalIdTypeBuyer",
                                                 "type": "string",
                                             },
 											"ID": {
                                                 "source": "customer.id",
-                                                "type": "string",
-                                            },
-                                            "Ref_VATNum": {
-                                                "source": "customer.idOfficial",
                                                 "type": "string",
                                             },
                                             "Name": {
@@ -183,6 +179,10 @@ const OrderInformationSchema = {
                                                 "source": "contact.contactInformation.phoneNumber",
                                                 "type": "string",
                                             },
+											"Ref_VATNum": {
+                                                "source": "customer.idOfficial",
+                                                "type": "string",
+                                            },
                                         },
                                     },
                                     "H_SellerParty": {
@@ -190,17 +190,13 @@ const OrderInformationSchema = {
                                         "type": "object",
                                         "properties": {
 											"ID_Code": {
-                                                "source": "externalIdType",
+                                                "source": "externalIdTypeSeller",
                                                 "type": "string",
                                             },
 											"ID": {
 												"source": "vendor.id",
 												"type": "string",
 											},
-											"Ref_VATNum": {
-                                                "source": "vendor.idOfficial",
-                                                "type": "string",
-                                            },
 											"Name": {
 												"source": "vendor.name",
 												"type": "string",
@@ -225,6 +221,10 @@ const OrderInformationSchema = {
 												"source": "vendor.countryCode",
 												"type": "string",
 											},
+											"Ref_VATNum": {
+                                                "source": "vendor.idOfficial",
+                                                "type": "string",
+                                            },
                                         },
                                     },
                                     "H_ConsigneeParty": {
@@ -232,17 +232,13 @@ const OrderInformationSchema = {
                                         "type": "object",
                                         "properties": {
 											"ID_Code": {
-                                                "source": "externalIdType",
+                                                "source": "externalIdTypeConsignee",
                                                 "type": "string",
                                             },
 											"ID": {
 												"source": "addressShipping.id",
 												"type": "string",
 											},
-											"Ref_VATNum": {
-                                                "source": "addressShipping.idOfficial",
-                                                "type": "string",
-                                            },
 											"Name": {
 												"source": "addressShipping.name",
 												"type": "string",
@@ -267,6 +263,10 @@ const OrderInformationSchema = {
 												"source": "addressShipping.countryCode",
 												"type": "string",
 											},
+											"Ref_VATNum": {
+                                                "source": "addressShipping.idOfficial",
+                                                "type": "string",
+                                            },
                                         },
                                     },
                                 },
@@ -318,7 +318,10 @@ const OrderInformationSchema = {
 const json2xml = (input = {}) => {
     input.externalMessageType = 'ORDERS';
     input.externalDocType = 'ORD';
-    input.externalIdType = 'EDI'
+    input.externalIdTypeBuyer = 'EDI'
+    input.externalIdTypeSeller = 'EDI'
+    input.externalIdTypeConsignee = 'EDI'
+
     input.timestamp = new Date().getTime();
     input.dateOrderDelivery = input.deliveryRequired ? input.deliveryRequired.slice(0, 10) : ''
     input.timeOrderDelivery = input.deliveryRequired ? input.deliveryRequired.slice(11, 19) : ''
@@ -331,14 +334,26 @@ const json2xml = (input = {}) => {
     
     input.vendor.idOfficial = input.vendor.idOfficial || '';
     input.vendor.id = input.vendor.idOfficial ? '0037' + input.vendor.idOfficial.replace('-', '').replace('FI', '') : ''
-    
+    if (!input.vendor.idOfficial) {
+        delete input.externalIdTypeSeller
+        delete input.vendor.id
+    }
+
     input.addressShipping.idLocal = input.addressShipping.idLocal || '';
     input.addressShipping.idOfficial = input.addressShipping.idOfficial || '';
     input.addressShipping.id = input.addressShipping.idOfficial ? '0037' + input.addressShipping.idOfficial.replace('-', '').replace('FI', '') : ''
+    if (!input.addressShipping.idOfficial) {
+        delete input.externalIdTypeConsignee
+        delete input.addressShipping.id
+    }
     input.addressShipping.countryCode = input.addressShipping.country.slice(0, 2).toUpperCase()
-    
+
     input.customer.idOfficial = input.customer.idOfficial || '';
     input.customer.id = input.customer.idOfficial ? '0037' + input.customer.idOfficial.replace('-', '').replace('FI', '') : ''
+    if (!input.customer.idOfficial) {
+        delete input.externalIdTypeBuyer
+        delete input.customer.id
+    }
     input.customer.contactInformation = input.customer.contactInformation || {};
     input.customer.contactInformation.streetAddressLine1 = input.customer.contactInformation.streetAddressLine1 || '';
     input.customer.contactInformation.postalCode = input.customer.contactInformation.postalCode || '';
