@@ -190,8 +190,7 @@ const getData = async (config= {}, pathArray) => {
 
     // Detect produced content.
     try {
-        if ((config.parameters.targetObject.content || config.parameters.targetObject.url)
-            && config.authConfig.fromPath !== '${fromPath}') {
+        if (config.parameters.targetObject.content || config.parameters.targetObject.url) {
             const doc = config.parameters.targetObject;
 
             // Fetch content.
@@ -201,7 +200,7 @@ const getData = async (config= {}, pathArray) => {
 
             // Write file to filesystem.
             const path = '/' + doc.name;
-            const to = DOWNLOAD_DIR + config.productCode + (config.authConfig.fromPath || '/from') + path;
+            const to = DOWNLOAD_DIR + config.productCode + (config.authConfig.fromPath || '') + path;
             await checkDir(to);
             await fs.promises.writeFile(to, Buffer.from(content, 'binary'), 'binary');
 

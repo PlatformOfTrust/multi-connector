@@ -98,6 +98,23 @@ const endpoints = function (passport) {
 };
 
 /**
+ * Pick custom ttl.
+ *
+ * @param {Object} config
+ * @param {Object} template
+ * @return {Object}
+ */
+const template = async (config, template) => {
+    try {
+        // Attempt to use custom ttl.
+        template.ttl = Number.parseInt(config.plugins['download-link'].ttl);
+    } catch (err) {
+        return template;
+    }
+    return template;
+};
+
+/**
  * Handles link generation and document caching.
  *
  * @param {Object} config
@@ -105,8 +122,8 @@ const endpoints = function (passport) {
  * @return {Object}
  */
 const output = async (config, output) => {
+    const ttl = Number.isInteger(config.ttl) ? config.ttl : LINK_EXPIRATION_TIME;
     try {
-        const ttl = LINK_EXPIRATION_TIME;
         output[config.output.object][config.output.array] = output[config.output.object][config.output.array].map(doc => {
             // Generate random id.
             // 2^160 (256^20) unique output values.
@@ -138,5 +155,6 @@ const output = async (config, output) => {
 module.exports = {
     name: PLUGIN_NAME,
     endpoints,
+    template,
     output,
 };

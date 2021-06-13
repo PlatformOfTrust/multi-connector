@@ -11,11 +11,16 @@
         "proxyPort": "[<socks-server-port>]"
     },
     "dynamic": {
-        "authConfig.path": "ids"
+        "authConfig.path": "targetObject.name"
+    },
+    "plugins" : {
+        "download-link": {
+            "ttl": "<link-expiration-time>"
+        }
     },
     "request": {
-        "ids": [
-            "<path>"
-        ]
+        "targetObject": {
+            "name": "<filename>"
+        }
     }
 }
