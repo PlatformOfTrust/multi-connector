@@ -167,6 +167,23 @@ const response = async (config, response) => {
 };
 
 /**
+ * Translates response id to request id.
+ *
+ * @param {Object} config
+ * @param {String/Object} id
+ * @return {String/Object}
+ */
+const id = async (config, id) => {
+    let translation;
+    try {
+        translation = config.parameters.ids.find(reqId => reqId.id === id);
+    } catch (err) {
+        return id;
+    }
+    return translation || id;
+};
+
+/**
  * Filters data by point ids.
  *
  * @param {Object} config
@@ -177,7 +194,7 @@ const output = async (config, output) => {
     const ids = [];
     try {
         ids.push(...config.parameters.ids.map(entry => entry.id).flat());
-        output[config.output.object][config.output.array] = output[config.output.object][config.output.array].filter(i => !!i).filter(d => ids.includes(d[config.output.id]));
+        output[config.output.object][config.output.array] = output[config.output.object][config.output.array].filter(i => !!i).filter(d => ids.includes(d[config.output.id].id || d[config.output.id]));
         return output;
     } catch (err) {
         return output;
@@ -191,5 +208,6 @@ module.exports = {
     name: 'fidelix',
     template,
     response,
+    id,
     output,
 };
