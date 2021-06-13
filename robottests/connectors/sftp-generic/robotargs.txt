@@ -1,0 +1,3 @@
+--pythonpath lib
+--outputdir connectors/sftp-generic/result
+connectors/sftp-generic/connector_tests.robot
