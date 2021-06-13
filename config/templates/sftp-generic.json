@@ -13,7 +13,7 @@
         "proxyPort": "${proxyPort}",
         "username": "${username}",
         "password": "${password}",
-        "path": "${id}"
+        "path": "/${targetObject.name}"
     },
     "dataObjects": [
         "data"
@@ -31,6 +31,11 @@
         "timestamp": {
             "dataObjectProperty": ""
         }
+    },
+    "input": {
+        "required": [
+            "parameters.targetObject.name"
+        ]
     },
     "output": {
         "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Document/",

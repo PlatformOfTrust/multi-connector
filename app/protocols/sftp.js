@@ -4,6 +4,7 @@
  */
 const fs = require('fs');
 const _ = require('lodash');
+const rp = require('request-promise');
 const winston = require('../../logger.js');
 const Client = require('ssh2-sftp-client');
 const response = require('../lib/response');
@@ -184,11 +185,35 @@ const createClient = async (config= {}, productCode) => {
  */
 const getData = async (config= {}, pathArray) => {
     const productCode = config.productCode || uuidv4();
-    const client = await createClient(config, productCode);
-
+    let toPath = config.authConfig.toPath || '';
     const items = [];
-    const toPath = config.authConfig.toPath || '';
 
+    // Detect produced content.
+    try {
+        if ((config.parameters.targetObject.content || config.parameters.targetObject.url)
+            && config.authConfig.fromPath !== '${fromPath}') {
+            const doc = config.parameters.targetObject;
+
+            // Fetch content.
+            const url = doc.url;
+            const response = url ? await rp({method: 'GET', url, resolveWithFullResponse: true, encoding: null}) : {body: doc.content};
+            const content = response.body;
+
+            // Write file to filesystem.
+            const path = '/' + doc.name;
+            const to = DOWNLOAD_DIR + config.productCode + (config.authConfig.fromPath || '/from') + path;
+            await checkDir(to);
+            await fs.promises.writeFile(to, Buffer.from(content, 'binary'), 'binary');
+
+            // Upload file to SFTP server.
+            await sendData(config, [path]);
+            toPath = config.authConfig.fromPath || '';
+        }
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+
+    const client = await createClient(config, productCode);
     for (let p = 0; p < pathArray.length; p++) {
         let files = await downloadFiles(client, toPath + pathArray[p], productCode);
         if (!files) continue;
