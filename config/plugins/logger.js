@@ -9,7 +9,6 @@ const logger = function (method, config, param) {
     console.log(param);
     return param;
 };
-
 /**
  * Expose plugin methods.
  */
@@ -18,6 +17,7 @@ module.exports = {
     template: (config, param) => logger('TEMPLATE', config, param),
     parameters: (config, param) => logger('PARAMETERS', config, param),
     request: (config, param) => logger('REQUEST', config, param),
+    onerror: (config, param) => logger('ONERROR', config, param.message),
     response: (config, param) => logger('RESPONSE', config, param),
     data: (config, param) => logger('DATA', config, param),
     id: (config, param) => logger('ID', config, param),
