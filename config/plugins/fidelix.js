@@ -176,7 +176,9 @@ const response = async (config, response) => {
 const id = async (config, id) => {
     let translation;
     try {
-        translation = config.parameters.ids.find(reqId => reqId[config.output.id] === id);
+        translation = config.parameters.ids.find(reqId => Object.values(reqId).includes(id));
+        const keys = Object.keys(translation);
+        translation = keys.length === 1 && keys[0] === 'id' ? id : translation;
     } catch (err) {
         return id;
     }
@@ -193,8 +195,10 @@ const id = async (config, id) => {
 const output = async (config, output) => {
     const ids = [];
     try {
-        ids.push(...config.parameters.ids.map(entry => entry.id).flat());
-        output[config.output.object][config.output.array] = output[config.output.object][config.output.array].filter(i => !!i).filter(d => ids.includes(d[config.output.id].id || d[config.output.id]));
+        ids.push(...config.parameters.ids.map(entry => entry.id || entry).flat());
+        output[config.output.object][config.output.array] = output[config.output.object][config.output.array]
+            .filter(i => !!i).filter(d => ids.map(id => JSON.stringify(id))
+                .includes(JSON.stringify(d[config.output.id].id || d[config.output.id])));
         return output;
     } catch (err) {
         return output;
