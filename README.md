@@ -10,7 +10,7 @@ Following data sources are supported out of the box. Example configs can be foun
 - Carinafour CALS
 - Congrid Public API
 - Digitraffic Live Trains API
-- Digitraffic Port Calls API
+- Digitraffic Marine API
 - EnerKey Data API
 - ENTSO-E Transparency Platform
 - Fidelix Pilvivalvomo
