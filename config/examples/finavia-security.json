@@ -1,0 +1,11 @@
+{
+  "template": "finavia-security",
+  "static": {
+    "applicationId": "<application-id>",
+    "applicationKey": "<application-key>",
+    "type": "Process"
+  },
+  "dynamic": {
+    "authConfig.path": "targetObject.idLocal"
+  }
+}

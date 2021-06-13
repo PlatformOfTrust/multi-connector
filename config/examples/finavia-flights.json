@@ -1,0 +1,11 @@
+{
+  "template": "finavia",
+  "static": {
+    "applicationId": "<application-id>",
+    "applicationKey": "<application-key>",
+    "flightType": "all"
+  },
+  "dynamic": {
+    "authConfig.path": "targetObject.idLocal"
+  }
+}

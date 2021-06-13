@@ -1,0 +1,41 @@
+{
+    "plugins": [
+      "finavia-security-queue"
+    ],
+    "protocol": "rest",
+    "authConfig": {
+      "url": "https://api.finavia.fi",
+      "headers": {
+          "app_id": "${applicationId}",
+          "app_key": "${applicationKey}"
+        },
+      "path": "/queues/v1.2/queues"
+    },
+    "dataObjects": [
+      "data.securityQueues"
+    ],
+    "dataPropertyMappings": {
+      "${type}": ""
+    },
+    "generalConfig": {
+      "sourceName": {
+        "dataObjectProperty": ""
+      },
+      "hardwareId": {
+        "dataObjectProperty": "airport"
+      },
+      "timestamp": {
+        "dataObjectProperty": "lastUpdate"
+      }
+    },
+    "input": {
+        "required": [
+            "parameters.targetObject"
+        ]
+    },
+    "output": {
+        "contextValue": "https://standards-ontotest.oftrust.net/v2/Context/DataProductContext/Process/",
+        "array": "process",
+        "data": "data"
+    }
+  }
