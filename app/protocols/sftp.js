@@ -60,20 +60,30 @@ const checkDir = async (filepath) => {
  */
 const downloadFiles = async (client, path, productCode) => {
     let files;
+    let filename = false;
     try {
+        // Try path as a directory.
         files = await client.list(path);
     } catch (err) {
-        winston.log('error', err.message);
+        try {
+            // Try path as a filename.
+            const parts = path.split('/');
+            parts.pop();
+            files = (await client.list(parts.join('/')))
+                .filter(file => path.split('/').includes(file.name));
+            filename = true;
+        } catch (err) {
+            winston.log('error', err.message);
+            return;
+        }
     }
-    if (!Array.isArray(files)) {
-        return;
-    }
+    if (!Array.isArray(files)) return;
     if (path.slice(-1) === '/') {
         path = path.slice(0, -1);
     }
     for (let i = 0; i < files.length; i++) {
-        const from = path + '/' + files[i].name;
-        const to = DOWNLOAD_DIR + productCode + path + '/' + files[i].name;
+        const from = path + (filename ? '' : '/' + files[i].name);
+        const to = DOWNLOAD_DIR + productCode + from;
         await checkDir(to);
         let filePath;
         try {

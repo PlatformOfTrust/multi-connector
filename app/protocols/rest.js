@@ -74,7 +74,7 @@ const getDataByOptions = async (config, options, path) => {
         }).catch(function (err) {
             try {
                 if (Object.prototype.toString.call(err.response.body) === '[object Uint8Array]') {
-                    err.message = new Buffer.from(err.response.body).toString();
+                    err.message = Buffer.from(err.response.body).toString();
                 }
             } catch (err) {
                 return Promise.reject(err);

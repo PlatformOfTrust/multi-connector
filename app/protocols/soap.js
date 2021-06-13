@@ -108,7 +108,7 @@ const createSOAPClient = async (config, url, pathArray) => {
     const username = config.authConfig.username;
     const password = config.authConfig.password;
     const SOAPFunction = config.authConfig.function;
-    let options = {wsdl_headers: {Authorization: 'Basic ' + new Buffer(username + ':' + password).toString('base64')}};
+    let options = {wsdl_headers: {Authorization: 'Basic ' + Buffer.from(username + ':' + password).toString('base64')}};
     if (config.plugins.find(p => p.name === 'soap-ntlm')) {
         options = {};
     }

@@ -368,7 +368,7 @@ const isJSON = (data) => {
 const response = async (config, response) => {
     try {
         if (typeof response.data === 'string' || response.data instanceof String) {
-            const fileType = await FileType.fromBuffer(new Buffer(response.data, 'base64'));
+            const fileType = await FileType.fromBuffer(Buffer.from(response.data, 'base64'));
             const filenameParts = response.id.split('.');
             const ext = filenameParts[filenameParts.length - 1];
             response = {
@@ -382,7 +382,7 @@ const response = async (config, response) => {
             };
             // Convert text content to plain data.
             if (!fileType) {
-                response.data.content = new Buffer(response.data.content, 'base64').toString('utf-8');
+                response.data.content = Buffer.from(response.data.content, 'base64').toString('utf-8');
                 response.data.encoding = 'utf-8';
                 if (isJSON(response.data.content)) {
                     response.data.mimetype = 'application/json';

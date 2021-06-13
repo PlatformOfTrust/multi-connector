@@ -75,7 +75,7 @@ const controller = async (req, res, next) => {
         }
 
         // Send file in response.
-        const data = new Buffer(doc.content, doc.categorizationEncoding || doc.encoding || 'base64');
+        const data = Buffer.from(doc.content, doc.categorizationEncoding || doc.encoding || 'base64');
         res.contentType(doc.categorizationInternetMediaType || doc.mimetype || 'text/plain');
         res.send(data);
     } catch (err) {
