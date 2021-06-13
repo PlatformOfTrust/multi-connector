@@ -176,7 +176,7 @@ const response = async (config, response) => {
 const id = async (config, id) => {
     let translation;
     try {
-        translation = config.parameters.ids.find(reqId => reqId.id === id);
+        translation = config.parameters.ids.find(reqId => reqId[config.output.id] === id);
     } catch (err) {
         return id;
     }
