@@ -1,6 +1,8 @@
 {
   "plugins": [
-    "oauth2"
+    "oauth2",
+    "millis",
+    "mode"
   ],
   "protocol": "rest",
   "authConfig": {
@@ -9,7 +11,7 @@
     "clientId": "${clientId}",
     "clientSecret": "${clientSecret}",
     "scope": "openid",
-    "path": "${dataUrl}/v3/iaq/sensors/latest/${id}"
+    "path": "${dataUrl}/v3/iaq/sensors/${mode}/${id}"
   },
   "dataObjects": [
     "data"
@@ -20,11 +22,25 @@
     "MeasureAirCO2LevelPPM": "CO2_01"
   },
   "generalConfig": {
+    "query": {
+      "properties": [
+        {
+          "interval": "minute"
+        }
+      ],
+      "end": "time_to",
+      "start": "time_from"
+    },
     "hardwareId": {
       "pathIndex": 7
     },
     "timestamp": {
       "dataObjectProperty": "timestamp"
+    },
+    "mode": {
+      "latest": "latest",
+      "history": "timeseries",
+      "prediction": "timeseries"
     }
   }
 }
