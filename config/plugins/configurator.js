@@ -449,6 +449,7 @@ const updateConfigs = async (dataProducts) => {
             }
         } else {
             /** 2. Remove. */
+            winston.log('info', 'Remove ' + productCode);
             cache.delDoc('configs', productCode);
         }
     }
