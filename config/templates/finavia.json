@@ -36,7 +36,7 @@
         ]
     },
     "output": {
-        "contextValue": "https://standards-ontotest.oftrust.net/v2/Context/DataProductContext/Flight/",
+        "contextValue": "https://standards-ontotest.oftrust.net/v2/Context/DataProductOutput/VehicleInformation/FlightDeparture/",
         "array": "flight",
         "data": "data"
     }

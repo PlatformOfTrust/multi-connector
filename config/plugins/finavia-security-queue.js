@@ -10,25 +10,19 @@ const transformer = require('../../app/lib/transformer');
 
 // Source mapping.
 const schema = {
-	'$schema': 'http://json-schema.org/draft-07/schema',
-	'$id': 'https://standards-ontotest.oftrust.net/v2/Schema/DataProductOutput/Process?v=2.0',
-	'suorce': null,
-    'type': 'object',
-	'title': 'Data product output core schema',
-	'description': 'Core schema for general data product output.',
-	'required': [
-		'@context',
-		'data',
-		'signature'
-	],
+	'$schema': 'http://json-schema.org/draft-06/schema#',
+	'$id': 'https://standards-ontotest.oftrust.net/v2/Schema/DataProductOutput/Process/Measure/AirportSecurityLine/?v=2.0',
+    'source': null,
+	'type': 'object',
+	'required': [],
 	'properties': {
 		'@context': {
 			'$id': '#/properties/@context',
             'source': null,
 			'type': 'string',
+			'const': 'https://standards-ontotest.oftrust.net/v2/Context/DataProductOutput/VehicleInformation/AirportSecurityLine/?v=2.0',
 			'title': 'JSON-LD context url',
-			'description': 'JSON-LD context url with terms required to understand data product content.',
-			'const': 'https://standards-ontotest.oftrust.net/v2/Context/DataProductOutput/Process/?v=2.0'
+			'description': 'JSON-LD context url with terms required to understand data product content.'
 		},
 		'data': {
 			'$id': '#/properties/data',
@@ -36,86 +30,246 @@ const schema = {
 			'type': 'object',
 			'title': 'Data product output',
 			'description': 'Output of data product delivered to customers.',
-            'properties': {
-                'process': {
-                    '$id': '#/properties/data/properties/note',
+			'required': [],
+			'properties': {
+				'airportSecurityLine': {
+					'$id': '#/properties/data/properties/airportSecurityLine',
                     'source': '',
-                    'type': 'array',
-                    'title': 'Note',
-                    'description': 'Note.',
-                    'items': {
-                        '$id': '#/properties/data/properties/note/items',
+					'type': 'array',
+					'title': 'Airport security line',
+					'description': 'Airport security line.',
+					'items': {
+						'$id': '#/properties/data/properties/airportSecurityLine/items',
                         'source': null,
-                        'type': 'object',
-                        'required': [],
-                        'properties': {
-                            '@type': {
-                                '$id': '#/properties/data/properties/note/items/properties/@type',
+						'type': 'object',
+						'required': [],
+						'properties': {
+							'@type': {
+								'$id': '#/properties/data/properties/airportSecurityLine/items/properties/@type',
                                 'source': 'type',
-                                'type': 'string',
-                                'title': 'Identity type',
-                                'description': 'Type of identity.',
-                            },
-                            'idLocal': {
-                                '$id': '#/properties/data/properties/note/items/properties/idLocal',
-                                'source': 'airport',
-                                'type': 'string',
-                                'title': 'Local identifier',
-                                'description': 'Locally given identifier.',
-                            },
-                        }
-                    }
-                }
-            }
-        },
+								'type': 'string',
+								'title': 'Identity type',
+								'description': 'Type of identity.'
+							},
+							'processValue': {
+								'$id': '#/properties/data/properties/airportSecurityLine/items/properties/processValue',
+                                'source': 'dwellTimeInSeconds',
+								'type': 'integer',
+								'title': 'Output value',
+								'description': 'Output value of the process.'
+							},
+							'exactTime': {
+								'$id': '#/properties/data/properties/airportSecurityLine/items/properties/exactTime',
+                                'source': 'lastUpdate',
+								'type': 'string',
+								'title': 'Exact time',
+								'description': 'Exact time.'
+							},
+							'sampleAmount': {
+								'$id': '#/properties/data/properties/airportSecurityLine/items/properties/sampleAmount',
+                                'source': 'sampleCount',
+								'type': 'integer',
+								'title': 'Sample amount',
+								'description': 'Sample amount (amount of samples).'
+							},
+							'location': {
+								'$id': '#/properties/data/properties/airportSecurityLine/items/properties/location',
+                                'source': null,
+								'type': 'object',
+								'title': 'Location',
+								'description': 'Location.',
+								'required': [],
+								'properties': {
+									'@type': {
+										'$id': '#/properties/data/properties/airportSecurityLine/items/properties/location/properties/@type',
+                                        'source': 'locationType',
+										'type': 'string',
+										'title': 'Identity type',
+										'description': 'Type of identity.'
+									},
+									'idLocal': {
+										'$id': '#/properties/data/properties/airportSecurityLine/items/properties/location/properties/idLocal',
+                                        'source': 'locationId',
+										'type': 'string',
+										'title': 'Local identifier',
+										'description': 'Locally given identifier.'
+									},
+									'location': {
+										'$id': '#/properties/data/properties/airportSecurityLine/items/properties/location/properties/location',
+                                        'source': null,
+										'type': 'object',
+										'title': 'Location',
+										'description': 'Location.',
+										'required': [],
+										'properties': {
+											'@type': {
+												'$id': '#/properties/data/properties/airportSecurityLine/items/properties/location/properties/location/properties/@type',
+                                                'source': 'locationLocationType',
+												'type': 'string',
+												'title': 'Identity type',
+												'description': 'Type of identity.'
+											},
+											'name': {
+												'$id': '#/properties/data/properties/airportSecurityLine/items/properties/location/properties/location/properties/name',
+                                                'source': 'locationArea',
+												'type': 'string',
+												'title': 'Name',
+												'description': 'Name.'
+											},
+											'location': {
+												'$id': '#/properties/data/properties/airportSecurityLine/items/properties/location/properties/location/properties/location',
+                                                'source': null,
+												'type': 'object',
+												'title': 'Location',
+												'description': 'Location.',
+												'required': [],
+												'properties': {
+													'@type': {
+														'$id': '#/properties/data/properties/airportSecurityLine/items/properties/location/properties/location/properties/location/properties/@type',
+                                                        'source': 'locationLocationLocationType',
+														'type': 'string',
+														'title': 'Identity type',
+														'description': 'Type of identity.'
+													},
+													'idOfficial': {
+														'$id': '#/properties/data/properties/airportSecurityLine/items/properties/location/properties/location/properties/location/properties/idOfficial',
+                                                        'source': 'airport',
+														'type': 'string',
+														'title': 'Official identifier',
+														'description': 'Government (official authority) assigned identifier.'
+													},
+													'categorizationPreferred': {
+														'$id': '#/properties/data/properties/airportSecurityLine/items/properties/location/properties/location/properties/location/properties/CateforizationPreferred',
+                                                        'source': 'preferred',
+														'type': 'boolean',
+														'title': 'Categorization preffered',
+														'description': 'Categorization preffered.'
+													},
+													'categorizationPremium:': {
+														'$id': '#/properties/data/properties/airportSecurityLine/items/properties/location/properties/location/properties/location/properties/categorizationPremium:',
+                                                        'source': 'premium',
+														'type': 'boolean',
+														'title': 'Categorization premium',
+														'description': 'Categorization premium.'
+													}
+												}
+											}
+										}
+									},
+									'localizationValue': {
+										'$id': '#/properties/data/properties/airportSecurityLine/items/properties/location/properties/localizationValue',
+                                        'source': null,
+										'type': 'object',
+										'title': 'Localization',
+										'description': 'Localization.',
+										'required': [],
+										'properties': {
+											'@type': {
+												'$id': '#/properties/data/properties/airportSecurityLine/items/properties/location/properties/localizationValue/properties/@type',
+                                                'source': 'locationLocalizationValueType',
+												'type': 'string',
+												'title': 'Identity type',
+												'description': 'Type of identity.'
+											},
+											'propertyName': {
+												'$id': '#/properties/data/properties/airportSecurityLine/items/properties/location/properties/localizationValue/properties/propertyName',
+                                                'source': null,
+												'type': 'string',
+												'title': 'Property name',
+												'description': 'Name of the property.'
+											},
+											'en-us': {
+												'$id': '#/properties/data/properties/airportSecurityLine/items/properties/location/properties/localizationValue/properties/en-us',
+                                                'source': 'locationName.en',
+												'type': 'string',
+												'title': 'English (American English)',
+												'description': 'English (American English).'
+											},
+											'fi-fi': {
+												'$id': '#/properties/data/properties/airportSecurityLine/items/properties/location/properties/localizationValue/properties/fi-fi',
+                                                'source': 'locationName.fi',
+												'type': 'string',
+												'title': 'Finnish',
+												'description': 'Finnish.'
+											}
+										}
+									}
+								}
+							},
+							'targetObject': {
+								'$id': '#/properties/data/properties/airportSecurityLine/items/properties/targetObject',
+                                'source': null,
+								'type': 'string',
+								'enum': [
+									'Line'
+								],
+								'title': 'Target object',
+								'description': 'Target object.'
+							},
+							'physicalProperty': {
+								'$id': '#/properties/data/properties/airportSecurityLine/items/properties/physicalProperty',
+                                'source': null,
+								'type': 'string',
+								'enum': [
+									'PassengerProcessingTime'
+								],
+								'title': 'Physical property',
+								'description': 'Physical property.'
+							},
+							'unitOfMeasure': {
+								'$id': '#/properties/data/properties/airportSecurityLine/items/properties/unitOfMeasure',
+                                'source': null,
+								'type': 'string',
+								'enum': [
+									'Second'
+								],
+								'title': 'Unit of measure',
+								'description': 'Unit of measure.'
+							}
+						}
+					}
+				}
+			}
+		},
 		'signature': {
 			'$id': '#/properties/signature',
+            'source': null,
 			'type': 'object',
 			'title': 'Signature',
-			'required': [
-				'type',
-				'created',
-				'creator',
-				'signatureValue'
-			],
+			'description': 'Signature.',
+			'required': [],
 			'properties': {
 				'type': {
 					'$id': '#/properties/signature/properties/type',
+                    'source': null,
 					'type': 'string',
-					'title': 'Signature type',
-					'examples': [
-						'RsaSignature2018'
-					]
+					'title': 'Type',
+					'description': 'Type.'
 				},
 				'created': {
 					'$id': '#/properties/signature/properties/created',
+                    'source': null,
 					'type': 'string',
-					'title': 'Signature creation date and time',
-					'format': 'date-time',
-					'examples': [
-						'2018-11-22T12:00:00Z'
-					]
+					'title': 'Created',
+					'description': 'Creation time.'
 				},
 				'creator': {
 					'$id': '#/properties/signature/properties/creator',
+                    'source': null,
 					'type': 'string',
-					'title': 'Signature creator',
-					'examples': [
-						'https://example.org/creator/public_key.pub'
-					]
+					'title': 'Creator',
+					'description': 'Party who has created the file or information.'
 				},
 				'signatureValue': {
 					'$id': '#/properties/signature/properties/signatureValue',
+                    'source': null,
 					'type': 'string',
-					'title': 'Generated signature',
-					'examples': [
-						'eyJ0eXAiOiJK...gFWFOEjXk'
-					]
+					'title': 'Signature value',
+					'description': 'Signature value.'
 				}
 			}
 		}
-	},
-	'version': '2.0'
+	}
 };
 
 /**
@@ -141,7 +295,11 @@ const handleData = function (config, id, data) {
             let result = {};
             const value = data[j][config.output.value];
             // Transform raw input.
-            value.type = 'Process';
+            value.type = 'Measure';
+            value.locationType = 'SecurityCheckPoint';
+            value.locationLocationType = 'Terminal';
+            value.locationLocationLocationType = 'Airport';
+            value.locationLocalizationValueType = 'Localization';
 
             result = transformer.transform(value, schema.properties.data);
 
