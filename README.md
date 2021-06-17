@@ -9,6 +9,7 @@ Following data sources are supported out of the box. Example configs can be foun
 - A-3 Integration API
 - Carinafour CALS
 - Congrid Public API
+- Digital Supply Chain
 - Digitraffic Live Trains API
 - Digitraffic Marine API
 - EnerKey Data API

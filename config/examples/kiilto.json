@@ -1,0 +1,21 @@
+{
+    "template": "kiilto-xml",
+    "static": {
+        "endpoint": "<vendor-url>",
+        "bearer": "<hook-bearer-for-vendor>",
+        "headers": {
+            "X-ApiKey": "<vendor-apikey>"
+        }
+    },
+    "dynamic": {
+        "authConfig.path": "targetObject.idLocal"
+    },
+    "plugins": {
+        "broker": {
+            "env": "production",
+            "receiver": "<dealer-product-code>",
+            "clientSecret": "<client-secret>",
+            "appAccessToken": "<app-token>"
+        }
+    }
+}
