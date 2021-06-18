@@ -1,0 +1,1211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 3.2.1 (Python 3.8.0 on win32)" generated="20210618 15:29:56.517" rpa="false">
+<suite id="s1" name="Connector Tests" source="C:\Users\henri\Documents\VSCodeProjects\multi-connector\robottests\connectors\finavia-security\connector_tests.robot">
+<test id="s1-t1" name="fetch, 200">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20210618 15:29:56.802" level="INFO">${body} = {'productCode': 'finavia-security', 'parameters': {'targetObject': {'idLocal': ['EFHK', 'EFHK']}}}</msg>
+<status status="PASS" starttime="20210618 15:29:56.802" endtime="20210618 15:29:56.802"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20210618 15:29:56.802" level="INFO">${now} = 2021-06-18T12:29:56+00:00</msg>
+<status status="PASS" starttime="20210618 15:29:56.802" endtime="20210618 15:29:56.802"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:29:56.803" endtime="20210618 15:29:56.803"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:29:56.803" endtime="20210618 15:29:56.803"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20210618 15:29:56.804" level="INFO">${json_string} = {"productCode": "finavia-security", "parameters": {"targetObject": {"idLocal": ["EFHK", "EFHK"]}}, "timestamp": "2021-06-18T12:29:56+00:00"}</msg>
+<status status="PASS" starttime="20210618 15:29:56.803" endtime="20210618 15:29:56.804"></status>
+</kw>
+<msg timestamp="20210618 15:29:56.804" level="INFO">${body} = {'productCode': 'finavia-security', 'parameters': {'targetObject': {'idLocal': ['EFHK', 'EFHK']}}, 'timestamp': '2021-06-18T12:29:56+00:00'}</msg>
+<status status="PASS" starttime="20210618 15:29:56.801" endtime="20210618 15:29:56.804"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20210618 15:29:56.805" level="INFO">${signature} = uBGgoDkHqUP07wGP4MCU9VGmjtGVEB/4KJwJ0bP0m7U=</msg>
+<status status="PASS" starttime="20210618 15:29:56.805" endtime="20210618 15:29:56.805"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:29:56.805" endtime="20210618 15:29:56.805"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:29:56.805" endtime="20210618 15:29:59.406"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20210618 15:29:59.407" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "@context": {
+            "type": "string",
+            "default": "https://standards.oftrust.net/v2/Context/DataProductOutput/Process/Measure/AirportSecurityLine/"
+        },
+        "data": {
+            "type": "object",
+            "properties": {
+                "airportSecurityLine": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "@type": {
+                                "type": "string"
+                            },
+                            "processValue": {
+                                "type": "integer"
+                            },
+                            "exactTime": {
+                                "type": "string"
+                            },
+                            "sampleAmount": {
+                                "type": "integer"
+                            },
+                            "location": {
+                                "type": "object",
+                                "properties": {
+                                    "@type": {
+                                        "type": "string"
+                                    },
+                                    "idLocal": {
+                                        "type": "string"
+                                    },
+                                    "location": {
+                                        "type": "object",
+                                        "properties": {
+                                            "@type": {
+                                                "type": "string"
+                                            },
+                                            "name": {
+                                                "type": "string"
+                                            },
+                                            "location": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "@type": {
+                                                        "type": "string"
+                                                    },
+                                                    "idOfficial": {
+                                                        "type": "string"
+                                                    },
+                                                    "categorizationPreferred": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "categorizationPremium:": {
+                                                        "type": "boolean"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "@type",
+                                                    "categorizationPreferred",
+                                                    "categorizationPremium:",
+                                                    "idOfficial"
+                                                ]
+                                            }
+                                        },
+                                        "required": [
+                                            "@type",
+                                            "location",
+                                            "name"
+                                        ]
+                                    },
+                                    "localizationValue": {
+                                        "type": "object",
+                                        "properties": {
+                                            "@type": {
+                                                "type": "string"
+                                            },
+                                            "en-us": {
+                                                "type": "string"
+                                            },
+                                            "fi-fi": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "@type",
+                                            "en-us",
+                                            "fi-fi"
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "@type",
+                                    "idLocal",
+                                    "localizationValue",
+                                    "location"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "@type",
+                            "exactTime",
+                            "location",
+                            "processValue",
+                            "sampleAmount"
+                        ]
+                    },
+                    "default": [
+                        {
+                            "@type": "Measure",
+                            "processValue": 0,
+                            "exactTime": "2021-06-18T12:30:00Z",
+                            "sampleAmount": 0,
+                            "location": {
+                                "@type": "SecurityCheckPoint",
+                                "idLocal": "Economy Queue",
+                                "location": {
+                                    "@type": "Terminal",
+                                    "name": "T1",
+                                    "location": {
+                                        "@type": "Airport",
+                                        "idOfficial": "EFHK",
+                                        "categorizationPreferred": false,
+                                        "categorizationPremium:": false
+                                    }
+                                },
+                                "localizationValue": {
+                                    "@type": "Localization",
+                                    "en-us": "Economy Queue",
+                                    "fi-fi": "Economy Queue"
+                                }
+                            }
+                        },
+                        {
+                            "@type": "Measure",
+                            "processValue": 0,
+                            "exactTime": "2021-06-18T12:30:00Z",
+                            "sampleAmount": 139,
+                            "location": {
+                                "@type": "SecurityCheckPoint",
+                                "idLocal": "SC9",
+                                "location": {
+                                    "@type": "Terminal",
+                                    "name": "NOSE",
+                                    "location": {
+                                        "@type": "Airport",
+                                        "idOfficial": "EFHK",
+                                        "categorizationPreferred": false,
+                                        "categorizationPremium:": false
+                                    }
+                                },
+                                "localizationValue": {
+                                    "@type": "Localization",
+                                    "en-us": "Security Check 9",
+                                    "fi-fi": "Turva 9"
+                                }
+                            }
+                        },
+                        {
+                            "@type": "Measure",
+                            "processValue": 0,
+                            "exactTime": "2021-06-18T12:30:00Z",
+                            "sampleAmount": 0,
+                            "location": {
+                                "@type": "SecurityCheckPoint",
+                                "idLocal": "Economy Queue",
+                                "location": {
+                                    "@type": "Terminal",
+                                    "name": "T2",
+                                    "location": {
+                                        "@type": "Airport",
+                                        "idOfficial": "EFHK",
+                                        "categorizationPreferred": false,
+                                        "categorizationPremium:": false
+                                    }
+                                },
+                                "localizationValue": {
+                                    "@type": "Localization",
+                                    "en-us": "Economy Queue",
+                                    "fi-fi": "Economy Queue"
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "airportSecurityLine"
+            ]
+        },
+        "signature": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "default": "RsaSignature2018"
+                },
+                "created": {
+                    "type": "string",
+                    "default": "2021-06-18T15:29:59+03:00"
+                },
+                "creator": {
+                    "type": "string",
+                    "default": "http://localhost:8080/translator/v1/public.key"
+                },
+                "signatureValue": {
+                    "type": "string",
+                    "default": "jRifPENZwOlFLdNr4wkzN+qE0mL+4lAFmyFDh3gJCSnA2PR+WsxcGYKA+1ha5FEdxnIRyECRZIAC2R9Tyw3Y7cyQanLy1YVqh5EfykeSYKH/mg36c9q5Q3lsgAVdP4fTQEji+Grzqx9TyLIiRFyv6QoBIDhLRp6sQiDR+Gc1m5mQ0uHCWLRx9Uat9bNiCxRQfmbGGcGIa4vTuSHTWXFrZN5T9cI2PMzoaJXpbDVhvYymMkG6S7s8szfsxqoO/qiUny14ZuNffjEHyjeWPxWynUYPpmpLSeipduHIAeJ8iqVGfVn4r9VWmLjc1txNJhq87aLY4Mxw/YoyGUbzEwYExZXW6nNAcbbqX7/pCKBJcZO5lxkkbnbGgCjqdtVi41ubmPJRH55llm88LGMvOYmH868I2nKyiuctvoqhP2wqFVdcucQrfb1n1EFqc63n4wx/Foyx5z5VlCqJBvXm1khibM2Mzre9PKgeFuiFvxbzRnNtwxypxpssH1vMQ+mSTMi5rnw5OVTLybRQBQGuEwiK8/5zmLTmZ20VXVfOe2knEk0xOkuzKkdFhIoucVNV2fuEPF4DA23MoYvcGwwa/zexe+BpiMZcd4i9sLwzLHoa534r4UTckwsEvYPNPbdZXDv7UxAkWUP2dZ2YRg5pi05h7GK0h0v0kRMtAp3VcbcJ1l4="
+                }
+            },
+            "required": [
+                "created",
+                "creator",
+                "signatureValue",
+                "type"
+            ]
+        }
+    },
+    "required": [
+        "@context",
+        "data",
+        "signature"
+    ]
+}</msg>
+<status status="PASS" starttime="20210618 15:29:59.406" endtime="20210618 15:29:59.426"></status>
+</kw>
+<status status="PASS" starttime="20210618 15:29:56.804" endtime="20210618 15:29:59.427"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>200</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:29:59.429" endtime="20210618 15:29:59.430"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body @context</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductOutput/Process/Measure/AirportSecurityLine/</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:29:59.430" endtime="20210618 15:29:59.430"></status>
+</kw>
+<kw name="Object" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON object.*</doc>
+<arguments>
+<arg>response body data</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:29:59.431" endtime="20210618 15:29:59.434"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data airportSecurityLine</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:29:59.434" endtime="20210618 15:29:59.436"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body data airportSecurityLine 0 @type</arg>
+<arg>Measure</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:29:59.436" endtime="20210618 15:29:59.437"></status>
+</kw>
+<tags>
+<tag>bug-0001</tag>
+</tags>
+<status status="PASS" starttime="20210618 15:29:56.801" endtime="20210618 15:29:59.437" critical="yes"></status>
+</test>
+<test id="s1-t2" name="fetch, 422, Missing data for timestamp required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20210618 15:29:59.439" level="INFO">${body} = {'productCode': 'finavia-security', 'parameters': {'targetObject': {'idLocal': ['EFHK', 'EFHK']}}}</msg>
+<status status="PASS" starttime="20210618 15:29:59.439" endtime="20210618 15:29:59.440"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20210618 15:29:59.440" level="INFO">${now} = 2021-06-18T12:29:59+00:00</msg>
+<status status="PASS" starttime="20210618 15:29:59.440" endtime="20210618 15:29:59.440"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:29:59.440" endtime="20210618 15:29:59.440"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:29:59.440" endtime="20210618 15:29:59.440"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20210618 15:29:59.441" level="INFO">${json_string} = {"productCode": "finavia-security", "parameters": {"targetObject": {"idLocal": ["EFHK", "EFHK"]}}, "timestamp": "2021-06-18T12:29:59+00:00"}</msg>
+<status status="PASS" starttime="20210618 15:29:59.440" endtime="20210618 15:29:59.441"></status>
+</kw>
+<msg timestamp="20210618 15:29:59.441" level="INFO">${body} = {'productCode': 'finavia-security', 'parameters': {'targetObject': {'idLocal': ['EFHK', 'EFHK']}}, 'timestamp': '2021-06-18T12:29:59+00:00'}</msg>
+<status status="PASS" starttime="20210618 15:29:59.439" endtime="20210618 15:29:59.441"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:29:59.441" endtime="20210618 15:29:59.442"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20210618 15:29:59.443" level="INFO">${signature} = dBc1gqIXF490fkCXnFCQqeYOo+JzV2BR2bOtLQiqFqQ=</msg>
+<status status="PASS" starttime="20210618 15:29:59.442" endtime="20210618 15:29:59.443"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:29:59.443" endtime="20210618 15:29:59.443"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:29:59.443" endtime="20210618 15:30:01.480"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20210618 15:30:01.481" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "timestamp": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "timestamp"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20210618 15:30:01.480" endtime="20210618 15:30:01.486"></status>
+</kw>
+<status status="PASS" starttime="20210618 15:29:59.442" endtime="20210618 15:30:01.487"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:30:01.492" endtime="20210618 15:30:01.493"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:30:01.494" endtime="20210618 15:30:01.495"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message timestamp 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:30:01.496" endtime="20210618 15:30:01.497"></status>
+</kw>
+<tags>
+<tag>bug-0001</tag>
+</tags>
+<status status="PASS" starttime="20210618 15:29:59.438" endtime="20210618 15:30:01.497" critical="yes"></status>
+</test>
+<test id="s1-t3" name="fetch, 422, Missing data for parameters required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20210618 15:30:01.501" level="INFO">${body} = {'productCode': 'finavia-security', 'parameters': {'targetObject': {'idLocal': ['EFHK', 'EFHK']}}}</msg>
+<status status="PASS" starttime="20210618 15:30:01.501" endtime="20210618 15:30:01.501"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20210618 15:30:01.502" level="INFO">${now} = 2021-06-18T12:30:01+00:00</msg>
+<status status="PASS" starttime="20210618 15:30:01.502" endtime="20210618 15:30:01.502"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:30:01.502" endtime="20210618 15:30:01.503"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:30:01.503" endtime="20210618 15:30:01.503"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20210618 15:30:01.504" level="INFO">${json_string} = {"productCode": "finavia-security", "parameters": {"targetObject": {"idLocal": ["EFHK", "EFHK"]}}, "timestamp": "2021-06-18T12:30:01+00:00"}</msg>
+<status status="PASS" starttime="20210618 15:30:01.503" endtime="20210618 15:30:01.504"></status>
+</kw>
+<msg timestamp="20210618 15:30:01.504" level="INFO">${body} = {'productCode': 'finavia-security', 'parameters': {'targetObject': {'idLocal': ['EFHK', 'EFHK']}}, 'timestamp': '2021-06-18T12:30:01+00:00'}</msg>
+<status status="PASS" starttime="20210618 15:30:01.500" endtime="20210618 15:30:01.504"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>parameters</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:30:01.505" endtime="20210618 15:30:01.505"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20210618 15:30:01.507" level="INFO">${signature} = AbbJQDkaKn9ujkfxWyR23MP0kaJ9R6T/7wg3JNVI4OU=</msg>
+<status status="PASS" starttime="20210618 15:30:01.506" endtime="20210618 15:30:01.507"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:30:01.507" endtime="20210618 15:30:01.507"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:30:01.507" endtime="20210618 15:30:03.550"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20210618 15:30:03.551" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "parameters": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "parameters"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20210618 15:30:03.550" endtime="20210618 15:30:03.556"></status>
+</kw>
+<status status="PASS" starttime="20210618 15:30:01.506" endtime="20210618 15:30:03.557"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:30:03.562" endtime="20210618 15:30:03.564"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:30:03.565" endtime="20210618 15:30:03.566"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message parameters 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:30:03.567" endtime="20210618 15:30:03.568"></status>
+</kw>
+<tags>
+<tag>bug-0002</tag>
+</tags>
+<status status="PASS" starttime="20210618 15:30:01.499" endtime="20210618 15:30:03.569" critical="yes"></status>
+</test>
+<test id="s1-t4" name="fetch, 422, Missing data for targetObject required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20210618 15:30:03.577" level="INFO">${body} = {'productCode': 'finavia-security', 'parameters': {'targetObject': {'idLocal': ['EFHK', 'EFHK']}}}</msg>
+<status status="PASS" starttime="20210618 15:30:03.575" endtime="20210618 15:30:03.577"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20210618 15:30:03.578" level="INFO">${now} = 2021-06-18T12:30:03+00:00</msg>
+<status status="PASS" starttime="20210618 15:30:03.578" endtime="20210618 15:30:03.579"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:30:03.579" endtime="20210618 15:30:03.580"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:30:03.580" endtime="20210618 15:30:03.581"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20210618 15:30:03.582" level="INFO">${json_string} = {"productCode": "finavia-security", "parameters": {"targetObject": {"idLocal": ["EFHK", "EFHK"]}}, "timestamp": "2021-06-18T12:30:03+00:00"}</msg>
+<status status="PASS" starttime="20210618 15:30:03.581" endtime="20210618 15:30:03.582"></status>
+</kw>
+<msg timestamp="20210618 15:30:03.582" level="INFO">${body} = {'productCode': 'finavia-security', 'parameters': {'targetObject': {'idLocal': ['EFHK', 'EFHK']}}, 'timestamp': '2021-06-18T12:30:03+00:00'}</msg>
+<status status="PASS" starttime="20210618 15:30:03.574" endtime="20210618 15:30:03.583"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body["parameters"]}</arg>
+<arg>targetObject</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:30:03.584" endtime="20210618 15:30:03.584"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20210618 15:30:03.587" level="INFO">${signature} = s0CHf3UZ2PNQjkZcB+CYHF6eIvP/RvIV6eiQqgJERWM=</msg>
+<status status="PASS" starttime="20210618 15:30:03.587" endtime="20210618 15:30:03.587"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:30:03.587" endtime="20210618 15:30:03.588"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:30:03.589" endtime="20210618 15:30:05.636"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20210618 15:30:05.636" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "parameters.targetObject": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Missing data for required field."
+                            ]
+                        }
+                    },
+                    "required": [
+                        "parameters.targetObject"
+                    ]
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20210618 15:30:05.636" endtime="20210618 15:30:05.638"></status>
+</kw>
+<status status="PASS" starttime="20210618 15:30:03.585" endtime="20210618 15:30:05.638"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:30:05.639" endtime="20210618 15:30:05.639"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response body error status</arg>
+<arg>422</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:30:05.640" endtime="20210618 15:30:05.640"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body error message parameters.targetObject 0</arg>
+<arg>Missing data for required field.</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:30:05.641" endtime="20210618 15:30:05.642"></status>
+</kw>
+<tags>
+<tag>bug-0003</tag>
+</tags>
+<status status="PASS" starttime="20210618 15:30:03.572" endtime="20210618 15:30:05.642" critical="yes"></status>
+</test>
+<test id="s1-t5" name="fetch, 200, Empty targetObject">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20210618 15:30:05.645" level="INFO">${body} = {'productCode': 'finavia-security', 'parameters': {'targetObject': {'idLocal': ['EFHK', 'EFHK']}}}</msg>
+<status status="PASS" starttime="20210618 15:30:05.644" endtime="20210618 15:30:05.645"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20210618 15:30:05.645" level="INFO">${now} = 2021-06-18T12:30:05+00:00</msg>
+<status status="PASS" starttime="20210618 15:30:05.645" endtime="20210618 15:30:05.645"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:30:05.645" endtime="20210618 15:30:05.645"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:30:05.645" endtime="20210618 15:30:05.646"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20210618 15:30:05.646" level="INFO">${json_string} = {"productCode": "finavia-security", "parameters": {"targetObject": {"idLocal": ["EFHK", "EFHK"]}}, "timestamp": "2021-06-18T12:30:05+00:00"}</msg>
+<status status="PASS" starttime="20210618 15:30:05.646" endtime="20210618 15:30:05.646"></status>
+</kw>
+<msg timestamp="20210618 15:30:05.646" level="INFO">${body} = {'productCode': 'finavia-security', 'parameters': {'targetObject': {'idLocal': ['EFHK', 'EFHK']}}, 'timestamp': '2021-06-18T12:30:05+00:00'}</msg>
+<status status="PASS" starttime="20210618 15:30:05.644" endtime="20210618 15:30:05.646"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body["parameters"]["targetObject"]}</arg>
+<arg>idLocal=@{EMPTY}</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:30:05.647" endtime="20210618 15:30:05.647"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20210618 15:30:05.648" level="INFO">${signature} = gA1qRM/kSrV6kyCQdHfL9A5d94JnSLd1v1xev4JdQNU=</msg>
+<status status="PASS" starttime="20210618 15:30:05.648" endtime="20210618 15:30:05.648"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:30:05.648" endtime="20210618 15:30:05.649"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:30:05.649" endtime="20210618 15:30:07.700"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20210618 15:30:07.700" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "@context": {
+            "type": "string",
+            "default": "https://standards.oftrust.net/v2/Context/DataProductOutput/Process/Measure/AirportSecurityLine/"
+        },
+        "data": {
+            "type": "object",
+            "properties": {
+                "airportSecurityLine": {
+                    "type": "array",
+                    "default": []
+                }
+            },
+            "required": [
+                "airportSecurityLine"
+            ]
+        },
+        "signature": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "default": "RsaSignature2018"
+                },
+                "created": {
+                    "type": "string",
+                    "default": "2021-06-18T15:30:07+03:00"
+                },
+                "creator": {
+                    "type": "string",
+                    "default": "http://localhost:8080/translator/v1/public.key"
+                },
+                "signatureValue": {
+                    "type": "string",
+                    "default": "mSQVpHLvcajuNoKPbdHqjMFacVPlqAC0zzM1mH7pAzQBfRRwr0CKInmRHNvOfVnXUeGfcYIAretY2ibl3gEu/FRCzi8TP8dGm9gWO/N00sDUemssWeMAj+WaFheQv1g6oGp1RHyBlvgDbfmsFaEmfoheR0yjrA7e+H6E27mCC+hNeqQ6OaFBJOK1WgrnGBqAAjx/NM8daFzLsu08h694nYoJxj/XeaFXPZ/BOXNXjSJVplshkyOo8eNhNolDI393XhiMfPGQr/CykKcY7uZHPvRxTrrmWNRu+xgOlhVpWif7UaXuh5ji47otX7Gf4ktQTjNjy8QkRmRzj1z5wGND7BWOsnDh/t0UZUGPEKzcyXI8YqmvuqirWTygqxu/txiYvi7gB+F8DIk0EfWqmTeAv4tBYih/grb7Ab9SczSBrdDaEwfKfeaxCAR6Het67dnpQWr+QCeRW7zS/72pli2NY/fod53y3CxOO8+mo7VVV+Q9H8pX6P2fu2QSWIUG/NCoW87dyQDTl4E8h7y2K8I8Ow5S5bPuyP/uY9m5Oto8qEFi+x8a0ocz3rt0ipkY53ivHkj8Js/unkNfG+T5iGTMZP7yCpudNmleWabKYplBzYBzaftLnSFRAoghNLxIMAHBj+2lcn761kjKUGJ8k5ddLfE7TXHEsCSOpAIxhU05TZE="
+                }
+            },
+            "required": [
+                "created",
+                "creator",
+                "signatureValue",
+                "type"
+            ]
+        }
+    },
+    "required": [
+        "@context",
+        "data",
+        "signature"
+    ]
+}</msg>
+<status status="PASS" starttime="20210618 15:30:07.700" endtime="20210618 15:30:07.704"></status>
+</kw>
+<status status="PASS" starttime="20210618 15:30:05.648" endtime="20210618 15:30:07.704"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>200</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:30:07.706" endtime="20210618 15:30:07.707"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body @context</arg>
+<arg>https://standards.oftrust.net/v2/Context/DataProductOutput/Process/Measure/AirportSecurityLine/</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:30:07.707" endtime="20210618 15:30:07.707"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data airportSecurityLine</arg>
+<arg>maxItems=0</arg>
+</arguments>
+<status status="PASS" starttime="20210618 15:30:07.708" endtime="20210618 15:30:07.708"></status>
+</kw>
+<tags>
+<tag>bug-0004</tag>
+</tags>
+<status status="PASS" starttime="20210618 15:30:05.644" endtime="20210618 15:30:07.709" critical="yes"></status>
+</test>
+<doc>Finavia security queue API - REST</doc>
+<status status="PASS" starttime="20210618 15:29:56.519" endtime="20210618 15:30:07.711"></status>
+</suite>
+<statistics>
+<total>
+<stat pass="5" fail="0">Critical Tests</stat>
+<stat pass="5" fail="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="2" fail="0">bug-0001</stat>
+<stat pass="1" fail="0">bug-0002</stat>
+<stat pass="1" fail="0">bug-0003</stat>
+<stat pass="1" fail="0">bug-0004</stat>
+</tag>
+<suite>
+<stat pass="5" fail="0" id="s1" name="Connector Tests">Connector Tests</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
