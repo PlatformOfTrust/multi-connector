@@ -11,7 +11,7 @@ const transformer = require('../../app/lib/transformer');
 // Source mapping.
 const schema = {
 	'$schema': 'http://json-schema.org/draft-06/schema#',
-	'$id': 'https://standards-ontotest.oftrust.net/v2/Schema/DataProductOutput/VehicleInformation/FlightDeparture?v=2.0',
+	'$id': 'https://standards.oftrust.net/v2/Schema/DataProductOutput/VehicleInformation/FlightDeparture?v=2.0',
     'source': null,
 	'type': 'object',
 	'required': [],
@@ -20,7 +20,7 @@ const schema = {
 			'$id': '#/properties/@context',
             'source': null,
 			'type': 'string',
-			'const': 'https://standards-ontotest.oftrust.net/v2/Context/DataProductOutput/VehicleInformation/FlightDeparture/?v=2.0',
+			'const': 'https://standards.oftrust.net/v2/Context/DataProductOutput/VehicleInformation/FlightDeparture/?v=2.0',
 			'title': 'JSON-LD context url',
 			'description': 'JSON-LD context url with terms required to understand data product content.'
 		},
@@ -602,11 +602,11 @@ const handleData = function (config, id, data) {
 
         for (let j = 0; j < data.length; j++) {
             // Filter by id.
-            const ids = config.parameters.ids.map(o => o.id);
+            const ids = config.parameters.targetObject.idLocal;
             if (!ids.includes(id) && ids.length > 0) {
                 continue;
             }
-
+            console.log(config.parameters)
             let result = {};
             const value = data[j][config.output.value];
             // Transform raw input.

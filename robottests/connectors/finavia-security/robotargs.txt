@@ -1,0 +1,3 @@
+--pythonpath lib
+--outputdir connectors/finavia-security/result
+connectors/finavia-security/connector_tests.robot
