@@ -3,7 +3,7 @@
   "static": {
     "applicationId": "<application-id>",
     "applicationKey": "<application-key>",
-    "type": "Process"
+    "type": "Measure"
   },
   "dynamic": {
     "authConfig.path": "targetObject.idLocal"
