@@ -1,5 +1,5 @@
 *** Settings ***
-Documentation     Finavia security flights API - REST
+Documentation     Finavia Flights API Tests
 Library           Collections
 Library           DateTime
 Library           PoTLib

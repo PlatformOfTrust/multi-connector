@@ -1,5 +1,5 @@
 *** Settings ***
-Documentation     Finavia security queue API - REST
+Documentation     Finavia Queues API Tests
 Library           Collections
 Library           DateTime
 Library           PoTLib
@@ -103,7 +103,7 @@ fetch, 422, Missing data for targetObject required field
 fetch, 200, Empty targetObject
     [Tags]                 bug-0004
     ${body}                Get Body
-    Set To Dictionary      ${body["parameters"]["targetObject"]}  idLocal=@{EMPTY}    
+    Set To Dictionary      ${body["parameters"]["targetObject"]}  idLocal=@{EMPTY}
     Fetch Data Product     ${body}
     Integer    response status                200
     String     response body @context         https://standards.oftrust.net/v2/Context/DataProductOutput/Process/Measure/AirportSecurityLine/

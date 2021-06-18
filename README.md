@@ -15,6 +15,8 @@ Following data sources are supported out of the box. Example configs can be foun
 - EnerKey Data API
 - ENTSO-E Transparency Platform
 - Fidelix Pilvivalvomo
+- Finavia Flights API
+- Finavia Queues API
 - SFTP Server
 - GeoServer Web Feature Service
 - Haltian Thingsee API
