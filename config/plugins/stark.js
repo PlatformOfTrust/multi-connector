@@ -68,6 +68,10 @@ const OrderInformationSchema = {
                             "source": "externalMessageType",
                             "type": "string",
                         },
+						"C_VersionTCXML": {
+							"source": "externalVersionType",
+							"type": "string",
+						},
                     },
 				},
                 "Msg": {
@@ -91,6 +95,10 @@ const OrderInformationSchema = {
 									},
 									"C_Msg_Type": {
 										"source": "externalMessageType",
+										"type": "string",
+									},
+									"C_VersionTCXML": {
+										"source": "externalVersionType",
 										"type": "string",
 									},
 								},
@@ -317,6 +325,7 @@ const OrderInformationSchema = {
 
 const json2xml = (input = {}) => {
     input.externalMessageType = 'ORDERS';
+    input.externalVersionType = '2x20R5B';
     input.externalDocType = 'ORD';
     input.externalIdTypeBuyer = 'EDI'
     input.externalIdTypeSeller = 'EDI'
