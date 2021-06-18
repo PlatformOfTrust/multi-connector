@@ -419,9 +419,6 @@ const template = async (config, template) => {
                 // winston.log('info', 'orderNumberToCALSId: ' + JSON.stringify(orderNumberToCALSId));
                 // winston.log('info', 'productCodeToCALSId: ' + JSON.stringify(productCodeToCALSId));
 
-                // Pick Laattapiste endpoint from config.
-                config.static.url = config.static.endpoint;
-
                 const xml = json2xml(result[id]);
                 const path = '/' + result[id].idSystemLocal + '.xml';
                 const to = DOWNLOAD_DIR + template.productCode + (template.authConfig.fromPath || '/from') + path;
