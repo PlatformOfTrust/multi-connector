@@ -34,8 +34,8 @@
         ]
     },
     "output": {
-        "contextValue": "https://standards-ontotest.oftrust.net/v2/Context/DataProductContext/Process/",
-        "array": "process",
+        "contextValue": "https://standards-ontotest.oftrust.net/v2/Context/DataProductOutput/Process/Measure/AirportSecurityLine/",
+        "array": "security",
         "data": "data"
     }
   }
