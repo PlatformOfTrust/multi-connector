@@ -1,0 +1,38 @@
+{
+    "plugins": [
+        "onninen",
+        "broker",
+        "streamer"
+    ],
+    "protocol": "hook",
+    "authConfig": {
+        "path": "${targetObject.idLocal}"
+    },
+    "dataObjects": [
+        ""
+    ],
+    "dataPropertyMappings": {
+        "OrderConfirmation": ""
+    },
+    "generalConfig": {
+        "hardwareId": {
+            "dataObjectProperty": "idLocal"
+        },
+        "sourceName": {
+            "dataObjectProperty": "reference"
+        },
+        "timestamp": {
+            "dataObjectProperty": ""
+        }
+    },
+    "input": {
+        "required": [
+            "parameters.targetObject"
+        ]
+    },
+    "output": {
+        "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/OrderConfirmation/",
+        "array": "order",
+        "data": "data"
+    }
+}

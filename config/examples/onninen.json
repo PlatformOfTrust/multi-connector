@@ -1,0 +1,22 @@
+{
+    "template": "onninen",
+    "static": {
+        "endpoint": "<vendor-url>",
+        "bearer": "<hook-bearer-for-vendor>",
+        "headers": {
+            "Ocp-Apim-Subscription-Key": "<vendor-apikey>",
+            "Ocp-Apim-Trace": "true"
+        }
+    },
+    "dynamic": {
+        "authConfig.path": "targetObject.idLocal"
+    },
+    "plugins": {
+        "broker": {
+            "env": "production",
+            "receiver": "<dealer-product-code>",
+            "clientSecret": "<client-secret>",
+            "appAccessToken": "<app-token>"
+        }
+    }
+}
