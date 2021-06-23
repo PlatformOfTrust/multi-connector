@@ -10,6 +10,7 @@
     "username": "${username}",
     "password": "${password}",
     "headers": "${headers}",
+    "wsdl": "${wsdl}",
     "function": "Fidelix.FidelixSoap.getPointDataList",
     "path": "${id}"
   },

@@ -182,6 +182,14 @@ const getData = async (config, pathArray) => {
             winston.log('info', 'Created folder for WSDL files.');
         }
 
+        try {
+            if (config.authConfig.wsdl !== '${wsdl}') {
+                await fs.promises.writeFile(WSDLFile, Buffer.from(config.authConfig.wsdl, 'base64'), 'utf-8');
+            }
+        } catch (e) {
+            winston.log('error', 'Failed to parse WSDL from config.');
+        }
+
         // Download WSDL file, if it does not exist.
         if (fs.existsSync(WSDLFile)) {
             winston.log('info', 'Initiated SOAP connection ' + config.productCode);
