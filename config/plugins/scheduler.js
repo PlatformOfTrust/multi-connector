@@ -31,8 +31,34 @@ const brokerRequest = async (productCode, parameters) => {
                 return '';
             },
         };
-        await connector.getData(triggeredReq);
+        return await connector.getData(triggeredReq);
     } catch (e) {
+        console.log(e.message);
+    }
+};
+
+/**
+ * Streams received broker response data.
+ *
+ * @param {Object} config
+ * @param {Object} scheduler
+ * @param {Object} response
+ */
+const stream = async (config, scheduler, response) => {
+    try {
+        if (Object.hasOwnProperty.call(scheduler, 'streamer')) {
+            if (Object.hasOwnProperty.call(scheduler.streamer, 'url')) {
+                let template = {
+                    config: {...config, plugins: {streamer: scheduler.streamer}},
+                    plugins: ['streamer'],
+                    output: {},
+                };
+                template = await connector.resolvePlugins(template);
+                await template.plugins.find(p => p.name === 'streamer').stream(template, response.output);
+            }
+        }
+    } catch (e) {
+        console.log(e.message);
     }
 };
 
@@ -51,9 +77,17 @@ const parameters = async (config, parameters) => {
                 clearInterval(schedule);
                 // Set new schedule if provided interval is valid.
                 if (Number.isInteger(parameters.scheduler.interval)) {
-                    schedule = setInterval(() => {
-                        brokerRequest(config.productCode, parameters);
-                    }, Math.max(DEFAULT_INTERVAL, parameters.scheduler.interval));
+                    schedule = setInterval(async (scheduler) => {
+                        // Detect mode from scheduler options.
+                        if (scheduler.mode === 'latest') {
+                            delete parameters.start;
+                            delete parameters.end;
+                        }
+                        // Trigger broker request.
+                        const result = await brokerRequest(config.productCode, parameters);
+                        // Stream result.
+                        await stream(config, scheduler, result);
+                    }, Math.max(DEFAULT_INTERVAL, parameters.scheduler.interval), parameters.scheduler);
                 }
             }
         }

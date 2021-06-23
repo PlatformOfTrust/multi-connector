@@ -58,7 +58,7 @@ const stream = async (template, data) => {
         headers = headers || config.static.headers || {};
         if (!url) return data;
         const objectKey = template.output.object || 'data';
-        const arrayKey = template.output.array;
+        const arrayKey = template.output.array || 'sensors';
         // Send data to external system.
         for (const d of (Array.isArray(data) ? data : [data])) {
             if (Array.isArray(d[objectKey][arrayKey])) {
