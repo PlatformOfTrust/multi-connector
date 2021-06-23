@@ -1,0 +1,30 @@
+{
+  "plugins": [
+    "soap-basic",
+    "fidelix",
+    "scheduler"
+  ],
+  "protocol": "soap",
+  "authConfig": {
+    "url": "http://${ipAddress}/WebServices/Fidelix.asmx?WSDL",
+    "username": "${username}",
+    "password": "${password}",
+    "headers": "${headers}",
+    "function": "Fidelix.FidelixSoap.getPointDataList",
+    "path": "${id}"
+  },
+  "dataObjects": [
+    ""
+  ],
+  "dataPropertyMappings": {
+    "${type}": "getPointDataResult"
+  },
+  "generalConfig": {
+    "hardwareId": {
+      "dataObjectProperty": "hardwareId"
+    },
+    "timestamp": {
+      "dataObjectProperty": "timestamp"
+    }
+  }
+}
