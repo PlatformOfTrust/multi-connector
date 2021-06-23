@@ -262,7 +262,11 @@ function replacer (template, placeholder, value) {
     if (value instanceof Date) value = value.toISOString();
     if (_.isObject(value)) {
         Object.keys(value).forEach(function (key) {
-            r = replaceAll(r, '${' + key + '}', value[key]);
+            if (_.isObject(value[key])) {
+                r = replaceAll(r, '"${' + key + '}"', JSON.stringify(value[key]));
+            } else {
+                r = replaceAll(r, '${' + key + '}', value[key]);
+            }
         });
         // In case id placeholder is left untouched.
         if (r === '"${id}"' && Object.keys(value).length > 0) {
