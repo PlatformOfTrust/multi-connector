@@ -8,10 +8,9 @@
     "url": "http://${ipAddress}/WebServices/Fidelix.asmx?WSDL",
     "username": "${username}",
     "password": "${password}",
+    "headers": "${headers}",
     "function": "Fidelix.FidelixSoap.getPointDataList",
-    "path": {
-      "point_id": "${id}"
-    }
+    "path": "${id}"
   },
   "dataObjects": [
     ""

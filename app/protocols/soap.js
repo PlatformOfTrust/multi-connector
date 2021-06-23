@@ -107,6 +107,7 @@ const createSOAPClient = async (config, url, pathArray) => {
     const receivedData = [];
     const username = config.authConfig.username;
     const password = config.authConfig.password;
+    const headers = config.authConfig.headers;
     const SOAPFunction = config.authConfig.function;
     let options = {wsdl_headers: {Authorization: 'Basic ' + Buffer.from(username + ':' + password).toString('base64')}};
     if (config.plugins.find(p => p.name === 'soap-ntlm')) {
@@ -115,6 +116,13 @@ const createSOAPClient = async (config, url, pathArray) => {
 
     return new Promise((resolve, reject) => {
         soap.createClient(url, options, async (err, client) => {
+            try {
+                if (headers !== '${headers}' && _.isObject(headers)) {
+                    Object.entries(headers).forEach(h => client.addHttpHeader(h[0], h[1]));
+                }
+            } catch (e) {
+                winston.log('error', e.message);
+            }
             if (err) {
                 // Execute onerror plugin function.
                 for (let i = 0; i < config.plugins.length; i++) {
