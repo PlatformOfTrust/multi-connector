@@ -1,0 +1,19 @@
+{
+    "template": "stark-sftp",
+    "static": {
+        "url": "localhost",
+        "port": "22",
+        "fromPath": "/from",
+        "toPath": "/to",
+        "username": "tester",
+        "password": "password"
+    },
+    "dynamic": {
+        "authConfig.path": "targetObject.idLocal"
+    },
+    "request": {
+        "ids": [
+            "<path>"
+        ]
+    }
+}

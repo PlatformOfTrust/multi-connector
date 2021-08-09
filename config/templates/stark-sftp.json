@@ -1,0 +1,44 @@
+{
+    "plugins": [
+        "stark"
+    ],
+    "protocol": "sftp",
+    "authConfig": {
+        "url": "${url}",
+        "port": "${port}",
+        "fromPath": "${fromPath}",
+        "toPath": "${toPath}",
+        "proxyHost": "${proxyHost}",
+        "proxyPort": "${proxyPort}",
+        "username": "${username}",
+        "password": "${password}",
+        "path": "${targetObject.idLocal}"
+    },
+    "dataObjects": [
+        ""
+    ],
+    "dataPropertyMappings": {
+        "OrderConfirmation": ""
+    },
+    "generalConfig": {
+        "hardwareId": {
+            "dataObjectProperty": "name"
+        },
+        "sourceName": {
+            "dataObjectProperty": ""
+        },
+        "timestamp": {
+            "dataObjectProperty": ""
+        }
+    },
+    "input": {
+        "required": [
+            "parameters.targetObject"
+        ]
+    },
+    "output": {
+        "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/OrderConfirmation/",
+        "array": "order",
+        "data": "data"
+    }
+}
