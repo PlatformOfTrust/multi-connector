@@ -9,7 +9,7 @@ const connector = require('../../app/lib/connector');
  */
 
 const DEFAULT_INTERVAL = 10000;
-let schedule;
+const schedules = {};
 
 /**
  * Initiates broker request.
@@ -71,13 +71,16 @@ const stream = async (config, scheduler, response) => {
  */
 const parameters = async (config, parameters) => {
     try {
-        if (Object.hasOwnProperty.call(parameters, 'scheduler')) {
+        if (Object.hasOwnProperty.call(parameters, 'scheduler')
+            && Object.hasOwnProperty.call(config, 'productCode')) {
             if (Object.hasOwnProperty.call(parameters.scheduler, 'interval')) {
                 // Remove previous schedule.
-                clearInterval(schedule);
+                if (Object.hasOwnProperty.call(schedules, config.productCode)) {
+                    clearInterval(schedules[config.productCode]);
+                }
                 // Set new schedule if provided interval is valid.
                 if (Number.isInteger(parameters.scheduler.interval)) {
-                    schedule = setInterval(async (scheduler) => {
+                    schedules[config.productCode] = setInterval(async (scheduler) => {
                         // Detect mode from scheduler options.
                         if (scheduler.mode === 'latest') {
                             delete parameters.start;
