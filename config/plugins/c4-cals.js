@@ -1002,7 +1002,7 @@ const template = async (config, template) => {
                 data.PurchaseOrderItems = items.map(input => {
                     const output = {};
                     // Root level delivery datetime by default.
-                    let datetime = template.parameters.targetObject.deliveryRequired;
+                    let datetime = template.parameters.targetObject.deliveryPlanned;
 
                     // Catch transportation/delivery time from delivery information.
                     if (!datetime && Object.hasOwnProperty.call(input, 'transportation')) {
@@ -1020,7 +1020,7 @@ const template = async (config, template) => {
 
                     // Set per order line if available.
                     if (!datetime) {
-                        datetime = input.deliveryRequired;
+                        datetime = input.deliveryPlanned;
                     }
 
                     // Resolve CALSId.
