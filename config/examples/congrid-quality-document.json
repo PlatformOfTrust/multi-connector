@@ -1,0 +1,22 @@
+{
+  "template": "congrid",
+  "static": {
+    "api": "api",
+    "version": "v2",
+    "resource": "qualityDocuments",
+    "token": "<congrid-api-token>",
+    "type": "Document",
+    "outputArray": "document",
+    "idProperty": "projectId",
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Document/"
+  },
+  "dynamic": {
+    "authConfig.path": "targetObject.idLocal",
+    "dataPropertyMappings": "type"
+  },
+  "request": {
+    "ids": [
+      "<project-id>"
+    ]
+  }
+}
