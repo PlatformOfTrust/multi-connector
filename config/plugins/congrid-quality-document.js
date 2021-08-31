@@ -13,7 +13,7 @@ const fs = require('fs');
  * Congrid quality document creator plugin.
  */
 
-const DOWNLOAD_DIR = './temp/';
+const DOWNLOAD_DIR = './temp';
 
 // Source mapping.
 const documentSchema = {
@@ -339,8 +339,9 @@ const downloadFile = async (url, folder = 'unspecified') => {
     try {
         const parts = url.split('/');
         const filename = parts[parts.length - 1];
-        const dir = DOWNLOAD_DIR + folder;
-        // Create directory, if it does not exist.
+        const dir = DOWNLOAD_DIR + '/' + folder;
+        // Make sure required directories exist.
+        if (!fs.existsSync(DOWNLOAD_DIR)) await fs.mkdirSync(DOWNLOAD_DIR);
         if (!fs.existsSync(dir)) await fs.mkdirSync(dir);
         const downloadPath = dir  + '/' + filename;
         return new Promise(resolve => {
