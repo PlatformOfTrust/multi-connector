@@ -446,12 +446,6 @@ const template = async (config, template) => {
             return template;
         }
 
-        // TODO: Testing.
-        const qualityDocumentName = 'Sertifikaatti';
-        const projectCode = '123124';
-        const workSectionCode = '2.1';
-        const workActivityName = 'CE-dokumentit';
-
         // TODO: Get order from CALS by WP, which is in the end of the filename.
         // https://c4-prod-apim.azure-api.net/pot/instances/{instanceId}/purchaseorders/{purchaseOrderId}
         // Query CALS connector through broker API.
@@ -463,6 +457,12 @@ const template = async (config, template) => {
         if (!contentType) {
             return Promise.reject(new Error('Missing field categorizationInternetMediaType.'));
         }
+
+        // TODO: Testing.
+        const qualityDocumentName = originalFilename;
+        const projectCode = '123124';
+        const workSectionCode = '2.1';
+        const workActivityName = 'CE-dokumentit';
 
         /** Create document and fetch it */
         const projectsUrl = domain + '/v2/projects?projectCode=' + projectCode;
