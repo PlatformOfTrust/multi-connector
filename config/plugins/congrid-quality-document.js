@@ -346,7 +346,7 @@ const downloadFile = async (url, folder = 'unspecified') => {
         const downloadPath = dir  + '/' + filename;
         return new Promise(resolve => {
             const file = fs.createWriteStream(downloadPath);
-            https.get(url, function (response) {
+            https.get(url.replace('http://', 'https://'), function (response) {
                 response.pipe(file);
                 file.on('finish', function () {
                     file.close();
