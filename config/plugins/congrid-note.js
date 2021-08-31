@@ -463,16 +463,20 @@ const handleData = function (config, id, data) {
  * @return {Object}
  */
 const output = async (config, output) => {
-    // Initialize harmonized output.
-    const result = {
-        [config.output.context]: config.output.contextValue,
-        [config.output.object]: {
-            [config.output.array]: [],
-        },
-    };
-
-    // Hand over data objects to transformer.
     try {
+        // Validate type.
+        if (config.parameters.targetObject['@type'] !== 'Note') {
+            return output;
+        }
+        // Initialize harmonized output.
+        const result = {
+            [config.output.context]: config.output.contextValue,
+            [config.output.object]: {
+                [config.output.array]: [],
+            },
+        };
+
+        // Hand over data objects to transformer.
         const array = output.data[config.output.array];
         for (let i = 0; i < array.length; i++) {
             result[config.output.object][config.output.array].push(

@@ -1,6 +1,7 @@
 {
   "plugins": [
-      "congrid-note"
+      "congrid-note",
+      "congrid-quality-document"
   ],
   "protocol": "rest",
   "authConfig": {

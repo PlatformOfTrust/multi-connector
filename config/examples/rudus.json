@@ -1,0 +1,29 @@
+{
+    "template": "azure-blob-storage-delivery-document",
+    "static": {
+        "account": "<account>",
+        "accountKey": "<account-key>",
+        "container": "<container-name>",
+        "type": "DeliveryInformation",
+        "hardwareId": "Asiakkaantilausnumero"
+    },
+    "dynamic": {
+        "authConfig.path": "targetObject.idLocal"
+    },
+    "plugins": {
+        "broker": {
+            "env": "dev",
+            "receiver": {
+                "order": "purchase-order-from-cals",
+                "document": "congrid-quality-document"
+            },
+            "clientSecret_disabled": "<client-secret>",
+            "appAccessToken_disabled": "<app-token>"
+        }
+    },
+    "request": {
+        "ids": [
+            "<path>"
+        ]
+    }
+}
