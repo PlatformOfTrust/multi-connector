@@ -456,13 +456,8 @@ const template = async (config, template) => {
         // https://c4-prod-apim.azure-api.net/pot/instances/{instanceId}/purchaseorders/{purchaseOrderId}
         // Query CALS connector through broker API.
 
-        const domain = 'https://api.congrid.com';
-        const apiToken = 'cfe48adb6ae45905c2ffa823ece655f29a46a07d';
-        const headers = {'Congrid-API-Token': apiToken};
-
-        template.authConfig.url = domain;
-        template.authConfig.headers['Congrid-API-Token'] = apiToken;
-
+        const domain = template.authConfig.url;
+        const headers = template.authConfig.headers;
         const originalFilename = template.parameters.targetObject.name;
         const contentType = template.parameters.targetObject['categorizationInternetMediaType'];
         if (!contentType) {
