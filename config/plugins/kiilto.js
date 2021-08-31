@@ -800,7 +800,7 @@ const controller = async (req, res) => {
                 },
                 protocol: 'http',
                 get: function () {
-                    return config.connectorURL;
+                    return config.connectorURL.replace('https://', '').replace('http://', '');
                 },
             };
 
