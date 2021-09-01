@@ -1001,8 +1001,9 @@ const template = async (config, template) => {
                 // 2. Parse PurchaseOrderItems - template.parameters.targetObject.orderLine or -.deliveryLine
                 data.PurchaseOrderItems = items.map(input => {
                     const output = {};
+                    const root = template.parameters.targetObject;
                     // Root level delivery datetime by default.
-                    let datetime = template.parameters.targetObject.deliveryPlanned;
+                    let datetime = root.deliveryPlanned;
 
                     // Catch transportation/delivery time from delivery information.
                     if (!datetime && Object.hasOwnProperty.call(input, 'transportation')) {
@@ -1017,10 +1018,18 @@ const template = async (config, template) => {
                             output.ActualDelivery = [];
                         }
                     }
+                    if (!datetime && Object.hasOwnProperty.call(root, 'processDelivery')) {
+                        if (root.processDelivery.deliveryPlanned !== '') {
+                            datetime = root.processDelivery.deliveryPlanned;
+                        }
+                        if (!datetime && root.processDelivery.deliveryRequired !== '') {
+                            datetime = root.processDelivery.deliveryRequired;
+                        }
+                    }
 
                     // Set per order line if available.
                     if (!datetime) {
-                        datetime = input.deliveryPlanned;
+                        datetime = input.deliveryPlanned || input.deliveryRequired;
                     }
 
                     // Resolve CALSId.
