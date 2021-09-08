@@ -27,288 +27,384 @@ const orderConfirmationSchema = {
 };
 
 const OrderInformationSchema = {
-    "source": null,
-    "type": "object",
-    "properties": {
-        "Batch": {
-            "source": null,
-            "type": "object",
-            "properties": {
-                "$": {
-                    "source": null,
-                    "type": "object",
-                    "properties": {
-                        "xsi:noNamespaceSchemaLocation": {
-                            "source": "$.xsi:noNamespaceSchemaLocation",
-                            "type": "string",
+    'source': null,
+    'type': 'object',
+    'properties': {
+        'Batch': {
+            'source': null,
+            'type': 'object',
+            'properties': {
+                '$': {
+                    'source': null,
+                    'type': 'object',
+                    'properties': {
+                        'xsi:noNamespaceSchemaLocation': {
+                            'source': '$.xsi:noNamespaceSchemaLocation',
+                            'type': 'string',
                         },
-                        "xmlns:xsi": {
-                            "source": "$.xmlns:xsi",
-                            "type": "string",
+                        'xmlns:xsi': {
+                            'source': '$.xmlns:xsi',
+                            'type': 'string',
                         },
                     },
                 },
-				"Control": {
-					"source": null,
-                    "type": "object",
-                    "properties": {
-						"C_Msg_OriginalID": {
-                            "source": "timetamp",
-                            "type": "string",
+                'Control': {
+                    'source': null,
+                    'type': 'object',
+                    'properties': {
+                        'C_Msg_OriginalID': {
+                            'source': 'timetamp',
+                            'type': 'string',
                         },
-                        "C_Msg_Sender": {
-                            "source": "customer.id",
-                            "type": "string",
+                        'C_Msg_Sender': {
+                            'source': 'customer.id',
+                            'type': 'string',
                         },
-						"C_Msg_Receiver": {
-                            "source": "vendor.id",
-                            "type": "string",
+                        'C_Msg_Receiver': {
+                            'source': 'vendor.id',
+                            'type': 'string',
                         },
-                        "C_Msg_Type": {
-                            "source": "externalMessageType",
-                            "type": "string",
+                        'C_Msg_Type': {
+                            'source': 'externalMessageType',
+                            'type': 'string',
                         },
-						"C_VersionTCXML": {
-							"source": "externalVersionType",
-							"type": "string",
-						},
+                        'C_VersionTCXML': {
+                            'source': 'externalVersionType',
+                            'type': 'string',
+                        },
                     },
-				},
-                "Msg": {
-                    "source": '',
-                    "type": "array",
-                    "items": {
-                        "source": null,
-                        "type": "object",
-                        "properties": {
-							"Control": {
-								"source": null,
-								"type": "object",
-								"properties": {
-									"C_Msg_Sender": {
-										"source": "customer.id",
-										"type": "string",
-									},
-									"C_Msg_Receiver": {
-										"source": "vendor.id",
-										"type": "string",
-									},
-									"C_Msg_Type": {
-										"source": "externalMessageType",
-										"type": "string",
-									},
-									"C_VersionTCXML": {
-										"source": "externalVersionType",
-										"type": "string",
-									},
-								},
-							},
-                            "Hdr": {
-                                "source": null,
-                                "type": "object",
-                                "properties": {
-									"H_DocType_Code": {
-                                        "source": "externalDocType",
-                                        "type": "string",
+                },
+                'Msg': {
+                    'source': '',
+                    'type': 'array',
+                    'items': {
+                        'source': null,
+                        'type': 'object',
+                        'properties': {
+                            'Control': {
+                                'source': null,
+                                'type': 'object',
+                                'properties': {
+                                    'C_Msg_Sender': {
+                                        'source': 'customer.id',
+                                        'type': 'string',
                                     },
-									"H_DocNumber_ID": {
-                                        "source": "idLocal",
-                                        "type": "string",
+                                    'C_Msg_Receiver': {
+                                        'source': 'vendor.id',
+                                        'type': 'string',
                                     },
-									"H_Date_Order_Delivery": {
-                                        "source": "dateOrderDelivery",
-                                        "type": "string",
+                                    'C_Msg_Type': {
+                                        'source': 'externalMessageType',
+                                        'type': 'string',
                                     },
-                                    "H_Time_Order_Delivery": {
-                                        "source": "timeOrderDelivery",
-                                        "type": "string",
-                                    },
-                                    "H_Freetext_Gen": {
-                                        "source": "descriptionGeneral",
-                                        "type": "string",
-                                    },
-                                    "H_Ref_CustNum": {
-                                        "source": "customer.ifOfficial",
-                                        "type": "string",
-                                    },
-                                    "H_Ref_VendorNum": {
-                                        "source": "vendor.idLocal",
-                                        "type": "string",
-                                    },
-                                    "H_Ref_ProjNum": {
-                                        "source": "project.idLocal",
-                                        "type": "string",
-                                    },
-									"H_Ref_OrderNum": {
-                                        "source": "idLocal",
-                                        "type": "string",
-                                    },
-                                    "H_BuyerParty": {
-                                        "source": null,
-                                        "type": "object",
-                                        "properties": {
-											"ID_Code": {
-                                                "source": "externalIdTypeBuyer",
-                                                "type": "string",
-                                            },
-											"ID": {
-                                                "source": "customer.id",
-                                                "type": "string",
-                                            },
-                                            "Name": {
-                                                "source": "customer.name",
-                                                "type": "string",
-                                            },
-											"Street": {
-												"source": "addressBilling.streetAddressLine1",
-												"type": "string",
-											},
-											"Zip": {
-												"source": "addressBilling.postalCode",
-												"type": "string",
-											},
-											"City": {
-												"source": "addressBilling.postalArea",
-												"type": "string",
-											},
-											"Country_Name": {
-												"source": "addressBilling.country",
-												"type": "string",
-											},
-											"Country_Code": {
-												"source": "addressBilling.countryCode",
-												"type": "string",
-											},
-											"Email": {
-                                                "source": "contact.contactInformation.addressEmail",
-                                                "type": "string",
-                                            },
-                                            "Phone": {
-                                                "source": "contact.contactInformation.phoneNumber",
-                                                "type": "string",
-                                            },
-											"Ref_VATNum": {
-                                                "source": "customer.idOfficial",
-                                                "type": "string",
-                                            },
-                                        },
-                                    },
-                                    "H_SellerParty": {
-                                        "source": null,
-                                        "type": "object",
-                                        "properties": {
-											"ID_Code": {
-                                                "source": "externalIdTypeSeller",
-                                                "type": "string",
-                                            },
-											"ID": {
-												"source": "vendor.id",
-												"type": "string",
-											},
-											"Name": {
-												"source": "vendor.name",
-												"type": "string",
-											},
-											"Street": {
-												"source": "vendor.contactInformation.streetAddressLine1",
-												"type": "string",
-											},
-											"Zip": {
-												"source": "vendor.contactInformation.postalCode",
-												"type": "string",
-											},
-											"City": {
-												"source": "vendor.contactInformation.postalArea",
-												"type": "string",
-											},
-											"Country_Name": {
-												"source": "vendor.contactInformation.country",
-												"type": "string",
-											},
-											"Country_Code": {
-												"source": "vendor.countryCode",
-												"type": "string",
-											},
-											"Ref_VATNum": {
-                                                "source": "vendor.idOfficial",
-                                                "type": "string",
-                                            },
-                                        },
-                                    },
-                                    "H_ConsigneeParty": {
-                                        "source": null,
-                                        "type": "object",
-                                        "properties": {
-											"ID_Code": {
-                                                "source": "externalIdTypeConsignee",
-                                                "type": "string",
-                                            },
-											"ID": {
-												"source": "addressShipping.id",
-												"type": "string",
-											},
-											"Name": {
-												"source": "addressShipping.name",
-												"type": "string",
-											},
-											"Street": {
-												"source": "addressShipping.streetAddressLine1",
-												"type": "string",
-											},
-											"Zip": {
-												"source": "addressShipping.postalCode",
-												"type": "string",
-											},
-											"City": {
-												"source": "addressShipping.postalArea",
-												"type": "string",
-											},
-											"Country_Name": {
-												"source": "addressShipping.country",
-												"type": "string",
-											},
-											"Country_Code": {
-												"source": "addressShipping.countryCode",
-												"type": "string",
-											},
-											"Ref_VATNum": {
-                                                "source": "addressShipping.idOfficial",
-                                                "type": "string",
-                                            },
-                                        },
+                                    'C_VersionTCXML': {
+                                        'source': 'externalVersionType',
+                                        'type': 'string',
                                     },
                                 },
                             },
-                            "Row": {
-                                "source": 'orderLine',
-                                "type": "array",
-                                "items": {
-                                    "source": null,
-                                    "type": "object",
-                                    "properties": {
-                                        "R_LineItem_Num": {
-                                            "source": "idLocal",
-                                            "type": "string",
+                            'Hdr': {
+                                'source': null,
+                                'type': 'object',
+                                'properties': {
+                                    'H_DocType_Code': {
+                                        'source': 'externalDocType',
+                                        'type': 'string',
+                                    },
+                                    'H_DocNumber_ID': {
+                                        'source': 'idLocal',
+                                        'type': 'string',
+                                    },
+                                    'H_Date_Order_Delivery': {
+                                        'source': 'dateOrderDelivery',
+                                        'type': 'string',
+                                    },
+                                    'H_Time_Order_Delivery': {
+                                        'source': 'timeOrderDelivery',
+                                        'type': 'string',
+                                    },
+                                    'H_Freetext_Gen': {
+                                        'source': 'descriptionGeneral',
+                                        'type': 'string',
+                                    },
+                                    'H_Ref_CustNum': {
+                                        'source': 'customer.ifOfficial',
+                                        'type': 'string',
+                                    },
+                                    'H_Ref_VendorNum': {
+                                        'source': 'vendor.idLocal',
+                                        'type': 'string',
+                                    },
+                                    'H_Ref_ProjNum': {
+                                        'source': 'project.idLocal',
+                                        'type': 'string',
+                                    },
+                                    'H_Ref_OrderNum': {
+                                        'source': 'idLocal',
+                                        'type': 'string',
+                                    },
+                                    'H_BuyerParty': {
+                                        'source': null,
+                                        'type': 'object',
+                                        'properties': {
+                                            'ID_Code': {
+                                                'source': 'externalIdTypeBuyer',
+                                                'type': 'string',
+                                            },
+                                            'ID': {
+                                                'source': 'customer.id',
+                                                'type': 'string',
+                                            },
+                                            'Name': {
+                                                'source': 'customer.name',
+                                                'type': 'string',
+                                            },
+                                            'Street': {
+                                                'source': 'addressBilling.streetAddressLine1',
+                                                'type': 'string',
+                                            },
+                                            'Zip': {
+                                                'source': 'addressBilling.postalCode',
+                                                'type': 'string',
+                                            },
+                                            'City': {
+                                                'source': 'addressBilling.postalArea',
+                                                'type': 'string',
+                                            },
+                                            'Country_Name': {
+                                                'source': 'addressBilling.country',
+                                                'type': 'string',
+                                            },
+                                            'Country_Code': {
+                                                'source': 'addressBilling.countryCode',
+                                                'type': 'string',
+                                            },
+                                            'Email': {
+                                                'source': 'contact.contactInformation.addressEmail',
+                                                'type': 'string',
+                                            },
+                                            'Phone': {
+                                                'source': 'contact.contactInformation.phoneNumber',
+                                                'type': 'string',
+                                            },
+                                            'Ref_VATNum': {
+                                                'source': 'customer.idOfficial',
+                                                'type': 'string',
+                                            },
                                         },
-										"R_Item_Num_EAN": {
-                                            "source": "product.idLocal",
-                                            "type": "string",
+                                    },
+                                    'H_SellerParty': {
+                                        'source': null,
+                                        'type': 'object',
+                                        'properties': {
+                                            'ID_Code': {
+                                                'source': 'externalIdTypeSeller',
+                                                'type': 'string',
+                                            },
+                                            'ID': {
+                                                'source': 'vendor.id',
+                                                'type': 'string',
+                                            },
+                                            'Name': {
+                                                'source': 'vendor.name',
+                                                'type': 'string',
+                                            },
+                                            'Street': {
+                                                'source': 'vendor.contactInformation.streetAddressLine1',
+                                                'type': 'string',
+                                            },
+                                            'Zip': {
+                                                'source': 'vendor.contactInformation.postalCode',
+                                                'type': 'string',
+                                            },
+                                            'City': {
+                                                'source': 'vendor.contactInformation.postalArea',
+                                                'type': 'string',
+                                            },
+                                            'Country_Name': {
+                                                'source': 'vendor.contactInformation.country',
+                                                'type': 'string',
+                                            },
+                                            'Country_Code': {
+                                                'source': 'vendor.countryCode',
+                                                'type': 'string',
+                                            },
+                                            'Ref_VATNum': {
+                                                'source': 'vendor.idOfficial',
+                                                'type': 'string',
+                                            },
                                         },
-                                        "R_Item_Num_Sup": {
-                                            "source": "product.codeProduct",
-                                            "type": "string",
+                                    },
+                                    'H_ConsigneeParty': {
+                                        'source': null,
+                                        'type': 'object',
+                                        'properties': {
+                                            'ID_Code': {
+                                                'source': 'externalIdTypeConsignee',
+                                                'type': 'string',
+                                            },
+                                            'ID': {
+                                                'source': 'addressShipping.id',
+                                                'type': 'string',
+                                            },
+                                            'Name': {
+                                                'source': 'addressShipping.name',
+                                                'type': 'string',
+                                            },
+                                            'Street': {
+                                                'source': 'addressShipping.streetAddressLine1',
+                                                'type': 'string',
+                                            },
+                                            'Zip': {
+                                                'source': 'addressShipping.postalCode',
+                                                'type': 'string',
+                                            },
+                                            'City': {
+                                                'source': 'addressShipping.postalArea',
+                                                'type': 'string',
+                                            },
+                                            'Country_Name': {
+                                                'source': 'addressShipping.country',
+                                                'type': 'string',
+                                            },
+                                            'Country_Code': {
+                                                'source': 'addressShipping.countryCode',
+                                                'type': 'string',
+                                            },
+                                            'Ref_VATNum': {
+                                                'source': 'addressShipping.idOfficial',
+                                                'type': 'string',
+                                            },
                                         },
-                                        "R_Item_Desc": {
-                                            "source": "product.descriptionGeneral",
-                                            "type": "string",
+                                    },
+                                    'H_DeliveryParty': {
+                                        'source': null,
+                                        'type': 'object',
+                                        'properties': {
+                                            'ID_Code': {
+                                                'source': 'externalIdTypeConsignee',
+                                                'type': 'string',
+                                            },
+                                            'ID': {
+                                                'source': 'addressShipping.id',
+                                                'type': 'string',
+                                            },
+                                            'Name': {
+                                                'source': 'addressShipping.name',
+                                                'type': 'string',
+                                            },
+                                            'Street': {
+                                                'source': 'addressShipping.streetAddressLine1',
+                                                'type': 'string',
+                                            },
+                                            'Zip': {
+                                                'source': 'addressShipping.postalCode',
+                                                'type': 'string',
+                                            },
+                                            'City': {
+                                                'source': 'addressShipping.postalArea',
+                                                'type': 'string',
+                                            },
+                                            'Country_Name': {
+                                                'source': 'addressShipping.country',
+                                                'type': 'string',
+                                            },
+                                            'Country_Code': {
+                                                'source': 'addressShipping.countryCode',
+                                                'type': 'string',
+                                            },
+                                            'Contact_ID': {
+                                                'source': 'workPackageOperator',
+                                                'type': 'string',
+                                            },
+                                            'Contact_Name': {
+                                                'source': 'workPackageOperatorContactName',
+                                                'type': 'string',
+                                            },
+                                            'Contact_Phone': {
+                                                'source': 'workPackageOperatorContactTelephone',
+                                                'type': 'string',
+                                            },
+                                            'Location_Place': {
+                                                'source': 'workPackageLocation',
+                                                'type': 'string',
+                                            },
+                                            'Ref_VATNum': {
+                                                'source': 'addressShipping.idOfficial',
+                                                'type': 'string',
+                                            },
                                         },
-                                        "R_Quantity_OrdPcs": {
-                                            "source": "quantity",
-                                            "type": "string",
+                                    },
+                                    'H_Ref_Special': {
+                                        'source': 'refSpecial',
+                                        'type': 'array',
+                                        'items': {
+                                            'source': null,
+                                            'type': 'object',
+                                            'properties': {
+                                                'H_Ref_Type': {
+                                                    'source': 'type',
+                                                    'type': 'string',
+                                                },
+                                                'H_Ref_Value': {
+                                                    'source': 'value',
+                                                    'type': 'string',
+                                                },
+                                            },
                                         },
-                                        "R_Quantity_OrdUnit": {
-                                            "source": "unit",
-                                            "type": "string",
+                                    },
+                                    'H_Freetext_Delivery#1': {
+                                        'source': 'additionalInfo1',
+                                        'type': 'string',
+                                    },
+                                    'H_Freetext_Delivery#2': {
+                                        'source': 'additionalInfo2',
+                                        'type': 'string',
+                                    },
+                                    'H_Freetext_Delivery#3': {
+                                        'source': 'additionalInfo3',
+                                        'type': 'string',
+                                    },
+                                    'H_Freetext_Delivery#4': {
+                                        'source': 'additionalInfo4',
+                                        'type': 'string',
+                                    },
+                                    'H_Freetext_Delivery#5': {
+                                        'source': 'additionalInfo5',
+                                        'type': 'string',
+                                    },
+                                },
+                            },
+                            'Row': {
+                                'source': 'orderLine',
+                                'type': 'array',
+                                'items': {
+                                    'source': null,
+                                    'type': 'object',
+                                    'properties': {
+                                        'R_LineItem_Num': {
+                                            'source': 'idLocal',
+                                            'type': 'string',
+                                        },
+                                        'R_Item_Num_EAN': {
+                                            'source': 'product.idLocal',
+                                            'type': 'string',
+                                        },
+                                        'R_Item_Num_Sup': {
+                                            'source': 'product.codeProduct',
+                                            'type': 'string',
+                                        },
+                                        'R_Item_Desc': {
+                                            'source': 'product.descriptionGeneral',
+                                            'type': 'string',
+                                        },
+                                        'R_Quantity_OrdPcs': {
+                                            'source': 'quantity',
+                                            'type': 'string',
+                                        },
+                                        'R_Quantity_OrdUnit': {
+                                            'source': 'unit',
+                                            'type': 'string',
                                         },
                                     },
                                 },
@@ -327,41 +423,41 @@ const json2xml = (input = {}) => {
     input.externalMessageType = 'ORDERS';
     input.externalVersionType = '2x20R5B';
     input.externalDocType = 'ORD';
-    input.externalIdTypeBuyer = 'EDI'
-    input.externalIdTypeSeller = 'EDI'
-    input.externalIdTypeConsignee = 'EDI'
+    input.externalIdTypeBuyer = 'EDI';
+    input.externalIdTypeSeller = 'EDI';
+    input.externalIdTypeConsignee = 'EDI';
 
     input.timestamp = new Date().getTime();
-    input.dateOrderDelivery = input.deliveryRequired ? input.deliveryRequired.slice(0, 10) : ''
-    input.timeOrderDelivery = input.deliveryRequired ? input.deliveryRequired.slice(11, 19) : ''
+    input.dateOrderDelivery = input.deliveryRequired ? input.deliveryRequired.slice(0, 10) : '';
+    input.timeOrderDelivery = input.deliveryRequired ? input.deliveryRequired.slice(11, 19) : '';
 
     input.addressBilling.idLocal = input.addressBilling.idLocal || '';
-    input.addressBilling.countryCode = input.addressBilling.country.slice(0, 2).toUpperCase()
-    
+    input.addressBilling.countryCode = input.addressBilling.country.slice(0, 2).toUpperCase();
+
     input.contact.idOfficial = input.contact.idOfficial || '';
-    input.contact.id = input.contact.idOfficial ? '0037' + input.contact.idOfficial.replace('-', '').replace('FI', '') : ''
-    
+    input.contact.id = input.contact.idOfficial ? '0037' + input.contact.idOfficial.replace('-', '').replace('FI', '') : '';
+
     input.vendor.idOfficial = input.vendor.idOfficial || '';
-    input.vendor.id = input.vendor.idOfficial ? '0037' + input.vendor.idOfficial.replace('-', '').replace('FI', '') : ''
+    input.vendor.id = input.vendor.idOfficial ? '0037' + input.vendor.idOfficial.replace('-', '').replace('FI', '') : '';
     if (!input.vendor.idOfficial) {
-        delete input.externalIdTypeSeller
-        delete input.vendor.id
+        delete input.externalIdTypeSeller;
+        delete input.vendor.id;
     }
 
     input.addressShipping.idLocal = input.addressShipping.idLocal || '';
     input.addressShipping.idOfficial = input.addressShipping.idOfficial || '';
-    input.addressShipping.id = input.addressShipping.idOfficial ? '0037' + input.addressShipping.idOfficial.replace('-', '').replace('FI', '') : ''
+    input.addressShipping.id = input.addressShipping.idOfficial ? '0037' + input.addressShipping.idOfficial.replace('-', '').replace('FI', '') : '';
     if (!input.addressShipping.idOfficial) {
-        delete input.externalIdTypeConsignee
-        delete input.addressShipping.id
+        delete input.externalIdTypeConsignee;
+        delete input.addressShipping.id;
     }
-    input.addressShipping.countryCode = input.addressShipping.country.slice(0, 2).toUpperCase()
+    input.addressShipping.countryCode = input.addressShipping.country.slice(0, 2).toUpperCase();
 
     input.customer.idOfficial = input.customer.idOfficial || '';
-    input.customer.id = input.customer.idOfficial ? '0037' + input.customer.idOfficial.replace('-', '').replace('FI', '') : ''
+    input.customer.id = input.customer.idOfficial ? '0037' + input.customer.idOfficial.replace('-', '').replace('FI', '') : '';
     if (!input.customer.idOfficial) {
-        delete input.externalIdTypeBuyer
-        delete input.customer.id
+        delete input.externalIdTypeBuyer;
+        delete input.customer.id;
     }
     input.customer.contactInformation = input.customer.contactInformation || {};
     input.customer.contactInformation.streetAddressLine1 = input.customer.contactInformation.streetAddressLine1 || '';
@@ -369,9 +465,14 @@ const json2xml = (input = {}) => {
     input.customer.contactInformation.postalArea = input.customer.contactInformation.postalArea || '';
     input.customer.contactInformation.country = input.customer.contactInformation.country || '';
 
+    input.refSpecial = [
+        {type: 'WORKPACK', value: input.workPackage},
+        {type: 'WORKPHASE', value: input.workPackagePhase},
+    ];
+
     input.orderLine = input.orderLine.map(o => {
-        o.unit = o.unit.toUpperCase()
-        return o
+        o.unit = o.unit.toUpperCase();
+        return o;
     });
 
     const output = transformer.transform({
