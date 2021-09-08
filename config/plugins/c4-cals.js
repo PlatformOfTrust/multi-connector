@@ -1006,7 +1006,7 @@ const controller = async (req, res) => {
                 },
             };
             const resource = (req.body.entity + 's').toLowerCase();
-            winston.log('info', '1. Query self with REST path /instances/${instanceId}/' + resource + '/${entityId}');
+            winston.log('info', '1. Query self with REST path /instances/' + req.body.instanceId + '/' + resource + '/${entityId}');
             result = await connector.getData(triggeredReq);
             // Check that an order was found in the response.
             try {
