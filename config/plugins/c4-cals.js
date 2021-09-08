@@ -323,6 +323,126 @@ const orderInformationSchema = {
                                 },
                             },
                         },
+                        'productGroup': {
+                            '$id': '#/properties/data/properties/order/properties/productGroup',
+                            'source': null,
+                            'type': 'object',
+                            'title': 'Product Group',
+                            'description': 'Product Group.',
+                            'required': [],
+                            'properties': {
+                                '@type': {
+                                    '$id': '#/properties/data/properties/order/properties/productGroup/properties/@type',
+                                    'source': 'productGroupType',
+                                    'type': 'string',
+                                    'title': 'Identity type',
+                                    'description': 'Type of identity.',
+                                },
+                                'idLocal': {
+                                    '$id': '#/properties/data/properties/order/properties/productGroup/properties/idLocal',
+                                    'source': 'workPackage',
+                                    'type': 'string',
+                                    'title': 'Local identifier',
+                                    'description': 'Locally given identifier.',
+                                },
+                                'locationFinal': {
+                                    '$id': '#/properties/data/properties/order/properties/productGroup/properties/locationFinal',
+                                    'source': null,
+                                    'type': 'object',
+                                    'title': 'Final location',
+                                    'description': 'Final location.',
+                                    'required': [],
+                                    'properties': {
+                                        '@type': {
+                                            '$id': '#/properties/data/properties/order/properties/productGroup/properties/locationFinal/properties/@type',
+                                            'source': 'locationFinalType',
+                                            'type': 'string',
+                                            'title': 'Identity type',
+                                            'description': 'Type of identity.',
+                                        },
+                                        'name': {
+                                            '$id': '#/properties/data/properties/order/properties/productGroup/properties/locationFinal/properties/name',
+                                            'source': 'workPackageLocation',
+                                            'type': 'string',
+                                            'title': 'Location name',
+                                            'description': 'Location name.',
+                                        },
+                                    },
+                                },
+                                'process': {
+                                    '$id': '#/properties/data/properties/order/properties/productGroup/properties/process',
+                                    'source': null,
+                                    'type': 'object',
+                                    'title': 'Product group process',
+                                    'description': 'Product group process.',
+                                    'required': [],
+                                    'properties': {
+                                        '@type': {
+                                            '$id': '#/properties/data/properties/order/properties/productGroup/properties/process/properties/@type',
+                                            'source': 'productGroupProcessType',
+                                            'type': 'string',
+                                            'title': 'Identity type',
+                                            'description': 'Type of identity.',
+                                        },
+                                        'operator': {
+                                            '$id': '#/properties/data/properties/order/properties/productGroup/properties/process/properties/operator',
+                                            'source': null,
+                                            'type': 'object',
+                                            'title': 'Product group process operator',
+                                            'description': 'Product group process operator.',
+                                            'required': [],
+                                            'properties': {
+                                                '@type': {
+                                                    '$id': '#/properties/data/properties/order/properties/productGroup/properties/process/properties/operator/@type',
+                                                    'source': 'productGroupProcessOperatorType',
+                                                    'type': 'string',
+                                                    'title': 'Identity type',
+                                                    'description': 'Type of identity.',
+                                                },
+                                                'name': {
+                                                    '$id': '#/properties/data/properties/order/properties/productGroup/properties/process/properties/operator/name',
+                                                    'source': 'workPackageOperator',
+                                                    'type': 'string',
+                                                    'title': 'Operator name',
+                                                    'description': 'Operator name.',
+                                                },
+                                            },
+                                        },
+                                        'contact': {
+                                            '$id': '#/properties/data/properties/order/properties/productGroup/properties/process/properties/contact',
+                                            'source': null,
+                                            'type': 'object',
+                                            'title': 'Product group process contact',
+                                            'description': 'Product group process contact.',
+                                            'required': [],
+                                            'properties': {
+                                                '@type': {
+                                                    '$id': '#/properties/data/properties/order/properties/productGroup/properties/process/properties/contact/@type',
+                                                    'source': 'productGroupProcessContactType',
+                                                    'type': 'string',
+                                                    'title': 'Identity type',
+                                                    'description': 'Type of identity.',
+                                                },
+                                                'name': {
+                                                    '$id': '#/properties/data/properties/order/properties/productGroup/properties/process/properties/contact/name',
+                                                    'source': 'workPackageOperatorContactName',
+                                                    'type': 'string',
+                                                    'title': 'Contact name',
+                                                    'description': 'Contact name.',
+                                                },
+                                                'phoneNumber': {
+                                                    '$id': '#/properties/data/properties/order/properties/productGroup/properties/process/properties/contact/phoneNumber',
+                                                    'source': 'workPackageOperatorContactTelephone',
+                                                    'type': 'string',
+                                                    'title': 'Contact phone number',
+                                                    'description': 'Contact phone number.',
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
                         'addressShipping': {
                             '$id': '#/properties/data/properties/order/properties/addressShipping',
                             'source': null,
@@ -564,6 +684,37 @@ const orderInformationSchema = {
     },
 };
 
+Date.prototype.stdTimezoneOffset = function () {
+    const jan = new Date(this.getFullYear(), 0, 1);
+    const jul = new Date(this.getFullYear(), 6, 1);
+    return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+};
+
+Date.prototype.isDstObserved = function () {
+    return this.getTimezoneOffset() < this.stdTimezoneOffset();
+};
+
+/**
+ * Converts date object which has finnish UTC(+2 OR +3) as UTC0 to valid date object and vice versa.
+ *
+ * @param {Date} input
+ * @param {Boolean} reverse
+ * @return {Date}
+ */
+const convertFinnishDateToISOString = (input, reverse) => {
+    // Examples.
+    // Finnish UTC +2 or +3.
+    // new Date(1610031289498); -2
+    // new Date(1631092909080); -3 (Daylight Saving Time)
+    let output;
+    if (input.isDstObserved()) {
+        output = new Date(input.setHours(input.getHours() - (reverse ? 3 : -3)));
+    } else {
+        output = new Date(input.setHours(input.getHours() - (reverse ? 2 : -2)));
+    }
+    return output;
+};
+
 /**
  * Handles data objects.
  *
@@ -596,8 +747,13 @@ const handleData = function (config, id, data) {
                     value.addressBillingType = 'ContactInformation';
                     value.customerType = 'Organization';
                     value.vendorType = 'Organization';
-                    // value.descriptionGeneral = 'Purchase order information.';
-                    value.requiredDeliveryDateTime = new Date(value.requiredDeliveryDate + 'T' + value.requiredDeliveryTime).toISOString();
+                    value.productGroupType = 'ProductGroup';
+                    value.locationFinalType = 'Location';
+                    value.productGroupProcessType = 'Process';
+                    value.productGroupProcessOperatorType = 'LegalParty';
+                    value.productGroupProcessContactType = 'ContactInformation';
+                    value.requiredDeliveryDateTime = convertFinnishDateToISOString(new Date(value.requiredDeliveryDate + 'T' + value.requiredDeliveryTime));
+
                     try {
                         orderNumberToCALSId[value.purchaseOrderNumber] = value.purchaseOrderId;
                         orderIdToCALSInstanceId[value.purchaseOrderId] = value.instanceId;
@@ -1040,7 +1196,7 @@ const template = async (config, template) => {
                     }
 
                     try {
-                        datetime = new Date(datetime).toISOString();
+                        datetime = convertFinnishDateToISOString(new Date(datetime), true);
                         output.ConfirmedDeliveryDate = (datetime || 'T').split('T')[0];
                         output.ConfirmedDeliveryTime = (datetime || 'T').split('T')[1].substring(0, 5);
 
