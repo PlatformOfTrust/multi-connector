@@ -146,6 +146,8 @@ const stream = async (template, data) => {
                     // Initialize signature value.
                     let signatureValue;
 
+                    requests[r] = JSON.parse(JSON.stringify(requests[r]));
+
                     // Create SHA256 signature in base64 encoded format.
                     try {
                         signatureValue = crypto
@@ -168,7 +170,7 @@ const stream = async (template, data) => {
             }
         }
     } catch (err) {
-        const error = new Error('External translator returns an invalid response.');
+        const error = new Error('Broker returns an invalid response.');
         error.httpStatusCode = 500;
         error.translator_response = err.error;
         winston.log('error', err.message);
