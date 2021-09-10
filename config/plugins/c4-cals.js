@@ -699,7 +699,7 @@ Date.prototype.isDstObserved = function () {
  *
  * @param {Date} input
  * @param {Boolean} [reverse]
- * @return {Date}
+ * @return {String}
  */
 const convertFinnishDateToISOString = (input, reverse = false) => {
     // Examples.
