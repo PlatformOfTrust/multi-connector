@@ -698,10 +698,10 @@ Date.prototype.isDstObserved = function () {
  * Converts date object which has finnish UTC(+2 OR +3) as UTC0 to valid date object and vice versa.
  *
  * @param {Date} input
- * @param {Boolean} reverse
+ * @param {Boolean} [reverse]
  * @return {Date}
  */
-const convertFinnishDateToISOString = (input, reverse) => {
+const convertFinnishDateToISOString = (input, reverse = false) => {
     // Examples.
     // Finnish UTC +2 or +3.
     // new Date(1610031289498); -2
@@ -712,7 +712,7 @@ const convertFinnishDateToISOString = (input, reverse) => {
     } else {
         output = new Date(input.setHours(input.getHours() - (reverse ? 2 : -2)));
     }
-    return output;
+    return output.toISOString();
 };
 
 /**
