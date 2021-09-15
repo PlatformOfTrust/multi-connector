@@ -314,19 +314,19 @@ const OrderInformationSchema = {
                                                 'type': 'string',
                                             },
                                             'Contact_ID': {
-                                                'source': 'workPackageOperator',
+                                                'source': 'productGroup.operator.name',
                                                 'type': 'string',
                                             },
                                             'Contact_Name': {
-                                                'source': 'workPackageOperatorContactName',
+                                                'source': 'productGroup.operator.contact.name',
                                                 'type': 'string',
                                             },
                                             'Contact_Phone': {
-                                                'source': 'workPackageOperatorContactTelephone',
+                                                'source': 'productGroup.operator.contact.phoneNumber',
                                                 'type': 'string',
                                             },
                                             'Location_Place': {
-                                                'source': 'workPackageLocation',
+                                                'source': 'productGroup.locationFinal.name',
                                                 'type': 'string',
                                             },
                                             'Ref_VATNum': {
@@ -354,23 +354,23 @@ const OrderInformationSchema = {
                                         },
                                     },
                                     'H_Freetext_Delivery#1': {
-                                        'source': 'additionalInfo1',
+                                        'source': 'vendor.customer.idLocal',
                                         'type': 'string',
                                     },
                                     'H_Freetext_Delivery#2': {
-                                        'source': 'additionalInfo2',
+                                        'source': null,
                                         'type': 'string',
                                     },
                                     'H_Freetext_Delivery#3': {
-                                        'source': 'additionalInfo3',
+                                        'source': null,
                                         'type': 'string',
                                     },
                                     'H_Freetext_Delivery#4': {
-                                        'source': 'additionalInfo4',
+                                        'source': null,
                                         'type': 'string',
                                     },
                                     'H_Freetext_Delivery#5': {
-                                        'source': 'additionalInfo5',
+                                        'source': null,
                                         'type': 'string',
                                     },
                                 },
@@ -466,8 +466,8 @@ const json2xml = (input = {}) => {
     input.customer.contactInformation.country = input.customer.contactInformation.country || '';
 
     input.refSpecial = [
-        {type: 'WORKPACK', value: input.workPackage},
-        {type: 'WORKPHASE', value: input.workPackagePhase},
+        {type: 'WORKPACK', value: input.productGroup.idLocal},
+        {type: 'WORKPHASE', value: input.productGroup.process.name},
     ];
 
     input.orderLine = input.orderLine.map(o => {
