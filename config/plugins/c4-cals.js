@@ -277,47 +277,70 @@ const orderInformationSchema = {
                                     'title': 'Name',
                                     'description': 'Name.',
                                 },
-                                'ContactInformation': {
-                                    '$id': '#/properties/data/properties/order/properties/vendor/properties/ContactInformation',
+                                'contactInformation': {
+                                    '$id': '#/properties/data/properties/order/properties/vendor/properties/contactInformation',
                                     'type': 'object',
                                     'title': 'Contact information',
                                     'description': 'Contact information.',
                                     'required': [],
                                     'properties': {
                                         '@type': {
-                                            '$id': '#/properties/data/properties/order/properties/vendor/properties/ContactInformation/properties/@type',
+                                            '$id': '#/properties/data/properties/order/properties/vendor/properties/contactInformation/properties/@type',
                                             'source': 'contactInformationType',
                                             'type': 'string',
                                             'title': 'Identity type',
                                             'description': 'Type of identity.',
                                         },
                                         'streetAddressLine1': {
-                                            '$id': '#/properties/data/properties/order/properties/vendor/properties/ContactInformation/properties/streetAddressLine1',
+                                            '$id': '#/properties/data/properties/order/properties/vendor/properties/contactInformation/properties/streetAddressLine1',
                                             'source': 'vendorStreetAddress',
                                             'type': 'string',
                                             'title': 'Street address line 1',
                                             'description': 'Street address line 1.',
                                         },
                                         'postalCode': {
-                                            '$id': '#/properties/data/properties/order/properties/vendor/properties/ContactInformation/properties/postalCode',
+                                            '$id': '#/properties/data/properties/order/properties/vendor/properties/contactInformation/properties/postalCode',
                                             'source': 'vendorPostalCode',
                                             'type': 'string',
                                             'title': 'Postal code',
                                             'description': 'Postal code.',
                                         },
                                         'postalArea': {
-                                            '$id': '#/properties/data/properties/order/properties/vendor/properties/ContactInformation/properties/postalArea',
+                                            '$id': '#/properties/data/properties/order/properties/vendor/properties/contactInformation/properties/postalArea',
                                             'source': 'vendorTown',
                                             'type': 'string',
                                             'title': 'Postal area',
                                             'description': 'Postal area.',
                                         },
                                         'country': {
-                                            '$id': '#/properties/data/properties/order/properties/vendor/properties/ContactInformation/properties/country',
+                                            '$id': '#/properties/data/properties/order/properties/vendor/properties/contactInformation/properties/country',
                                             'source': 'vendorCountry',
                                             'type': 'string',
                                             'title': 'Country',
                                             'description': 'Location country name.',
+                                        },
+                                    },
+                                },
+                                'customer': {
+                                    '$id': '#/properties/data/properties/order/properties/vendor/properties/contactInformation',
+                                    'type': 'object',
+                                    'title': 'Customer',
+                                    'description': 'Customer.',
+                                    'required': [],
+                                    'properties': {
+                                        '@type': {
+                                            '$id': '#/properties/data/properties/order/properties/vendor/properties/customer/properties/@type',
+                                            'source': 'vendorCustomerType',
+                                            'type': 'string',
+                                            'title': 'Identity type',
+                                            'description': 'Type of identity.',
+                                        },
+                                        'idLocal': {
+                                            '$id': '#/properties/data/properties/order/properties/vendor/properties/customer/properties/idLocal',
+                                            'source': 'additionalInfo1',
+                                            'type': 'string',
+                                            'title': 'Locally given identifier',
+                                            'description': 'Locally given identifier.',
                                         },
                                     },
                                 },
@@ -328,7 +351,7 @@ const orderInformationSchema = {
                             'source': null,
                             'type': 'object',
                             'title': 'Product Group',
-                            'description': 'Product Group.',
+                            'description': 'Product Group is listing of products that have something in common.',
                             'required': [],
                             'properties': {
                                 '@type': {
@@ -350,7 +373,7 @@ const orderInformationSchema = {
                                     'source': null,
                                     'type': 'object',
                                     'title': 'Final location',
-                                    'description': 'Final location.',
+                                    'description': 'Final or target location for something.',
                                     'required': [],
                                     'properties': {
                                         '@type': {
@@ -364,8 +387,8 @@ const orderInformationSchema = {
                                             '$id': '#/properties/data/properties/order/properties/productGroup/properties/locationFinal/properties/name',
                                             'source': 'workPackageLocation',
                                             'type': 'string',
-                                            'title': 'Location name',
-                                            'description': 'Location name.',
+                                            'title': 'Name',
+                                            'description': 'Name.',
                                         },
                                     },
                                 },
@@ -373,8 +396,8 @@ const orderInformationSchema = {
                                     '$id': '#/properties/data/properties/order/properties/productGroup/properties/process',
                                     'source': null,
                                     'type': 'object',
-                                    'title': 'Product group process',
-                                    'description': 'Product group process.',
+                                    'title': 'Process',
+                                    'description': 'A process is a single activity or set of activities that interact to produce a result.',
                                     'required': [],
                                     'properties': {
                                         '@type': {
@@ -384,32 +407,39 @@ const orderInformationSchema = {
                                             'title': 'Identity type',
                                             'description': 'Type of identity.',
                                         },
-                                        'operator': {
-                                            '$id': '#/properties/data/properties/order/properties/productGroup/properties/process/properties/operator',
-                                            'source': null,
-                                            'type': 'object',
-                                            'title': 'Product group process operator',
-                                            'description': 'Product group process operator.',
-                                            'required': [],
-                                            'properties': {
-                                                '@type': {
-                                                    '$id': '#/properties/data/properties/order/properties/productGroup/properties/process/properties/operator/@type',
-                                                    'source': 'productGroupProcessOperatorType',
-                                                    'type': 'string',
-                                                    'title': 'Identity type',
-                                                    'description': 'Type of identity.',
-                                                },
-                                                'name': {
-                                                    '$id': '#/properties/data/properties/order/properties/productGroup/properties/process/properties/operator/name',
-                                                    'source': 'workPackageOperator',
-                                                    'type': 'string',
-                                                    'title': 'Operator name',
-                                                    'description': 'Operator name.',
-                                                },
-                                            },
+                                        'name': {
+                                            '$id': '#/properties/data/properties/order/properties/productGroup/properties/process/properties/name',
+                                            'source': 'workPackagePhase',
+                                            'type': 'string',
+                                            'title': 'Name',
+                                            'description': 'Name.',
+                                        },
+                                    },
+                                },
+                                'operator': {
+                                    '$id': '#/properties/data/properties/order/properties/productGroup/properties/operator',
+                                    'source': null,
+                                    'type': 'object',
+                                    'title': 'Product group process operator',
+                                    'description': 'Product group process operator.',
+                                    'required': [],
+                                    'properties': {
+                                        '@type': {
+                                            '$id': '#/properties/data/properties/order/properties/productGroup/properties/operator/properties/@type',
+                                            'source': 'productGroupProcessOperatorType',
+                                            'type': 'string',
+                                            'title': 'Identity type',
+                                            'description': 'Type of identity.',
+                                        },
+                                        'name': {
+                                            '$id': '#/properties/data/properties/order/properties/productGroup/properties/operator/properties/name',
+                                            'source': 'workPackageOperator',
+                                            'type': 'string',
+                                            'title': 'Operator name',
+                                            'description': 'Operator name.',
                                         },
                                         'contact': {
-                                            '$id': '#/properties/data/properties/order/properties/productGroup/properties/process/properties/contact',
+                                            '$id': '#/properties/data/properties/order/properties/productGroup/properties/operator/properties/contact',
                                             'source': null,
                                             'type': 'object',
                                             'title': 'Product group process contact',
@@ -417,25 +447,25 @@ const orderInformationSchema = {
                                             'required': [],
                                             'properties': {
                                                 '@type': {
-                                                    '$id': '#/properties/data/properties/order/properties/productGroup/properties/process/properties/contact/@type',
+                                                    '$id': '#/properties/data/properties/order/properties/productGroup/properties/operator/properties/contact/properties/@type',
                                                     'source': 'productGroupProcessContactType',
                                                     'type': 'string',
                                                     'title': 'Identity type',
                                                     'description': 'Type of identity.',
                                                 },
                                                 'name': {
-                                                    '$id': '#/properties/data/properties/order/properties/productGroup/properties/process/properties/contact/name',
+                                                    '$id': '#/properties/data/properties/order/properties/productGroup/properties/operator/properties/contact/properties/name',
                                                     'source': 'workPackageOperatorContactName',
                                                     'type': 'string',
-                                                    'title': 'Contact name',
-                                                    'description': 'Contact name.',
+                                                    'title': 'Name',
+                                                    'description': 'Name.',
                                                 },
                                                 'phoneNumber': {
-                                                    '$id': '#/properties/data/properties/order/properties/productGroup/properties/process/properties/contact/phoneNumber',
+                                                    '$id': '#/properties/data/properties/order/properties/productGroup/properties/operator/properties/contact/properties/phoneNumber',
                                                     'source': 'workPackageOperatorContactTelephone',
                                                     'type': 'string',
-                                                    'title': 'Contact phone number',
-                                                    'description': 'Contact phone number.',
+                                                    'title': 'Phone number',
+                                                    'description': 'Phone number.',
                                                 },
                                             },
                                         },
@@ -747,6 +777,7 @@ const handleData = function (config, id, data) {
                     value.addressBillingType = 'ContactInformation';
                     value.customerType = 'Organization';
                     value.vendorType = 'Organization';
+                    value.vendorCustomerType = 'Organization';
                     value.productGroupType = 'ProductGroup';
                     value.locationFinalType = 'Location';
                     value.productGroupProcessType = 'Process';
