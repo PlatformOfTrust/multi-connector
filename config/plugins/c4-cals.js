@@ -752,7 +752,7 @@ const handleData = function (config, id, data) {
                     value.productGroupProcessType = 'Process';
                     value.productGroupProcessOperatorType = 'LegalParty';
                     value.productGroupProcessContactType = 'ContactInformation';
-                    value.requiredDeliveryDateTime = convertFinnishDateToISOString(new Date(value.requiredDeliveryDate + 'T' + value.requiredDeliveryTime));
+                    value.requiredDeliveryDateTime = convertFinnishDateToISOString(new Date(value.requiredDeliveryDate + 'T' + value.requiredDeliveryTime + ':00.000Z'));
 
                     try {
                         orderNumberToCALSId[value.purchaseOrderNumber] = value.purchaseOrderId;
