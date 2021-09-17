@@ -353,25 +353,17 @@ const OrderInformationSchema = {
                                             },
                                         },
                                     },
-                                    'H_Freetext_Delivery#1': {
-                                        'source': 'vendor.customer.idLocal',
-                                        'type': 'string',
-                                    },
-                                    'H_Freetext_Delivery#2': {
-                                        'source': null,
-                                        'type': 'string',
-                                    },
-                                    'H_Freetext_Delivery#3': {
-                                        'source': null,
-                                        'type': 'string',
-                                    },
-                                    'H_Freetext_Delivery#4': {
-                                        'source': null,
-                                        'type': 'string',
-                                    },
-                                    'H_Freetext_Delivery#5': {
-                                        'source': null,
-                                        'type': 'string',
+                                    'H_Freetext_Delivery': {
+                                        'source': 'additionalInformation',
+                                        'type': 'array',
+                                        'items': {
+                                            'anyOf': [
+                                                {
+                                                    'source': 'value',
+                                                    'type': 'string',
+                                                },
+                                            ],
+                                        },
                                     },
                                 },
                             },
@@ -416,8 +408,6 @@ const OrderInformationSchema = {
         },
     },
 };
-
-
 
 const json2xml = (input = {}) => {
     input.externalMessageType = 'ORDERS';
@@ -475,17 +465,31 @@ const json2xml = (input = {}) => {
         return o;
     });
 
-    const output = transformer.transform({
-        ...input,
-        '$': {
-            'xsi:noNamespaceSchemaLocation': 'TCXML-V2x20R5B.xsd',
-            'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
-        },
-        emptyString: '',
-    }, OrderInformationSchema);
+    input.additionalInformation = [
+        {value: input.vendor.customer.idLocal || ''},
+        {value: ''},
+        {value: ''},
+        {value: ''},
+        {value: ''},
+    ];
 
-    const builder = new xml2js.Builder();
-    const xml = builder.buildObject(output);
+    let output;
+    let xml;
+    try {
+        output = transformer.transform({
+            ...input,
+            '$': {
+                'xsi:noNamespaceSchemaLocation': 'TCXML-V2x20R5B.xsd',
+                'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+            },
+            emptyString: '',
+        }, OrderInformationSchema);
+        const builder = new xml2js.Builder();
+        xml = builder.buildObject(output);
+    } catch (err) {
+        return err;
+    }
+
     return xml;
 };
 
@@ -530,6 +534,11 @@ const template = async (config, template) => {
                 // winston.log('info', 'productCodeToCALSId: ' + JSON.stringify(productCodeToCALSId));
 
                 const xml = json2xml(result[id]);
+                if (xml instanceof Error) {
+                    xml.message = 'Failed to write XML file with error "' + xml.message + '"';
+                    return Promise.reject(xml);
+                }
+
                 const path = '/' + result[id].idSystemLocal + '.xml';
                 const to = DOWNLOAD_DIR + template.productCode + (template.authConfig.fromPath || '/from') + path;
                 await sftp.checkDir(to);

@@ -287,17 +287,23 @@ const json2xml = (input = {}) => {
     input.customer.contactInformation.postalArea = input.customer.contactInformation.postalArea || '';
     input.customer.contactInformation.country = input.customer.contactInformation.country || '';
 
-    const output = transformer.transform({
-        ...input,
-        '$': {
-            'xsi:noNamespaceSchemaLocation': 'SalesOrderInhouse%20(ID%209326).xsd',
-            'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
-        },
-        emptyString: '',
-    }, OrderInformationSchema);
+    let output;
+    let xml;
+    try {
+        output = transformer.transform({
+            ...input,
+            '$': {
+                'xsi:noNamespaceSchemaLocation': 'SalesOrderInhouse%20(ID%209326).xsd',
+                'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+            },
+            emptyString: '',
+        }, OrderInformationSchema);
+        const builder = new xml2js.Builder();
+        xml = builder.buildObject(output);
+    } catch (err) {
+        return err;
+    }
 
-    const builder = new xml2js.Builder();
-    const xml = builder.buildObject(output);
     return xml;
 };
 
@@ -344,7 +350,12 @@ const template = async (config, template) => {
                 // Pick Laattapiste endpoint from config.
                 config.static.url = config.static.endpoint;
 
-                const xml = json2xml(result[id]);
+                let xml = json2xml(result[id]);
+                if (xml instanceof Error) {
+                    xml.message = 'Failed to write XML file with error "' + xml.message + '"';
+                    return Promise.reject(xml);
+                }
+
                 const path = '/' + result[id].idSystemLocal + '.xml';
                 const to = DOWNLOAD_DIR + template.productCode + (template.authConfig.fromPath || '/from') + path;
                 await sftp.checkDir(to);
