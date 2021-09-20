@@ -75,6 +75,13 @@ const orderInformationSchema = {
                             'title': 'Local system identifier',
                             'description': 'Locally given system identifier.',
                         },
+                        'ordered': {
+                            '$id': '#/properties/data/properties/order/properties/ordered',
+                            'source': 'purchaseOrderDateTime',
+                            'type': 'string',
+                            'title': 'Order time',
+                            'description': 'Time when order was executed.',
+                        },
                         'deliveryRequired': {
                             '$id': '#/properties/data/properties/order/properties/deliveryRequired',
                             'source': 'requiredDeliveryDateTime',
@@ -784,6 +791,7 @@ const handleData = function (config, id, data) {
                     value.productGroupProcessOperatorType = 'LegalParty';
                     value.productGroupProcessContactType = 'ContactInformation';
                     value.requiredDeliveryDateTime = convertFinnishDateToISOString(new Date(value.requiredDeliveryDate + 'T' + value.requiredDeliveryTime + ':00.000Z'));
+                    value.purchaseOrderDateTime = convertFinnishDateToISOString(new Date(value.purchaseOrderDate + 'T' + value.purchaseOrderTime + ':00.000Z'));
 
                     try {
                         orderNumberToCALSId[value.purchaseOrderNumber] = value.purchaseOrderId;

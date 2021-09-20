@@ -115,6 +115,10 @@ const OrderInformationSchema = {
                                         'source': 'idLocal',
                                         'type': 'string',
                                     },
+                                    'H_Date_Order': {
+                                        'source': 'ordered',
+                                        'type': 'string',
+                                    },
                                     'H_Date_Order_Delivery': {
                                         'source': 'dateOrderDelivery',
                                         'type': 'string',

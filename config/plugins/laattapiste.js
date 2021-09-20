@@ -60,6 +60,10 @@ const OrderInformationSchema = {
                                     'source': 'idLocal',
                                     'type': 'string',
                                 },
+                                'OrderDate': {
+                                    'source': 'ordered',
+                                    'type': 'string',
+                                },
                                 'RequestedDeliveryDate': {
                                     'source': 'deliveryRequired',
                                     'type': 'string',
