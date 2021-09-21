@@ -116,7 +116,11 @@ const OrderInformationSchema = {
                                         'type': 'string',
                                     },
                                     'H_Date_Order': {
-                                        'source': 'ordered',
+                                        'source': 'dateOrdered',
+                                        'type': 'string',
+                                    },
+                                    'H_Time_Order': {
+                                        'source': 'timeOrdered',
                                         'type': 'string',
                                     },
                                     'H_Date_Order_Delivery': {
@@ -422,6 +426,8 @@ const json2xml = (input = {}) => {
     input.externalIdTypeConsignee = 'EDI';
 
     input.timestamp = new Date().getTime();
+    input.dateOrdered = input.ordered ? input.ordered.slice(0, 10) : new Date().toISOString().slice(0, 10);
+    input.timeOrdered = input.ordered ? input.ordered.slice(11, 19) : new Date().toISOString().slice(11, 19);
     input.dateOrderDelivery = input.deliveryRequired ? input.deliveryRequired.slice(0, 10) : '';
     input.timeOrderDelivery = input.deliveryRequired ? input.deliveryRequired.slice(11, 19) : '';
 
