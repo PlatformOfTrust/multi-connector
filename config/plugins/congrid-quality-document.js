@@ -461,9 +461,17 @@ const template = async (config, template) => {
 
         // TODO: Testing.
         const qualityDocumentName = originalFilename;
-        const projectCode = '123124';
+        let projectCode = '123124';
         const workSectionCode = '2.1';
         const workActivityName = 'CE-dokumentit';
+
+        // Pick project number from document.
+        try {
+            projectCode = template.parameters.targetObject.project.idLocal;
+            winston.log('info', 'Project: ' + JSON.stringify(template.parameters.targetObject.project));
+        } catch (e) {
+            console.log(e.message);
+        }
 
         /** Create document and fetch it */
         const projectsUrl = domain + '/v2/projects?projectCode=' + projectCode;
