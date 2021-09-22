@@ -1777,6 +1777,13 @@ const controller = async (req, res) => {
                 }
                 // Resolve ids.
                 result.output.data[key].map((order) => {
+                    // Add project details.
+                    if (order['@type'] === 'Document' && !Object.hasOwnProperty.call(order, 'project')) {
+                        order.project = {
+                            '@type': 'Project',
+                            idLocal: '1234',
+                        };
+                    }
                     if (!Object.hasOwnProperty.call(order, 'deliveryLine')) {
                         return order;
                     }
