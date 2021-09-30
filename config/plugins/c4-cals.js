@@ -20,7 +20,7 @@ const _ = require('lodash');
 const PLUGIN_NAME = 'c4-cals';
 const orderIdToCALSInstanceId = {};
 const orderNumberToCALSId = {};
-const materialSecondaryCodeToCALSId = {};
+const vendorMaterialCodeToCALSId = {};
 
 // Source mapping.
 const orderInformationSchema = {
@@ -683,14 +683,14 @@ const orderInformationSchema = {
                                             },
                                             'idLocal': {
                                                 '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/idLocal',
-                                                'source': 'materialPrimaryCode',
+                                                'source': 'materialId',
                                                 'type': 'string',
                                                 'title': 'Local identifier',
                                                 'description': 'Locally given identifier.',
                                             },
                                             'codeProduct': {
                                                 '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/codeProduct',
-                                                'source': 'materialSecondaryCode',
+                                                'source': 'vendorMaterialCode',
                                                 'type': 'string',
                                                 'title': 'Product code',
                                                 'description': 'Unique product code given by manufacturer.',
@@ -704,7 +704,7 @@ const orderInformationSchema = {
                                             },
                                             'gtin': {
                                                 '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/gtin',
-                                                'source': null,
+                                                'source': 'materialGlobalTradeItemNumber',
                                                 'type': 'string',
                                                 'title': 'Gtin',
                                                 'description': 'Gtin.',
@@ -797,10 +797,10 @@ const handleData = function (config, id, data) {
                         orderNumberToCALSId[value.purchaseOrderNumber] = value.purchaseOrderId;
                         orderIdToCALSInstanceId[value.purchaseOrderId] = value.instanceId;
                         for (let i = 0; i < value.purchaseOrderItems.length; i++) {
-                            if (!Object.hasOwnProperty.call(materialSecondaryCodeToCALSId, value.purchaseOrderId)) {
-                                materialSecondaryCodeToCALSId[value.purchaseOrderId] = {};
+                            if (!Object.hasOwnProperty.call(vendorMaterialCodeToCALSId, value.purchaseOrderId)) {
+                                vendorMaterialCodeToCALSId[value.purchaseOrderId] = {};
                             }
-                            materialSecondaryCodeToCALSId[value.purchaseOrderId][value.purchaseOrderItems[i].materialSecondaryCode] = value.purchaseOrderItems[i].purchaseOrderItemId;
+                            vendorMaterialCodeToCALSId[value.purchaseOrderId][value.purchaseOrderItems[i].vendorMaterialCode] = value.purchaseOrderItems[i].purchaseOrderItemId;
                             value.purchaseOrderItems[i] = {
                                 orderLineType: 'OrderLine',
                                 productType: 'Product',
@@ -1229,7 +1229,7 @@ const template = async (config, template) => {
 
                     // Resolve CALSId.
                     try {
-                        output.PurchaseOrderItemId = materialSecondaryCodeToCALSId[data.PurchaseOrderId][input.product.codeProduct];
+                        output.PurchaseOrderItemId = vendorMaterialCodeToCALSId[data.PurchaseOrderId][input.product.codeProduct];
                     } catch (e) {
                         output.PurchaseOrderItemId = input.idSystemLocal;
                     }
@@ -1253,7 +1253,7 @@ const template = async (config, template) => {
                     if (!output.PurchaseOrderItemId) {
                         // Attach meta.
                         if (Object.hasOwnProperty.call(input, 'product')) {
-                            output.materialSecondaryCode = input.product.codeProduct;
+                            output.vendorMaterialCode = input.product.codeProduct;
                             output.materialName = input.product.name;
                         }
                     }
