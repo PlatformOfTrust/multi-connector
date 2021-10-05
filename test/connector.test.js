@@ -5,6 +5,7 @@ const connector = require('../app/lib/connector');
 const reqTemplate = {
     body: {},
     connectorUrl: 'http://localhost:8080',
+    publicKeyUrl: 'http://localhost:8080/translator/v1/public.key',
 };
 
 /** Wrapper for getData. */

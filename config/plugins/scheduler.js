@@ -27,6 +27,7 @@ const brokerRequest = async (productCode, parameters) => {
                 parameters: {...parameters},
             },
             connectorUrl: '',
+            publicKeyUrl: '',
         };
         return await connector.getData(triggeredReq);
     } catch (e) {

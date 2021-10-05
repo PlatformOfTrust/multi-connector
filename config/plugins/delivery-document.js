@@ -1727,6 +1727,7 @@ const controller = async (req, res) => {
                     },
                 },
                 connectorUrl: config.connectorUrl,
+                publicKeyUrl: config.publicKeyUrl,
             };
 
             winston.log('info', '1. Query self with path ${targetObject.idLocal} as ' + req.body.filename);
