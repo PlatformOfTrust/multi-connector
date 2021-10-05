@@ -938,7 +938,6 @@ const errorResponse = async (req, res, err) => {
  */
 const controller = async (req, res) => {
     let result;
-    let host;
     try {
         /** Request header validation */
         const bearer = req.headers.authorization;
@@ -1009,8 +1008,8 @@ const controller = async (req, res) => {
             winston.log('info', 'Received trigger request from ' + (req.get('x-real-ip') || req.get('origin') || req.socket.remoteAddress));
 
             template = cache.getDoc('templates', config.template) || {};
-            host = req.get('host').split(':')[0];
-            config.connectorURL = (host === 'localhost' || net.isIP(host) ? 'http' : 'https') + '://' + req.get('host');
+            config.connectorUrl = req.connectorUrl;
+            config.publicKeyUrl = req.publicKeyUrl;
         } catch (err) {
             err.httpStatusCode = 500;
             err.message = 'Failed to handle request.';
@@ -1039,10 +1038,8 @@ const controller = async (req, res) => {
                         },
                     },
                 },
-                protocol: 'http',
-                get: function () {
-                    return config.connectorURL.replace('https://', '').replace('http://', '');
-                },
+                connectorUrl: config.connectorUrl,
+                publicKeyUrl: config.publicKeyUrl,
             };
             const resource = (req.body.entity + 's').toLowerCase();
             winston.log('info', '1. Query self with REST path /instances/' + req.body.instanceId + '/' + resource + '/${entityId}');
@@ -1107,7 +1104,7 @@ const controller = async (req, res) => {
             signature: {
                 type: 'RsaSignature2018',
                 created,
-                creator: config.connectorURL + '/translator/v1/public.key',
+                creator: config.publicKeyUrl,
                 signatureValue: rsa.generateSignature({
                     __signed__: created,
                     ...(result.output[result.payloadKey || 'data'] || {}),

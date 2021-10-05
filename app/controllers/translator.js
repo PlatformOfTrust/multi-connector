@@ -24,18 +24,15 @@ const connector = require('../lib/connector');
  */
 module.exports.fetch = async (req, res) => {
     let result;
-    let host;
     try {
         // Fetch data.
         result = await connector.getData(req);
-        host = req.get('host').split(':')[0];
 
         // Initialize signature object.
         const signature = {
             type: 'RsaSignature2018',
             created: moment().format(),
-            creator: (host === 'localhost' || net.isIP(host) ? 'http' : 'https')
-                + '://' + req.get('host') + '/translator/v1/public.key',
+            creator: req.publicKeyUrl,
         };
 
         // Send signed data response.

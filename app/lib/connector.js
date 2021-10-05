@@ -616,7 +616,8 @@ const getData = async (req) => {
     config.productCode = productCode;
 
     // Store connector URL.
-    template.authConfig.connectorURL = req.protocol + '://' + req.get('host');
+    template.authConfig.connectorUrl = req.connectorUrl;
+    template.authConfig.publicKeyUrl = req.publicKeyUrl;
 
     // Make sure plugins array exists.
     if (!Array.isArray(template.plugins)) {

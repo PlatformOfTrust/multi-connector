@@ -133,7 +133,7 @@ const output = async (config, output) => {
             cache.setDoc('documents', id, doc, ttl);
 
             // Attach url.
-            doc.url = config.authConfig.connectorURL + '/translator/v1/plugins/'+ PLUGIN_NAME + '/' + id + '/' + encodeURI(doc.name);
+            doc.url = config.authConfig.connectorUrl + '/translator/v1/plugins/'+ PLUGIN_NAME + '/' + id + '/' + encodeURI(doc.name);
             doc.expires = new Date(new Date().getTime() + ttl * 1000).toISOString();
 
             // Remove content from response.

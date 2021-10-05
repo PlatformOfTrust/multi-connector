@@ -205,9 +205,8 @@ const controller = async (req, res) => {
         }
 
         // Store data.
-        host = req.get('host').split(':')[0];
-        config.connectorURL = (host === 'localhost' || net.isIP(host) ? 'http' : 'https')
-            + '://' + req.get('host');
+        config.connectorUrl = req.connectorUrl;
+        config.publicKeyUrl = req.publicKeyUrl;
 
         result = await handler(productCode, config, topic, req.body);
 
@@ -220,7 +219,7 @@ const controller = async (req, res) => {
             const signature = {
                 type: 'RsaSignature2018',
                 created: moment().format(),
-                creator: config.connectorURL + '/translator/v1/public.key',
+                creator: config.publicKeyUrl,
             };
 
             // Send signed data response.

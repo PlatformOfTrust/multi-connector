@@ -28,7 +28,7 @@ const response = async (config, response) => {
 
         // Include connectors public key.
         publicKeys.push({
-            url: config.authConfig.connectorURL + '/translator/v1/public.key',
+            url: config.authConfig.publicKeyUrl,
             key: rsa.getPublicKey(),
             env: 'local',
             priority: publicKeys.length,

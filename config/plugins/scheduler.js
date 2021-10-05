@@ -26,10 +26,7 @@ const brokerRequest = async (productCode, parameters) => {
                 timestamp: new Date().toISOString(),
                 parameters: {...parameters},
             },
-            protocol: 'http',
-            get: function () {
-                return '';
-            },
+            connectorUrl: '',
         };
         return await connector.getData(triggeredReq);
     } catch (e) {

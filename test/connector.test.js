@@ -4,10 +4,7 @@ const connector = require('../app/lib/connector');
 /** Empty request. */
 const reqTemplate = {
     body: {},
-    protocol: 'http',
-    get: function () {
-        return 'localhost:8080';
-    },
+    connectorUrl: 'http://localhost:8080',
 };
 
 /** Wrapper for getData. */

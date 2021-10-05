@@ -185,8 +185,8 @@ const getTokenWithCode = async (authConfig) => {
         code = authConfig.code;
     }
 
-    const redirectURL = authConfig.connectorURL + '/translator/v1/plugins/oauth2/' + authConfig.productCode + '/redirect';
-    const internalAuthorizeURL = authConfig.connectorURL + '/translator/v1/plugins/oauth2/' + authConfig.productCode + '/authorize';
+    const redirectURL = authConfig.connectorUrl + '/translator/v1/plugins/oauth2/' + authConfig.productCode + '/redirect';
+    const internalAuthorizeURL = authConfig.connectorUrl + '/translator/v1/plugins/oauth2/' + authConfig.productCode + '/authorize';
 
     if (!code) {
         // Return authorization link.
@@ -240,6 +240,8 @@ const requestToken = async (authConfig, refresh) => {
     if (Object.hasOwnProperty.call(authConfig, 'grantType')) {
         grantType = authConfig.grantType;
     }
+
+    console.log(grantType);
 
     return (refresh && grant.refresh_token
         ? getTokenWithRefreshToken(authConfig, grant.refresh_token)
@@ -311,7 +313,8 @@ const getConfig = function (req, res, next) {
         const config = cache.getDoc('configs', productCode) || {};
         const template = config ? cache.getDoc('templates', config.template) || {} : {};
         req.authConfig = {...template.authConfig, ...config.static, productCode, code};
-        req.authConfig.connectorURL = req.protocol + '://' + req.get('host');
+        req.authConfig.connectorUrl = req.connectorUrl;
+        req.authConfig.publicKeyUrl = req.publicKeyUrl;
     } catch (err) {
         // Compose error response object.
         const result = {
@@ -419,7 +422,7 @@ const endpoints = function (passport) {
                 }
 
                 if (!token) {
-                    const redirectURL = req.protocol + '://' + req.get('host') + '/translator/v1/plugins/oauth2/' + req.authConfig.productCode + '/authorize';
+                    const redirectURL = req.connectorUrl + '/translator/v1/plugins/oauth2/' + req.authConfig.productCode + '/authorize';
                     res.write(
                         '<h4>Authentication configurator</h4>' +
                         '<p>Authorization failed. Requesting access token with authorization code failed.</p><br><input type="button" onclick="location.href=\'' + redirectURL + '\';" value="Try again" />');
@@ -483,7 +486,7 @@ const endpoints = function (passport) {
                             // Validate client secret.
                             if (clientSecret === req.authConfig.clientSecret) {
                                 authSuccess(req);
-                                const redirectURL = req.protocol + '://' + req.get('host') + '/translator/v1/plugins/oauth2/' + req.authConfig.productCode + '/redirect';
+                                const redirectURL = req.connectorUrl + '/translator/v1/plugins/oauth2/' + req.authConfig.productCode + '/redirect';
                                 // Generate state.
                                 const state = crypto.randomBytes(48).toString('hex');
                                 // Generate link to authorization page.
@@ -524,7 +527,11 @@ module.exports = {
 
         // Check for existing grant.
         let grant = cache.getDoc('grants', config.authConfig.productCode);
-        if (!grant && config.authConfig.accessToken) grant = {access_token: config.authConfig.accessToken};
+        if (!grant && config.authConfig.accessToken) {
+            if (config.authConfig.accessToken !== '${accessToken}') {
+                grant = {access_token: config.authConfig.accessToken};
+            }
+        }
         if (!grant) grant = {};
         if (!Object.hasOwnProperty.call(grant, 'access_token')
             && !Object.hasOwnProperty.call(grant, 'token')) {
