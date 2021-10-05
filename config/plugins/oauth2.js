@@ -241,8 +241,6 @@ const requestToken = async (authConfig, refresh) => {
         grantType = authConfig.grantType;
     }
 
-    console.log(grantType);
-
     return (refresh && grant.refresh_token
         ? getTokenWithRefreshToken(authConfig, grant.refresh_token)
         : (grantType !== 'authorization_code' ? getTokenWithPassword(authConfig) : getTokenWithCode(authConfig))
