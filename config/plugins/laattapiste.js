@@ -246,7 +246,7 @@ const OrderInformationSchema = {
                                                 'type': 'string',
                                             },
                                             'ItemEAN': {
-                                                'source': 'product.idLocal',
+                                                'source': 'product.gtin',
                                                 'type': 'string',
                                             },
                                             'ItemIDSeller': {
