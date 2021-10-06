@@ -125,9 +125,10 @@ const uploadFile = async (client, path, productCode) => {
  *
  * @param {Object} config
  * @param {String} productCode
+ * @param {String} clientId
  * @return {Object}
  */
-const createClient = async (config= {}, productCode) => {
+const createClient = async (config = {}, productCode, clientId = uuidv4()) => {
     const options = {};
 
     if (Object.hasOwnProperty.call(config.authConfig, 'url')) {
@@ -147,7 +148,11 @@ const createClient = async (config= {}, productCode) => {
     }
 
     if (!Object.hasOwnProperty.call(clients, productCode)) {
-        clients[productCode] = new Client(productCode);
+        clients[productCode] = {};
+    }
+
+    if (!Object.hasOwnProperty.call(clients[productCode], clientId)) {
+        clients[productCode][clientId] = new Client(productCode);
     }
 
     if (Object.hasOwnProperty.call(config.authConfig, 'proxyHost')) {
@@ -172,8 +177,8 @@ const createClient = async (config= {}, productCode) => {
         }
     }
 
-    await clients[productCode].connect(options);
-    return clients[productCode];
+    await clients[productCode][clientId].connect(options);
+    return clients[productCode][clientId];
 };
 
 /**
@@ -185,6 +190,7 @@ const createClient = async (config= {}, productCode) => {
  */
 const getData = async (config= {}, pathArray) => {
     const productCode = config.productCode || uuidv4();
+    const clientId = uuidv4();
     let toPath = config.authConfig.toPath || '';
     const items = [];
 
@@ -205,14 +211,14 @@ const getData = async (config= {}, pathArray) => {
             await fs.promises.writeFile(to, Buffer.from(content, 'binary'), 'binary');
 
             // Upload file to SFTP server.
-            await sendData(config, [path]);
+            await sendData(config, [path], clientId);
             toPath = config.authConfig.fromPath || '';
         }
     } catch (err) {
         winston.log('error', err.message);
     }
 
-    const client = await createClient(config, productCode);
+    const client = await createClient(config, productCode, clientId);
     for (let p = 0; p < pathArray.length; p++) {
         let files = await downloadFiles(client, toPath + pathArray[p], productCode);
         if (!files) continue;
@@ -227,6 +233,10 @@ const getData = async (config= {}, pathArray) => {
     }
 
     await client.end();
+    delete clients[productCode][clientId];
+    if (JSON.stringify(clients[productCode] === '{}')) {
+        delete clients[productCode];
+    }
     return items;
 };
 
@@ -235,11 +245,12 @@ const getData = async (config= {}, pathArray) => {
  *
  * @param {Object} config
  * @param {Array} pathArray
+ * @param {String} clientId
  * @return {Promise}
  */
-const sendData = async (config= {}, pathArray) => {
+const sendData = async (config= {}, pathArray, clientId) => {
     const productCode = config.productCode || uuidv4();
-    const client = await createClient(config, productCode);
+    const client = await createClient(config, productCode, clientId);
 
     const items = [];
     const fromPath = config.authConfig.fromPath || '';
