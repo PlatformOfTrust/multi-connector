@@ -805,7 +805,7 @@ const handleData = function (config, id, data) {
                                 orderLineType: 'OrderLine',
                                 productType: 'Product',
                                 ...value.purchaseOrderItems[i],
-                                purchaseOrderItemNumber: i + '0',
+                                purchaseOrderItemNumber: (i + 1) + '0',
                             };
                         }
                         winston.log('info', 'Store CALS identifiers from sent order.');
