@@ -471,7 +471,8 @@ const json2xml = (input = {}) => {
     ];
 
     input.orderLine = input.orderLine.map(o => {
-        o.unit = o.unit.toUpperCase();
+        // Not required anymore.
+        // o.unit = o.unit.toUpperCase();
         return o;
     });
 
