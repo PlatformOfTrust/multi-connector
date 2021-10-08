@@ -198,6 +198,7 @@ const getData = async (config= {}, pathArray) => {
     try {
         if (config.parameters.targetObject.content || config.parameters.targetObject.url) {
             const doc = config.parameters.targetObject;
+            const encoding = config.parameters.targetObject.categorizationEncoding || 'binary';
 
             // Fetch content.
             const url = doc.url;
@@ -208,7 +209,7 @@ const getData = async (config= {}, pathArray) => {
             const path = '/' + doc.name;
             const to = DOWNLOAD_DIR + config.productCode + (config.authConfig.fromPath || '') + path;
             await checkDir(to);
-            await fs.promises.writeFile(to, Buffer.from(content, 'binary'), 'binary');
+            await fs.promises.writeFile(to, Buffer.from(content, encoding), 'binary');
 
             // Upload file to SFTP server.
             await sendData(config, [path], clientId);
