@@ -387,7 +387,7 @@ const OrderInformationSchema = {
                                             'type': 'string',
                                         },
                                         'R_Item_Num_EAN': {
-                                            'source': 'product.idLocal',
+                                            'source': 'product.gtin',
                                             'type': 'string',
                                         },
                                         'R_Item_Num_Sup': {
