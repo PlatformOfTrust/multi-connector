@@ -129,22 +129,28 @@ const uploadFile = async (client, path, productCode) => {
  * @return {Object}
  */
 const createClient = async (config = {}, productCode, clientId = uuidv4()) => {
-    const options = {};
+    const options = {
+        port: 22,
+    };
 
     if (Object.hasOwnProperty.call(config.authConfig, 'url')) {
-        options.host = config.authConfig.url;
+        config.authConfig.url !== '${url}' ? options.host = config.authConfig.url : null;
     }
 
     if (Object.hasOwnProperty.call(config.authConfig, 'port')) {
-        options.port = Number.parseInt(config.authConfig.port);
+        config.authConfig.port !== '${port}' ? options.port = Number.parseInt(config.authConfig.port) : null;
     }
 
     if (Object.hasOwnProperty.call(config.authConfig, 'username')) {
-        options.username = config.authConfig.username;
+        config.authConfig.username !== '${username}' ? options.username = config.authConfig.username : null;
     }
 
     if (Object.hasOwnProperty.call(config.authConfig, 'password')) {
-        options.password = config.authConfig.password;
+        config.authConfig.password !== '${password}' ? options.password = config.authConfig.password : null;
+    }
+
+    if (Object.hasOwnProperty.call(config.authConfig, 'privateKey')) {
+        config.authConfig.privateKey !== '${privateKey}' ? options.privateKey = Buffer.from(config.authConfig.privateKey, 'base64') : null;
     }
 
     if (!Object.hasOwnProperty.call(clients, productCode)) {
