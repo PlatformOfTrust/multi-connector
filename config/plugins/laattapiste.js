@@ -80,6 +80,36 @@ const OrderInformationSchema = {
                                     'source': 'descriptionGeneral',
                                     'type': 'string',
                                 },
+                                'Attributes': {
+                                    'source': null,
+                                    'type': 'object',
+                                    'properties': {
+                                        'Attribute': {
+                                            'source': 'attributes',
+                                            'type': 'array',
+                                            'items': {
+                                                'source': null,
+                                                'type': 'object',
+                                                'properties': {
+                                                    '$': {
+                                                        'source': null,
+                                                        'type': 'object',
+                                                        'properties': {
+                                                            'name': {
+                                                                'source': 'name',
+                                                                'type': 'string',
+                                                            },
+                                                        },
+                                                    },
+                                                    '_': {
+                                                        'source': 'value',
+                                                        'type': 'string',
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
                                 'Parties': {
                                     'source': null,
                                     'type': 'object',
@@ -290,6 +320,15 @@ const json2xml = (input = {}) => {
     input.customer.contactInformation.postalCode = input.customer.contactInformation.postalCode || '';
     input.customer.contactInformation.postalArea = input.customer.contactInformation.postalArea || '';
     input.customer.contactInformation.country = input.customer.contactInformation.country || '';
+    input.attributes = [
+        {name: 'purchaseOrderQRC', value: _.get(input, 'codeQr')},
+        {name: 'workPackage', value: _.get(input, 'productGroup.idLocal')},
+        {name: 'workPackageLocation', value: _.get(input, 'productGroup.locationFinal.name')},
+        {name: 'workPackagePhase', value: _.get(input, 'productGroup.process.name')},
+        {name: 'workPackageOperator', value: _.get(input, 'productGroup.operator.name')},
+        {name: 'workPackageOperatorContactName', value: _.get(input, 'productGroup.operator.contact.name')},
+        {name: 'workPackageOperatorContactTelephone', value: _.get(input, 'productGroup.operator.contact.phoneNumber')},
+    ];
 
     let output;
     let xml;
@@ -354,7 +393,7 @@ const template = async (config, template) => {
                 // Pick Laattapiste endpoint from config.
                 config.static.url = config.static.endpoint;
 
-                let xml = json2xml(result[id]);
+                const xml = json2xml(result[id]);
                 if (xml instanceof Error) {
                     xml.message = 'Failed to write XML file with error "' + xml.message + '"';
                     return Promise.reject(xml);
