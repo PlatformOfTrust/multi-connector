@@ -8,7 +8,8 @@
         "username": "<username>",
         "password": "<password>",
         "proxyHost": "[<socks-server-host>]",
-        "proxyPort": "[<socks-server-port>]"
+        "proxyPort": "[<socks-server-port>]",
+        "privateKey": "[<base64-encoded-private-key>]"
     },
     "dynamic": {
         "authConfig.path": "targetObject.name"
