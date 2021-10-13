@@ -6,7 +6,7 @@
         "fromPath": "[<from-path>]",
         "toPath": "[<to-path>]",
         "username": "<username>",
-        "password": "<password>",
+        "password": "[<password>]",
         "proxyHost": "[<socks-server-host>]",
         "proxyPort": "[<socks-server-port>]",
         "privateKey": "[<base64-encoded-private-key>]"
