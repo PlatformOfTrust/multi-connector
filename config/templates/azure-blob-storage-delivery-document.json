@@ -9,6 +9,15 @@
         "account": "${account}",
         "accountKey": "${accountKey}",
         "container": "${container}",
+        "url": "${url}",
+        "port": "${port}",
+        "fromPath": "${fromPath}",
+        "toPath": "${toPath}",
+        "proxyHost": "${proxyHost}",
+        "proxyPort": "${proxyPort}",
+        "username": "${username}",
+        "password": "${password}",
+        "privateKey": "${privateKey}",
         "path": "${targetObject.idLocal}"
     },
     "dataObjects": [

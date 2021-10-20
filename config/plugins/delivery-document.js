@@ -5,6 +5,7 @@
 const transformer = require('../../app/lib/transformer');
 const connector = require('../../app/lib/connector');
 const validator = require('../../app/lib/validator');
+const sftp = require('../../app/protocols/sftp');
 const router = require('express').Router();
 const winston = require('../../logger.js');
 const cache = require('../../app/cache');
@@ -13,6 +14,7 @@ const rp = require('request-promise');
 const moment = require('moment');
 const net = require('net');
 const _ = require('lodash');
+const fs = require('fs').promises;
 const FileType = require('file-type');
 
 const CSVToJSON = require('csvtojson');
@@ -22,6 +24,7 @@ const CSVToJSON = require('csvtojson');
  */
 
 const PLUGIN_NAME = 'delivery-document';
+const DOWNLOAD_DIR = './temp/';
 const PRIMARY_PRODUCT_CODE = 'C1EC2973-8A0B-4858-BF1E-3A0D0CEFE33A';
 const orderNumberToCALSId = {};
 const productCodeToCALSId = {};
@@ -1556,6 +1559,8 @@ const response = async (config, response) => {
                     },
                 };
             }
+        } else {
+            response = {data: response};
         }
         return response;
     } catch (e) {
@@ -1913,15 +1918,17 @@ const template = async (config, template) => {
                 console.log('orderNumberToCALSId: ' + JSON.stringify(orderNumberToCALSId));
                 console.log('productCodeToCALSId: ' + JSON.stringify(productCodeToCALSId));
 
-                /*
+                const path = '/' + result[id].idSystemLocal + '.json';
+                const to = DOWNLOAD_DIR + template.productCode + (template.authConfig.fromPath || '/from') + path;
+                await sftp.checkDir(to);
+                await fs.writeFile(to, JSON.stringify(template.parameters.targetObject));
 
-                winston.log('info', '3. Send data to URL ' + config.static.url);
-                await template.plugins.find(p => p.name === 'streamer')
-                    .stream({...template, config}, {data: {order: body}});
-                 */
+                winston.log('info', '3. Send data to URL ' + to);
+                await sftp.sendData(template, [path]);
 
                 template.protocol = 'hook';
                 template.authConfig.path = id;
+                template.output.array = 'order';
                 template.generalConfig.hardwareId.dataObjectProperty = 'idLocal';
                 template.output.contextValue = 'https://standards.oftrust.net/v2/Context/DataProductOutput/OrderInformation/';
             } catch (err) {
