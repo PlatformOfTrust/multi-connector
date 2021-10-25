@@ -461,7 +461,8 @@ const endpoints = function (passport) {
                     if (!req.authConfig.path) {
                         // Connector is used to hand over the token.
                         html += '<script type="text/javascript">' +
-                            'window.location.href = "' + req.authConfig.redirectUri + '?token=' + token + '"' +
+                            'window.location.href = "' + req.authConfig.redirectUri + '?token=' +
+                            Buffer.from(JSON.stringify(accessToken)).toString('base64') + '"' +
                             '</script>';
                     } else {
                         // Connector is used to query data with the token.
