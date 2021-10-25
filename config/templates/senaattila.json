@@ -1,0 +1,36 @@
+{
+  "plugins": [
+    "oauth2"
+  ],
+  "protocol": "rest",
+  "authConfig": {
+    "url": "https://iamtesti.senaatti.fi",
+    "authPath": "/ui_igm/login/oauth2",
+    "grantType": "authorization_code",
+    "scope": "${scope}",
+    "accessToken": "${accessToken}",
+    "clientId": "${clientId}",
+    "clientSecret": "${clientSecret}",
+    "redirectUri": "${redirectUri}",
+    "path": ""
+  },
+  "dataObjects": [
+    "value"
+  ],
+  "dataPropertyMappings": {
+    "${type}": "url"
+  },
+  "generalConfig": {
+    "sourceName": {
+      "dataObjectProperty": "name"
+    },
+    "hardwareId": {
+      "dataObjectProperty": "id"
+    }
+  },
+  "output": {
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Login/",
+    "array": "login",
+    "data": "data"
+  }
+}
