@@ -1546,7 +1546,7 @@ const response = async (config, response) => {
             if (!fileType) {
                 // File is .txt, .csv, .svg, etc (not a binary-based file format).
                 response = {
-                    data: await CSVToJSON().fromString(Buffer.from(response.data, 'base64').toString('utf-8')),
+                    data: await CSVToJSON({delimiter: 'auto'}).fromString(Buffer.from(response.data, 'base64').toString('utf-8')),
                 };
             } else {
                 response = {
