@@ -455,9 +455,6 @@ const template = async (config, template) => {
         const headers = template.authConfig.headers;
         const originalFilename = template.parameters.targetObject.name;
         const contentType = template.parameters.targetObject['categorizationInternetMediaType'];
-        if (!contentType) {
-            return Promise.reject(new Error('Missing field categorizationInternetMediaType.'));
-        }
 
         // TODO: Testing.
         const qualityDocumentName = originalFilename;
@@ -468,16 +465,31 @@ const template = async (config, template) => {
         // Pick project number from document.
         try {
             projectCode = template.parameters.targetObject.project.idLocal;
-            winston.log('info', 'Project: ' + JSON.stringify(template.parameters.targetObject.project));
+            // winston.log('info', 'Project: ' + JSON.stringify(template.parameters.targetObject.project));
         } catch (e) {
             console.log(e.message);
         }
 
-        /** Create document and fetch it */
         const projectsUrl = domain + '/v2/projects?projectCode=' + projectCode;
         const projects = await request('GET', projectsUrl, headers);
         const project = projects.body.results.find(p => p.projectCode === projectCode);
 
+        if (!contentType) {
+            // Fetch documents.
+            if (project) {
+                template.authConfig.path = '/v2/qualityDocuments?projectCode=' + projectCode;
+            } else if (projectCode) {
+                template.authConfig.path = '/v2/qualityDocuments?projectId=' + projectCode;
+            } else {
+                template.authConfig.path = '/v2/qualityDocuments';
+            }
+
+            template.dataObjects = ['results'];
+            return template;
+            // return Promise.reject(new Error('Missing field categorizationInternetMediaType.'));
+        }
+
+        /** Create document and fetch it */
         const matricesUrl = domain + '/v2/projects/' + project.id + '/matrices';
         const matrices = await request('GET', matricesUrl, headers);
         const matrix = matrices.body.results.find(p => p.projectId === project.id);
