@@ -267,7 +267,7 @@ const requestToken = async (authConfig, refresh, store = true) => {
         }
         return Promise.resolve();
     }).catch(function (err) {
-        return onerror(authConfig, err).then(function (result) {
+        return onerror({authConfig}, err).then(function (result) {
             /** Second attempt was successful. */
             return Promise.resolve(result);
         }).catch(function (err) {
