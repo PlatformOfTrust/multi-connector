@@ -151,6 +151,10 @@ const OrderInformationSchema = {
                                         'source': 'idLocal',
                                         'type': 'string',
                                     },
+                                    'H_Ref_Ship_ID': {
+                                        'source': 'codeQr',
+                                        'type': 'string',
+                                    },
                                     'H_BuyerParty': {
                                         'source': null,
                                         'type': 'object',
