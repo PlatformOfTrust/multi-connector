@@ -267,7 +267,7 @@ const requestToken = async (authConfig, refresh, store = true) => {
         }
         return Promise.resolve();
     }).catch(function (err) {
-        return onerror(authConfig, err).then(function (result) {
+        return onerror({authConfig}, err).then(function (result) {
             /** Second attempt was successful. */
             return Promise.resolve(result);
         }).catch(function (err) {
@@ -280,11 +280,11 @@ const requestToken = async (authConfig, refresh, store = true) => {
 /**
  * Handles erroneous response.
  *
- * @param {Object} authConfig
+ * @param {Object} config
  * @param {Error} err
  * @return {Promise}
  */
-const onerror = async (authConfig, err) => {
+const onerror = async (config, err) => {
     /** Internal error. */
     if (err.reference) {
         return promiseRejectWithError(err.statusCode, err.message);
@@ -295,14 +295,14 @@ const onerror = async (authConfig, err) => {
         /** 401 - Unauthorized. */
         case 401:
             /** Philips HUE specific response handling. */
-            if (authConfig.url === 'https://api.meethue.com') {
-                return updateToken(authConfig, true);
+            if (config.authConfig.url === 'https://api.meethue.com') {
+                return updateToken(config.authConfig, true);
             } else {
-                return updateToken(authConfig, false);
+                return updateToken(config.authConfig, false);
             }
         /** 403 - Token expired. */
         case 403:
-            return updateToken(authConfig, true);
+            return updateToken(config.authConfig, true);
         /** 400 - Invalid credentials / Access token is missing */
         case 400:
             return promiseRejectWithError(err.statusCode, 'Authentication failed.');
