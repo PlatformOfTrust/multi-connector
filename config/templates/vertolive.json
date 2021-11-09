@@ -1,0 +1,28 @@
+{
+    "plugins": ["logger"],
+    "protocol": "rest",
+    "authConfig": {
+      "url": "${url}",
+      "headers": {
+        "X-Vertolive-Api-Key": "${apikey}"
+      },
+      "path": "/rest/integration/apartment/254761?startDate=2021-01-01"
+    },
+    "dataObjects": [
+      ""
+    ],  
+    "dataPropertyMappings": {
+      "${type}": ""
+    },
+    "generalConfig": {
+      "timestamp": {
+        "dataObjectProperty": "timestamp"
+      }
+    },
+    
+    "output": {
+      "id": "id"
+    }
+
+  }
+  
