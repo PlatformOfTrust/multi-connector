@@ -213,9 +213,15 @@ const requestData = async (config, path, index) => {
                 return Promise.resolve([]);
             }
         }
-        return handleError(config, err).then(function () {
+        return handleError(config, err).then(async () => {
             /** Second attempt */
             // If error handler recovers from the error, another attempt is initiated.
+            // Execute request plugin function.
+            for (let i = 0; i < config.plugins.length; i++) {
+                if (config.plugins[i].request) {
+                    options = await config.plugins[i].request(config, options);
+                }
+            }
             return getDataByOptions(config.authConfig, options, path);
         }).then(function (result) {
             // Handle received data.
