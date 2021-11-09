@@ -2,12 +2,8 @@
 /**
  * Module dependencies.
  */
-// const transformer = require('../../app/lib/transformer');
 const winston = require('../../logger.js');
 const rp = require('request-promise');
-const req = require('request');
-// const https = require('https');
-// const fs = require('fs');
 
 /**
  * Schneider id double encoding.
@@ -44,7 +40,7 @@ const parameters = async (config, parameters) => {
  * @param {String/Object/Array} [body]
  * @return {Promise}
  */
-function request(method, url, headers, body) {
+function request (method, url, headers, body) {
     const options = {
         method: method,
         uri: url,
@@ -69,6 +65,12 @@ function request(method, url, headers, body) {
  */
 const template = async (config, template) => {
     try {
+        // Skip subscription if query includes only one id.
+        const ids = template.parameters.ids.map(item => decodeURIComponent(decodeURIComponent(item.id)));
+        if (ids.length < 2) {
+            return template;
+        }
+
         const oauth2 = template.plugins.find(p => p.name === 'oauth2');
         if (!oauth2) {
             return Promise.reject();
@@ -76,41 +78,42 @@ const template = async (config, template) => {
 
         const options = await oauth2.request(template, {});
         const domain = template.authConfig.url;
-        const ids = template.parameters.ids.map(item => decodeURIComponent(decodeURIComponent(item.id)));
 
-        // Create subsciption
-        const createSubsciptionUrl = domain + '/Subscriptions/Create';
-        const subsciptionBody = {
+        // Create subscription.
+        const createSubscriptionBodyUrl = domain + '/Subscriptions/Create';
+        const SubscriptionBody = {
             SubscriptionType: 'ValueItemChanged',
             Ids: ids,
         };
-        const createdSubscription = await request('POST', createSubsciptionUrl, options.headers, subsciptionBody);
-        // console.log('POST, subscription body', createdSubscription.body);
+        const createdSubscription = await request('POST', createSubscriptionBodyUrl, options.headers, SubscriptionBody);
 
-        // Create notification
+        // Create notification.
         const createNotificationUrl = domain + '/Notifications/Create';
         const notificationBody = {
             SubscriptionId: createdSubscription.body.Id,
             ChangesOnly: false,
         };
         const createdNotification = await request('POST', createNotificationUrl, options.headers, notificationBody);
-        // console.log('POST, notification body', createdNotification.body);
 
-        // Get notification
+        // Get notification.
         const getNotificationUrl = domain + '/Notifications/' + createdNotification.body.Id + '/Items';
-        const fetchedNotification = await request('GET', getNotificationUrl, options.headers);
-        console.log('GET, notification body', fetchedNotification.body);
+        const {body} = await request('GET', getNotificationUrl, options.headers);
 
-        // Delete notification
+        // Delete notification.
         const deleteNotificationUrl = domain + '/Notifications/' + createdNotification.body.Id + '/Delete';
-        const deletedNotification = await request('DELETE', deleteNotificationUrl, options.headers);
-        console.log('DELETE, notification body', deletedNotification.body);
+        await request('DELETE', deleteNotificationUrl, options.headers);
 
-        // Delete subsciption
+        // Delete subscription.
         const deleteSubscriptionUrl = domain + '/Subscriptions/' + createdSubscription.body.Id + '/Delete';
-        const deletedSubscription = await request('DELETE', deleteSubscriptionUrl, options.headers);
-        console.log('DELETE, subscription body', deletedSubscription.body);
+        await request('DELETE', deleteSubscriptionUrl, options.headers);
 
+        template.generalConfig = {
+            hardwareId: {dataObjectProperty: 'ChangedItemId'},
+            timestamp: {dataObjectProperty: 'ChangedAt'},
+        };
+
+        template.authConfig.path = body;
+        template.protocol = 'custom';
     } catch (err) {
         winston.log('error', err.message);
         return template;
