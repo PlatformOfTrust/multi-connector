@@ -5,6 +5,7 @@
 const connector = require('../lib/connector');
 const hook = require('../protocols/hook');
 const router = require('express').Router();
+const winston = require('../../logger.js');
 
 /**
  * Hooks controller.
@@ -31,11 +32,15 @@ connector.emitter.on('collections',
                     const productCode = entry[0];
                     const config = entry[1];
                     try {
-                        config.template = templates[config.template];
-                        const hookRequired = config.template.protocol === 'hook';
-                        if (hookRequired) routers[productCode] = hook.endpoints;
+                        if (Object.hasOwnProperty.call(templates, config.template)) {
+                            config.template = templates[config.template];
+                            const hookRequired = config.template.protocol === 'hook';
+                            if (hookRequired) routers[productCode] = hook.endpoints;
+                        } else {
+                            winston.log('error', 'Template ' + config.template + ' not found.');
+                        }
                     } catch (err) {
-                        console.log(err.message);
+                        winston.log('error', err.message);
                     }
                 }
             }
