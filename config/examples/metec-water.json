@@ -1,0 +1,14 @@
+{
+  "template": "metec",
+  "static": {
+    "username": "<email-address>",
+    "password": "<password>",
+    "site": "<site-id>",
+    "type": "water",
+    "resolution": "hour"
+  },
+  "dynamic": {
+    "authConfig.path": "ids"
+  },
+  "signature": false
+}
