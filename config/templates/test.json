@@ -1,6 +1,7 @@
 {
   "plugins": [
-    "test"
+    "test",
+    "logger"
   ],
   "protocol": "custom",
   "authConfig": {
