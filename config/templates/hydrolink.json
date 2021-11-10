@@ -1,0 +1,28 @@
+{
+    "plugins": ["logger"],
+    "protocol": "rest",
+    "authConfig": {
+      "url": "${url}",
+      "headers": {
+        "Authorization": "${authorization}"
+      },
+      "path": "/api/${id}/json"
+    },
+    "dataObjects": [
+      ""
+    ],  
+    "dataPropertyMappings": {
+      "${type}": ""
+    },
+    "generalConfig": {
+      "timestamp": {
+        "dataObjectProperty": "timestamp"
+      }
+    },
+    
+    "output": {
+      "id": "id"
+    }
+
+  }
+  
