@@ -35,6 +35,7 @@ Following data sources are supported out of the box. Example configs can be foun
 - Smartwatcher API
 - Talotohtori API
 - Trackinno Service API
+- Varda API
 - Vastuu Group Company API
 - VTT Transport Data Platform
 - Wapice IoT-Ticket
