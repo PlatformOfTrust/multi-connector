@@ -1,0 +1,38 @@
+{
+    "plugins": ["varda-organization"],
+    "protocol": "rest",
+    "authConfig": {
+        "url": "${url}",
+        "headers": {
+          "caller-id": "${caller-id}"
+        },
+        "path": "/organisaatio-service/rest/organisaatio/hae?searchStr=${targetObject.name}"
+    },
+    "dataObjects": [
+        "organisaatiot"
+    ],
+    "dataPropertyMappings": {
+        "Service": ""
+    },
+    "generalConfig": {
+        "timestamp": {
+          "dataObjectProperty": "alkuPvm"
+        },
+        "sourceName": {
+            "dataObjectProperty": "nimi.fi"
+        },
+        "hardwareId": {
+          "dataObjectProperty": "oid"
+        }
+    },
+    "input": {
+      "required": [
+        "parameters.targetObject"
+      ]
+    },
+    "output": {
+      "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Service/",
+      "array": "service",
+      "data": "data"
+    }
+}
