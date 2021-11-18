@@ -54,7 +54,11 @@ function getValueFromResponse (config, path, object, key) {
             return _.get(object, config[key].dataObjectProperty);
         }
         if (config[key].pathIndex) {
-            return path.split('/')[config[key].pathIndex];
+            if (Array.isArray(config[key].pathIndex)) {
+                return config[key].pathIndex.map(index => path.split('/')[index]).join('/');
+            } else {
+                return path.split('/')[config[key].pathIndex];
+            }
         }
     }
     return undefined;
