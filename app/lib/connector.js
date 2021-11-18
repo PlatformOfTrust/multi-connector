@@ -650,6 +650,15 @@ const getData = async (req) => {
     // Resolve plugins.
     template = await resolvePlugins(template);
 
+    // Attach plugin options from config.
+    for (let i = 0; i < template.plugins.length; i++) {
+        try {
+            template.plugins[i].options = config.plugins[template.plugins[i].name];
+        } catch (e) {
+            template.plugins[i].options = {};
+        }
+    }
+
     // Execute template plugin function.
     for (let i = 0; i < template.plugins.length; i++) {
         if (template.plugins[i].template) {
