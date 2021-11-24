@@ -1877,6 +1877,31 @@ const endpoints = function (passport) {
 };
 
 /**
+ * Resolves contract object by project.
+ *
+ * @param {Object} order
+ * @return {Object}
+ */
+const resolveContract = async (order) => {
+    try {
+        // Fetch contract info.
+        const project = order.project.idLocal;
+        const domain = 'https://docs.google.com';
+        const sheetId = '1rNKNqWlhguThMEThBtnndalPGeNLmyUTnaS5OYZXD5w';
+        const sheetUrl = domain + '/spreadsheets/d/' + sheetId + '/export?format=csv';
+        const {body} = await request('GET', sheetUrl);
+        const contracts = await CSVToJSON({delimiter: 'auto'}).fromString(body);
+        const result = contracts.find((c) => c.project === project.toString());
+        const contract = result ? result.contract : null;
+        order.contract = {idLocal: contract};
+        winston.log('info', 'Contract resolver result: ' + project + (contract ? ' => ' + contract : ' not found'));
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+    return order;
+};
+
+/**
  * Switch querying protocol to REST.
  *
  * @param {Object} config
@@ -1901,6 +1926,18 @@ const template = async (config, template) => {
             );
             const id = template.parameters.targetObject.vendor.idLocal;
             const result = cache.getDoc('messages', template.productCode) || {};
+
+            // Resolve contract.
+            if (!Object.hasOwnProperty.call(template.parameters.targetObject, 'contract')) {
+                template.parameters.targetObject.contract = {idLocal: null};
+            }
+            if (!Object.hasOwnProperty.call(template.parameters.targetObject.contract, 'idLocal')) {
+                template.parameters.targetObject.contract.idLocal = null;
+            }
+            if (template.parameters.targetObject.contract.idLocal === null) {
+                template.parameters.targetObject = await resolveContract(template.parameters.targetObject);
+            }
+
             result[id] = template.parameters.targetObject;
 
             // TODO: Store received order to cache?
@@ -1914,9 +1951,9 @@ const template = async (config, template) => {
                     productCodeToCALSId[result[id].orderLine[i].product.codeProduct] = result[id].orderLine[i].idSystemLocal;
                 }
 
-                console.log('Store CALS identifiers from received order.');
-                console.log('orderNumberToCALSId: ' + JSON.stringify(orderNumberToCALSId));
-                console.log('productCodeToCALSId: ' + JSON.stringify(productCodeToCALSId));
+                // console.log('Store CALS identifiers from received order.');
+                // console.log('orderNumberToCALSId: ' + JSON.stringify(orderNumberToCALSId));
+                // console.log('productCodeToCALSId: ' + JSON.stringify(productCodeToCALSId));
 
                 const path = '/' + result[id].idSystemLocal + '.json';
                 const to = DOWNLOAD_DIR + template.productCode + (template.authConfig.fromPath || '/from') + path;

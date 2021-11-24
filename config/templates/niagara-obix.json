@@ -1,0 +1,34 @@
+{
+  "plugins": [
+    "scheduler",
+    "basic",
+    "xml-parser"
+  ],
+  "protocol": "rest",
+  "authConfig": {
+    "url": "${url}",
+    "username": "${username}",
+    "password": "${password}",
+    "headers": "${headers}",
+    "path": "/obix/histories/${id}/~historyQuery"
+  },
+  "dataObjects": [
+    "obj.list.obj"
+  ],
+  "dataPropertyMappings": {
+    "${type}": "real.@_val"
+  },
+  "generalConfig": {
+    "query": {
+      "limit": { "limit": 1 },
+      "end": "end",
+      "start": "start"
+    },
+    "hardwareId": {
+      "pathIndex": [3, 4]
+    },
+    "timestamp": {
+      "dataObjectProperty": "abstime.@_val"
+    }
+  }
+}
