@@ -1880,14 +1880,14 @@ const endpoints = function (passport) {
  * Resolves contract object by project.
  *
  * @param {Object} order
+ * @param {String} sheetId
  * @return {Object}
  */
-const resolveContract = async (order) => {
+const resolveContract = async (order, sheetId) => {
     try {
         // Fetch contract info.
         const project = order.project.idLocal;
         const domain = 'https://docs.google.com';
-        const sheetId = '1rNKNqWlhguThMEThBtnndalPGeNLmyUTnaS5OYZXD5w';
         const sheetUrl = domain + '/spreadsheets/d/' + sheetId + '/export?format=csv';
         const {body} = await request('GET', sheetUrl);
         const contracts = await CSVToJSON({delimiter: 'auto'}).fromString(body);
@@ -1935,7 +1935,7 @@ const template = async (config, template) => {
                 template.parameters.targetObject.contract.idLocal = null;
             }
             if (template.parameters.targetObject.contract.idLocal === null) {
-                template.parameters.targetObject = await resolveContract(template.parameters.targetObject);
+                template.parameters.targetObject = await resolveContract(template.parameters.targetObject, template.authConfig.contractSheet);
             }
 
             result[id] = template.parameters.targetObject;

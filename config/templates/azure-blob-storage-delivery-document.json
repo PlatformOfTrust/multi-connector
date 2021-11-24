@@ -9,6 +9,7 @@
         "account": "${account}",
         "accountKey": "${accountKey}",
         "container": "${container}",
+        "contractSheet": "${contractSheet}",
         "url": "${url}",
         "port": "${port}",
         "fromPath": "${fromPath}",
