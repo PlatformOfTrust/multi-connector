@@ -1,0 +1,30 @@
+{
+  "plugins": [
+    "trafik-verket"
+  ],
+  "protocol": "rest",
+  "authConfig": {
+    "url": "https://api.trafikinfo.trafikverket.se",
+    "body": "<REQUEST><LOGIN authenticationkey=\"${apiKey}\" /><QUERY objecttype=\"Parking\" limit=\"100\" schemaversion=\"1.4\"></QUERY></REQUEST>",
+    "headers": {
+      "Content-Type": "application/xml"
+    },
+    "path": "/v2/data.json",
+    "method": "POST"
+  },
+  "dataObjects": [
+    ""
+  ],
+  "dataPropertyMappings": {
+    "${type}": ""
+  },
+  "generalConfig": {},
+  "input": {
+    "required": []
+  },
+  "output": {
+    "contextValue": "https://standards-ontotest.oftrust.net/v2/Context/DataProductOutput/ParkingAndRestAreaInformation/?v=2.0",
+    "array": "ParkingData",
+    "data": "data"
+  }
+}
