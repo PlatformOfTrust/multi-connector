@@ -1,0 +1,43 @@
+{
+  "plugins": [
+    "oauth2",
+    "schneider"
+  ],
+  "protocol": "rest",
+  "authConfig": {
+    "url": "${authUrl}",
+    "authPath": "/connect/token",
+    "clientId": "${clientId}",
+    "clientSecret": "${clientSecret}",
+    "username": "${username}",
+    "password": "${password}",
+    "scope": "api1",
+    "path": "${url}/api/v1/objects/${targetObject.idLocal}/service-requests"
+  },
+  "dataObjects": [
+    ""
+  ],
+  "dataPropertyMappings": {
+    "${type}": ""
+  },
+  "generalConfig": {
+    "timestamp": {
+      "dataObjectProperty": "LatestHistoryItem.UpdatedDate"
+    },
+    "sourceName": {
+      "dataObjectProperty": "CodedObject.Name"
+    },
+    "hardwareId": {
+      "dataObjectProperty": "CodedObject.Id"
+    }
+  },
+  "input": {
+    "required": [
+      "parameters.targetObject.idLocal"
+    ]
+  },
+  "output": {
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/ServiceRequest/?v=2.0",
+    "array": "serviceRequest"
+  }
+}
