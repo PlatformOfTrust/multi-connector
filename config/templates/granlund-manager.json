@@ -1,7 +1,7 @@
 {
   "plugins": [
     "oauth2",
-    "schneider"
+    "granlund-manager"
   ],
   "protocol": "rest",
   "authConfig": {
