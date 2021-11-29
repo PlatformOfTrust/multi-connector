@@ -56,7 +56,7 @@
                             },
                             "status": {
                                 "$id": "#/properties/data/properties/serviceRequest/items/properties/status",
-                                "source": null,
+                                "source": "",
                                 "type": "array",
                                 "title": "Life-cycle status",
                                 "description": "Life-cycle status.  Status name.",
@@ -68,7 +68,7 @@
                                     "properties": {
                                         "@type": {
                                             "$id": "#/properties/data/properties/serviceRequest/items/properties/status/items/properties/@type",
-                                            "source": null,
+                                            "source": "statusType",
                                             "type": "string",
                                             "title": "Identity type",
                                             "description": "Type of identity."
@@ -85,7 +85,7 @@
                             },
                             "statusCode": {
                                 "$id": "#/properties/data/properties/serviceRequest/items/properties/statusCode",
-                                "source": null,
+                                "source": "",
                                 "type": "array",
                                 "title": "Life-cycle status code",
                                 "description": "Life-cycle status code.",
@@ -97,7 +97,7 @@
                                     "properties": {
                                         "@type": {
                                             "$id": "#/properties/data/properties/serviceRequest/items/properties/statusCode/items/properties/@type",
-                                            "source": null,
+                                            "source": "statusCodeType",
                                             "type": "string",
                                             "title": "Identity type",
                                             "description": "Type of identity."
@@ -192,7 +192,7 @@
                                 "properties": {
                                     "@type": {
                                         "$id": "#/properties/data/properties/serviceRequest/items/properties/parentObject/properties/@type",
-                                        "source": null,
+                                        "source": "parentObjectType",
                                         "type": "string",
                                         "title": "Identity type",
                                         "description": "Type of identity."
@@ -216,7 +216,7 @@
                                 "properties": {
                                     "@type": {
                                         "$id": "#/properties/data/properties/serviceRequest/items/properties/location/properties/@type",
-                                        "source": null,
+                                        "source": "locationType",
                                         "type": "string",
                                         "title": "Identity type",
                                         "description": "Type of identity."
@@ -276,7 +276,7 @@
                                         "properties": {
                                             "@type": {
                                                 "$id": "#/properties/data/properties/serviceRequest/items/properties/location/properties/organization/properties/@type",
-                                                "source": null,
+                                                "source": "locationOrganizationType",
                                                 "type": "string",
                                                 "title": "Identity type",
                                                 "description": "Type of identity."
@@ -309,7 +309,7 @@
                                 "properties": {
                                     "@type": {
                                         "$id": "#/properties/data/properties/serviceRequest/items/properties/creator/properties/@type",
-                                        "source": null,
+                                        "source": "creatorType",
                                         "type": "string",
                                         "title": "Identity type",
                                         "description": "Type of identity."
@@ -323,7 +323,7 @@
                                     },
                                     "name": {
                                         "$id": "#/properties/data/properties/serviceRequest/items/properties/creator/properties/name",
-                                        "source": "CreatorName",
+                                        "source": null,
                                         "type": "string",
                                         "title": "Name",
                                         "description": "Name."
@@ -340,7 +340,7 @@
                                 "properties": {
                                     "@type": {
                                         "$id": "#/properties/data/properties/serviceRequest/items/properties/requestor/properties/@type",
-                                        "source": null,
+                                        "source": "requestorType",
                                         "type": "string",
                                         "title": "Identity type",
                                         "description": "Type of identity."
@@ -354,7 +354,7 @@
                                     },
                                     "name": {
                                         "$id": "#/properties/data/properties/serviceRequest/items/properties/requestor/properties/name",
-                                        "source": null,
+                                        "source": "CreatorName",
                                         "type": "string",
                                         "title": "Name",
                                         "description": "Name."

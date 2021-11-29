@@ -28,6 +28,29 @@ const handleData = function (config, id, data) {
 
             // Transform raw input.
             value.type = 'Case';
+            value.statusType = 'Status';
+            value.statusCodeType = 'StatusCode';
+            value.creatorType = 'Organization';
+            value.requestorType = 'Person';
+            value.parentObjectType = 'Object';
+            value.locationType = 'Location';
+            value.locationOrganizationType = 'Organization';
+
+            switch (value.Phase) {
+                case 'Defined':
+                    value.Phase = 'Defined';
+                    break;
+                case 'New':
+                    value.Phase = 'New';
+                    break;
+                case 'UnderProgress':
+                    value.Phase = 'Ongoing';
+                    break;
+                case 'Completed':
+                    value.Phase = 'Completed';
+                    break;
+            }
+
             result = transformer.transform(value, schema.properties.data);
 
             // Merge all to same result.
