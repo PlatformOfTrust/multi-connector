@@ -5,7 +5,7 @@
     "topic": "sites/hemso/#",
     "username": "<username>",
     "password": "<password>",
-    "type": "MeasureAirTemperatureCelsiusDegree"
+    "type": ["MeasureAirTemperatureCelsiusDegree", "MeasureAirCO2LevelPPM"]
   },
   "dynamic": {
     "authConfig.path": "ids"

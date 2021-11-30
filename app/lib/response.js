@@ -179,8 +179,20 @@ const handleData = async (config, path, index, data) => {
 
             // Format data
             for (let d = 0; d < Object.entries(measurement.data).length; d++) {
+                let type = Object.entries(measurement.data)[d][0];
+                try {
+                    // Select best match from array of types.
+                    if (type.split(',').length > 1) {
+                        const match = type.split(',').map(t => ({type: t, score: _.uniq(t.split('')
+                            .filter(value => hardwareId.split('').includes(value))).length}))
+                            .sort((a, b) => b.score - a.score);
+                        type = match[0].type;
+                    }
+                } catch (err) {
+                    console.log(err.message);
+                }
                 item[keys.data].push({
-                    [keys.type]: Object.entries(measurement.data)[d][0],
+                    [keys.type]: type,
                     [keys.timestamp]: measurement.timestamp,
                     [keys.value]: Object.entries(measurement.data)[d][1],
                 });
