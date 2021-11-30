@@ -3,12 +3,16 @@
  * Module dependencies.
  */
 const _ = require('lodash');
+const crypto = require('crypto');
+const rp = require('request-promise');
 const rsa = require('../../app/lib/rsa');
-const cache = require('../../app/cache');
 
 /**
  * Plugin to perform RSA validation on received data.
  */
+
+/** Import Platform of Trust definitions. */
+const {brokerURLs} = require('../../config/definitions/pot');
 
 /**
  * Validates response signature.
@@ -23,45 +27,86 @@ const response = async (config, response) => {
         if (!_.isObject(response)) {
             return response;
         }
-        const url = config.authConfig.url;
-        const publicKeys = (cache.getDocs('publicKeys') || []).sort((a, b) => (a.priority > b.priority) ? 1 : -1).filter(c => c.url.startsWith(url));
+        const body = await rp({method: 'GET', url: response.signature.creator});
+        const publicKey = body.toString();
 
-        // Include connectors public key.
-        publicKeys.push({
-            url: config.authConfig.publicKeyUrl,
-            key: rsa.getPublicKey(),
-            env: 'local',
-            priority: publicKeys.length,
-        });
+        // Verify payload and signature against public key.
+        output = rsa.verifySignature({
+            __signed__: response.signature.created,
+            ...(response.data || response.message),
+        }, response.signature.signatureValue, publicKey) ? response : null;
 
-        /** Signature validation */
-        config.rsa = {
-            verified: false,
-        };
-
-        // Verify payload and signature against public keys.
-        for (let i = 0; i < publicKeys.length; i++) {
-            if (config.rsa.verified) continue;
-            if (rsa.verifySignature({
-                __signed__: response.signature.created,
-                ...(response.data || response.message),
-            }, response.signature.signatureValue, publicKeys[i].key)) {
-                config.rsa.verified = true;
-                config.rsa.environment = publicKeys[i].env;
-                config.rsa.url = publicKeys[i].url;
-            }
-        }
-        output = config.rsa.verified ? response : null;
     } catch (err) {
         console.log(err.message);
     }
     return output;
 };
 
+
+
 /**
  * Expose plugin methods.
  */
 module.exports = {
     name: 'rsa',
+    request: async (config, options) => {
+        let headers;
+        try {
+            const parameters = config.plugins.find(p => p.name === 'rsa').options;
+            let env = 'sandbox';
+            let url;
+            // Try to parse env from the config.
+            try {
+                // Find env specific broker URL.
+                env = parameters.env;
+                url = (brokerURLs.find(i => i.env === (env || 'sandbox'))
+                    || {url: 'http://localhost:8080/translator/v1/fetch'}).url;
+            } catch (err) {
+                console.log(err.message);
+            }
+
+            // Load PoT credentials from env by default.
+            let clientSecret = process.env.POT_CLIENT_SECRET;
+            let appAccessToken = process.env.POT_APP_ACCESS_TOKEN;
+
+            // Try to parse credentials from the config.
+            try {
+                clientSecret = parameters.clientSecret || clientSecret;
+                appAccessToken = parameters.appAccessToken || appAccessToken;
+            } catch (err) {
+                console.log(err.message);
+            }
+
+            const accessToken = process.env.POT_ACCESS_TOKEN || appAccessToken;
+
+            // Initialize signature value.
+            let signatureValue;
+            try {
+                signatureValue = crypto
+                    .createHmac('sha256', Buffer.from(clientSecret, 'utf8'))
+                    .update(rsa.stringifyBody(options.body)).digest('base64');
+            } catch (err) {
+                console.log(err.message);
+            }
+
+            // Set request headers
+            headers = {
+                'X-Pot-Signature': signatureValue,
+                'X-App-Token': appAccessToken,
+                'X-User-Token': accessToken,
+            };
+
+            if (options.url === '${url}') {
+                options.url = url;
+            }
+
+        } catch (err) {
+            headers = {};
+        }
+
+        // Include signature.
+        options.headers = {...options.headers, ...headers};
+        return options;
+    },
     response,
 };

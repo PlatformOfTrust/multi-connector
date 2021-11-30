@@ -198,6 +198,12 @@ const requestData = async (config, path, index) => {
         }
     }
 
+    if (_.isObject(options.body)) {
+        options.body = JSON.stringify(options.body);
+    }
+
+    console.log(options);
+
     /** First attempt */
     return getDataByOptions(config.authConfig, options, path).then(function (result) {
         // Handle received data.
@@ -213,7 +219,9 @@ const requestData = async (config, path, index) => {
                 return Promise.resolve([]);
             }
         }
+        console.log(err.message)
         return handleError(config, err).then(async () => {
+
             /** Second attempt */
             // If error handler recovers from the error, another attempt is initiated.
             // Execute request plugin function.
