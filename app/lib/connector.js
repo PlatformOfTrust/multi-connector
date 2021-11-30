@@ -328,9 +328,14 @@ function replacePlaceholders (config, template, params) {
                         });
                         _.set(template, path, array);
                     } else {
+                        let value = placeholder === '' ? params : _.get(params, placeholder);
+                        // Insert current datetime to timestamp placeholder.
+                        if (value === undefined && placeholder === 'timestamp') {
+                            value = new Date().toISOString();
+                        }
                         // If not found at static parameters, replace placeholder with undefined.
                         if (_.get(params, placeholder) || !Object.keys(config.static).includes(placeholder)) {
-                            _.set(template, path, replacer(templateValue, placeholder, _.get(params, placeholder)));
+                            _.set(template, path, replacer(templateValue, placeholder, value));
                         }
                     }
                 }
