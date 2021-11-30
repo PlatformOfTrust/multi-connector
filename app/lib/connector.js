@@ -267,6 +267,12 @@ function replacer (template, placeholder, value) {
             } else {
                 r = replaceAll(r, '${' + key + '}', value[key]);
             }
+            // Reverse replace in case parse fails and use stringified value instead.
+            try {
+                JSON.parse(r);
+            } catch (err) {
+                r = replaceAll(r, JSON.stringify(value[key]), '"' + value[key] + '"');
+            }
         });
         // In case id placeholder is left untouched.
         if (r === '"${id}"' && Object.keys(value).length > 0) {
