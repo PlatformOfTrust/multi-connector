@@ -202,8 +202,6 @@ const requestData = async (config, path, index) => {
         options.body = JSON.stringify(options.body);
     }
 
-    console.log(options);
-
     /** First attempt */
     return getDataByOptions(config.authConfig, options, path).then(function (result) {
         // Handle received data.
@@ -219,7 +217,6 @@ const requestData = async (config, path, index) => {
                 return Promise.resolve([]);
             }
         }
-        console.log(err.message)
         return handleError(config, err).then(async () => {
 
             /** Second attempt */
