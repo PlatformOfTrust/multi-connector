@@ -3,7 +3,6 @@
  * Module dependencies.
  */
 const winston = require('../../logger.js');
-const moment = require('moment');
 const _ = require('lodash');
 
 /**
@@ -129,7 +128,7 @@ const handleData = async (config, path, index, data) => {
 
             // Look for timestamp.
             let timestamp = getValueFromResponse(config.generalConfig, path, dataObjects[j], 'timestamp');
-            if (!timestamp) timestamp = moment.now();
+            if (!timestamp) timestamp = new Date();
 
             // Map data from the response data.
             const measurement = {
@@ -141,6 +140,9 @@ const handleData = async (config, path, index, data) => {
             if (measurement.timestamp.getFullYear() === 1970) {
                 measurement.timestamp = new Date(timestamp * 1000);
             }
+
+            // Convert timestamp to ISO-format.
+            measurement.timestamp = measurement.timestamp.toISOString();
 
             // Map data.
             _.forIn(config.dataPropertyMappings, function (value, key) {
