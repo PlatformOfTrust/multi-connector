@@ -652,6 +652,11 @@ const getData = async (req) => {
         return rest.promiseRejectWithError(500, 'Insufficient authentication configurations.');
     }
 
+    // Attach scheduler.
+    if (process.env.SCHEDULER === 'true') {
+        template.plugins = _.uniq(['scheduler', ...template.plugins]);
+    }
+
     // Resolve plugins.
     template = await resolvePlugins(template);
 
