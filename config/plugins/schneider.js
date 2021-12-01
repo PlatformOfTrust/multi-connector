@@ -67,9 +67,10 @@ const template = async (config, template) => {
     try {
         // Skip subscription if query includes only one id.
         const ids = template.parameters.ids.map(item => decodeURIComponent(decodeURIComponent(item.id)));
-        if (ids.length < 2) {
+        if (ids.length < 5) {
             return template;
         }
+        template.parameters.ids = ids;
 
         const oauth2 = template.plugins.find(p => p.name === 'oauth2');
         if (!oauth2) {
