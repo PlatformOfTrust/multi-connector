@@ -72,6 +72,10 @@ function handleFile (collection, file, data) {
                 protocols['websocket'].connect(object, file);
             }
         }
+        // Attach scheduler plugin.
+        if (process.env.SCHEDULER === 'true' && collection === 'templates') {
+            object.plugins = _.uniq(['scheduler', ...object.plugins]);
+        }
     } catch (err) {
         /** File is not a valid JSON. */
     }
@@ -656,11 +660,6 @@ const getData = async (req) => {
     // Check that authConfig exists.
     if (!Object.hasOwnProperty.call(template, 'authConfig')) {
         return rest.promiseRejectWithError(500, 'Insufficient authentication configurations.');
-    }
-
-    // Attach scheduler.
-    if (process.env.SCHEDULER === 'true') {
-        template.plugins = _.uniq(['scheduler', ...template.plugins]);
     }
 
     // Resolve plugins.
