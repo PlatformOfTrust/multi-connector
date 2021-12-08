@@ -43,14 +43,16 @@ const templatesDir = './config/templates';
 const resourcesDir = './config/resources';
 const protocolsDir = './app/protocols';
 const pluginsDir = './config/plugins';
+const schemasDir = './config/schemas';
 const configsDir = './config';
 
 // Make sure directories for templates, protocols, configs and plugins exists.
 if (!fs.existsSync(templatesDir)) fs.mkdirSync(templatesDir);
 if (!fs.existsSync(resourcesDir)) fs.mkdirSync(resourcesDir);
 if (!fs.existsSync(protocolsDir)) fs.mkdirSync(protocolsDir);
-if (!fs.existsSync(configsDir)) fs.mkdirSync(configsDir);
 if (!fs.existsSync(pluginsDir)) fs.mkdirSync(pluginsDir);
+if (!fs.existsSync(schemasDir)) fs.mkdirSync(schemasDir);
+if (!fs.existsSync(configsDir)) fs.mkdirSync(configsDir);
 
 /**
  * Handles JSON data.
@@ -211,6 +213,12 @@ function emit (collections) {
             /** Source selection for configs. */
             loadJSON('configs', process.env.CONFIGS) :
             load(configsDir, '.json', 'configs', readFile));
+    })
+    .then(() => {
+        return (process.env.SCHEMAS ?
+            /** Source selection for schemas. */
+            loadJSON('schemas', process.env.SCHEMAS) :
+            load(schemasDir, '.json', 'schemas', readFile));
     })
     .then(() => {
         return load(pluginsDir, '.js', 'plugins', readFile);
