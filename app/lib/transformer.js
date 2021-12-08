@@ -34,7 +34,9 @@ const transform = function (source, schema) {
                     break;
                 case 'array':
                     value = [];
-                    if (Object.hasOwnProperty.call(schema, 'source')) {
+                    if (Object.hasOwnProperty.call(schema, 'value')) {
+                        value.push(schema.value);
+                    } else if (Object.hasOwnProperty.call(schema, 'source')) {
                         let array = schema.source === '' ? source : _.get(source, schema.source);
                         if (array === undefined) return;
                         if (!Array.isArray(array)) array = [array];
@@ -56,7 +58,9 @@ const transform = function (source, schema) {
                 case 'boolean':
                 case 'integer':
                 case 'number':
-                    if (Object.hasOwnProperty.call(schema, 'source')) {
+                    if (Object.hasOwnProperty.call(schema, 'value')) {
+                        value = schema.value;
+                    } else if (Object.hasOwnProperty.call(schema, 'source')) {
                         if (schema.source) value = schema.source === '' ? source : _.get(source, schema.source, schema.default);
                     }
                     break;
