@@ -1,6 +1,5 @@
 {
     "$schema": "http://json-schema.org/draft-06/schema#",
-    "source": null,
     "$id": "https://standards-ontotest.oftrust.net/v2/Schema/DataProductOutput/ServiceRequest?v=2.0",
     "type": "object",
     "required": [],
@@ -29,7 +28,7 @@
                     "description": "Service request.",
                     "items": {
                         "$id": "#/properties/data/properties/serviceRequest/items",
-                        "source": "null",
+                        "source": null,
                         "type": "object",
                         "required": [],
                         "properties": {
