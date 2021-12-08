@@ -1,0 +1,296 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "$id": "https://standards.oftrust.net/v2/Schema/DataProductOutput/Process/Measure/WaterMeterReading?v=3.0",
+    "type": "object",
+    "required": [],
+    "properties": {
+        "@context": {
+            "$id": "#/properties/@context",
+            "source": null,
+            "type": "string",
+            "const": "https://standards-ontotest.oftrust.net/v2/Context/DataProductOutput/Process/Measure/WaterMeterReading/?v=3.0",
+            "title": "JSON-LD context url",
+            "description": "JSON-LD context url with terms required to understand data product content."
+        },
+        "data": {
+            "$id": "#/properties/data",
+            "source": null,
+            "type": "object",
+            "title": "Data product output",
+            "description": "Output of data product delivered to customers.",
+            "required": [],
+            "properties": {
+                "process": {
+                    "$id": "#/properties/data/properties/process",
+                    "source": "",
+                    "type": "array",
+                    "title": "Process",
+                    "description": "A process is a single activity or set of activities that interact to produce a result.",
+                    "items": {
+                        "$id": "#/properties/data/properties/process/items",
+                        "source": null,
+                        "type": "object",
+                        "required": [],
+                        "properties": {
+                            "@type": {
+                                "$id": "#/properties/data/properties/process/items/properties/@type",
+                                "value": "Measure",
+                                "type": "string",
+                                "title": "Identity type",
+                                "description": "Type of identity."
+                            },
+                            "executor": {
+                                "$id": "#/properties/data/properties/process/items/properties/executor",
+                                "source": null,
+                                "type": "array",
+                                "title": "Process executor",
+                                "description": "Executor of the process (source of the data).",
+                                "items": {
+                                    "$id": "#/properties/data/properties/process/items/properties/executor/items",
+                                    "source": null,
+                                    "type": "object",
+                                    "required": [],
+                                    "properties": {
+                                        "@type": {
+                                            "$id": "#/properties/data/properties/process/items/properties/executor/items/properties/@type",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Identity type",
+                                            "description": "Type of identity."
+                                        },
+                                        "name": {
+                                            "$id": "#/properties/data/properties/process/items/properties/executor/items/properties/name",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Name",
+                                            "description": "Name."
+                                        },
+                                        "idLocal": {
+                                            "$id": "#/properties/data/properties/process/items/properties/executor/items/properties/idLocal",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Local identifier",
+                                            "description": "Locally given identifier."
+                                        }
+                                    }
+                                }
+                            },
+                            "location": {
+                                "$id": "#/properties/data/properties/process/items/properties/location",
+                                "source": null,
+                                "type": "object",
+                                "title": "Location",
+                                "description": "Property category for location related information.",
+                                "required": [],
+                                "properties": {
+                                    "@type": {
+                                        "$id": "#/properties/data/properties/process/items/properties/location/properties/@type",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Identity type",
+                                        "description": "Type of identity."
+                                    },
+                                    "name": {
+                                        "$id": "#/properties/data/properties/process/items/properties/location/properties/name",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Name",
+                                        "description": "Name."
+                                    },
+                                    "idLocal": {
+                                        "$id": "#/properties/data/properties/process/items/properties/location/properties/idLocal",
+                                        "source": "id",
+                                        "type": "string",
+                                        "title": "Local identifier",
+                                        "description": "Locally given identifier."
+                                    },
+                                    "description": {
+                                        "$id": "#/properties/data/properties/process/items/properties/location/properties/description",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Property category for descriptive information",
+                                        "description": "Property category for descriptive information."
+                                    },
+                                    "streetAddressLine1": {
+                                        "$id": "#/properties/data/properties/process/items/properties/location/properties/streetAddressLine1",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Street address line 1",
+                                        "description": "Street address line 1."
+                                    },
+                                    "postalCode": {
+                                        "$id": "#/properties/data/properties/process/items/properties/location/properties/postalCode",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Postal code",
+                                        "description": "Postal code."
+                                    },
+                                    "city": {
+                                        "$id": "#/properties/data/properties/process/items/properties/location/properties/city",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "City",
+                                        "description": "City."
+                                    },
+                                    "countryCode": {
+                                        "$id": "#/properties/data/properties/process/items/properties/location/properties/countryCode",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Country code",
+                                        "description": "Country code."
+                                    },
+                                    "locationPoint": {
+                                        "$id": "#/properties/data/properties/process/items/properties/location/properties/locationPoint",
+                                        "source": null,
+                                        "type": "object",
+                                        "title": "Location point",
+                                        "description": "Location point.",
+                                        "required": [],
+                                        "properties": {
+                                            "@type": {
+                                                "$id": "#/properties/data/properties/process/items/properties/location/properties/locationPoint/properties/@type",
+                                                "type": "string",
+                                                "title": "Identity type",
+                                                "description": "Type of identity."
+                                            },
+                                            "location": {
+                                                "$id": "#/properties/data/properties/process/items/properties/location/properties/locationPoint/properties/location",
+                                                "type": "array",
+                                                "title": "Location",
+                                                "description": "Property category for location related information.",
+                                                "items": {
+                                                    "$id": "#/properties/data/properties/process/items/properties/location/properties/locationPoint/properties/location/items",
+                                                    "type": "object",
+                                                    "required": [],
+                                                    "properties": {
+                                                        "@type": {
+                                                            "$id": "#/properties/data/properties/process/items/properties/location/properties/locationPoint/properties/location/items/properties/@type",
+                                                            "type": "string",
+                                                            "title": "Identity type",
+                                                            "description": "Type of identity."
+                                                        },
+                                                        "longitude": {
+                                                            "$id": "#/properties/data/properties/process/items/properties/location/properties/locationPoint/properties/location/items/properties/longitude",
+                                                            "type": "number",
+                                                            "title": "Longitude",
+                                                            "description": "Angular distance east or west on the earth's surface, measured by the angle contained between the meridian of a particular place and some prime meridian, as that of Greenwich, England, and expressed either in degrees or by some corresponding difference in time (WGS 84)."
+                                                        },
+                                                        "latitude": {
+                                                            "$id": "#/properties/data/properties/process/items/properties/location/properties/locationPoint/properties/location/items/properties/latitude",
+                                                            "type": "number",
+                                                            "title": "Latitude",
+                                                            "description": "The angular distance north or south from the equator of a point on the earth's surface, measured on the meridian of the point (WGS 84)."
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "processTarget": {
+                                "$id": "#/properties/data/properties/process/items/properties/processTarget",
+                                "source": "data.@type",
+                                "type": "string",
+                                "enum": [
+                                    "Water"
+                                ],
+                                "title": "Process target",
+                                "description": "Object into which process (verb) is targeted."
+                            },
+                            "physicalProperty": {
+                                "$id": "#/properties/data/properties/process/items/properties/physicalProperty",
+                                "value": "Volume",
+                                "type": "string",
+                                "enum": [
+                                    "Volume"
+                                ],
+                                "title": "Physical property",
+                                "description": "Physical property."
+                            },
+                            "processValue": {
+                                "$id": "#/properties/data/properties/process/items/properties/processValue",
+                                "source": "",
+                                "type": "array",
+                                "title": "Output value",
+                                "description": "Output value of the process.",
+                                "items": {
+                                    "$id": "#/properties/data/properties/process/items/properties/processValue/items",
+                                    "source": null,
+                                    "type": "object",
+                                    "required": [],
+                                    "properties": {
+                                        "@type": {
+                                            "$id": "#/properties/data/properties/process/items/properties/processValue/items/properties/@type",
+                                            "value": "Value",
+                                            "type": "string",
+                                            "title": "Identity type",
+                                            "description": "Type of identity."
+                                        },
+                                        "processValue": {
+                                            "$id": "#/properties/data/properties/process/items/properties/processValue/items/properties/processValue",
+                                            "source": "data.value",
+                                            "type": "string",
+                                            "title": "Output value",
+                                            "description": "Output value of the process."
+                                        },
+                                        "unitOfMeasure": {
+                                            "$id": "#/properties/data/properties/process/items/properties/processValue/items/properties/unitOfMeasure",
+                                            "value": "litre",
+                                            "type": "string",
+                                            "enum": [
+                                                "Liter"
+                                            ],
+                                            "title": "Unit of measure",
+                                            "description": "Unit of measure."
+                                        },
+                                        "period": {
+                                            "$id": "#/properties/data/properties/process/items/properties/processValue/items/properties/period",
+                                            "type": "string",
+                                            "title": "Period",
+                                            "description": "Period."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "signature": {
+                    "$id": "#/properties/data/properties/signature",
+                    "type": "object",
+                    "title": "Signature",
+                    "description": "Signature.",
+                    "required": [],
+                    "properties": {
+                        "type": {
+                            "$id": "#/properties/data/properties/signature/properties/type",
+                            "type": "string",
+                            "title": "Type",
+                            "description": "Type."
+                        },
+                        "created": {
+                            "$id": "#/properties/data/properties/signature/properties/created",
+                            "type": "string",
+                            "title": "Created",
+                            "description": "Creation time."
+                        },
+                        "creator": {
+                            "$id": "#/properties/data/properties/signature/properties/creator",
+                            "type": "string",
+                            "title": "Creator",
+                            "description": "Party who has created the file or information."
+                        },
+                        "signatureValue": {
+                            "$id": "#/properties/data/properties/signature/properties/signatureValue",
+                            "type": "string",
+                            "title": "Signature value",
+                            "description": "Signature value."
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "version": "3.0"
+}

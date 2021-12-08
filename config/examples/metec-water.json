@@ -5,7 +5,8 @@
     "password": "<password>",
     "site": "<site-id>",
     "type": "water",
-    "resolution": "hour"
+    "resolution": "hour",
+    "schema": "water-meter-reading-v3_metec"
   },
   "dynamic": {
     "authConfig.path": "ids"
