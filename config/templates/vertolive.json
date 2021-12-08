@@ -1,12 +1,12 @@
 {
-    "plugins": ["vertolive"],
+    "plugins": ["vertolive", "logger"],
     "protocol": "rest",
     "authConfig": {
       "url": "${url}",
       "headers": {
         "X-Vertolive-Api-Key": "${apikey}"
       },
-      "path": "/rest/integration/apartment/254761?startDate=2021-01-01"
+      "path": "/rest/integration/apartment/${targetObject.idLocal}"
     },
     "dataObjects": [
       ""
@@ -15,11 +15,21 @@
       "${type}": ""
     },
     "generalConfig": {
+      "query": {
+        "start": "startDate",
+        "end": "endDate"
+    },
       "timestamp": {
         "dataObjectProperty": "timestamp"
       }
     },
-    
+    "input": {
+      "required": [
+          "parameters.targetObject",
+          "parameters.period"
+
+      ]
+  },
     "output": {
       "id": "id"
     }

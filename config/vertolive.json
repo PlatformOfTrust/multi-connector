@@ -5,7 +5,18 @@
         "apikey": "stNcPv8tTaAWWjufChDt4Jj8lUddtb7mpniqFg8CE9lqZiA9zCucaV99LlNSvOqn",
         "type": "MeasureWaterConsumption"
     },
+    "dynamic": {
+        "authConfig.path": "targetObject.idLocal"
+    },
     "request": {
-      "ids": "<id>"
-    }
+      "period": "<startDate>/<endDate>",
+      "targetObject":
+      [
+      {
+        "idLocal": [
+            "<path>"
+        ]
+      }
+    ]
   }
+}
