@@ -5,6 +5,7 @@
 const winston = require('../../logger.js');
 const rest = require('../protocols/rest');
 const validator = require('./validator');
+const output = require('../lib/output');
 const events = require('events');
 const cache = require('../cache');
 const moment = require('moment');
@@ -529,7 +530,7 @@ const composeOutput = async (template, input) => {
     const ARRAY = _.get(template, 'output.array');
 
     // Compose output payload.
-    let output = {
+    let result = {
         [CONTEXT]: _.get(template, 'output.contextValue'),
         [OBJECT]: {
             [ARRAY]: _.flatten(items),
@@ -539,13 +540,18 @@ const composeOutput = async (template, input) => {
     // Execute output plugin function.
     for (let i = 0; i < template.plugins.length; i++) {
         if (template.plugins[i].output) {
-            output = await template.plugins[i].output(template, output);
+            result = await template.plugins[i].output(template, result);
         }
+    }
+
+    // Execute default output function.
+    if (template.schema) {
+        result = await output.handleOutput(template, result);
     }
 
     // Return output and payload key name separately for signing purposes.
     return Promise.resolve({
-        output,
+        output: result,
         payloadKey: OBJECT,
     });
 };
@@ -637,6 +643,7 @@ const getData = async (req) => {
     template.authConfig.productCode = productCode;
     template.productCode = productCode;
     config.productCode = productCode;
+    template.schema = config.schema;
 
     // Store connector URL.
     template.authConfig.connectorUrl = req.connectorUrl;
