@@ -6,7 +6,7 @@
       "headers": {
         "X-Vertolive-Api-Key": "${apikey}"
       },
-      "path": "/rest/integration/apartment/${targetObject.idLocal}"
+      "path": "/rest/integration/apartment/${idLocal}"
     },
     "dataObjects": [
       ""
@@ -31,7 +31,7 @@
       ]
   },
     "output": {
-      "id": "id"
+      "array": "process"
     }
 
   }

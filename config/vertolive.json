@@ -6,17 +6,6 @@
         "type": "MeasureWaterConsumption"
     },
     "dynamic": {
-        "authConfig.path": "targetObject.idLocal"
-    },
-    "request": {
-      "period": "<startDate>/<endDate>",
-      "targetObject":
-      [
-      {
-        "idLocal": [
-            "<path>"
-        ]
-      }
-    ]
-  }
+        "authConfig.path": "targetObject"
+    }
 }

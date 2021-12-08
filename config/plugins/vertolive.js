@@ -326,33 +326,6 @@ const parameters = async (config, parameters) => {
     }
 };
 
-
-// /**
-//  * Sends http request.
-//  *
-//  * @param {String} method
-//  * @param {String} url
-//  * @param {Object} [headers]
-//  * @param {String/Object/Array} [body]
-//  * @return {Promise}
-//  */
-// function request(method, url, headers, body) {
-
-//     const options = {
-//         method: method,
-//         uri: url,
-//         json: true,
-//         body: body,
-//         resolveWithFullResponse: true,
-//         headers: headers,
-//     };
-
-//     return rp(options).then(result => Promise.resolve(result))
-//         .catch((error) => {
-//             return Promise.reject(error);
-//         });
-// }
-
 /**
  * Handles data objects.
  *
@@ -366,6 +339,7 @@ const handleData = function (config, id, data) {
     try {
         for (let j = 0; j < data.length; j++) {
             const value = data[j][config.output.value];
+            console.log(value);
 
             // Transform raw input.
             value.processType = 'Measure';
@@ -429,35 +403,6 @@ const output = async (config, output) => {
     }
 };
 
-// /**
-//  * Switch querying protocol to REST.
-//  *
-//  * @param {Object} config
-//  * @param {Object} template
-//  * @return {Object}
-//  */
-// const template = async (config, template) => {
-
-//     const ids = template.parameters.targetObject.map(item => item.idLocal);
-//     try {
-
-//         const urls = ids.map((id) => `${template.authConfig.url}/rest/integration/apartment/${id}?startDate=${template.parameters.start}?endDate=${template.parameters.end}`);
-//         const promises = urls.map(url => request('GET', url, { 'X-Vertolive-Api-Key': 'stNcPv8tTaAWWjufChDt4Jj8lUddtb7mpniqFg8CE9lqZiA9zCucaV99LlNSvOqn' }));
-//         const responses = await Promise.all(promises);
-//         const result = responses.map(response => response.body);
-
-//         template.authConfig.path = result;
-//         template.protocol = 'custom';
-
-
-//         // Get notification.
-//     } catch (err) {
-//         winston.log('error', err.message);
-//         return template;
-//     }
-//     return template;
-// };
-
 
 /**
  * Expose plugin methods.
@@ -465,6 +410,5 @@ const output = async (config, output) => {
 module.exports = {
     name: 'vertolive',
     parameters,
-    // template,
     output,
 };
