@@ -124,7 +124,7 @@ const handleData = async (config, path, index, data) => {
         for (let j = 0; j < dataObjects.length; j++) {
 
             // Look for hardwareId.
-            const hardwareId = getValueFromResponse(config.generalConfig, path, dataObjects[j], 'hardwareId');
+            let hardwareId = getValueFromResponse(config.generalConfig, path, dataObjects[j], 'hardwareId');
 
             // Look for timestamp.
             let timestamp = getValueFromResponse(config.generalConfig, path, dataObjects[j], 'timestamp');
@@ -171,6 +171,20 @@ const handleData = async (config, path, index, data) => {
 
             // Skip to next resource if the data did not pass the parsing operation.
             if (Object.keys(measurement.data).length === 0) continue;
+
+            try {
+                // Use parameter id as fallback.
+                if (!hardwareId) {
+                    const idObjects =
+                        _.get(config, 'parameters.ids') ||
+                        _.get(config, 'parameters.targetObject') || [];
+                    const ids = (Array.isArray(idObjects) ? idObjects : [idObjects])
+                        .map(object => object.id || object.idLocal || object);
+                    hardwareId = ids[index] || index;
+                }
+            } catch (e) {
+                hardwareId = index;
+            }
 
             const item = {
                 [keys.id]: hardwareId,
