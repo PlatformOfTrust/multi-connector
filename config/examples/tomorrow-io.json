@@ -1,0 +1,13 @@
+{
+  "template": "tomorrow-io",
+  "static": {
+    "type": "MeasureAirTemperatureCelsiusDegree",
+    "apikey": "${apikey}",
+    "api": "timelines",
+    "version": "v4",
+    "timesteps": "current"
+  },
+  "dynamic": {
+    "authConfig.path": "ids"
+  }
+}

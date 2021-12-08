@@ -1,0 +1,28 @@
+{
+  "plugins": [],
+  "protocol": "rest",
+  "authConfig": {
+    "url": "https://api.tomorrow.io",
+    "path": "/${version}/${api}?location=${id}&fields=temperature&timesteps=${timesteps}&units=metric&apikey=${apikey}"
+  },
+  "dataObjects": [
+    "data.timelines.0.intervals"
+  ],
+  "dataPropertyMappings": {
+    "${type}": "values.temperature"
+  },
+  "generalConfig": {
+    "timestamp": {
+      "dataObjectProperty": "startTime"
+    }
+  },
+  "output": {
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/",
+    "timestamp": "timestamp",
+    "array": "sensors",
+    "object": "data",
+    "value": "value",
+    "data": "data",
+    "id": "id"
+  }
+}
