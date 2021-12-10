@@ -21,7 +21,7 @@ const parameters = async (config, parameters) => {
         if (Object.hasOwnProperty.call(parameters, 'ids')) {
             if (Array.isArray(parameters.ids)) {
                 for (let i = 0; i < parameters.ids.length; i++) {
-                    parameters.ids[i] = encodeURIComponent(encodeURIComponent(parameters.ids[i].id || parameters.ids[i]));
+                    parameters.ids[i] = encodeURIComponent(encodeURIComponent(parameters.ids[i].id || parameters.ids[i].idLocal || parameters.ids[i]));
                 }
             }
         }
