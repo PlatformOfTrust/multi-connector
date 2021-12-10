@@ -24,6 +24,7 @@ const {
     TIMESTAMP,
     PARAMETERS,
     IDS,
+    TARGET_OBJECT,
     START,
     END,
     DATA_TYPES,
@@ -279,6 +280,11 @@ function replacer (template, placeholder, value) {
                 r = replaceAll(r, '"${' + key + '}"', JSON.stringify(value[key]));
             } else {
                 r = replaceAll(r, '${' + key + '}', value[key]);
+
+                // Convert idLocal to id in case placeholder is not found.
+                if (key === 'idLocal' && !r.includes('${idLocal}') && r.includes('${id}')) {
+                    r = replaceAll(r, '${id}', value[key]);
+                }
             }
             // Reverse replace in case parse fails and use stringified value instead.
             try {
@@ -612,13 +618,20 @@ const getData = async (req) => {
     /** Validation of data product specific parameters */
     validation = validator.validate(reqBody, requiredParameters || {});
     if (Object.hasOwnProperty.call(validation, 'error')) {
-        if (validation.error) return rest.promiseRejectWithError(422, validation.error);
+        if (validation.error) {
+            // Try another set of  required parameters.
+            requiredParameters = {[TARGET_OBJECT]: {required: true}};
+            const revalidation = validator.validate(reqBody, requiredParameters || {});
+            if (Object.hasOwnProperty.call(revalidation, 'error')) {
+                if (revalidation.error) return rest.promiseRejectWithError(422, validation.error);
+            }
+        }
     }
 
     // Pick supported parameters from reqBody.
     const timestamp = parseTs(_.get(reqBody, TIMESTAMP) || moment.now());
     let parameters = {
-        ids: _.get(reqBody, _.get(template, 'input.ids') || IDS) || [],
+        ids: _.get(reqBody, _.get(template, 'input.ids') || IDS) || _.get(reqBody, TARGET_OBJECT) || [],
         start: parseTs(_.get(reqBody, _.get(template, 'input.start') || START)),
         end: parseTs(_.get(reqBody, _.get(template, 'input.end') || END) || timestamp),
         dataTypes: _.uniq(_.get(reqBody, _.get(template, 'input.dataTypes') || DATA_TYPES) || []),
