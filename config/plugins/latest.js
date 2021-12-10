@@ -25,7 +25,7 @@ const sortByDateTimeString = (key) => (a, b) => new Date(a[key]).getTime() - new
  */
 const response = async (config, response) => {
     try {
-        const ids = (_.get(config, 'parameters.ids') || []).map(object => object.id);
+        const ids = (_.get(config, 'parameters.ids') || []).map(object => object.id || object.idLocal);
         const idPath = 'generalConfig.hardwareId.dataObjectProperty';
         const idKey = _.get(config, idPath);
         const timestampPath = 'generalConfig.timestamp.dataObjectProperty';
