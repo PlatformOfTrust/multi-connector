@@ -634,14 +634,18 @@ const getData = async (req) => {
         ids: _.get(reqBody, _.get(template, 'input.ids') || IDS) || _.get(reqBody, TARGET_OBJECT) || [],
         start: parseTs(_.get(reqBody, _.get(template, 'input.start') || START)),
         end: parseTs(_.get(reqBody, _.get(template, 'input.end') || END) || timestamp),
-        dataTypes: _.uniq(_.get(reqBody, _.get(template, 'input.dataTypes') || DATA_TYPES) || []),
+        dataTypes: _.get(reqBody, _.get(template, 'input.dataTypes') || DATA_TYPES) || [],
     };
 
-    // Make sure ids is an array and remove duplicates.
+    // Make sure ids and data types are arrays and remove duplicates.
     if (!Array.isArray(parameters.ids)) {
         parameters.ids = [parameters.ids];
     }
+    if (!Array.isArray(parameters.dataTypes)) {
+        parameters.dataTypes = [parameters.dataTypes];
+    }
     parameters.ids = _.uniq(parameters.ids);
+    parameters.dataTypes = _.uniq(parameters.dataTypes);
 
     // Leave unsupported parameters untouched.
     _.unset(reqBody, IDS);

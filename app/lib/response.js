@@ -205,13 +205,26 @@ const handleData = async (config, path, index, data) => {
                 } catch (err) {
                     console.log(err.message);
                 }
+
+                // Filter data types.
+                if (Object.hasOwnProperty.call(config.parameters, 'dataTypes')) {
+                    let types = config.parameters.dataTypes;
+                    types = Array.isArray(types) ? types : [types];
+                    if (!types.includes(type) && types.length > 0) {
+                        continue;
+                    }
+                }
+
                 item[keys.data].push({
                     [keys.type]: type,
                     [keys.timestamp]: measurement.timestamp,
                     [keys.value]: Object.entries(measurement.data)[d][1],
                 });
             }
-            measurements.push(item);
+
+            if (item[keys.data].length > 0) {
+                measurements.push(item);
+            }
         }
     }
 
