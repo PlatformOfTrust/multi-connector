@@ -207,11 +207,13 @@ const handleData = async (config, path, index, data) => {
                 }
 
                 // Filter data types.
-                if (Object.hasOwnProperty.call(config.parameters, 'dataTypes')) {
-                    let types = config.parameters.dataTypes;
-                    types = Array.isArray(types) ? types : [types];
-                    if (!types.includes(type) && types.length > 0) {
-                        continue;
+                if (Object.hasOwnProperty.call(config, 'parameters')) {
+                    if (Object.hasOwnProperty.call(config.parameters, 'dataTypes')) {
+                        let types = config.parameters.dataTypes;
+                        types = Array.isArray(types) ? types : [types];
+                        if (!types.includes(type) && types.length > 0) {
+                            continue;
+                        }
                     }
                 }
 
