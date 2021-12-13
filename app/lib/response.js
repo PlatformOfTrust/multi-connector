@@ -198,7 +198,7 @@ const handleData = async (config, path, index, data) => {
                     // Select best match from array of types.
                     if (type.split(',').length > 1) {
                         const match = type.split(',').map(t => ({type: t, score: _.uniq(t.split('')
-                            .filter(value => hardwareId.split('').includes(value))).length}))
+                            .filter(value => hardwareId.split('').includes(value.toUpperCase()))).length}))
                             .sort((a, b) => b.score - a.score);
                         type = match[0].type;
                     }
