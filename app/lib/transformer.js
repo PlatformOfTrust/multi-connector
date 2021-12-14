@@ -3,12 +3,38 @@
  * Module dependencies.
  */
 const _ = require('lodash');
+const {replacer} = require('./utils');
 
 /**
  * Transformer library.
  *
  * Handles output transformation.
  */
+
+/**
+ * Detects and handlers placeholders.
+ *
+ * @param {Object} source
+ * @param {Object} value
+ * @return
+ */
+const replacePlaceholders = function (source, value) {
+    try {
+        const placeholders = value.match(/\${(.*?)}/g);
+        (placeholders || []).forEach(function (placeholder) {
+            try {
+                const path = placeholder.substring(2, placeholder.length - 1);
+                const data = _.get(source, path);
+                value = replacer(value, path, data);
+            } catch (err) {
+                console.log(err.message);
+            }
+        });
+    } catch (err) {
+        console.log(err.message);
+    }
+    return value;
+};
 
 /**
  * Transforms data object by given properties schema.
@@ -35,7 +61,7 @@ const transform = function (source, schema) {
                 case 'array':
                     value = [];
                     if (Object.hasOwnProperty.call(schema, 'value')) {
-                        value.push(schema.value);
+                        value.push(replacePlaceholders(source, schema.value));
                     } else if (Object.hasOwnProperty.call(schema, 'source')) {
                         let array = schema.source === '' ? source : _.get(source, schema.source);
                         if (array === undefined) return;
@@ -59,7 +85,7 @@ const transform = function (source, schema) {
                 case 'integer':
                 case 'number':
                     if (Object.hasOwnProperty.call(schema, 'value')) {
-                        value = schema.value;
+                        value = replacePlaceholders(source, schema.value);
                     } else if (Object.hasOwnProperty.call(schema, 'source')) {
                         if (schema.source) value = schema.source === '' ? source : _.get(source, schema.source, schema.default);
                     }

@@ -246,6 +246,7 @@
                                         },
                                         "period": {
                                             "$id": "#/properties/data/properties/process/items/properties/processValue/items/properties/period",
+                                            "value": "${parameters.start}/${parameters.end}",
                                             "type": "string",
                                             "title": "Period",
                                             "description": "Period."
