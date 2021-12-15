@@ -12,6 +12,17 @@ const {replacer} = require('./utils');
  */
 
 /**
+ * Extracts the most inner placeholder.
+ *
+ * @param {String} placeholder
+ * @return {String}
+ */
+const extractPlaceholder = (placeholder) => {
+    const parts = placeholder.split('${');
+    return '${' + parts[parts.length - 1];
+};
+
+/**
  * Detects and handlers placeholders.
  *
  * @param {Object} source
@@ -20,16 +31,21 @@ const {replacer} = require('./utils');
  */
 const replacePlaceholders = function (source, value) {
     try {
-        const placeholders = value.match(/\${(.*?)}/g);
-        (placeholders || []).forEach(function (placeholder) {
+        const placeholders = value.match(/\${(.*?)}/g) || [];
+        for (let i = 0; i < placeholders.length; i++) {
             try {
-                const path = placeholder.substring(2, placeholder.length - 1);
+                const current = extractPlaceholder(placeholders[i]);
+                const path = current.substring(2, current.length - 1);
                 const data = _.get(source, path);
                 value = replacer(value, path, data);
+                // Handle outer placeholders.
+                if ((placeholders[i].match(/\${/g) || []).length > 1) {
+                    placeholders.push(...value.match(/\${(.*?)}/g) || []);
+                }
             } catch (err) {
                 console.log(err.message);
             }
-        });
+        }
     } catch (err) {
         console.log(err.message);
     }
