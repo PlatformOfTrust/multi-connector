@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-06/schema#",
-    "$id": "https://standards.oftrust.net/v2/Schema/DataProductOutput/Process/Measure/WaterMeterReading?v=3.0",
+    "$id": "https://standards.oftrust.net/v2/Schema/DataProductOutput/Process/Measure/IndoorAirQuality?v=4.0",
     "type": "object",
     "required": [],
     "properties": {
@@ -8,7 +8,7 @@
             "$id": "#/properties/@context",
             "source": null,
             "type": "string",
-            "const": "https://standards-ontotest.oftrust.net/v2/Context/DataProductOutput/Process/Measure/WaterMeterReading/?v=3.0",
+            "const": "https://standards.oftrust.net/v2/Context/DataProductOutput/Process/Measure/IndoorAirQuality/?v=4.0",
             "title": "JSON-LD context url",
             "description": "JSON-LD context url with terms required to understand data product content."
         },
@@ -149,34 +149,40 @@
                                         "properties": {
                                             "@type": {
                                                 "$id": "#/properties/data/properties/process/items/properties/location/properties/locationPoint/properties/@type",
+                                                "source": null,
                                                 "type": "string",
                                                 "title": "Identity type",
                                                 "description": "Type of identity."
                                             },
                                             "location": {
                                                 "$id": "#/properties/data/properties/process/items/properties/location/properties/locationPoint/properties/location",
+                                                "source": null,
                                                 "type": "array",
                                                 "title": "Location",
                                                 "description": "Property category for location related information.",
                                                 "items": {
                                                     "$id": "#/properties/data/properties/process/items/properties/location/properties/locationPoint/properties/location/items",
+                                                    "source": null,
                                                     "type": "object",
                                                     "required": [],
                                                     "properties": {
                                                         "@type": {
                                                             "$id": "#/properties/data/properties/process/items/properties/location/properties/locationPoint/properties/location/items/properties/@type",
+                                                            "source": null,
                                                             "type": "string",
                                                             "title": "Identity type",
                                                             "description": "Type of identity."
                                                         },
                                                         "longitude": {
                                                             "$id": "#/properties/data/properties/process/items/properties/location/properties/locationPoint/properties/location/items/properties/longitude",
+                                                            "source": null,
                                                             "type": "number",
                                                             "title": "Longitude",
                                                             "description": "Angular distance east or west on the earth's surface, measured by the angle contained between the meridian of a particular place and some prime meridian, as that of Greenwich, England, and expressed either in degrees or by some corresponding difference in time (WGS 84)."
                                                         },
                                                         "latitude": {
                                                             "$id": "#/properties/data/properties/process/items/properties/location/properties/locationPoint/properties/location/items/properties/latitude",
+                                                            "source": null,
                                                             "type": "number",
                                                             "title": "Latitude",
                                                             "description": "The angular distance north or south from the equator of a point on the earth's surface, measured on the meridian of the point (WGS 84)."
@@ -190,20 +196,27 @@
                             },
                             "processTarget": {
                                 "$id": "#/properties/data/properties/process/items/properties/processTarget",
-                                "source": "data.@type",
+                                "value": "${common.targets.${data.@type}}",
                                 "type": "string",
                                 "enum": [
-                                    "Water"
+                                    "Air"
                                 ],
                                 "title": "Process target",
                                 "description": "Object into which process (verb) is targeted."
                             },
                             "physicalProperty": {
                                 "$id": "#/properties/data/properties/process/items/properties/physicalProperty",
-                                "value": "Volume",
+                                "value": "${common.properties.${data.@type}}",
                                 "type": "string",
                                 "enum": [
-                                    "Volume"
+                                    "Temperature",
+                                    "CarbonDioxide",
+                                    "Humidity",
+                                    "PressureDifference",
+                                    "VolatileOrganicCompounds",
+                                    "Revolutions",
+                                    "Mold",
+                                    "Speed"
                                 ],
                                 "title": "Physical property",
                                 "description": "Physical property."
@@ -234,22 +247,28 @@
                                             "title": "Output value",
                                             "description": "Output value of the process."
                                         },
+                                        "exactTime": {
+                                            "$id": "#/properties/data/properties/process/items/properties/processValue/items/properties/exactTime",
+                                            "source": "data.timestamp",
+                                            "type": "string",
+                                            "title": "Exact Time",
+                                            "description": "Exact Time."
+                                        },
                                         "unitOfMeasure": {
                                             "$id": "#/properties/data/properties/process/items/properties/processValue/items/properties/unitOfMeasure",
-                                            "value": "litre",
+                                            "value": "${common.units.${data.@type}}",
                                             "type": "string",
                                             "enum": [
-                                                "Liter"
+                                                "CelsiusDegree",
+                                                "PartsPerMillion",
+                                                "Percent",
+                                                "Pascal",
+                                                "PartsPerBillion",
+                                                "RevolutionsPerMinute",
+                                                "MoldIndex"
                                             ],
                                             "title": "Unit of measure",
                                             "description": "Unit of measure."
-                                        },
-                                        "period": {
-                                            "$id": "#/properties/data/properties/process/items/properties/processValue/items/properties/period",
-                                            "value": "${parameters.start}/${parameters.end}",
-                                            "type": "string",
-                                            "title": "Period",
-                                            "description": "Period."
                                         }
                                     }
                                 }
@@ -293,5 +312,5 @@
             }
         }
     },
-    "version": "3.0"
+    "version": "4.0"
 }

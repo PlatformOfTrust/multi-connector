@@ -2,6 +2,7 @@
 /**
  * Module dependencies.
  */
+const common = require('../../config/definitions/common');
 const transformer = require('./transformer');
 const cache = require('../cache');
 
@@ -26,7 +27,7 @@ const handleData = function (config, schema, id, data) {
         const key = Object.keys(schema.properties.data.properties)[0];
         for (let j = 0; j < data.length; j++) {
             let result = {};
-            result = transformer.transform({id, parameters: config.parameters || {}, data: data[j]}, schema.properties.data);
+            result = transformer.transform({id, parameters: config.parameters || {}, data: data[j], common}, schema.properties.data);
 
             // Merge all to same result.
             if (Object.hasOwnProperty.call(object, key)) {

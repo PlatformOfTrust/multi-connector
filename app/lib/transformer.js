@@ -23,7 +23,7 @@ const extractPlaceholder = (placeholder) => {
 };
 
 /**
- * Detects and handlers placeholders.
+ * Detects and handles placeholders.
  *
  * @param {Object} source
  * @param {Object} value

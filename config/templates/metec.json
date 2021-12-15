@@ -12,10 +12,10 @@
         "path": "/reports?site=${site}&type=${type}&resolution=${resolution}"
     },
     "dataPropertyMappings": {
-        "temp": "tempAvg",
-        "humidity": "rhAvg",
-        "coldWater": "consumptionCW",
-        "hotWater": "consumptionHW"
+        "MeasureAirTemperatureCelsiusDegree": "tempAvg",
+        "MeasureAirHumidityPercentage": "rhAvg",
+        "MeasureWaterColdConsumptionLitre": "consumptionCW",
+        "MeasureWaterHotConsumptionLitre": "consumptionHW"
     },
     "dataObjects": [
         "measurementReportItems",
