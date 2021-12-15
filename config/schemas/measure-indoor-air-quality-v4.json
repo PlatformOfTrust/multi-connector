@@ -41,7 +41,7 @@
                             },
                             "executor": {
                                 "$id": "#/properties/data/properties/process/items/properties/executor",
-                                "source": null,
+                                "source": "",
                                 "type": "array",
                                 "title": "Process executor",
                                 "description": "Executor of the process (source of the data).",
@@ -53,7 +53,7 @@
                                     "properties": {
                                         "@type": {
                                             "$id": "#/properties/data/properties/process/items/properties/executor/items/properties/@type",
-                                            "source": null,
+                                            "value": "Sensor",
                                             "type": "string",
                                             "title": "Identity type",
                                             "description": "Type of identity."
@@ -67,7 +67,7 @@
                                         },
                                         "idLocal": {
                                             "$id": "#/properties/data/properties/process/items/properties/executor/items/properties/idLocal",
-                                            "source": null,
+                                            "source": "id",
                                             "type": "string",
                                             "title": "Local identifier",
                                             "description": "Locally given identifier."
@@ -99,7 +99,7 @@
                                     },
                                     "idLocal": {
                                         "$id": "#/properties/data/properties/process/items/properties/location/properties/idLocal",
-                                        "source": "id",
+                                        "source": null,
                                         "type": "string",
                                         "title": "Local identifier",
                                         "description": "Locally given identifier."
