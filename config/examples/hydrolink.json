@@ -1,0 +1,11 @@
+{
+    "template": "hydrolink",
+    "static": {
+        "url": "http://vedenkulutus.fi",
+        "authorization": "Basic anVoYS5ib3Jlbml1czpyaUR5cHdMdWhp",
+        "type": "water"
+    },
+    "dynamic": {
+        "authConfig.path": "targetObject"
+    }
+  }

@@ -42,6 +42,7 @@ const schema = {
                             '@type': {
                                 '$id': '#/properties/data/properties/process/items/properties/@type',
                                 'type': 'string',
+                                'source': 'measureType',
                                 'title': 'Identity type',
                                 'description': 'Type of identity.',
                             },
@@ -92,7 +93,7 @@ const schema = {
                                     '@type': {
                                         '$id': '#/properties/data/properties/process/items/properties/location/properties/@type',
                                         'type': 'string',
-                                        'source': null,
+                                        'source': 'locationType',
                                         'title': 'Identity type',
                                         'description': 'Type of identity.',
                                     },
@@ -206,8 +207,8 @@ const schema = {
                             },
                             'physicalProperty': {
                                 '$id': '#/properties/data/properties/process/items/properties/physicalProperty',
-                                'value': 'Volume',
                                 'type': 'string',
+                                'source': 'physicalProperty',
                                 'enum': [
                                     'Volume',
                                 ],
@@ -228,7 +229,7 @@ const schema = {
                                         '@type': {
                                             '$id': '#/properties/data/properties/process/items/properties/processValue/items/properties/@type',
                                             'type': 'string',
-                                            'source': 'type',
+                                            'source': 'valueType',
                                             'title': 'Identity type',
                                             'description': 'Type of identity.',
                                         },
@@ -335,7 +336,6 @@ const handleData = function (config, id, data) {
             const value = data[j][config.output.value];
 
             // Transform raw input.
-            value.unitOfMeasure = 'l';
 
             const coldDaily = value.readings.map(reading => reading.cold.dailyAverage);
             const coldDailySum = coldDaily.reduce((partial_sum, a) => partial_sum + a, 0);
@@ -343,14 +343,13 @@ const handleData = function (config, id, data) {
             const warmDaily = value.readings.map(reading => reading.warm.dailyAverage);
             const warmDailySum = warmDaily.reduce((partial_sum, a) => partial_sum + a, 0);
 
-            const WaterCold = { value: coldDailySum, period: config.parameters.period, unitOfMeasure: 'l' };
-            const WaterWarm = { value: warmDailySum, period: config.parameters.period, unitOfMeasure: 'l' }
+            const WaterCold = { value: coldDailySum, period: config.parameters.period, unitOfMeasure: 'l', valueType: 'Value' };
+            const WaterWarm = { value: warmDailySum, period: config.parameters.period, unitOfMeasure: 'l', valueType: 'Value' }
 
-            const coldValues = { ...value, readings: [WaterCold], processTarget: 'WaterCold' };
-            const warmValues = { ...value, readings: [WaterWarm], processTarget: 'WaterWarm' };
+            const coldValues = { ...value, readings: [WaterCold], processTarget: 'WaterCold', measureType: 'Measure', locationType: 'Location', physicalProperty: 'Volume' };
+            const warmValues = { ...value, readings: [WaterWarm], processTarget: 'WaterWarm', measureType: 'Measure', locationType: 'Location', physicalProperty: 'Volume' };
 
             const valuesArray = [coldValues, warmValues];
-            console.log(valuesArray)
 
             result = transformer.transform(valuesArray, schema.properties.data);
         }

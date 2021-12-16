@@ -15,14 +15,12 @@ ${CONNECTOR_PATH}            /translator/v1/fetch
 ${APP_TOKEN}                 
 ${CLIENT_SECRET}             
 ${PRODUCT_CODE}              vertolive
-${ID1}                       254761
+${ID1}                       3636
 &{ID_LOCAL_1}                idLocal=${ID1}
-${ID2}                       254766
-&{ID_LOCAL_2}                idLocal=${ID2}
 ${START_DATE}                2021-11-24T23:00:00.000Z
 ${END_DATE}                  2021-12-05T23:00:00.000Z
 ${PERIOD}                    ${START_DATE}/${END_DATE}
-@{TARGET_OBJECT}             &{ID_LOCAL_1}  &{ID_LOCAL_2} 
+@{TARGET_OBJECT}             &{ID_LOCAL_1}
 &{BROKER_BODY_PARAMETERS}    targetObject=@{TARGET_OBJECT}
 ...                          period=${PERIOD}
 &{BROKER_BODY}               productCode=${PRODUCT_CODE}
