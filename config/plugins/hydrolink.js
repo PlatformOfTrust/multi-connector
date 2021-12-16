@@ -4,7 +4,6 @@
  */
 const transformer = require('../../app/lib/transformer');
 
-
 // Source mapping.
 const schema = {
     '$schema': 'http://json-schema.org/draft-06/schema#',
@@ -48,7 +47,7 @@ const schema = {
                             'executor': {
                                 '$id': '#/properties/data/properties/process/items/properties/executor',
                                 'type': 'array',
-                                'source': null,
+                                'source': '',
                                 'title': 'Process executor',
                                 'description': 'Executor of the process (source of the data).',
                                 'items': {
@@ -60,21 +59,20 @@ const schema = {
                                         '@type': {
                                             '$id': '#/properties/data/properties/process/items/properties/executor/items/properties/@type',
                                             'type': 'string',
-                                            'source': null,
                                             'title': 'Identity type',
                                             'description': 'Type of identity.',
                                         },
                                         'name': {
                                             '$id': '#/properties/data/properties/process/items/properties/executor/items/properties/name',
-                                            'type': null,
-                                            'source': '',
+                                            'type': 'string',
+                                            'source': null,
                                             'title': 'Name',
                                             'description': 'Name.',
                                         },
                                         'idLocal': {
                                             '$id': '#/properties/data/properties/process/items/properties/executor/items/properties/idLocal',
-                                            'type': null,
-                                            'source': '',
+                                            'type': 'string',
+                                            'source': 'companyId',
                                             'title': 'Local identifier',
                                             'description': 'Locally given identifier.',
                                         },
@@ -84,7 +82,7 @@ const schema = {
                             'location': {
                                 '$id': '#/properties/data/properties/process/items/properties/location',
                                 'type': 'object',
-                                'source': '',
+                                'source': 'apartment',
                                 'title': 'Location',
                                 'description': 'Property category for location related information.',
                                 'required': [],
@@ -99,14 +97,14 @@ const schema = {
                                     'name': {
                                         '$id': '#/properties/data/properties/process/items/properties/location/properties/name',
                                         'type': 'string',
-                                        'source': 'buildingName',
+                                        'source': 'apartment.-name',
                                         'title': 'Name',
                                         'description': 'Name.',
                                     },
                                     'idLocal': {
                                         '$id': '#/properties/data/properties/process/items/properties/location/properties/idLocal',
                                         'type': 'string',
-                                        'source': 'id',
+                                        'source': 'apartment.-id',
                                         'title': 'Local identifier',
                                         'description': 'Locally given identifier.',
                                     },
@@ -120,7 +118,7 @@ const schema = {
                                     'streetAddressLine1': {
                                         '$id': '#/properties/data/properties/process/items/properties/location/properties/streetAddressLine1',
                                         'type': 'string',
-                                        'source': 'buildingAddress',
+                                        'source': '',
                                         'title': 'Street address line 1',
                                         'description': 'Street address line 1.',
                                     },
@@ -206,8 +204,8 @@ const schema = {
                             },
                             'physicalProperty': {
                                 '$id': '#/properties/data/properties/process/items/properties/physicalProperty',
-                                'value': 'Volume',
                                 'type': 'string',
+                                'source': 'physicalProperty',
                                 'enum': [
                                     'Volume',
                                 ],
@@ -228,7 +226,6 @@ const schema = {
                                         '@type': {
                                             '$id': '#/properties/data/properties/process/items/properties/processValue/items/properties/@type',
                                             'type': 'string',
-                                            'source': 'type',
                                             'title': 'Identity type',
                                             'description': 'Type of identity.',
                                         },
@@ -301,6 +298,7 @@ const schema = {
     'version': '3.0',
 };
 
+
 /**
  * Splits period to start and end properties.
  *
@@ -311,8 +309,8 @@ const schema = {
 const parameters = async (config, parameters) => {
     try {
         if (Object.hasOwnProperty.call(parameters, 'period')) {
-            parameters.start = parameters.period.split('/')[0];
-            parameters.end = parameters.period.split('/')[1];
+            parameters.targetObject.forEach(object => object.start = parameters.period.split('T')[0].replace(/-/g, ''));
+            parameters.targetObject.forEach(object => object.end = parameters.period.split('/')[1].split('T')[0].replace(/-/g, ''));
         }
         return parameters;
     } catch (e) {
@@ -330,36 +328,31 @@ const parameters = async (config, parameters) => {
  */
 const handleData = function (config, id, data) {
     let result = {};
+
     try {
         for (let j = 0; j < data.length; j++) {
             const value = data[j][config.output.value];
 
             // Transform raw input.
-            value.unitOfMeasure = 'l';
 
-            const coldDaily = value.readings.map(reading => reading.cold.dailyAverage);
-            const coldDailySum = coldDaily.reduce((partial_sum, a) => partial_sum + a, 0);
-
-            const warmDaily = value.readings.map(reading => reading.warm.dailyAverage);
-            const warmDailySum = warmDaily.reduce((partial_sum, a) => partial_sum + a, 0);
-
-            const WaterCold = { value: coldDailySum, period: config.parameters.period, unitOfMeasure: 'l' };
-            const WaterWarm = { value: warmDailySum, period: config.parameters.period, unitOfMeasure: 'l' }
-
-            const coldValues = { ...value, readings: [WaterCold], processTarget: 'WaterCold' };
-            const warmValues = { ...value, readings: [WaterWarm], processTarget: 'WaterWarm' };
-
-            const valuesArray = [coldValues, warmValues];
-            console.log(valuesArray)
+            const valuesArray = value.company.apartments.flatMap(apartment => {
+                apartment.companyId = value.company_id;
+                apartment.physicalProperty = 'Volume';
+                const waterCold = { value: (apartment.apartment.meters['meter-cold'].value * 1000), period: config.parameters.period, unitOfMeasure: 'l' };
+                const waterWarm = { value: (apartment.apartment.meters['meter-warm'].value * 1000), period: config.parameters.period, unitOfMeasure: 'l' };
+                const coldValues = { ...apartment, readings: waterCold, processTarget: 'WaterCold' };
+                const warmValues = { ...apartment, readings: waterWarm, processTarget: 'WaterWarm' };
+                return [warmValues, coldValues];
+            });
 
             result = transformer.transform(valuesArray, schema.properties.data);
+
         }
         return result;
     } catch (err) {
         return result;
     }
 };
-
 
 /**
  * Transforms output to Platform of Trust context schema.
@@ -408,7 +401,8 @@ const output = async (config, output) => {
  * Expose plugin methods.
  */
 module.exports = {
-    name: 'vertolive',
+    name: 'hydrolink',
     parameters,
     output,
 };
+

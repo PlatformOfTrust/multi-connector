@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 3.2.2 (Python 3.10.1 on win32)" generated="20211216 08:07:15.614" rpa="false">
+<suite id="s1" name="Connector Tests" source="C:\Users\KimmoPC\Documents\Projects\Platform of Trust\multi-connector\robottests\connectors\vertolive\connector_tests.robot">
+<test id="s1-t1" name="fetch, 200">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20211216 08:07:16.226" level="INFO">${body} = {'productCode': 'vertolive', 'parameters': {'ids': ['254761', '254766'], 'startDate': '2021-11-24T23:00:00.000Z', 'endDate': '2021-12-05T23:00:00.000Z'}}</msg>
+<status status="PASS" starttime="20211216 08:07:16.226" endtime="20211216 08:07:16.226"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20211216 08:07:16.227" level="INFO">${now} = 2021-12-16T06:07:16+00:00</msg>
+<status status="PASS" starttime="20211216 08:07:16.226" endtime="20211216 08:07:16.227"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20211216 08:07:16.227" endtime="20211216 08:07:16.227"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20211216 08:07:16.227" endtime="20211216 08:07:16.227"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20211216 08:07:16.228" level="INFO">${json_string} = {"productCode": "vertolive", "parameters": {"ids": ["254761", "254766"], "startDate": "2021-11-24T23:00:00.000Z", "endDate": "2021-12-05T23:00:00.000Z"}, "timestamp": "2021-12-16T06:07:16+00:00"}</msg>
+<status status="PASS" starttime="20211216 08:07:16.227" endtime="20211216 08:07:16.228"></status>
+</kw>
+<msg timestamp="20211216 08:07:16.228" level="INFO">${body} = {'productCode': 'vertolive', 'parameters': {'ids': ['254761', '254766'], 'startDate': '2021-11-24T23:00:00.000Z', 'endDate': '2021-12-05T23:00:00.000Z'}, 'timestamp': '2021-12-16T06:07:16+00:00'}</msg>
+<status status="PASS" starttime="20211216 08:07:16.225" endtime="20211216 08:07:16.228"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20211216 08:07:16.230" level="INFO">${signature} = Oz3jriBWDt6qZH0UonVoxUxDeQsCeuy+atZFopAWdho=</msg>
+<status status="PASS" starttime="20211216 08:07:16.229" endtime="20211216 08:07:16.230"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20211216 08:07:16.230" endtime="20211216 08:07:16.231"></status>
+</kw>
+<kw name="POST" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${API_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20211216 08:07:16.231" endtime="20211216 08:07:16.413"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20211216 08:07:16.413" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "error": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "default": 422
+                },
+                "message": {
+                    "type": "string",
+                    "default": "Could not validate app token."
+                }
+            },
+            "required": [
+                "message",
+                "status"
+            ]
+        }
+    },
+    "required": [
+        "error"
+    ]
+}</msg>
+<status status="PASS" starttime="20211216 08:07:16.413" endtime="20211216 08:07:16.451"></status>
+</kw>
+<status status="PASS" starttime="20211216 08:07:16.229" endtime="20211216 08:07:16.451"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>200</arg>
+</arguments>
+<msg timestamp="20211216 08:07:16.482" level="FAIL">422 is not one of [200]
+
+Failed validating 'enum' in schema:
+    {'enum': [200], 'type': 'integer'}
+
+On instance:
+    422</msg>
+<status status="FAIL" starttime="20211216 08:07:16.452" endtime="20211216 08:07:16.482"></status>
+</kw>
+<tags>
+<tag>bug-0001</tag>
+</tags>
+<status status="FAIL" starttime="20211216 08:07:16.225" endtime="20211216 08:07:16.494" critical="yes">422 is not one of [200]
+
+Failed validating 'enum' in schema:
+    {'enum': [200], 'type': 'integer'}
+
+On instance:
+    422</status>
+</test>
+<doc>Vertolive API Tests</doc>
+<status status="FAIL" starttime="20211216 08:07:15.616" endtime="20211216 08:07:16.498"></status>
+</suite>
+<statistics>
+<total>
+<stat pass="0" fail="1">Critical Tests</stat>
+<stat pass="0" fail="1">All Tests</stat>
+</total>
+<tag>
+<stat pass="0" fail="1">bug-0001</stat>
+</tag>
+<suite>
+<stat pass="0" fail="1" id="s1" name="Connector Tests">Connector Tests</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

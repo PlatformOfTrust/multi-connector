@@ -1,12 +1,12 @@
 {
-    "plugins": ["logger"],
+    "plugins": ["hydrolink"],
     "protocol": "rest",
     "authConfig": {
       "url": "${url}",
       "headers": {
         "Authorization": "${authorization}"
       },
-      "path": "/api/${id}/json"
+      "path": "/api/${idLocal}/${start}/${end}/json"
     },
     "dataObjects": [
       ""
@@ -15,14 +15,20 @@
       "${type}": ""
     },
     "generalConfig": {
+      "query": {
+        "start": "",
+        "end": ""
+    },
       "timestamp": {
         "dataObjectProperty": "timestamp"
       }
     },
-    
-    "output": {
-      "id": "id"
-    }
+    "input": {
+      "required": [
+          "parameters.targetObject",
+          "parameters.period"
 
+      ]
+  }
   }
   

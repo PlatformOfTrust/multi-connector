@@ -3,10 +3,9 @@
     "static": {
         "url": "http://vedenkulutus.fi",
         "authorization": "Basic anVoYS5ib3Jlbml1czpyaUR5cHdMdWhp",
-        "type": "MeasureWaterConsumption",
-        "id": "3636"
+        "type": "water"
     },
-    "request": {
-      "ids": "<id>"
+    "dynamic": {
+        "authConfig.path": "targetObject"
     }
   }

@@ -1,5 +1,7 @@
 {
-    "plugins": ["vertolive", "logger"],
+    "plugins": [
+      "vertolive"
+    ],
     "protocol": "rest",
     "authConfig": {
       "url": "${url}",
