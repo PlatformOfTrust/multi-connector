@@ -20,6 +20,7 @@ const units = {
     MeasureLightLevelLux: 'lux',
     MeasureDistanceMilliMeter: 'mm',
     MeasureEnergyConsumptionKilowattHour: 'kWh',
+    MeasureWaterConsumptionLitre: 'l',
     MeasureWaterColdConsumptionLitre: 'l',
     MeasureWaterHotConsumptionLitre: 'l',
     /** Legacy */
@@ -43,6 +44,7 @@ const targets = {
     MeasureLightLevelLux: 'Light',
     MeasureDistanceMilliMeter: '',
     MeasureEnergyConsumptionKilowattHour: 'Energy',
+    MeasureWaterConsumptionLitre: 'Water',
     MeasureWaterColdConsumptionLitre: 'Water',
     MeasureWaterHotConsumptionLitre: 'Water',
     /** Legacy */
@@ -66,6 +68,7 @@ const properties = {
     MeasureLightLevelLux: '',
     MeasureDistanceMilliMeter: '',
     MeasureEnergyConsumptionKilowattHour: 'Consumption',
+    MeasureWaterConsumptionLitre: 'Volume',
     MeasureWaterColdConsumptionLitre: 'Volume',
     MeasureWaterHotConsumptionLitre: 'Volume',
     /** Legacy */
