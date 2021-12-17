@@ -8,13 +8,13 @@ Library           REST         ${API_URL}
 *** Variables ***
 ${LOCAL_TZ}                  +02:00
 ${TEST_ENV}                  sandbox
-${API_URL}                   http://localhost:8080
-${API_PATH}                  /translator/v1/fetch
+${API_URL}                   https://api-${TEST_ENV}.oftrust.net
+${API_PATH}                  /broker/v1/fetch-data-product
 ${CONNECTOR_URL}             http://localhost:8080
 ${CONNECTOR_PATH}            /translator/v1/fetch
-${APP_TOKEN}                 
-${CLIENT_SECRET}             
-${PRODUCT_CODE}              vertolive
+${APP_TOKEN}                 %{POT_APP_ACCESS_TOKEN}
+${CLIENT_SECRET}             %{POT_CLIENT_SECRET}
+${PRODUCT_CODE}              %{POT_PRODUCT_CODE}
 ${ID1}                       254761
 &{ID_LOCAL_1}                idLocal=${ID1}
 ${ID2}                       254766

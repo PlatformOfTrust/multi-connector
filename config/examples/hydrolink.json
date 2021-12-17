@@ -2,7 +2,7 @@
     "template": "hydrolink",
     "static": {
         "url": "http://vedenkulutus.fi",
-        "authorization": "Basic anVoYS5ib3Jlbml1czpyaUR5cHdMdWhp",
+        "authorization": "<authorization>",
         "type": "water"
     },
     "dynamic": {

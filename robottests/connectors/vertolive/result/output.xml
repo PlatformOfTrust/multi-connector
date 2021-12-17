@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot generator="Robot 3.2.2 (Python 3.10.1 on win32)" generated="20211216 14:34:40.668" rpa="false">
+<robot generator="Robot 3.2.2 (Python 3.10.1 on win32)" generated="20211217 09:03:31.546" rpa="false">
 <suite id="s1" name="Connector Tests" source="C:\Users\KimmoPC\Documents\Projects\Platform of Trust\multi-connector\robottests\connectors\vertolive\connector_tests.robot">
 <test id="s1-t1" name="fetch, 200">
 <kw name="Get Body">
@@ -15,8 +15,8 @@
 <assign>
 <var>${body}</var>
 </assign>
-<msg timestamp="20211216 14:34:41.113" level="INFO">${body} = {'productCode': 'vertolive', 'parameters': {'targetObject': [{'idLocal': '254761'}, {'idLocal': '254766'}], 'period': '2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z'}}</msg>
-<status status="PASS" starttime="20211216 14:34:41.112" endtime="20211216 14:34:41.113"></status>
+<msg timestamp="20211217 09:03:31.891" level="INFO">${body} = {'productCode': 'vertolive', 'parameters': {'targetObject': [{'idLocal': '254761'}, {'idLocal': '254766'}], 'period': '2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z'}}</msg>
+<status status="PASS" starttime="20211217 09:03:31.890" endtime="20211217 09:03:31.891"></status>
 </kw>
 <kw name="Get Current Date" library="DateTime">
 <doc>Returns current local or UTC time with an optional increment.</doc>
@@ -27,8 +27,8 @@
 <assign>
 <var>${now}</var>
 </assign>
-<msg timestamp="20211216 14:34:41.113" level="INFO">${now} = 2021-12-16T12:34:41+00:00</msg>
-<status status="PASS" starttime="20211216 14:34:41.113" endtime="20211216 14:34:41.113"></status>
+<msg timestamp="20211217 09:03:31.891" level="INFO">${now} = 2021-12-17T07:03:31+00:00</msg>
+<status status="PASS" starttime="20211217 09:03:31.891" endtime="20211217 09:03:31.891"></status>
 </kw>
 <kw name="Set To Dictionary" library="Collections">
 <doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
@@ -37,7 +37,7 @@
 <arg>timestamp</arg>
 <arg>${now}</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:41.113" endtime="20211216 14:34:41.113"></status>
+<status status="PASS" starttime="20211217 09:03:31.891" endtime="20211217 09:03:31.891"></status>
 </kw>
 <kw name="Set To Dictionary" library="Collections">
 <doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
@@ -45,7 +45,7 @@
 <arg>${body}</arg>
 <arg>&amp;{kwargs}</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:41.114" endtime="20211216 14:34:41.115"></status>
+<status status="PASS" starttime="20211217 09:03:31.892" endtime="20211217 09:03:31.893"></status>
 </kw>
 <kw name="Evaluate" library="BuiltIn">
 <doc>Evaluates the given expression in Python and returns the result.</doc>
@@ -56,11 +56,11 @@
 <assign>
 <var>${json_string}</var>
 </assign>
-<msg timestamp="20211216 14:34:41.115" level="INFO">${json_string} = {"productCode": "vertolive", "parameters": {"targetObject": [{"idLocal": "254761"}, {"idLocal": "254766"}], "period": "2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z"}, "timestamp": "2021-12-16T12:...</msg>
-<status status="PASS" starttime="20211216 14:34:41.115" endtime="20211216 14:34:41.115"></status>
+<msg timestamp="20211217 09:03:31.893" level="INFO">${json_string} = {"productCode": "vertolive", "parameters": {"targetObject": [{"idLocal": "254761"}, {"idLocal": "254766"}], "period": "2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z"}, "timestamp": "2021-12-17T07:...</msg>
+<status status="PASS" starttime="20211217 09:03:31.893" endtime="20211217 09:03:31.893"></status>
 </kw>
-<msg timestamp="20211216 14:34:41.115" level="INFO">${body} = {'productCode': 'vertolive', 'parameters': {'targetObject': [{'idLocal': '254761'}, {'idLocal': '254766'}], 'period': '2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z'}, 'timestamp': '2021-12-16T12:...</msg>
-<status status="PASS" starttime="20211216 14:34:41.112" endtime="20211216 14:34:41.115"></status>
+<msg timestamp="20211217 09:03:31.894" level="INFO">${body} = {'productCode': 'vertolive', 'parameters': {'targetObject': [{'idLocal': '254761'}, {'idLocal': '254766'}], 'period': '2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z'}, 'timestamp': '2021-12-17T07:...</msg>
+<status status="PASS" starttime="20211217 09:03:31.890" endtime="20211217 09:03:31.894"></status>
 </kw>
 <kw name="Fetch Data Product">
 <arguments>
@@ -74,8 +74,8 @@
 <assign>
 <var>${signature}</var>
 </assign>
-<msg timestamp="20211216 14:34:41.116" level="INFO">${signature} = LzJKEoja832rs2+VrV3Z3fwI8/HDDOykm9FHu6tW7Ks=</msg>
-<status status="PASS" starttime="20211216 14:34:41.116" endtime="20211216 14:34:41.116"></status>
+<msg timestamp="20211217 09:03:31.896" level="INFO">${signature} = GG5CoeRfdxDDljHMeJU0It4Gk9RLXAHCSOCcP1VRXFY=</msg>
+<status status="PASS" starttime="20211217 09:03:31.894" endtime="20211217 09:03:31.896"></status>
 </kw>
 <kw name="Set Headers" library="REST">
 <tags>
@@ -85,7 +85,7 @@
 <arguments>
 <arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:41.117" endtime="20211216 14:34:41.117"></status>
+<status status="PASS" starttime="20211217 09:03:31.896" endtime="20211217 09:03:31.896"></status>
 </kw>
 <kw name="POST" library="REST">
 <tags>
@@ -96,7 +96,7 @@
 <arg>${API_PATH}</arg>
 <arg>${body}</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:41.117" endtime="20211216 14:34:43.637"></status>
+<status status="PASS" starttime="20211217 09:03:31.896" endtime="20211217 09:03:34.394"></status>
 </kw>
 <kw name="Output Schema" library="REST">
 <tags>
@@ -106,7 +106,7 @@
 <arguments>
 <arg>response body</arg>
 </arguments>
-<msg timestamp="20211216 14:34:43.638" level="INFO">
+<msg timestamp="20211217 09:03:34.395" level="INFO">
 {
     "type": "object",
     "properties": {
@@ -314,7 +314,7 @@
                 },
                 "created": {
                     "type": "string",
-                    "default": "2021-12-16T14:34:43+02:00"
+                    "default": "2021-12-17T09:03:34+02:00"
                 },
                 "creator": {
                     "type": "string",
@@ -322,7 +322,7 @@
                 },
                 "signatureValue": {
                     "type": "string",
-                    "default": "q7rMMdC773CPHkBrJkEmnrHDNko+hujtIcQnDWoHM16EYi1exDalffRjd32xHI+J42SIQxkPnUmK/toFuGFQJDNtVOHU6OM4fCOiEK5V/+bK5qZ77c7ZWEaXGTus8trFlCyVGaqukIuhsN97X12Yj+LpHUZ5XMx2Qy4rzdfDq9oVs5JerxMPbqjvLshs1ZKxyj3prPjfoCYbVYVzQfBnbNf50VCQvlpRRWgfcFJAFTGw2OlGZswmA4aN3fpULrC5wX0Nn79dvI2KAWspAo7GOZe/TMtgdP9/8owjiYmafKSxhwju5YXNzK25EYAcPFLPPADW8T7UzVIUwgheoxB31EcXA6zb0bZb9RLlZeSA1Di4nAbIsN/V6gtX0v5VhjkDLniG5yY+MWEYGHwnJn2ClDTCAUHNs+8n0CC1u48cEQZZYXSxlBpHy3H++yg74yB3K1iwJP83zmHdo//QKeU9MZcFyygMMsMY+Sq4PvoVgkKKmqWHnYgjRDlAjo0z2oVia9bK3CC5ZJIIqLwqNh0Y6lJgE8QDWt0c7Meyg/Tr5ioFT6sWVuKTCHjBxh6YTzJd1DMohA2t11vpEzmCBW2l5NRn5igz2h/3n6ZsMBzz6t91UQPXU/OYHZbSLWnpDH8tBZtdbJCVysv1ZqUn2tuF7bE4z+5Fq7znYg1p6budBUI="
+                    "default": "APNv1+zdro49ruXE38W3kgqEQ0alg1V6mJcjRLfxof3fWYCQBhFuLmGZGLOYuPCMaW+sCLoB3Yiy/GaHzkcKHHl3/2Xc/cRH4u0zBC5F6fKoJIweTojvAJa+73Id5J5oVHPhHFTRY/GvbvDVXKU7p8NQWO8s/2KgBNyjbFHHlJl4iPMvbFsEmv1tdcdtpFogE1ZlRk3bq08dQWpZmw9MAJ1WYFfEzAKe2tFxSDssg/SLxLss/tnp1PeyG53sJWyoHENZFiM/7UzrWoEoHhpbvR9oFjrtPl/74aK2XkZ7cgGtRqf2J6Xv3vrJFwhqfvQa28c79UeEUaE7Zo9bV/cesFYLa+9TEyPFFtueqsPcaoGydjpJ/f3O6zfc0FWP0gJ3XEL0pxxBjLcB5hA6VE3Tk2K9wIxafRlCA1qF2tDoMxtt7vuoVxVnnyt+G5UvapNYDJky5YZcBc54eboEwS5qr7IPazuTPQJj1Ye3j1zmlDbQuWFyNwn8HNiR16aEcgZRLZHUraSOQ09DEfBuAn3ZRO3Tca3gUnZhvTm1SWdkVWesllSXDycn50Qg3PE5lztRGvP1lWuzaOTkn/2BnXteTG3ja4ZHp/O0Evnysaxpjj5rryKaucciLuqRk6ETjqi0iYPCQzJ9ekqFE1VyVqcjDtn3wy67Ttk822Fw1/Re54Q="
                 }
             },
             "required": [
@@ -339,9 +339,9 @@
         "signature"
     ]
 }</msg>
-<status status="PASS" starttime="20211216 14:34:43.637" endtime="20211216 14:34:43.703"></status>
+<status status="PASS" starttime="20211217 09:03:34.394" endtime="20211217 09:03:34.484"></status>
 </kw>
-<status status="PASS" starttime="20211216 14:34:41.116" endtime="20211216 14:34:43.703"></status>
+<status status="PASS" starttime="20211217 09:03:31.894" endtime="20211217 09:03:34.484"></status>
 </kw>
 <kw name="Integer" library="REST">
 <tags>
@@ -352,7 +352,7 @@
 <arg>response status</arg>
 <arg>200</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:43.704" endtime="20211216 14:34:43.708"></status>
+<status status="PASS" starttime="20211217 09:03:34.485" endtime="20211217 09:03:34.497"></status>
 </kw>
 <kw name="String" library="REST">
 <tags>
@@ -363,7 +363,7 @@
 <arg>response body @context</arg>
 <arg>https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:43.709" endtime="20211216 14:34:43.711"></status>
+<status status="PASS" starttime="20211217 09:03:34.498" endtime="20211217 09:03:34.501"></status>
 </kw>
 <kw name="Object" library="REST">
 <tags>
@@ -373,7 +373,7 @@
 <arguments>
 <arg>response body data</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:43.712" endtime="20211216 14:34:43.730"></status>
+<status status="PASS" starttime="20211217 09:03:34.502" endtime="20211217 09:03:34.512"></status>
 </kw>
 <kw name="Array" library="REST">
 <tags>
@@ -383,7 +383,7 @@
 <arguments>
 <arg>response body data process</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:43.731" endtime="20211216 14:34:43.756"></status>
+<status status="PASS" starttime="20211217 09:03:34.513" endtime="20211217 09:03:34.527"></status>
 </kw>
 <kw name="String" library="REST">
 <tags>
@@ -394,7 +394,7 @@
 <arg>response body data process 0 @type</arg>
 <arg>Measure</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:43.756" endtime="20211216 14:34:43.759"></status>
+<status status="PASS" starttime="20211217 09:03:34.527" endtime="20211217 09:03:34.529"></status>
 </kw>
 <kw name="String" library="REST">
 <tags>
@@ -405,12 +405,12 @@
 <arg>response body data process 0 processValue 0 @type</arg>
 <arg>Value</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:43.760" endtime="20211216 14:34:43.763"></status>
+<status status="PASS" starttime="20211217 09:03:34.530" endtime="20211217 09:03:34.532"></status>
 </kw>
 <tags>
 <tag>bug-0001</tag>
 </tags>
-<status status="PASS" starttime="20211216 14:34:41.110" endtime="20211216 14:34:43.764" critical="yes"></status>
+<status status="PASS" starttime="20211217 09:03:31.878" endtime="20211217 09:03:34.533" critical="yes"></status>
 </test>
 <test id="s1-t2" name="fetch, 422, Missing data for timestamp required field">
 <kw name="Get Body">
@@ -426,8 +426,8 @@
 <assign>
 <var>${body}</var>
 </assign>
-<msg timestamp="20211216 14:34:43.769" level="INFO">${body} = {'productCode': 'vertolive', 'parameters': {'targetObject': [{'idLocal': '254761'}, {'idLocal': '254766'}], 'period': '2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z'}}</msg>
-<status status="PASS" starttime="20211216 14:34:43.767" endtime="20211216 14:34:43.769"></status>
+<msg timestamp="20211217 09:03:34.537" level="INFO">${body} = {'productCode': 'vertolive', 'parameters': {'targetObject': [{'idLocal': '254761'}, {'idLocal': '254766'}], 'period': '2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z'}}</msg>
+<status status="PASS" starttime="20211217 09:03:34.537" endtime="20211217 09:03:34.537"></status>
 </kw>
 <kw name="Get Current Date" library="DateTime">
 <doc>Returns current local or UTC time with an optional increment.</doc>
@@ -438,8 +438,8 @@
 <assign>
 <var>${now}</var>
 </assign>
-<msg timestamp="20211216 14:34:43.771" level="INFO">${now} = 2021-12-16T12:34:43+00:00</msg>
-<status status="PASS" starttime="20211216 14:34:43.770" endtime="20211216 14:34:43.771"></status>
+<msg timestamp="20211217 09:03:34.538" level="INFO">${now} = 2021-12-17T07:03:34+00:00</msg>
+<status status="PASS" starttime="20211217 09:03:34.537" endtime="20211217 09:03:34.538"></status>
 </kw>
 <kw name="Set To Dictionary" library="Collections">
 <doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
@@ -448,7 +448,7 @@
 <arg>timestamp</arg>
 <arg>${now}</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:43.772" endtime="20211216 14:34:43.772"></status>
+<status status="PASS" starttime="20211217 09:03:34.538" endtime="20211217 09:03:34.539"></status>
 </kw>
 <kw name="Set To Dictionary" library="Collections">
 <doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
@@ -456,7 +456,7 @@
 <arg>${body}</arg>
 <arg>&amp;{kwargs}</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:43.773" endtime="20211216 14:34:43.773"></status>
+<status status="PASS" starttime="20211217 09:03:34.539" endtime="20211217 09:03:34.540"></status>
 </kw>
 <kw name="Evaluate" library="BuiltIn">
 <doc>Evaluates the given expression in Python and returns the result.</doc>
@@ -467,11 +467,11 @@
 <assign>
 <var>${json_string}</var>
 </assign>
-<msg timestamp="20211216 14:34:43.774" level="INFO">${json_string} = {"productCode": "vertolive", "parameters": {"targetObject": [{"idLocal": "254761"}, {"idLocal": "254766"}], "period": "2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z"}, "timestamp": "2021-12-16T12:...</msg>
-<status status="PASS" starttime="20211216 14:34:43.774" endtime="20211216 14:34:43.774"></status>
+<msg timestamp="20211217 09:03:34.541" level="INFO">${json_string} = {"productCode": "vertolive", "parameters": {"targetObject": [{"idLocal": "254761"}, {"idLocal": "254766"}], "period": "2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z"}, "timestamp": "2021-12-17T07:...</msg>
+<status status="PASS" starttime="20211217 09:03:34.540" endtime="20211217 09:03:34.541"></status>
 </kw>
-<msg timestamp="20211216 14:34:43.775" level="INFO">${body} = {'productCode': 'vertolive', 'parameters': {'targetObject': [{'idLocal': '254761'}, {'idLocal': '254766'}], 'period': '2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z'}, 'timestamp': '2021-12-16T12:...</msg>
-<status status="PASS" starttime="20211216 14:34:43.766" endtime="20211216 14:34:43.775"></status>
+<msg timestamp="20211217 09:03:34.541" level="INFO">${body} = {'productCode': 'vertolive', 'parameters': {'targetObject': [{'idLocal': '254761'}, {'idLocal': '254766'}], 'period': '2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z'}, 'timestamp': '2021-12-17T07:...</msg>
+<status status="PASS" starttime="20211217 09:03:34.536" endtime="20211217 09:03:34.541"></status>
 </kw>
 <kw name="Pop From Dictionary" library="Collections">
 <doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
@@ -479,7 +479,7 @@
 <arg>${body}</arg>
 <arg>timestamp</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:43.775" endtime="20211216 14:34:43.776"></status>
+<status status="PASS" starttime="20211217 09:03:34.542" endtime="20211217 09:03:34.542"></status>
 </kw>
 <kw name="Fetch Data Product">
 <arguments>
@@ -493,8 +493,8 @@
 <assign>
 <var>${signature}</var>
 </assign>
-<msg timestamp="20211216 14:34:43.778" level="INFO">${signature} = k6KyRtn0QKLS64oZLxcROZ0RhDNaHtdFk5SvEeFgLlk=</msg>
-<status status="PASS" starttime="20211216 14:34:43.777" endtime="20211216 14:34:43.778"></status>
+<msg timestamp="20211217 09:03:34.543" level="INFO">${signature} = k6KyRtn0QKLS64oZLxcROZ0RhDNaHtdFk5SvEeFgLlk=</msg>
+<status status="PASS" starttime="20211217 09:03:34.543" endtime="20211217 09:03:34.543"></status>
 </kw>
 <kw name="Set Headers" library="REST">
 <tags>
@@ -504,7 +504,7 @@
 <arguments>
 <arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:43.778" endtime="20211216 14:34:43.779"></status>
+<status status="PASS" starttime="20211217 09:03:34.544" endtime="20211217 09:03:34.544"></status>
 </kw>
 <kw name="POST" library="REST">
 <tags>
@@ -515,7 +515,7 @@
 <arg>${API_PATH}</arg>
 <arg>${body}</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:43.780" endtime="20211216 14:34:45.846"></status>
+<status status="PASS" starttime="20211217 09:03:34.544" endtime="20211217 09:03:36.585"></status>
 </kw>
 <kw name="Output Schema" library="REST">
 <tags>
@@ -525,7 +525,7 @@
 <arguments>
 <arg>response body</arg>
 </arguments>
-<msg timestamp="20211216 14:34:45.847" level="INFO">
+<msg timestamp="20211217 09:03:36.585" level="INFO">
 {
     "type": "object",
     "properties": {
@@ -564,9 +564,9 @@
         "error"
     ]
 }</msg>
-<status status="PASS" starttime="20211216 14:34:45.847" endtime="20211216 14:34:45.855"></status>
+<status status="PASS" starttime="20211217 09:03:36.585" endtime="20211217 09:03:36.604"></status>
 </kw>
-<status status="PASS" starttime="20211216 14:34:43.776" endtime="20211216 14:34:45.855"></status>
+<status status="PASS" starttime="20211217 09:03:34.543" endtime="20211217 09:03:36.605"></status>
 </kw>
 <kw name="Integer" library="REST">
 <tags>
@@ -577,7 +577,7 @@
 <arg>response status</arg>
 <arg>422</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:45.856" endtime="20211216 14:34:45.860"></status>
+<status status="PASS" starttime="20211217 09:03:36.606" endtime="20211217 09:03:36.608"></status>
 </kw>
 <kw name="Integer" library="REST">
 <tags>
@@ -588,7 +588,7 @@
 <arg>response body error status</arg>
 <arg>422</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:45.861" endtime="20211216 14:34:45.864"></status>
+<status status="PASS" starttime="20211217 09:03:36.609" endtime="20211217 09:03:36.611"></status>
 </kw>
 <kw name="String" library="REST">
 <tags>
@@ -599,12 +599,12 @@
 <arg>response body error message timestamp 0</arg>
 <arg>Missing data for required field.</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:45.865" endtime="20211216 14:34:45.867"></status>
+<status status="PASS" starttime="20211217 09:03:36.611" endtime="20211217 09:03:36.612"></status>
 </kw>
 <tags>
 <tag>bug-0002</tag>
 </tags>
-<status status="PASS" starttime="20211216 14:34:43.765" endtime="20211216 14:34:45.868" critical="yes"></status>
+<status status="PASS" starttime="20211217 09:03:34.535" endtime="20211217 09:03:36.613" critical="yes"></status>
 </test>
 <test id="s1-t3" name="fetch, 422, Missing data for parameters required field">
 <kw name="Get Body">
@@ -620,8 +620,8 @@
 <assign>
 <var>${body}</var>
 </assign>
-<msg timestamp="20211216 14:34:45.872" level="INFO">${body} = {'productCode': 'vertolive', 'parameters': {'targetObject': [{'idLocal': '254761'}, {'idLocal': '254766'}], 'period': '2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z'}}</msg>
-<status status="PASS" starttime="20211216 14:34:45.872" endtime="20211216 14:34:45.872"></status>
+<msg timestamp="20211217 09:03:36.616" level="INFO">${body} = {'productCode': 'vertolive', 'parameters': {'targetObject': [{'idLocal': '254761'}, {'idLocal': '254766'}], 'period': '2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z'}}</msg>
+<status status="PASS" starttime="20211217 09:03:36.616" endtime="20211217 09:03:36.616"></status>
 </kw>
 <kw name="Get Current Date" library="DateTime">
 <doc>Returns current local or UTC time with an optional increment.</doc>
@@ -632,8 +632,8 @@
 <assign>
 <var>${now}</var>
 </assign>
-<msg timestamp="20211216 14:34:45.873" level="INFO">${now} = 2021-12-16T12:34:45+00:00</msg>
-<status status="PASS" starttime="20211216 14:34:45.873" endtime="20211216 14:34:45.873"></status>
+<msg timestamp="20211217 09:03:36.616" level="INFO">${now} = 2021-12-17T07:03:36+00:00</msg>
+<status status="PASS" starttime="20211217 09:03:36.616" endtime="20211217 09:03:36.616"></status>
 </kw>
 <kw name="Set To Dictionary" library="Collections">
 <doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
@@ -642,7 +642,7 @@
 <arg>timestamp</arg>
 <arg>${now}</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:45.873" endtime="20211216 14:34:45.874"></status>
+<status status="PASS" starttime="20211217 09:03:36.617" endtime="20211217 09:03:36.617"></status>
 </kw>
 <kw name="Set To Dictionary" library="Collections">
 <doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
@@ -650,7 +650,7 @@
 <arg>${body}</arg>
 <arg>&amp;{kwargs}</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:45.874" endtime="20211216 14:34:45.874"></status>
+<status status="PASS" starttime="20211217 09:03:36.617" endtime="20211217 09:03:36.617"></status>
 </kw>
 <kw name="Evaluate" library="BuiltIn">
 <doc>Evaluates the given expression in Python and returns the result.</doc>
@@ -661,11 +661,11 @@
 <assign>
 <var>${json_string}</var>
 </assign>
-<msg timestamp="20211216 14:34:45.875" level="INFO">${json_string} = {"productCode": "vertolive", "parameters": {"targetObject": [{"idLocal": "254761"}, {"idLocal": "254766"}], "period": "2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z"}, "timestamp": "2021-12-16T12:...</msg>
-<status status="PASS" starttime="20211216 14:34:45.874" endtime="20211216 14:34:45.875"></status>
+<msg timestamp="20211217 09:03:36.618" level="INFO">${json_string} = {"productCode": "vertolive", "parameters": {"targetObject": [{"idLocal": "254761"}, {"idLocal": "254766"}], "period": "2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z"}, "timestamp": "2021-12-17T07:...</msg>
+<status status="PASS" starttime="20211217 09:03:36.618" endtime="20211217 09:03:36.618"></status>
 </kw>
-<msg timestamp="20211216 14:34:45.875" level="INFO">${body} = {'productCode': 'vertolive', 'parameters': {'targetObject': [{'idLocal': '254761'}, {'idLocal': '254766'}], 'period': '2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z'}, 'timestamp': '2021-12-16T12:...</msg>
-<status status="PASS" starttime="20211216 14:34:45.871" endtime="20211216 14:34:45.876"></status>
+<msg timestamp="20211217 09:03:36.618" level="INFO">${body} = {'productCode': 'vertolive', 'parameters': {'targetObject': [{'idLocal': '254761'}, {'idLocal': '254766'}], 'period': '2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z'}, 'timestamp': '2021-12-17T07:...</msg>
+<status status="PASS" starttime="20211217 09:03:36.615" endtime="20211217 09:03:36.618"></status>
 </kw>
 <kw name="Pop From Dictionary" library="Collections">
 <doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
@@ -673,7 +673,7 @@
 <arg>${body}</arg>
 <arg>parameters</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:45.876" endtime="20211216 14:34:45.877"></status>
+<status status="PASS" starttime="20211217 09:03:36.619" endtime="20211217 09:03:36.619"></status>
 </kw>
 <kw name="Fetch Data Product">
 <arguments>
@@ -687,8 +687,8 @@
 <assign>
 <var>${signature}</var>
 </assign>
-<msg timestamp="20211216 14:34:45.880" level="INFO">${signature} = /jxEpe2eUFX+XkYRL7m8tSsQOURoZpymiik5JahkPIM=</msg>
-<status status="PASS" starttime="20211216 14:34:45.880" endtime="20211216 14:34:45.881"></status>
+<msg timestamp="20211217 09:03:36.620" level="INFO">${signature} = PF77KTBNXgLAkR3wN8IAiVtfDGIGHYCphuOfrd0bvtA=</msg>
+<status status="PASS" starttime="20211217 09:03:36.620" endtime="20211217 09:03:36.620"></status>
 </kw>
 <kw name="Set Headers" library="REST">
 <tags>
@@ -698,7 +698,7 @@
 <arguments>
 <arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:45.881" endtime="20211216 14:34:45.881"></status>
+<status status="PASS" starttime="20211217 09:03:36.620" endtime="20211217 09:03:36.620"></status>
 </kw>
 <kw name="POST" library="REST">
 <tags>
@@ -709,7 +709,7 @@
 <arg>${API_PATH}</arg>
 <arg>${body}</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:45.882" endtime="20211216 14:34:47.949"></status>
+<status status="PASS" starttime="20211217 09:03:36.621" endtime="20211217 09:03:38.646"></status>
 </kw>
 <kw name="Output Schema" library="REST">
 <tags>
@@ -719,7 +719,7 @@
 <arguments>
 <arg>response body</arg>
 </arguments>
-<msg timestamp="20211216 14:34:47.949" level="INFO">
+<msg timestamp="20211217 09:03:38.646" level="INFO">
 {
     "type": "object",
     "properties": {
@@ -758,9 +758,9 @@
         "error"
     ]
 }</msg>
-<status status="PASS" starttime="20211216 14:34:47.949" endtime="20211216 14:34:47.958"></status>
+<status status="PASS" starttime="20211217 09:03:38.646" endtime="20211217 09:03:38.668"></status>
 </kw>
-<status status="PASS" starttime="20211216 14:34:45.878" endtime="20211216 14:34:47.959"></status>
+<status status="PASS" starttime="20211217 09:03:36.619" endtime="20211217 09:03:38.668"></status>
 </kw>
 <kw name="Integer" library="REST">
 <tags>
@@ -771,7 +771,7 @@
 <arg>response status</arg>
 <arg>422</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:47.959" endtime="20211216 14:34:47.961"></status>
+<status status="PASS" starttime="20211217 09:03:38.669" endtime="20211217 09:03:38.670"></status>
 </kw>
 <kw name="Integer" library="REST">
 <tags>
@@ -782,7 +782,7 @@
 <arg>response body error status</arg>
 <arg>422</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:47.962" endtime="20211216 14:34:47.964"></status>
+<status status="PASS" starttime="20211217 09:03:38.671" endtime="20211217 09:03:38.673"></status>
 </kw>
 <kw name="String" library="REST">
 <tags>
@@ -793,12 +793,12 @@
 <arg>response body error message parameters 0</arg>
 <arg>Missing data for required field.</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:47.965" endtime="20211216 14:34:47.966"></status>
+<status status="PASS" starttime="20211217 09:03:38.673" endtime="20211217 09:03:38.676"></status>
 </kw>
 <tags>
 <tag>bug-0003</tag>
 </tags>
-<status status="PASS" starttime="20211216 14:34:45.870" endtime="20211216 14:34:47.967" critical="yes"></status>
+<status status="PASS" starttime="20211217 09:03:36.615" endtime="20211217 09:03:38.677" critical="yes"></status>
 </test>
 <test id="s1-t4" name="fetch, 422, Missing data for targetObject required field">
 <kw name="Get Body">
@@ -814,8 +814,8 @@
 <assign>
 <var>${body}</var>
 </assign>
-<msg timestamp="20211216 14:34:47.972" level="INFO">${body} = {'productCode': 'vertolive', 'parameters': {'targetObject': [{'idLocal': '254761'}, {'idLocal': '254766'}], 'period': '2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z'}}</msg>
-<status status="PASS" starttime="20211216 14:34:47.972" endtime="20211216 14:34:47.972"></status>
+<msg timestamp="20211217 09:03:38.683" level="INFO">${body} = {'productCode': 'vertolive', 'parameters': {'targetObject': [{'idLocal': '254761'}, {'idLocal': '254766'}], 'period': '2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z'}}</msg>
+<status status="PASS" starttime="20211217 09:03:38.683" endtime="20211217 09:03:38.683"></status>
 </kw>
 <kw name="Get Current Date" library="DateTime">
 <doc>Returns current local or UTC time with an optional increment.</doc>
@@ -826,8 +826,8 @@
 <assign>
 <var>${now}</var>
 </assign>
-<msg timestamp="20211216 14:34:47.973" level="INFO">${now} = 2021-12-16T12:34:47+00:00</msg>
-<status status="PASS" starttime="20211216 14:34:47.973" endtime="20211216 14:34:47.973"></status>
+<msg timestamp="20211217 09:03:38.684" level="INFO">${now} = 2021-12-17T07:03:38+00:00</msg>
+<status status="PASS" starttime="20211217 09:03:38.684" endtime="20211217 09:03:38.684"></status>
 </kw>
 <kw name="Set To Dictionary" library="Collections">
 <doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
@@ -836,7 +836,7 @@
 <arg>timestamp</arg>
 <arg>${now}</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:47.973" endtime="20211216 14:34:47.973"></status>
+<status status="PASS" starttime="20211217 09:03:38.684" endtime="20211217 09:03:38.685"></status>
 </kw>
 <kw name="Set To Dictionary" library="Collections">
 <doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
@@ -844,7 +844,7 @@
 <arg>${body}</arg>
 <arg>&amp;{kwargs}</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:47.974" endtime="20211216 14:34:47.974"></status>
+<status status="PASS" starttime="20211217 09:03:38.685" endtime="20211217 09:03:38.685"></status>
 </kw>
 <kw name="Evaluate" library="BuiltIn">
 <doc>Evaluates the given expression in Python and returns the result.</doc>
@@ -855,11 +855,11 @@
 <assign>
 <var>${json_string}</var>
 </assign>
-<msg timestamp="20211216 14:34:47.974" level="INFO">${json_string} = {"productCode": "vertolive", "parameters": {"targetObject": [{"idLocal": "254761"}, {"idLocal": "254766"}], "period": "2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z"}, "timestamp": "2021-12-16T12:...</msg>
-<status status="PASS" starttime="20211216 14:34:47.974" endtime="20211216 14:34:47.974"></status>
+<msg timestamp="20211217 09:03:38.686" level="INFO">${json_string} = {"productCode": "vertolive", "parameters": {"targetObject": [{"idLocal": "254761"}, {"idLocal": "254766"}], "period": "2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z"}, "timestamp": "2021-12-17T07:...</msg>
+<status status="PASS" starttime="20211217 09:03:38.685" endtime="20211217 09:03:38.686"></status>
 </kw>
-<msg timestamp="20211216 14:34:47.975" level="INFO">${body} = {'productCode': 'vertolive', 'parameters': {'targetObject': [{'idLocal': '254761'}, {'idLocal': '254766'}], 'period': '2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z'}, 'timestamp': '2021-12-16T12:...</msg>
-<status status="PASS" starttime="20211216 14:34:47.971" endtime="20211216 14:34:47.975"></status>
+<msg timestamp="20211217 09:03:38.686" level="INFO">${body} = {'productCode': 'vertolive', 'parameters': {'targetObject': [{'idLocal': '254761'}, {'idLocal': '254766'}], 'period': '2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z'}, 'timestamp': '2021-12-17T07:...</msg>
+<status status="PASS" starttime="20211217 09:03:38.682" endtime="20211217 09:03:38.686"></status>
 </kw>
 <kw name="Pop From Dictionary" library="Collections">
 <doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
@@ -867,7 +867,7 @@
 <arg>${body["parameters"]}</arg>
 <arg>targetObject</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:47.975" endtime="20211216 14:34:47.975"></status>
+<status status="PASS" starttime="20211217 09:03:38.687" endtime="20211217 09:03:38.688"></status>
 </kw>
 <kw name="Fetch Data Product">
 <arguments>
@@ -881,8 +881,8 @@
 <assign>
 <var>${signature}</var>
 </assign>
-<msg timestamp="20211216 14:34:47.976" level="INFO">${signature} = 9tASDwbDi0g5xLF6g3hnpd6BRnp5N8cmTa9xpwsqicw=</msg>
-<status status="PASS" starttime="20211216 14:34:47.976" endtime="20211216 14:34:47.976"></status>
+<msg timestamp="20211217 09:03:38.690" level="INFO">${signature} = noNXunyziJY3wZrAQF0HYFHpU/lsoKNgxWi2G6aEPXM=</msg>
+<status status="PASS" starttime="20211217 09:03:38.689" endtime="20211217 09:03:38.690"></status>
 </kw>
 <kw name="Set Headers" library="REST">
 <tags>
@@ -892,7 +892,7 @@
 <arguments>
 <arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:47.977" endtime="20211216 14:34:47.977"></status>
+<status status="PASS" starttime="20211217 09:03:38.690" endtime="20211217 09:03:38.691"></status>
 </kw>
 <kw name="POST" library="REST">
 <tags>
@@ -903,7 +903,7 @@
 <arg>${API_PATH}</arg>
 <arg>${body}</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:47.977" endtime="20211216 14:34:50.052"></status>
+<status status="PASS" starttime="20211217 09:03:38.691" endtime="20211217 09:03:40.720"></status>
 </kw>
 <kw name="Output Schema" library="REST">
 <tags>
@@ -913,7 +913,7 @@
 <arguments>
 <arg>response body</arg>
 </arguments>
-<msg timestamp="20211216 14:34:50.054" level="INFO">
+<msg timestamp="20211217 09:03:40.721" level="INFO">
 {
     "type": "object",
     "properties": {
@@ -952,9 +952,9 @@
         "error"
     ]
 }</msg>
-<status status="PASS" starttime="20211216 14:34:50.052" endtime="20211216 14:34:50.069"></status>
+<status status="PASS" starttime="20211217 09:03:40.721" endtime="20211217 09:03:40.732"></status>
 </kw>
-<status status="PASS" starttime="20211216 14:34:47.976" endtime="20211216 14:34:50.069"></status>
+<status status="PASS" starttime="20211217 09:03:38.688" endtime="20211217 09:03:40.733"></status>
 </kw>
 <kw name="Integer" library="REST">
 <tags>
@@ -965,7 +965,7 @@
 <arg>response status</arg>
 <arg>422</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:50.070" endtime="20211216 14:34:50.072"></status>
+<status status="PASS" starttime="20211217 09:03:40.733" endtime="20211217 09:03:40.735"></status>
 </kw>
 <kw name="Integer" library="REST">
 <tags>
@@ -976,7 +976,7 @@
 <arg>response body error status</arg>
 <arg>422</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:50.073" endtime="20211216 14:34:50.074"></status>
+<status status="PASS" starttime="20211217 09:03:40.736" endtime="20211217 09:03:40.738"></status>
 </kw>
 <kw name="String" library="REST">
 <tags>
@@ -987,12 +987,12 @@
 <arg>response body error message parameters.targetObject 0</arg>
 <arg>Missing data for required field.</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:50.075" endtime="20211216 14:34:50.077"></status>
+<status status="PASS" starttime="20211217 09:03:40.739" endtime="20211217 09:03:40.741"></status>
 </kw>
 <tags>
 <tag>bug-0004</tag>
 </tags>
-<status status="PASS" starttime="20211216 14:34:47.970" endtime="20211216 14:34:50.078" critical="yes"></status>
+<status status="PASS" starttime="20211217 09:03:38.680" endtime="20211217 09:03:40.742" critical="yes"></status>
 </test>
 <test id="s1-t5" name="fetch, 422, Missing data for period required field">
 <kw name="Get Body">
@@ -1008,8 +1008,8 @@
 <assign>
 <var>${body}</var>
 </assign>
-<msg timestamp="20211216 14:34:50.081" level="INFO">${body} = {'productCode': 'vertolive', 'parameters': {'targetObject': [{'idLocal': '254761'}, {'idLocal': '254766'}], 'period': '2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z'}}</msg>
-<status status="PASS" starttime="20211216 14:34:50.081" endtime="20211216 14:34:50.081"></status>
+<msg timestamp="20211217 09:03:40.747" level="INFO">${body} = {'productCode': 'vertolive', 'parameters': {'targetObject': [{'idLocal': '254761'}, {'idLocal': '254766'}], 'period': '2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z'}}</msg>
+<status status="PASS" starttime="20211217 09:03:40.746" endtime="20211217 09:03:40.747"></status>
 </kw>
 <kw name="Get Current Date" library="DateTime">
 <doc>Returns current local or UTC time with an optional increment.</doc>
@@ -1020,8 +1020,8 @@
 <assign>
 <var>${now}</var>
 </assign>
-<msg timestamp="20211216 14:34:50.082" level="INFO">${now} = 2021-12-16T12:34:50+00:00</msg>
-<status status="PASS" starttime="20211216 14:34:50.082" endtime="20211216 14:34:50.082"></status>
+<msg timestamp="20211217 09:03:40.747" level="INFO">${now} = 2021-12-17T07:03:40+00:00</msg>
+<status status="PASS" starttime="20211217 09:03:40.747" endtime="20211217 09:03:40.747"></status>
 </kw>
 <kw name="Set To Dictionary" library="Collections">
 <doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
@@ -1030,7 +1030,7 @@
 <arg>timestamp</arg>
 <arg>${now}</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:50.082" endtime="20211216 14:34:50.082"></status>
+<status status="PASS" starttime="20211217 09:03:40.747" endtime="20211217 09:03:40.748"></status>
 </kw>
 <kw name="Set To Dictionary" library="Collections">
 <doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
@@ -1038,7 +1038,7 @@
 <arg>${body}</arg>
 <arg>&amp;{kwargs}</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:50.082" endtime="20211216 14:34:50.083"></status>
+<status status="PASS" starttime="20211217 09:03:40.748" endtime="20211217 09:03:40.749"></status>
 </kw>
 <kw name="Evaluate" library="BuiltIn">
 <doc>Evaluates the given expression in Python and returns the result.</doc>
@@ -1049,11 +1049,11 @@
 <assign>
 <var>${json_string}</var>
 </assign>
-<msg timestamp="20211216 14:34:50.083" level="INFO">${json_string} = {"productCode": "vertolive", "parameters": {"targetObject": [{"idLocal": "254761"}, {"idLocal": "254766"}], "period": "2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z"}, "timestamp": "2021-12-16T12:...</msg>
-<status status="PASS" starttime="20211216 14:34:50.083" endtime="20211216 14:34:50.083"></status>
+<msg timestamp="20211217 09:03:40.750" level="INFO">${json_string} = {"productCode": "vertolive", "parameters": {"targetObject": [{"idLocal": "254761"}, {"idLocal": "254766"}], "period": "2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z"}, "timestamp": "2021-12-17T07:...</msg>
+<status status="PASS" starttime="20211217 09:03:40.749" endtime="20211217 09:03:40.750"></status>
 </kw>
-<msg timestamp="20211216 14:34:50.084" level="INFO">${body} = {'productCode': 'vertolive', 'parameters': {'targetObject': [{'idLocal': '254761'}, {'idLocal': '254766'}], 'period': '2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z'}, 'timestamp': '2021-12-16T12:...</msg>
-<status status="PASS" starttime="20211216 14:34:50.081" endtime="20211216 14:34:50.084"></status>
+<msg timestamp="20211217 09:03:40.751" level="INFO">${body} = {'productCode': 'vertolive', 'parameters': {'targetObject': [{'idLocal': '254761'}, {'idLocal': '254766'}], 'period': '2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z'}, 'timestamp': '2021-12-17T07:...</msg>
+<status status="PASS" starttime="20211217 09:03:40.745" endtime="20211217 09:03:40.751"></status>
 </kw>
 <kw name="Pop From Dictionary" library="Collections">
 <doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
@@ -1061,7 +1061,7 @@
 <arg>${body["parameters"]}</arg>
 <arg>period</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:50.084" endtime="20211216 14:34:50.084"></status>
+<status status="PASS" starttime="20211217 09:03:40.751" endtime="20211217 09:03:40.752"></status>
 </kw>
 <kw name="Fetch Data Product">
 <arguments>
@@ -1075,8 +1075,8 @@
 <assign>
 <var>${signature}</var>
 </assign>
-<msg timestamp="20211216 14:34:50.086" level="INFO">${signature} = Z1WxckvsEVtVh4C0dG0zdDX1D8K+TR1KtNi2sBQ+F+0=</msg>
-<status status="PASS" starttime="20211216 14:34:50.085" endtime="20211216 14:34:50.086"></status>
+<msg timestamp="20211217 09:03:40.754" level="INFO">${signature} = dMz2frzX8X/qERydYKMnnnODkFGhA9ceGhrG1rRd3Lg=</msg>
+<status status="PASS" starttime="20211217 09:03:40.753" endtime="20211217 09:03:40.754"></status>
 </kw>
 <kw name="Set Headers" library="REST">
 <tags>
@@ -1086,7 +1086,7 @@
 <arguments>
 <arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:50.086" endtime="20211216 14:34:50.086"></status>
+<status status="PASS" starttime="20211217 09:03:40.754" endtime="20211217 09:03:40.754"></status>
 </kw>
 <kw name="POST" library="REST">
 <tags>
@@ -1097,7 +1097,7 @@
 <arg>${API_PATH}</arg>
 <arg>${body}</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:50.086" endtime="20211216 14:34:52.141"></status>
+<status status="PASS" starttime="20211217 09:03:40.755" endtime="20211217 09:03:42.807"></status>
 </kw>
 <kw name="Output Schema" library="REST">
 <tags>
@@ -1107,7 +1107,7 @@
 <arguments>
 <arg>response body</arg>
 </arguments>
-<msg timestamp="20211216 14:34:52.141" level="INFO">
+<msg timestamp="20211217 09:03:42.807" level="INFO">
 {
     "type": "object",
     "properties": {
@@ -1146,9 +1146,9 @@
         "error"
     ]
 }</msg>
-<status status="PASS" starttime="20211216 14:34:52.141" endtime="20211216 14:34:52.150"></status>
+<status status="PASS" starttime="20211217 09:03:42.807" endtime="20211217 09:03:42.831"></status>
 </kw>
-<status status="PASS" starttime="20211216 14:34:50.085" endtime="20211216 14:34:52.150"></status>
+<status status="PASS" starttime="20211217 09:03:40.753" endtime="20211217 09:03:42.831"></status>
 </kw>
 <kw name="Integer" library="REST">
 <tags>
@@ -1159,7 +1159,7 @@
 <arg>response status</arg>
 <arg>422</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:52.151" endtime="20211216 14:34:52.153"></status>
+<status status="PASS" starttime="20211217 09:03:42.832" endtime="20211217 09:03:42.835"></status>
 </kw>
 <kw name="Integer" library="REST">
 <tags>
@@ -1170,7 +1170,7 @@
 <arg>response body error status</arg>
 <arg>422</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:52.154" endtime="20211216 14:34:52.156"></status>
+<status status="PASS" starttime="20211217 09:03:42.836" endtime="20211217 09:03:42.838"></status>
 </kw>
 <kw name="String" library="REST">
 <tags>
@@ -1181,12 +1181,12 @@
 <arg>response body error message parameters.period 0</arg>
 <arg>Missing data for required field.</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:52.157" endtime="20211216 14:34:52.158"></status>
+<status status="PASS" starttime="20211217 09:03:42.838" endtime="20211217 09:03:42.841"></status>
 </kw>
 <tags>
 <tag>bug-0005</tag>
 </tags>
-<status status="PASS" starttime="20211216 14:34:50.080" endtime="20211216 14:34:52.159" critical="yes"></status>
+<status status="PASS" starttime="20211217 09:03:40.744" endtime="20211217 09:03:42.841" critical="yes"></status>
 </test>
 <test id="s1-t6" name="fetch, 200, Empty targetObject">
 <kw name="Get Body">
@@ -1202,8 +1202,8 @@
 <assign>
 <var>${body}</var>
 </assign>
-<msg timestamp="20211216 14:34:52.165" level="INFO">${body} = {'productCode': 'vertolive', 'parameters': {'targetObject': [{'idLocal': '254761'}, {'idLocal': '254766'}], 'period': '2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z'}}</msg>
-<status status="PASS" starttime="20211216 14:34:52.163" endtime="20211216 14:34:52.165"></status>
+<msg timestamp="20211217 09:03:42.846" level="INFO">${body} = {'productCode': 'vertolive', 'parameters': {'targetObject': [{'idLocal': '254761'}, {'idLocal': '254766'}], 'period': '2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z'}}</msg>
+<status status="PASS" starttime="20211217 09:03:42.846" endtime="20211217 09:03:42.846"></status>
 </kw>
 <kw name="Get Current Date" library="DateTime">
 <doc>Returns current local or UTC time with an optional increment.</doc>
@@ -1214,8 +1214,8 @@
 <assign>
 <var>${now}</var>
 </assign>
-<msg timestamp="20211216 14:34:52.166" level="INFO">${now} = 2021-12-16T12:34:52+00:00</msg>
-<status status="PASS" starttime="20211216 14:34:52.165" endtime="20211216 14:34:52.166"></status>
+<msg timestamp="20211217 09:03:42.847" level="INFO">${now} = 2021-12-17T07:03:42+00:00</msg>
+<status status="PASS" starttime="20211217 09:03:42.846" endtime="20211217 09:03:42.847"></status>
 </kw>
 <kw name="Set To Dictionary" library="Collections">
 <doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
@@ -1224,7 +1224,7 @@
 <arg>timestamp</arg>
 <arg>${now}</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:52.166" endtime="20211216 14:34:52.166"></status>
+<status status="PASS" starttime="20211217 09:03:42.847" endtime="20211217 09:03:42.847"></status>
 </kw>
 <kw name="Set To Dictionary" library="Collections">
 <doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
@@ -1232,7 +1232,7 @@
 <arg>${body}</arg>
 <arg>&amp;{kwargs}</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:52.166" endtime="20211216 14:34:52.167"></status>
+<status status="PASS" starttime="20211217 09:03:42.847" endtime="20211217 09:03:42.848"></status>
 </kw>
 <kw name="Evaluate" library="BuiltIn">
 <doc>Evaluates the given expression in Python and returns the result.</doc>
@@ -1243,11 +1243,11 @@
 <assign>
 <var>${json_string}</var>
 </assign>
-<msg timestamp="20211216 14:34:52.168" level="INFO">${json_string} = {"productCode": "vertolive", "parameters": {"targetObject": [{"idLocal": "254761"}, {"idLocal": "254766"}], "period": "2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z"}, "timestamp": "2021-12-16T12:...</msg>
-<status status="PASS" starttime="20211216 14:34:52.167" endtime="20211216 14:34:52.168"></status>
+<msg timestamp="20211217 09:03:42.848" level="INFO">${json_string} = {"productCode": "vertolive", "parameters": {"targetObject": [{"idLocal": "254761"}, {"idLocal": "254766"}], "period": "2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z"}, "timestamp": "2021-12-17T07:...</msg>
+<status status="PASS" starttime="20211217 09:03:42.848" endtime="20211217 09:03:42.848"></status>
 </kw>
-<msg timestamp="20211216 14:34:52.168" level="INFO">${body} = {'productCode': 'vertolive', 'parameters': {'targetObject': [{'idLocal': '254761'}, {'idLocal': '254766'}], 'period': '2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z'}, 'timestamp': '2021-12-16T12:...</msg>
-<status status="PASS" starttime="20211216 14:34:52.162" endtime="20211216 14:34:52.168"></status>
+<msg timestamp="20211217 09:03:42.848" level="INFO">${body} = {'productCode': 'vertolive', 'parameters': {'targetObject': [{'idLocal': '254761'}, {'idLocal': '254766'}], 'period': '2021-11-24T23:00:00.000Z/2021-12-05T23:00:00.000Z'}, 'timestamp': '2021-12-17T07:...</msg>
+<status status="PASS" starttime="20211217 09:03:42.845" endtime="20211217 09:03:42.849"></status>
 </kw>
 <kw name="Set To Dictionary" library="Collections">
 <doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
@@ -1255,7 +1255,7 @@
 <arg>${body["parameters"]}</arg>
 <arg>targetObject=@{EMPTY}</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:52.169" endtime="20211216 14:34:52.169"></status>
+<status status="PASS" starttime="20211217 09:03:42.849" endtime="20211217 09:03:42.850"></status>
 </kw>
 <kw name="Fetch Data Product">
 <arguments>
@@ -1269,8 +1269,8 @@
 <assign>
 <var>${signature}</var>
 </assign>
-<msg timestamp="20211216 14:34:52.170" level="INFO">${signature} = qHR00ZMJjHaMePgl9a/SPLNExYTUePEP4mu5nb0vBDQ=</msg>
-<status status="PASS" starttime="20211216 14:34:52.170" endtime="20211216 14:34:52.170"></status>
+<msg timestamp="20211217 09:03:42.852" level="INFO">${signature} = xrCIXtWrGsBx9SLMYY8TXMa4E3bxlBsXo3xj0lvavzM=</msg>
+<status status="PASS" starttime="20211217 09:03:42.852" endtime="20211217 09:03:42.852"></status>
 </kw>
 <kw name="Set Headers" library="REST">
 <tags>
@@ -1280,7 +1280,7 @@
 <arguments>
 <arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:52.171" endtime="20211216 14:34:52.171"></status>
+<status status="PASS" starttime="20211217 09:03:42.852" endtime="20211217 09:03:42.853"></status>
 </kw>
 <kw name="POST" library="REST">
 <tags>
@@ -1291,7 +1291,7 @@
 <arg>${API_PATH}</arg>
 <arg>${body}</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:52.171" endtime="20211216 14:34:54.229"></status>
+<status status="PASS" starttime="20211217 09:03:42.853" endtime="20211217 09:03:44.909"></status>
 </kw>
 <kw name="Output Schema" library="REST">
 <tags>
@@ -1301,7 +1301,7 @@
 <arguments>
 <arg>response body</arg>
 </arguments>
-<msg timestamp="20211216 14:34:54.229" level="INFO">
+<msg timestamp="20211217 09:03:44.909" level="INFO">
 {
     "type": "object",
     "properties": {
@@ -1330,7 +1330,7 @@
                 },
                 "created": {
                     "type": "string",
-                    "default": "2021-12-16T14:34:54+02:00"
+                    "default": "2021-12-17T09:03:44+02:00"
                 },
                 "creator": {
                     "type": "string",
@@ -1338,7 +1338,7 @@
                 },
                 "signatureValue": {
                     "type": "string",
-                    "default": "EyugRG5LeuaoGANytOg5eoIQi0/OFj0BOiRJmPjyMGPlXuwDiY6TmdAujQoDNsSBm18wIlgQYVxw3feXzP3uf0s4TpKH0LQCjddw+hC8QVwkgIQex8pwjO3HG9BYou5nagAW6xSCQcCE9uVhv2mz5yDUADAzOENxQVo//1D8x54X8AaQVMOosOsHwMBX1sROcsu6Nm/jdE8LcLWeIS4tpfyAwyDTUYC2u+j8n/lSSumKWbiMh4okp9mApBQf0l+xRyEllCWDQ1pGl8UQgWi1IAU9VGvLcDSIwtdbBtT+Qgfmb7BYzLaGZLSkM1aCkneKiFvoNsHlF1vtHZXPYxHrO5xNrSRxzqdqk7to5L4x+rycB19ER8M7oqWZV7ZzyjSwn22k+KOSzMeKVQQQX5BPXCBKRm/uXpsWPsimymckhDEfhkgsMdUR+lhdEz66juqaGYZ/qMsW4rnp+ZBU1rvD/NmtcPNlQjrHxUhetF9g2UeyZALEd7Tayf8js0k3tdbTxZn/REKlIFkl+2MAzhgcWhq9OF6+BEqHL3Mctqkx1EuiT7E7nTqjdEK3Bx7svVWB+DjNWSWXcfK4MEFw8Ah4LlmCq9Lew0FhbNlu5zwJG3HlNX1DsPz2BbeHBLwCKZk8Ny9SPfkYaHZ8ZkeBHIKVINv/6MBytD7WgRJToYe5Vyo="
+                    "default": "T4wWmL/fkXMwFjkZN/nTkZCZMeudMNWhzWlk1+gzo20xce+XYXn/3wEJ35uGx+GJNOpjHkhsQbNNeM5OnYOTqmsRVKjXobhBKau7fSsytLBO61RQ50tM2a6BhCYMsI6QY/aV2GxnryiM++iPSeD/5FIlC3sA/n/L2oeVTy1hTYeSBVw5GLgVivhImDaux9Kc4T3wKqyMM6PI8rqVTZav0zVg7GBqj/k9O7T/Djqu+bJlQ2JtBgxSm+4X56EirdEIjWzfkE1YHkIHZyFgi04cMwNVmL9bGo1IP895DQrVY5hxT7uMfLr5G1FH1RJ4QanGBDB3saWIyYgpUJVMuALeZfF0rXDHzrVnmB96o9wMnvcyWsaHW0kdmEFxcgNLfJ+rccyCHTXwJPpm6YaeUwOvP7wD05d0ow/iIT/YwSYzvu9m8ItkPW6dO+bT3kudOkfP63Wcc9Z0w0755zX2uu35ZP+3Nh0qGfwI0cy9aNWyCRA6ye0rWagjmbr82UTk+f3n1lHxYdwn3WOl8UoPQEMXaDiRLsTxl8PRMKTmgb3XjlC01mr8LwQ1TQGE5z99Q3vwP8r4KDBaychvTjMhEOvyBWOWNCp5o3y3eoKdsj1S4pcKGox81uVcClyMac13SgEnmafArFDEjiDxszL41hKqh54n0WQRaDSvNHKXJrCkySQ="
                 }
             },
             "required": [
@@ -1355,9 +1355,9 @@
         "signature"
     ]
 }</msg>
-<status status="PASS" starttime="20211216 14:34:54.229" endtime="20211216 14:34:54.244"></status>
+<status status="PASS" starttime="20211217 09:03:44.909" endtime="20211217 09:03:44.923"></status>
 </kw>
-<status status="PASS" starttime="20211216 14:34:52.170" endtime="20211216 14:34:54.245"></status>
+<status status="PASS" starttime="20211217 09:03:42.851" endtime="20211217 09:03:44.924"></status>
 </kw>
 <kw name="Integer" library="REST">
 <tags>
@@ -1368,7 +1368,7 @@
 <arg>response status</arg>
 <arg>200</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:54.246" endtime="20211216 14:34:54.247"></status>
+<status status="PASS" starttime="20211217 09:03:44.925" endtime="20211217 09:03:44.928"></status>
 </kw>
 <kw name="String" library="REST">
 <tags>
@@ -1379,7 +1379,7 @@
 <arg>response body @context</arg>
 <arg>https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:54.248" endtime="20211216 14:34:54.249"></status>
+<status status="PASS" starttime="20211217 09:03:44.929" endtime="20211217 09:03:44.930"></status>
 </kw>
 <kw name="Array" library="REST">
 <tags>
@@ -1390,15 +1390,15 @@
 <arg>response body data process</arg>
 <arg>maxItems=0</arg>
 </arguments>
-<status status="PASS" starttime="20211216 14:34:54.249" endtime="20211216 14:34:54.250"></status>
+<status status="PASS" starttime="20211217 09:03:44.932" endtime="20211217 09:03:44.934"></status>
 </kw>
 <tags>
 <tag>bug-0006</tag>
 </tags>
-<status status="PASS" starttime="20211216 14:34:52.161" endtime="20211216 14:34:54.251" critical="yes"></status>
+<status status="PASS" starttime="20211217 09:03:42.844" endtime="20211217 09:03:44.935" critical="yes"></status>
 </test>
 <doc>Vertolive API Tests</doc>
-<status status="PASS" starttime="20211216 14:34:40.670" endtime="20211216 14:34:54.255"></status>
+<status status="PASS" starttime="20211217 09:03:31.546" endtime="20211217 09:03:44.938"></status>
 </suite>
 <statistics>
 <total>
