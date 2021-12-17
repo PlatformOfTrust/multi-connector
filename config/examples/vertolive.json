@@ -1,0 +1,11 @@
+{
+    "template": "vertolive",
+    "static": {
+        "url": "https://www.vertolive.fi",
+        "apikey": "<apikey>",
+        "type": "water"
+    },
+    "dynamic": {
+        "authConfig.path": "targetObject"
+    }
+}

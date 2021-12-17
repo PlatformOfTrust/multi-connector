@@ -1,0 +1,40 @@
+{
+    "plugins": [
+      "vertolive"
+    ],
+    "protocol": "rest",
+    "authConfig": {
+      "url": "${url}",
+      "headers": {
+        "X-Vertolive-Api-Key": "${apikey}"
+      },
+      "path": "/rest/integration/apartment/${idLocal}"
+    },
+    "dataObjects": [
+      ""
+    ],  
+    "dataPropertyMappings": {
+      "${type}": ""
+    },
+    "generalConfig": {
+      "query": {
+        "start": "startDate",
+        "end": "endDate"
+    },
+      "timestamp": {
+        "dataObjectProperty": "timestamp"
+      }
+    },
+    "input": {
+      "required": [
+          "parameters.targetObject",
+          "parameters.period"
+
+      ]
+  },
+    "output": {
+      "array": "process"
+    }
+
+  }
+  

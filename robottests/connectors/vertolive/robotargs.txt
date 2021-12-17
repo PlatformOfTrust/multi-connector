@@ -1,0 +1,3 @@
+--pythonpath lib
+--outputdir connectors/vertolive/result
+connectors/vertolive/connector_tests.robot
