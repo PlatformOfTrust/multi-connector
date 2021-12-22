@@ -229,7 +229,7 @@ const getData = async (config= {}, pathArray) => {
     for (let p = 0; p < pathArray.length; p++) {
         let files = await downloadFiles(client, toPath + pathArray[p], productCode);
         if (!files) continue;
-        files = Array.isArray(files) ? files : [files];
+        files = (Array.isArray(files) ? files : [files]).filter(item => item.type !== 'd');
         for (let f = 0; f < files.length; f++) {
             if (_.isObject(files[f])) {
                 files[f].id = files[f].name;
