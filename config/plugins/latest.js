@@ -25,17 +25,21 @@ const sortByDateTimeString = (key) => (a, b) => new Date(a[key]).getTime() - new
  */
 const response = async (config, response) => {
     try {
-        const ids = (_.get(config, 'parameters.ids') || []).map(object => object.id || object.idLocal);
-        const idPath = 'generalConfig.hardwareId.dataObjectProperty';
-        const idKey = _.get(config, idPath);
-        const timestampPath = 'generalConfig.timestamp.dataObjectProperty';
-        const timestampKey = _.get(config, timestampPath);
-        config['dataObjects'].forEach((path) => {
-            // Filter latest data.
-            if (Object.hasOwnProperty.call(response, path)) {
-                response[path] = ids.map(id => response[path].sort(sortByDateTimeString(timestampKey)).filter(c => c[idKey] === id).pop()).flat();
-            }
-        });
+        if (config.mode === 'latest') {
+            const ids = (_.get(config, 'parameters.ids') || []).map(object => object.id || object.idLocal);
+            const idPath = 'generalConfig.hardwareId.dataObjectProperty';
+            const idKey = _.get(config, idPath);
+            const timestampPath = 'generalConfig.timestamp.dataObjectProperty';
+            const timestampKey = _.get(config, timestampPath);
+            config['dataObjects'].forEach((path) => {
+                // Filter latest data.
+                if (Object.hasOwnProperty.call(response, path)) {
+                    response[path] = ids.map(id => response[path]
+                        .sort(sortByDateTimeString(timestampKey))
+                        .filter(c => c[idKey] === id || ids[config.index] === id).pop()).flat();
+                }
+            });
+        }
         return response;
     } catch (e) {
         console.log(e);
