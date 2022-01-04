@@ -36,7 +36,7 @@ const response = async (config, response) => {
                 if (Object.hasOwnProperty.call(response, path)) {
                     response[path] = ids.map(id => response[path]
                         .sort(sortByDateTimeString(timestampKey))
-                        .filter(c => c[idKey] === id || ids[config.index] === id).pop()).flat();
+                        .filter(c => idKey ? c[idKey] === id : ids[config.index] === id).pop()).flat();
                 }
             });
         }
