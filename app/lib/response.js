@@ -171,19 +171,30 @@ const handleData = async (config, path, index, data) => {
 
             // Skip to next resource if the data did not pass the parsing operation.
             if (Object.keys(measurement.data).length === 0) continue;
+            let idObjects = [];
+            let dataType;
 
             try {
                 // Use parameter id as fallback.
+                idObjects =
+                    _.get(config, 'parameters.ids') ||
+                    _.get(config, 'parameters.targetObject') || [];
                 if (!hardwareId) {
-                    const idObjects =
-                        _.get(config, 'parameters.ids') ||
-                        _.get(config, 'parameters.targetObject') || [];
                     const ids = (Array.isArray(idObjects) ? idObjects : [idObjects])
                         .map(object => object.id || object.idLocal || object);
                     hardwareId = ids[index] || index;
                 }
             } catch (e) {
                 hardwareId = index;
+            }
+
+            try {
+                // Use type from id object.
+                if (Object.hasOwnProperty.call(idObjects[index] || {}, 'type')) {
+                    dataType = idObjects[index].type;
+                }
+            } catch (e) {
+                dataType = null;
             }
 
             const item = {
@@ -193,7 +204,7 @@ const handleData = async (config, path, index, data) => {
 
             // Format data
             for (let d = 0; d < Object.entries(measurement.data).length; d++) {
-                let type = Object.entries(measurement.data)[d][0];
+                let type = dataType || Object.entries(measurement.data)[d][0];
                 try {
                     // Select best match from array of types.
                     if (type.split(',').length > 1) {
