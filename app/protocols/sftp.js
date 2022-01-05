@@ -197,7 +197,7 @@ const createClient = async (config = {}, productCode, clientId = uuidv4()) => {
 const getData = async (config= {}, pathArray) => {
     const productCode = config.productCode || uuidv4();
     const clientId = uuidv4();
-    let toPath = config.authConfig.toPath || '';
+    let toPath = (Array.isArray(config.authConfig.toPath) ? config.authConfig.toPath[0] : config.authConfig.toPath) || '';
     const items = [];
 
     // Detect produced content.
@@ -260,7 +260,7 @@ const sendData = async (config= {}, pathArray, clientId) => {
     const client = await createClient(config, productCode, clientId);
 
     const items = [];
-    const fromPath = config.authConfig.fromPath || '';
+    const fromPath = (Array.isArray(config.authConfig.fromPath) ? config.authConfig.fromPath[0] : config.authConfig.fromPath) || '';
 
     for (let p = 0; p < pathArray.length; p++) {
         const item = await uploadFile(client, fromPath + pathArray[p], productCode + fromPath + pathArray[p]);
