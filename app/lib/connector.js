@@ -333,9 +333,9 @@ const parseTs = function (timestamp) {
  */
 const interpretMode = function (config, parameters) {
     // Some systems require always start and end time and latest values cannot be queried otherwise.
-    // Start and end times are set to match last 24 hours from given timestamp.
+    // Start and end times are set to match last 48 hours from given timestamp.
     // Limit property is used to include only latest values.
-    const defaultTimeRange = 1000 * 60 * 60 * 24;
+    const defaultTimeRange = 1000 * 60 * 60 * 24 * 2;
 
     // Latest by default.
     config.mode = 'latest';

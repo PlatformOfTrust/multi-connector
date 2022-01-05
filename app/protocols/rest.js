@@ -126,6 +126,7 @@ const handleError = async (config, err) => {
 const getData = async (config, pathArray) => {
     const items = [];
     for (let p = 0; p < pathArray.length; p++) {
+        config.index = p;
         const item = await requestData(config, pathArray[p], p);
         if (item) items.push(item);
     }

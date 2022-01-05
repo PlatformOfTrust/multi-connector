@@ -9,7 +9,7 @@
     "headers": {
       "Congrid-API-Token": "${token}"
     },
-    "path": "/${version}/${resource}"
+    "path": "/${version}/${resource}?${idProperty}=${targetObject.idLocal}"
   },
   "dataObjects": [
     "results"
