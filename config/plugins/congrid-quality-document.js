@@ -7,6 +7,7 @@ const winston = require('../../logger.js');
 const rp = require('request-promise');
 const req = require('request');
 const https = require('https');
+const http = require('http');
 const fs = require('fs');
 
 /**
@@ -346,7 +347,11 @@ const downloadFile = async (url, folder = 'unspecified') => {
         const downloadPath = dir  + '/' + filename;
         return new Promise(resolve => {
             const file = fs.createWriteStream(downloadPath);
-            https.get(url.replace('http://', 'https://'), function (response) {
+            let protocol = http;
+            if (url.includes('https://')) {
+                protocol = https;
+            }
+            protocol.get(url, function (response) {
                 response.pipe(file);
                 file.on('finish', function () {
                     file.close();
