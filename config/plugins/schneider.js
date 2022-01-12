@@ -65,9 +65,12 @@ function request (method, url, headers, body) {
  */
 const template = async (config, template) => {
     try {
+        if (template.mode === 'history') {
+            template.authConfig.path = template.authConfig.path.map(p => p.replace('/Values/', '/TrendSamples/'));
+        }
         // Skip subscription if query includes only one id.
         const ids = template.parameters.ids.map(item => decodeURIComponent(decodeURIComponent(item.id)));
-        if (ids.length < 5) {
+        if (ids.length < 5 || template.mode !== 'latest') {
             return template;
         }
         template.parameters.ids = ids;
