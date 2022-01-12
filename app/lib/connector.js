@@ -444,11 +444,14 @@ const composeOutput = async (template, input) => {
         return rest.promiseRejectWithError(500, 'Connection protocol not defined.');
     } else {
         // Check that the protocol is supported.
-        if (!Object.hasOwnProperty.call(protocols, template.protocol)) {
+        if (!Object.hasOwnProperty.call(protocols, template.protocol) && !_.intersection(protocols, template.protocol)) {
             return rest.promiseRejectWithError(500, 'Connection protocol ' + template.protocol + ' is not supported.');
         } else {
-            items = input || await protocols[template.protocol].getData(template, pathArray);
-            if (!items) items = [];
+            const selected = Array.isArray(template.protocol) ? template.protocol : [template.protocol];
+            for (let i = 0; i < selected.length; i++) {
+                const result = input || await protocols[selected[i]].getData({...template, protocol: selected[i]}, pathArray);
+                if (result) items.push(...Array.isArray(result) ? result : [result]);
+            }
         }
     }
 
