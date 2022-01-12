@@ -74,7 +74,7 @@ const downloadFiles = async (client, path, productCode) => {
                 .filter(file => path.split('/').includes(file.name));
             filename = true;
         } catch (err) {
-            winston.log('error', err.message);
+            // winston.log('error', err.message);
             return;
         }
     }
@@ -82,6 +82,9 @@ const downloadFiles = async (client, path, productCode) => {
     if (path.slice(-1) === '/') {
         path = path.slice(0, -1);
     }
+    // Skip directories.
+    files = (Array.isArray(files) ? files : [files]).filter(item => item.type !== 'd');
+
     for (let i = 0; i < files.length; i++) {
         const from = path + (filename ? '' : '/' + files[i].name);
         const to = DOWNLOAD_DIR + productCode + from;
@@ -90,6 +93,8 @@ const downloadFiles = async (client, path, productCode) => {
         try {
             // Download file.
             filePath = await client.get(from, to);
+            // Attach dir.
+            files[i].path = from;
             // Read file content.
             files[i].data = fs.readFileSync(filePath, 'base64');
         } catch (err) {
@@ -192,12 +197,13 @@ const createClient = async (config = {}, productCode, clientId = uuidv4()) => {
  *
  * @param {Object} config
  * @param {Array} pathArray
+ * @param {Boolean} skipHandling
  * @return {Promise}
  */
-const getData = async (config= {}, pathArray) => {
+const getData = async (config= {}, pathArray, skipHandling = false) => {
     const productCode = config.productCode || uuidv4();
     const clientId = uuidv4();
-    let toPath = (Array.isArray(config.authConfig.toPath) ? config.authConfig.toPath[0] : config.authConfig.toPath) || '';
+    let toPath = config.authConfig.toPath || '';
     const items = [];
 
     // Detect produced content.
@@ -227,15 +233,19 @@ const getData = async (config= {}, pathArray) => {
 
     const client = await createClient(config, productCode, clientId);
     for (let p = 0; p < pathArray.length; p++) {
-        let files = await downloadFiles(client, toPath + pathArray[p], productCode);
-        if (!files) continue;
-        files = (Array.isArray(files) ? files : [files]).filter(item => item.type !== 'd');
-        for (let f = 0; f < files.length; f++) {
-            if (_.isObject(files[f])) {
-                files[f].id = files[f].name;
+        const name = pathArray[p][0] === '/' ? pathArray[p] : '/' + pathArray[p];
+        const paths = Array.isArray(toPath) ? toPath : [toPath];
+        for (let l = 0; l < paths.length; l++) {
+            let files = await downloadFiles(client, paths[l] + name, productCode);
+            if (!files) continue;
+            files = (Array.isArray(files) ? files : [files]).filter(item => item.type !== 'd');
+            for (let f = 0; f < files.length; f++) {
+                if (_.isObject(files[f])) {
+                    files[f].id = files[f].name;
+                }
+                const item = skipHandling ? files[f] : await response.handleData(config, pathArray[p], p, files[f]);
+                if (item) items.push(item);
             }
-            const item = await response.handleData(config, pathArray[p], p, files[f]);
-            if (item) items.push(item);
         }
     }
 

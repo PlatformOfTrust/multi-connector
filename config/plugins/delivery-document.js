@@ -11,6 +11,7 @@ const winston = require('../../logger.js');
 const cache = require('../../app/cache');
 const rsa = require('../../app/lib/rsa');
 const rp = require('request-promise');
+const cron = require('node-cron');
 const moment = require('moment');
 const net = require('net');
 const _ = require('lodash');
@@ -1533,6 +1534,20 @@ const handleData = function (config, id, data) {
 };
 
 /**
+ * Detect JSON data.
+ *
+ * @param {String} data
+ * @return {Boolean}
+ */
+const isJSON = (data) => {
+    try {
+        return !!JSON.parse(data);
+    } catch (e) {
+        return false;
+    }
+};
+
+/**
  * Converts CSV to JSON.
  *
  * @param {Object} config
@@ -1544,10 +1559,17 @@ const response = async (config, response) => {
         if (typeof response.data === 'string' || response.data instanceof String) {
             const fileType = await FileType.fromBuffer(Buffer.from(response.data, 'base64'));
             if (!fileType) {
-                // File is .txt, .csv, .svg, etc (not a binary-based file format).
-                response = {
-                    data: await CSVToJSON({delimiter: 'auto'}).fromString(Buffer.from(response.data, 'base64').toString('utf-8')),
-                };
+                const json = Buffer.from(response.data, 'base64').toString('utf-8');
+                // File is not a binary-based file format.
+                if (isJSON(json)) {
+                    // File is .json
+                    response.data = JSON.parse(json);
+                } else {
+                    // File is .txt, .csv, .svg, etc.
+                    response = {
+                        data: await CSVToJSON({delimiter: 'auto'}).fromString(Buffer.from(response.data, 'base64').toString('utf-8')),
+                    };
+                }
             } else {
                 response = {
                     data: {
@@ -1640,6 +1662,34 @@ const errorResponse = async (req, res, err) => {
 };
 
 /**
+ * Composes local connector request.
+ *
+ * @param {String} productCode
+ * @param {Object} config
+ * @param {String} idLocal
+ * @return
+ *   The connector response.
+ */
+const getData = async (productCode, config, idLocal) => {
+    // Compose triggered local connector request.
+    const triggeredReq = {
+        body: {
+            productCode,
+            timestamp: moment().format(),
+            parameters: {
+                targetObject: {
+                    idLocal,
+                },
+            },
+        },
+        connectorUrl: config.connectorUrl,
+        publicKeyUrl: config.publicKeyUrl,
+    };
+    winston.log('info', '1. Query self with path ${targetObject.idLocal} as ' + idLocal);
+    return await connector.getData(triggeredReq);
+};
+
+/**
  * Endpoint to trigger fetching of new data from CALS.
  *
  * @param {Object} req
@@ -1720,23 +1770,7 @@ const controller = async (req, res) => {
 
         // 2. Get new data from vendor with parameters provided in the body.
         try {
-            // Compose triggered local connector request.
-            const triggeredReq = {
-                body: {
-                    productCode,
-                    'timestamp': moment().format(),
-                    'parameters': {
-                        'targetObject': {
-                            idLocal: req.body.filename,
-                        },
-                    },
-                },
-                connectorUrl: config.connectorUrl,
-                publicKeyUrl: config.publicKeyUrl,
-            };
-
-            winston.log('info', '1. Query self with path ${targetObject.idLocal} as ' + req.body.filename);
-            result = await connector.getData(triggeredReq);
+            result = await getData(productCode, config, req.body.filename);
         } catch (err) {
             winston.log('error', err.message);
             return errorResponse(req, res, err);
@@ -1892,7 +1926,8 @@ const resolveContract = async (order, sheetId) => {
         const {body} = await request('GET', sheetUrl);
         const contracts = await CSVToJSON({delimiter: 'auto'}).fromString(body);
         const result = contracts.find((c) => c.project === project.toString());
-        const contract = result ? result.contract : null;
+        const fallback = contracts.find((c) => c.project === '*');
+        const contract = result ? result.contract : (fallback ? fallback.contract : null);
         order.contract = {idLocal: contract};
         winston.log('info', 'Contract resolver result: ' + project + (contract ? ' => ' + contract : ' not found'));
     } catch (err) {
@@ -1900,6 +1935,126 @@ const resolveContract = async (order, sheetId) => {
     }
     return order;
 };
+
+// Cron tasks.
+const tasks = {};
+const DEFAULT_SCHEDULE = '*/30 * * * *';
+const DEFAULT_TIMEZONE = 'Europe/Helsinki';
+
+/**
+ * Executes scheduled task.
+ *
+ * @param {String} productCode
+ */
+const runJob = async (productCode) => {
+    try {
+        const config = cache.getDoc('configs', productCode);
+        const template = {
+            productCode,
+            plugins: [],
+            authConfig: config.static,
+            parameters: {
+                targetObject: {},
+            },
+        };
+        // Download files.
+        const docs = await sftp.getData(template, [''], true);
+        // Send new files and move to archive.
+        docs.forEach(d => winston.log('info', d.path));
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+};
+
+/**
+ * Restarts a cron task by product code.
+ *
+ * @param {String} productCode
+ * @param {String} [schedule]
+ * @param {String} [timezone]
+ */
+const restartTask = (productCode, schedule = DEFAULT_SCHEDULE, timezone = DEFAULT_TIMEZONE) => {
+    try {
+        stopTask(productCode);
+        destroyTask(productCode);
+        return startTask(productCode, schedule, timezone);
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+};
+
+/**
+ * Starts a cron task by product code.
+ *
+ * @param {String} productCode
+ * @param {String} [schedule]
+ * @param {String} [timezone]
+ */
+const startTask = async (productCode, schedule = DEFAULT_SCHEDULE, timezone = 'Europe/Helsinki') => {
+    try {
+        await runJob(productCode);
+        winston.log('info', `Start a job with product code ${productCode} and schedule ${schedule} at ${timezone} timezone`);
+        tasks[productCode] = cron.schedule(schedule, () => {
+            runJob(productCode);
+        }, {
+            scheduled: true,
+            timezone,
+        });
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+};
+
+/**
+ * Stops a cron task by product code.
+ *
+ * @param {String} productCode
+ */
+const stopTask = (productCode) => {
+    try {
+        if (Object.hasOwnProperty.call(tasks, productCode)) {
+            if (Object.hasOwnProperty.call(tasks[productCode], 'stop')) {
+                tasks[productCode].stop();
+            }
+        }
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+};
+
+/**
+ * Destroys a cron task by product code.
+ *
+ * @param {String} productCode
+ */
+const destroyTask = (productCode) => {
+    try {
+        if (Object.hasOwnProperty.call(tasks, productCode)) {
+            if (Object.hasOwnProperty.call(tasks[productCode], 'destroy')) {
+                tasks[productCode].destroy();
+            }
+        }
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+};
+
+// Get related configs and set schedules.
+setTimeout(() => {
+    Object.entries(cache.getKeysAndDocs('configs') || [])
+        .filter(([_key, value]) => Object.entries(value.plugins || {})
+            .filter(([key, _value]) => key === PLUGIN_NAME).length > 0)
+        .forEach(([productCode, config]) => {
+            if (Object.hasOwnProperty.call(config.plugins[PLUGIN_NAME], 'schedule')) {
+                const schedule = config.plugins[PLUGIN_NAME].schedule;
+                if (cron.validate(schedule)) {
+                    restartTask(productCode, schedule, config.plugins[PLUGIN_NAME].timezone);
+                } else {
+                    winston.log('error', 'Invalid cron expression.');
+                }
+            }
+        });
+}, 5000);
 
 /**
  * Switch querying protocol to REST.
@@ -1918,6 +2073,8 @@ const template = async (config, template) => {
                 template.output.array = 'document';
             }
         }
+
+        // Switch protocol if container not found from request.
         if (Object.hasOwnProperty.call(template.parameters.targetObject, 'sender')) {
             /** Vendor connector */
             winston.log('info', 'Received produced data from '
