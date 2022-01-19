@@ -1927,9 +1927,10 @@ const resolveContract = async (order, sheetId) => {
         const contracts = await CSVToJSON({delimiter: 'auto'}).fromString(body);
         const result = contracts.find((c) => c.project === project.toString());
         const fallback = contracts.find((c) => c.project === '*');
+        fallback.project = project.toString();
         const contract = result ? result.contract : (fallback ? fallback.contract : null);
         order.contract = {idLocal: contract};
-        Object.entries(result || {}).forEach(([key, value]) => {
+        Object.entries(result || fallback || {}).forEach(([key, value]) => {
             if (key !== 'contract') {
                 order.contract[key] = value;
             }
