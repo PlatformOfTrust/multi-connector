@@ -1928,7 +1928,8 @@ const resolveContract = async (order, sheetId) => {
         const result = contracts.find((c) => c.project === project.toString());
         const fallback = contracts.find((c) => c.project === '*');
         const contract = result ? result.contract : (fallback ? fallback.contract : null);
-        order.contract = {idLocal: contract};
+        const name = result ? result.name : '';
+        order.contract = {idLocal: contract, name};
         winston.log('info', 'Contract resolver result: ' + project + (contract ? ' => ' + contract : ' not found'));
     } catch (err) {
         winston.log('error', err.message);
