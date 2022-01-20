@@ -3,7 +3,7 @@
  * Module dependencies.
  */
 const transformer = require('../../app/lib/transformer');
-const schema = require('../schemas/service-request_granlund-manager.json');
+const schema = require('../schemas/service-request_granlund-manager-v2.1.json');
 
 /**
  * Grandlund Manager transformer.
