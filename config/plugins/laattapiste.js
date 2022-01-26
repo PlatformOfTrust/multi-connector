@@ -322,12 +322,15 @@ const json2xml = (input = {}) => {
     input.customer.contactInformation.country = input.customer.contactInformation.country || '';
     input.attributes = [
         {name: 'purchaseOrderQRC', value: _.get(input, 'codeQr')},
-        {name: 'workPackage', value: _.get(input, 'productGroup.idLocal')},
-        {name: 'workPackageLocation', value: _.get(input, 'productGroup.locationFinal.name')},
-        {name: 'workPackagePhase', value: _.get(input, 'productGroup.process.name')},
-        {name: 'workPackageOperator', value: _.get(input, 'productGroup.operator.name')},
-        {name: 'workPackageOperatorContactName', value: _.get(input, 'productGroup.operator.contact.name')},
-        {name: 'workPackageOperatorContactTelephone', value: _.get(input, 'productGroup.operator.contact.phoneNumber')},
+        {name: 'workPackage', value: _.get(input, 'addressShipping.process.idLocal')},
+        {name: 'workPackageLocation', value: _.get(input, 'addressShipping.nameArea')},
+        {name: 'workPackageLocationName', value: _.get(input, 'addressShipping.location.name')},
+        {name: 'workPackageAreaName', value: _.get(input, 'addressShipping.location.zone')},
+        {name: 'workPackageInventoryLocationName', value: _.get(input, 'addressShipping.location.space')},
+        {name: 'workPackagePhase', value: _.get(input, 'addressShipping.process.name')},
+        {name: 'workPackageOperator', value: _.get(input, 'addressShipping.contact.name')},
+        {name: 'workPackageOperatorContactName', value: _.get(input, 'addressShipping.contact.contactInformation.name')},
+        {name: 'workPackageOperatorContactTelephone', value: _.get(input, 'addressShipping.contact.contactInformation.phoneNumber')},
     ];
 
     let output;

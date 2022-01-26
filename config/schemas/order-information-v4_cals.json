@@ -34,7 +34,7 @@
                         "properties": {
                             "@type": {
                                 "$id": "#/properties/data/properties/order/items/properties/@type",
-                                "source": "type",
+                                "value": "OrderInformation",
                                 "type": "string",
                                 "title": "Identity type",
                                 "description": "Type of identity."
@@ -122,7 +122,7 @@
                                 "properties": {
                                     "@type": {
                                         "$id": "#/properties/data/properties/order/items/properties/contract/properties/@type",
-                                        "source": "contractType",
+                                        "value": "Contract",
                                         "type": "string",
                                         "title": "Identity type",
                                         "description": "Type of identity."
@@ -146,7 +146,7 @@
                                 "properties": {
                                     "@type": {
                                         "$id": "#/properties/data/properties/order/items/properties/project/properties/@type",
-                                        "source": "projectType",
+                                        "value": "Project",
                                         "type": "string",
                                         "title": "Identity type",
                                         "description": "Type of identity."
@@ -215,7 +215,7 @@
                                 "properties": {
                                     "@type": {
                                         "$id": "#/properties/data/properties/order/items/properties/contact/properties/@type",
-                                        "source": "contactType",
+                                        "value": "Person",
                                         "type": "string",
                                         "title": "Identity type",
                                         "description": "Type of identity."
@@ -237,7 +237,7 @@
                                         "properties": {
                                             "@type": {
                                                 "$id": "#/properties/data/properties/order/items/properties/contact/properties/contactInformation/properties/@type",
-                                                "source": "contactInformationType",
+                                                "value": "ContactInformation",
                                                 "type": "string",
                                                 "title": "Identity type",
                                                 "description": "Type of identity."
@@ -429,7 +429,7 @@
                                 "properties": {
                                     "@type": {
                                         "$id": "#/properties/data/properties/order/items/properties/addressShipping/properties/@type",
-                                        "source": "addressShippingType",
+                                        "value": "ContactInformation",
                                         "type": "string",
                                         "title": "Identity type",
                                         "description": "Type of identity."
@@ -524,7 +524,7 @@
                                         "properties": {
                                             "@type": {
                                                 "$id": "#/properties/data/properties/order/items/properties/addressShipping/properties/contact/properties/@type",
-                                                "source": "productGroupProcessOperatorType",
+                                                "value": "LegalParty",
                                                 "type": "string",
                                                 "title": "Identity type",
                                                 "description": "Type of identity."
@@ -546,7 +546,7 @@
                                                 "properties": {
                                                     "@type": {
                                                         "$id": "#/properties/data/properties/order/items/properties/addressShipping/properties/contact/properties/contactInformation/properties/@type",
-                                                        "source": "productGroupProcessContactType",
+                                                        "value": "ContactInformation",
                                                         "type": "string",
                                                         "title": "Identity type",
                                                         "description": "Type of identity."
@@ -660,7 +660,7 @@
                                 "properties": {
                                     "@type": {
                                         "$id": "#/properties/data/properties/order/items/properties/addressBilling/properties/@type",
-                                        "source": "addressBillingType",
+                                        "value": "ContactInformation",
                                         "type": "string",
                                         "title": "Identity type",
                                         "description": "Type of identity."

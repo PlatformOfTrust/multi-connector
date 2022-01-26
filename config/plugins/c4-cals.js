@@ -778,21 +778,9 @@ const handleData = function (config, id, data) {
                     };
                 } else {
                     // Transform raw input.
-                    value.type = 'OrderInformation';
-                    value.contractType = 'Contract';
-                    value.projectType = 'Project';
-                    value.contactType = 'Person';
-                    value.contactInformationType = 'ContactInformation';
-                    value.addressShippingType = 'ContactInformation';
-                    value.addressBillingType = 'ContactInformation';
                     value.customerType = 'Organization';
                     value.vendorType = 'Organization';
                     value.vendorCustomerType = 'Organization';
-                    value.productGroupType = 'ProductGroup';
-                    value.locationFinalType = 'Location';
-                    value.productGroupProcessType = 'Process';
-                    value.productGroupProcessOperatorType = 'LegalParty';
-                    value.productGroupProcessContactType = 'ContactInformation';
 
                     try {
                         value.requiredDeliveryDateTime = convertFinnishDateToISOString(new Date(value.requiredDeliveryDate + 'T' + value.requiredDeliveryTime + ':00.000Z'));
