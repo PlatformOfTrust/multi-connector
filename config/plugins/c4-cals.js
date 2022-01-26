@@ -23,7 +23,8 @@ const orderNumberToCALSId = {};
 const vendorMaterialCodeToCALSId = {};
 
 // Source mapping.
-const orderInformationSchema = {
+const orderInformationSchema = require('../schemas/order-information-v4_cals.json');
+const orderInformationSchema_v1 = {
     '$schema': 'http://json-schema.org/draft-06/schema#',
     '$id': 'https://standards.oftrust.net/v2/Schema/DataProductOutput/OrderInformation?v=2.0',
     'source': null,
@@ -762,6 +763,7 @@ const convertFinnishDateToISOString = (input, reverse = false) => {
  */
 const handleData = function (config, id, data) {
     let result = {};
+    const key = 'order';
     try {
         for (let j = 0; j < data.length; j++) {
             const value = data[j][config.output.value];
@@ -770,13 +772,14 @@ const handleData = function (config, id, data) {
                 if (Object.hasOwnProperty.call(value, 'vendor')) {
                     // Output has already been transformed.
                     result = {
-                        order: {
+                        [key]: {
                             ...value,
                         },
                     };
                 } else {
                     // Transform raw input.
                     value.type = 'OrderInformation';
+                    value.contractType = 'Contract';
                     value.projectType = 'Project';
                     value.contactType = 'Person';
                     value.contactInformationType = 'ContactInformation';
@@ -790,8 +793,18 @@ const handleData = function (config, id, data) {
                     value.productGroupProcessType = 'Process';
                     value.productGroupProcessOperatorType = 'LegalParty';
                     value.productGroupProcessContactType = 'ContactInformation';
-                    value.requiredDeliveryDateTime = convertFinnishDateToISOString(new Date(value.requiredDeliveryDate + 'T' + value.requiredDeliveryTime + ':00.000Z'));
-                    value.purchaseOrderDateTime = convertFinnishDateToISOString(new Date(value.purchaseOrderDate + 'T' + value.purchaseOrderTime + ':00.000Z'));
+
+                    try {
+                        value.requiredDeliveryDateTime = convertFinnishDateToISOString(new Date(value.requiredDeliveryDate + 'T' + value.requiredDeliveryTime + ':00.000Z'));
+                    } catch (err) {
+                        return new Error('Invalid requiredDeliveryDate or requiredDeliveryTime');
+                    }
+
+                    try {
+                        value.purchaseOrderDateTime = convertFinnishDateToISOString(new Date(value.purchaseOrderDate + 'T' + value.purchaseOrderTime + ':00.000Z'));
+                    } catch (err) {
+                        value.purchaseOrderDateTime = new Date().toISOString()
+                    }
 
                     try {
                         orderNumberToCALSId[value.purchaseOrderNumber] = value.purchaseOrderId;
@@ -825,7 +838,14 @@ const handleData = function (config, id, data) {
                 };
             }
         }
-        return result;
+        try {
+            if (Array.isArray(result[key])) {
+                result[key] = result[key][0];
+            }
+            return result;
+        } catch (err) {
+            return result;
+        }
     } catch (err) {
         winston.log('error', err.message);
         return result;
@@ -1068,7 +1088,14 @@ const controller = async (req, res) => {
             vendorProductCode = 'vendor-purchase-order';
             vendorProductCode = result.output.data.order.vendor.idLocal;
         } catch (err) {
-            const message = 'Could not parse vendor external id from CALS response.';
+            let message = 'Failed to parse order. Could not parse vendor external id from CALS response.';
+            if (Object.hasOwnProperty.call(result, 'output') && Object.hasOwnProperty.call(result, 'payloadKey')) {
+                if (Object.hasOwnProperty.call(result.output, result.payloadKey)) {
+                    if (result.output[result.payloadKey] instanceof Error) {
+                        message = result.output[result.payloadKey].message;
+                    }
+                }
+            }
             winston.log('error', message);
             return errorResponse(req, res, new Error(message));
         }
