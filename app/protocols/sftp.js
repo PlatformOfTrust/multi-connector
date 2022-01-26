@@ -108,17 +108,17 @@ const downloadFiles = async (client, path, productCode) => {
  * Uploads a file by remote filepath.
  *
  * @param {String} client
- * @param {String} path
- * @param {String} productCode
+ * @param {String} remotePath
+ * @param {String} localPath
  * @return {String}
  */
-const uploadFile = async (client, path, productCode) => {
-    if (path.slice(-1) === '/') {
-        path = path.slice(0, -1);
+const uploadFile = async (client, remotePath, localPath) => {
+    if (remotePath.slice(-1) === '/') {
+        remotePath = remotePath.slice(0, -1);
     }
     let upload;
     try {
-        upload = client.put(DOWNLOAD_DIR + productCode, path);
+        upload = client.put(DOWNLOAD_DIR + localPath, remotePath);
     } catch (err) {
         winston.log('error', err.message);
     }
@@ -318,13 +318,17 @@ const move = async (config= {}, pathArray, clientId, newPath = '') => {
     const toPath = (Array.isArray(config.authConfig.toPath) ? config.authConfig.toPath[0] : config.authConfig.toPath) || '';
 
     for (let p = 0; p < pathArray.length; p++) {
+        const name = pathArray[p][0] === '/' ? pathArray[p] : '/' + pathArray[p];
         // Upload to new path.
-        console.log('new path', newPath + pathArray[p]);
-        const item = await uploadFile(client, newPath + pathArray[p], productCode + toPath + pathArray[p]);
+        const item = await uploadFile(client, newPath + name, productCode + toPath + name);
+        try {
+            await downloadFiles(client, newPath + name, productCode);
+        } catch (err) {
+            winston.log('error', err.message);
+        }
         // Remove from old path
         if (item) {
-            console.log('old path', toPath + pathArray[p]);
-            await deleteFile(client, toPath + pathArray[p]);
+            await deleteFile(client, toPath + name);
             items.push(item);
         }
     }
@@ -340,5 +344,5 @@ module.exports = {
     getData,
     sendData,
     checkDir,
-    move
+    move,
 };
