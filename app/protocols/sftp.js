@@ -126,6 +126,26 @@ const uploadFile = async (client, path, productCode) => {
 };
 
 /**
+ * Deletes a file by remote filepath.
+ *
+ * @param {String} client
+ * @param {String} path
+ * @return {String}
+ */
+const deleteFile = async (client, path) => {
+    if (path.slice(-1) === '/') {
+        path = path.slice(0, -1);
+    }
+    let upload;
+    try {
+        upload = client.delete(path);
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+    return upload;
+};
+
+/**
  * Creates SFTP client.
  *
  * @param {Object} config
@@ -282,10 +302,43 @@ const sendData = async (config= {}, pathArray, clientId) => {
 };
 
 /**
+ * Moves received file to another path at SFTP server.
+ *
+ * @param {Object} config
+ * @param {Array} pathArray
+ * @param {String} clientId
+ * @param {String} newPath
+ * @return {Promise}
+ */
+const move = async (config= {}, pathArray, clientId, newPath = '') => {
+    const productCode = config.productCode || uuidv4();
+    const client = await createClient(config, productCode, clientId);
+
+    const items = [];
+    const toPath = (Array.isArray(config.authConfig.toPath) ? config.authConfig.toPath[0] : config.authConfig.toPath) || '';
+
+    for (let p = 0; p < pathArray.length; p++) {
+        // Upload to new path.
+        console.log('new path', newPath + pathArray[p]);
+        const item = await uploadFile(client, newPath + pathArray[p], productCode + toPath + pathArray[p]);
+        // Remove from old path
+        if (item) {
+            console.log('old path', toPath + pathArray[p]);
+            await deleteFile(client, toPath + pathArray[p]);
+            items.push(item);
+        }
+    }
+
+    await client.end();
+    return items;
+};
+
+/**
  * Expose library functions.
  */
 module.exports = {
     getData,
     sendData,
     checkDir,
+    move
 };
