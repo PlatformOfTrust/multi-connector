@@ -270,7 +270,9 @@ const getData = async (config= {}, pathArray, skipHandling = false) => {
     }
 
     await client.end();
-    delete clients[productCode][clientId];
+    if (Object.hasOwnProperty.call(clients, productCode)) {
+        delete clients[productCode][clientId];
+    }
     if (JSON.stringify(clients[productCode] === '{}')) {
         delete clients[productCode];
     }
