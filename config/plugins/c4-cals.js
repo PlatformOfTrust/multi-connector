@@ -1293,7 +1293,8 @@ const template = async (config, template) => {
                     return Promise.reject(new Error('Could not resolve CALS instance ID. Resending the order from CALS is required.'));
                 }
 
-                config.static.url = 'https://c4-prod-apim.azure-api.net/pot/instances/' + data.InstanceId + '/confirmpurchaseorder';
+                const url = template.authConfig.url;
+                config.static.url = url + '/pot/instances/' + data.InstanceId + '/confirmpurchaseorder';
                 config.static.headers = {
                     'CALS-API-KEY': config.static.apikey,
                     'x-is-test': template.authConfig.isTest === 'true',

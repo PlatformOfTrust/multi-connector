@@ -6,7 +6,7 @@
   ],
   "protocol": "custom",
   "authConfig": {
-    "url": "https://c4-prod-apim.azure-api.net/pot",
+    "url": "${url}",
     "headers": {
       "CALS-API-KEY": "${apikey}"
     },

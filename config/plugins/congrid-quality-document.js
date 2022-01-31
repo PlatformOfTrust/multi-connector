@@ -453,7 +453,7 @@ const template = async (config, template) => {
         }
 
         // TODO: Get order from CALS by WP, which is in the end of the filename.
-        // https://c4-prod-apim.azure-api.net/pot/instances/{instanceId}/purchaseorders/{purchaseOrderId}
+        // .../instances/{instanceId}/purchaseorders/{purchaseOrderId}
         // Query CALS connector through broker API.
 
         const domain = template.authConfig.url;
