@@ -1,0 +1,29 @@
+{
+  "plugins": ["oauth2"],
+  "protocol": "rest",
+  "authConfig": {
+    "url": "${url}",
+    "authPath": "/oauth/token",
+    "clientId": "${clientId}",
+    "clientSecret": "${clientSecret}",
+    "username": "${username}",
+    "password": "${password}",
+    "path": "/service-call/${targetObject.idLocal}"
+  },
+  "dataObjects": [
+    "entity"
+  ],
+  "dataPropertyMappings": {
+    "${type}": ""
+  },
+  "generalConfig": {
+    "hardwareId": {
+      "dataObjectProperty": "_id.$oid"
+    }
+  },
+  "output": {
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/ProductCatalog/",
+    "array": "products",
+    "data": "data"
+  }
+}
