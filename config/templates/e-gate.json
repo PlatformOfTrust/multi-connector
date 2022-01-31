@@ -1,0 +1,31 @@
+{
+  "plugins": [],
+  "protocol": "rest",
+  "authConfig": {
+    "url": "${url}",
+    "headers": "${headers}",
+    "path": "/client/${targetObject.idLocal}/notification/active"
+  },
+  "dataObjects": [
+    ""
+  ],
+  "dataPropertyMappings": {
+    "${type}": ""
+  },
+  "generalConfig": {
+    "sourceName": {
+      "dataObjectProperty": "message"
+    },
+    "hardwareId": {
+      "dataObjectProperty": "id"
+    },
+    "timestamp": {
+      "dataObjectProperty": "created_at"
+    }
+  },
+  "output": {
+    "contextValue": "https://standards.oftrust.net/v2/Schema/DataProductOutput/Note",
+    "array": "notes",
+    "data": "data"
+  }
+}
