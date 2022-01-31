@@ -1587,7 +1587,6 @@ const restartTask = (productCode, schedule = DEFAULT_SCHEDULE, timezone = DEFAUL
  */
 const startTask = async (productCode, schedule = DEFAULT_SCHEDULE, timezone = 'Europe/Helsinki') => {
     try {
-        await runJob(productCode);
         winston.log('info', `Start a job with product code ${productCode} and schedule ${schedule} at ${timezone} timezone`);
         tasks[productCode] = cron.schedule(schedule, () => {
             runJob(productCode);
