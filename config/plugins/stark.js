@@ -53,7 +53,7 @@ const OrderInformationSchema = {
                     'type': 'object',
                     'properties': {
                         'C_Msg_OriginalID': {
-                            'source': 'timetamp',
+                            'source': 'timestamp',
                             'type': 'string',
                         },
                         'C_Msg_Sender': {
