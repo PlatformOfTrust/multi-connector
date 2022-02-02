@@ -1184,8 +1184,8 @@ const output = async (config, output) => {
 /**
  * Local handler to send error response.
  *
- * @param {Object} req
- * @param {Object} res
+ * @param {Object} [req]
+ * @param {Object} [res]
  * @param {Error} err
  */
 const errorResponse = async (req, res, err) => {
@@ -1205,7 +1205,11 @@ const errorResponse = async (req, res, err) => {
     };
 
     // Send response.
-    return res.status(err.httpStatusCode || 500).send(result);
+    if (req && res) {
+        return res.status(err.httpStatusCode || 500).send(result);
+    } else {
+        return result;
+    }
 };
 
 /**
@@ -1237,7 +1241,152 @@ const getData = async (productCode, config, idLocal) => {
 };
 
 /**
- * Endpoint to trigger fetching of new data from CALS.
+ * Sends triggered broker request.
+ *
+ * @param {Object} [req]
+ * @param {Object} [res]
+ * @param {String} productCode
+ * @param {Object} config
+ * @param {Object} template
+ * @param {Object} result
+ * @param {Object} options
+ */
+const sendData = async (req, res, productCode, config, template, result, options) => {
+    let receiverProductCode;
+    try {
+        // Fallback.
+        receiverProductCode = 'purchase-order-from-cals';
+        // Get receiver from config.
+        receiverProductCode = config.plugins.broker.receiver;
+    } catch (err) {
+        winston.log('info', 'Set receiver data product as ' + receiverProductCode + '.');
+    }
+
+    // 4. Send data to vendor data product with broker plugin.
+    try {
+        /** Sender data product */
+        config.productCode = productCode;
+        template = await connector.resolvePlugins(template);
+        template.config = config;
+
+        const keys = Object.keys(result.output.data);
+
+        if (keys.length === 0) {
+            const noData = new Error();
+            noData.httpStatusCode = 404;
+            noData.message = 'Not found.';
+            return errorResponse(req, res, noData);
+        }
+
+        const key = keys[0];
+        template.output.array = key;
+
+        try {
+            if (!Array.isArray(result.output.data[keys[0]])) {
+                result.output.data[key] = [result.output.data[key]];
+            }
+            // Resolve ids.
+            result.output.data[key].map((order) => {
+                // Add project details.
+                if (order['@type'] === 'Document' && !Object.hasOwnProperty.call(order, 'project')) {
+                    order.project = {
+                        '@type': 'Project',
+                        idLocal: '123124',
+                    };
+                }
+                if (!Object.hasOwnProperty.call(order, 'deliveryLine')) {
+                    return order;
+                }
+                if (!Array.isArray(order.deliveryLine)) {
+                    order.deliveryLine = [order.deliveryLine];
+                }
+                order.deliveryLine = order.deliveryLine.map((l) => {
+                    winston.log('info', 'Changed ' + l.product.codeProduct + ' to ' + productCodeToCALSId[l.product.codeProduct]);
+                    return {
+                        ...l,
+                        idLocal: productCodeToCALSId[l.product.codeProduct],
+                    };
+                });
+                return order;
+            });
+            if (result.output.data[key].length === 1) {
+                result.output.data[key] = result.output.data[key][0];
+                if (Array.isArray(result.output.data[key])) {
+                    if (result.output.data[key].length === 1) {
+                        result.output.data[key] = result.output.data[key][0];
+                    }
+                }
+            }
+        } catch (e) {
+            console.log(e.message);
+        }
+
+        if (template.plugins.find(p => p.name === 'broker') && template.config.plugins.broker) {
+            // Set isTest.
+            template.config.plugins.broker.parameters = {
+                isTest: options.isTest,
+            };
+
+            /** Sender data product */
+            template.config.productCode = productCode;
+
+            // Check for mapped receiver.
+            if (_.isObject(receiverProductCode)) {
+                if (Object.hasOwnProperty.call(receiverProductCode, key)) {
+                    receiverProductCode = receiverProductCode[key];
+                }
+            }
+
+            /** Receiver data product */
+            config.static.productCode = receiverProductCode;
+
+            winston.log('info', '2. Send received data to receiver data product ' + config.static.productCode + ', isTest=' + options.isTest);
+            await template.plugins.find(p => p.name === 'broker').stream(template, result.output);
+        }
+    } catch (err) {
+        winston.log('error', err.message);
+        return errorResponse(req, res, err);
+    }
+
+    // Detect if order confirmation was sent.
+    try {
+        if (Object.hasOwnProperty.call(result.output, 'data')) {
+            if (Object.hasOwnProperty.call(result.output.data, 'order')) {
+                if (Object.hasOwnProperty.call(result.output.data.order, 'orderLine')) {
+                    const filename = options.filename;
+                    const dirs = Array.isArray(config.static.toPath) ? config.static.toPath : [config.static.toPath];
+                    for (let i = 0; i < dirs.length; i++) {
+                        let moved = false;
+                        try {
+                            const items = await sftp.move({
+                                productCode: config.productCode,
+                                authConfig: {...config.static, toPath: dirs[i]},
+                            }, [filename], config.productCode, dirs[i] + '/Archive');
+                            if (items.length > 0) {
+                                moved = true;
+                                winston.log('info', items.toString());
+                            }
+                        } catch (err) {
+                            winston.log('error', err.message);
+                            moved = false;
+                        }
+                        if (moved) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+    return {
+        message: 'ok',
+    };
+};
+
+/**
+ * Endpoint to trigger order/delivery confirmation sending to CALS.
  *
  * @param {Object} req
  * @param {Object} res
@@ -1246,7 +1395,7 @@ const getData = async (productCode, config, idLocal) => {
  */
 const controller = async (req, res) => {
     let result;
-    let host;
+    // let host;
     try {
         /** Request header validation */
         /*
@@ -1324,136 +1473,11 @@ const controller = async (req, res) => {
         }
 
         // 3. Parse receiver productCode from received confirmation and send broker request to produce confirmation.
-        let receiverProductCode;
-        try {
-            // Fallback.
-            receiverProductCode = 'purchase-order-from-cals';
-            // Get receiver from config.
-            receiverProductCode = config.plugins.broker.receiver;
-        } catch (err) {
-            winston.log('info', 'Set receiver data product as ' + receiverProductCode + '.');
-        }
-
-        // 4. Send data to vendor data product with broker plugin.
-        try {
-            /** Sender data product */
-            config.productCode = productCode;
-
-            template = await connector.resolvePlugins(template);
-            template.config = config;
-
-            const keys = Object.keys(result.output.data);
-
-            if (keys.length === 0) {
-                const noData = new Error();
-                noData.httpStatusCode = 404;
-                noData.message = 'Not found.';
-                return errorResponse(req, res, noData);
-            }
-
-            const key = keys[0];
-
-            template.output.array = key;
-
-            try {
-                if (!Array.isArray(result.output.data[keys[0]])) {
-                    result.output.data[key] = [result.output.data[key]];
-                }
-                // Resolve ids.
-                result.output.data[key].map((order) => {
-                    // Add project details.
-                    if (order['@type'] === 'Document' && !Object.hasOwnProperty.call(order, 'project')) {
-                        order.project = {
-                            '@type': 'Project',
-                            idLocal: '123124',
-                        };
-                    }
-                    if (!Object.hasOwnProperty.call(order, 'deliveryLine')) {
-                        return order;
-                    }
-                    if (!Array.isArray(order.deliveryLine)) {
-                        order.deliveryLine = [order.deliveryLine];
-                    }
-                    order.deliveryLine = order.deliveryLine.map((l) => {
-                        winston.log('info', 'Changed ' + l.product.codeProduct + ' to ' + productCodeToCALSId[l.product.codeProduct]);
-                        return {
-                            ...l,
-                            idLocal: productCodeToCALSId[l.product.codeProduct],
-                        };
-                    });
-                    return order;
-                });
-                if (result.output.data[key].length === 1) {
-                    result.output.data[key] = result.output.data[key][0];
-                    if (Array.isArray(result.output.data[key])) {
-                        if (result.output.data[key].length === 1) {
-                            result.output.data[key] = result.output.data[key][0];
-                        }
-                    }
-                }
-            } catch (e) {
-                console.log(e.message);
-            }
-
-            if (template.plugins.find(p => p.name === 'broker') && template.config.plugins.broker) {
-                // Set isTest.
-                template.config.plugins.broker.parameters = {
-                    isTest: req.body.is_test,
-                };
-
-                /** Sender data product */
-                template.config.productCode = productCode;
-
-                // Check for mapped receiver.
-                if (_.isObject(receiverProductCode)) {
-                    if (Object.hasOwnProperty.call(receiverProductCode, key)) {
-                        receiverProductCode = receiverProductCode[key];
-                    }
-                }
-
-                /** Receiver data product */
-                config.static.productCode = receiverProductCode;
-
-                winston.log('info', '2. Send received data to receiver data product ' + config.static.productCode + ', isTest=' + req.body.is_test);
-                await template.plugins.find(p => p.name === 'broker').stream(template, result.output);
-            }
-        } catch (err) {
-            winston.log('error', err.message);
-            return errorResponse(req, res, err);
-        }
-
-        // Detect if order confirmation was sent.
-        try {
-            if (Object.hasOwnProperty.call(result.output, 'data')) {
-                if (Object.hasOwnProperty.call(result.output.data, 'order')) {
-                    if (Object.hasOwnProperty.call(result.output.data.order, 'orderLine')) {
-                        const filename = req.body.filename;
-                        const dirs = Array.isArray(config.static.toPath) ? config.static.toPath : [config.static.toPath];
-                        for (let i = 0; i < dirs.length; i++) {
-                            let moved = false;
-                            try {
-                                const items = await sftp.move({
-                                    productCode: config.productCode,
-                                    authConfig: {...config.static, toPath: dirs[i]},
-                                }, [filename], config.productCode, dirs[i] + '/Archive');
-                                if (items.length > 0) {
-                                    moved = true;
-                                    winston.log('info', items.toString());
-                                }
-                            } catch (err) {
-                                winston.log('error', err.message);
-                                moved = false;
-                            }
-                            if (moved) {
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (err) {
-            winston.log('error', err.message);
-        }
+        const options = {
+            filename: req.body.filename,
+            isTest: req.body.is_test,
+        };
+        await sendData(req, res, productCode, config, template, result, options);
 
         // 5. Send signed data response.
         const created = moment().format();
@@ -1535,27 +1559,62 @@ const DEFAULT_TIMEZONE = 'Europe/Helsinki';
 const runJob = async (productCode) => {
     try {
         const config = cache.getDoc('configs', productCode);
-        const template = {
+        // Download files.
+        const docs = await sftp.getData({
             productCode,
             plugins: [],
             authConfig: config.static,
-            parameters: {
-                targetObject: {},
-            },
-        };
-        // Download files.
-        const docs = await sftp.getData(template, [''], true);
+            parameters: {targetObject: {}},
+        }, [''], true);
         // Send new files and move to archive.
-        docs.forEach(d => {
-            winston.log('info', d.path);
+        for (let i = 0; i < docs.length; i++) {
+            const d = docs[i];
+            winston.log('info', 'Send file ' + d.path);
             // 2. Trigger file sending to receivers.
             try {
                 const parts = d.path.split('/');
-                return getData(productCode, config, parts[parts.length - 1]);
+                const result = await getData(productCode, config, parts[parts.length - 1]);
+                const options = {
+                    filename: parts[parts.length - 1],
+                    isTest: false,
+                };
+                const template = cache.getDoc('templates', config.template) || {};
+                const send = await sendData(null, null, productCode, config, template, result, options);
+                if (Object.hasOwnProperty.call(send, 'error')) {
+                    const lineLimit = 10;
+                    const path = '/error.log';
+                    const logFilePath = parts.slice(0, -1).join('/') + '/Log';
+                    // Get log.
+                    const logs = await sftp.getData({
+                        productCode,
+                        plugins: [],
+                        authConfig: {...config.static, toPath: logFilePath},
+                        parameters: {targetObject: {}},
+                    }, [path], true);
+                    // Insert new line.
+                    let log = '';
+                    const file = logs.find(f => f.name === 'error.log');
+                    if (file) {
+                        log = Buffer.from(file.data, 'base64').toString('utf-8') + '\n';
+                    }
+                    log += new Date().toISOString() + ': ' + parts[parts.length - 1] + ', ' + JSON.stringify(send.error);
+                    const content = log.split('\n').slice(-lineLimit).join('\n');
+
+                    // Upload log.
+                    const to = DOWNLOAD_DIR + productCode + logFilePath + path;
+                    await sftp.checkDir(to);
+                    await fs.writeFile(to, content);
+                    await sftp.sendData({
+                        productCode,
+                        plugins: [],
+                        authConfig: {...config.static, fromPath: logFilePath},
+                        parameters: {targetObject: {}},
+                    }, [path]);
+                }
             } catch (err) {
                 winston.log('error', err.message);
             }
-        });
+        }
     } catch (err) {
         winston.log('error', err.message);
     }
