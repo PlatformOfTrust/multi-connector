@@ -1294,7 +1294,7 @@ const template = async (config, template) => {
                 }
 
                 const url = template.authConfig.url;
-                config.static.url = url + '/pot/instances/' + data.InstanceId + '/confirmpurchaseorder';
+                config.static.url = url + '/instances/' + data.InstanceId + '/confirmpurchaseorder';
                 config.static.headers = {
                     'CALS-API-KEY': config.static.apikey,
                     'x-is-test': template.authConfig.isTest === 'true',
