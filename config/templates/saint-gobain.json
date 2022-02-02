@@ -8,7 +8,7 @@
     "clientSecret": "${clientSecret}",
     "username": "${username}",
     "password": "${password}",
-    "path": "/service-call/${targetObject.idLocal}"
+    "path": "${path}"
   },
   "dataObjects": [
     "entity"
@@ -20,6 +20,9 @@
     "hardwareId": {
       "dataObjectProperty": "_id.$oid"
     }
+  },
+  "input": {
+    "required": []
   },
   "output": {
     "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/ProductCatalog/",
