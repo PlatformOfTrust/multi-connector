@@ -45,8 +45,8 @@ const targets = {
     MeasureDistanceMilliMeter: '',
     MeasureEnergyConsumptionKilowattHour: 'Energy',
     MeasureWaterConsumptionLitre: 'Water',
-    MeasureWaterColdConsumptionLitre: 'Water',
-    MeasureWaterHotConsumptionLitre: 'Water',
+    MeasureWaterColdConsumptionLitre: 'WaterCold',
+    MeasureWaterHotConsumptionLitre: 'WaterHot',
     /** Legacy */
     MeasureAirCO2LevelPPM: 'Air',
 };
