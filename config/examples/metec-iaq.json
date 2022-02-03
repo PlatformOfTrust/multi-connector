@@ -10,6 +10,5 @@
   "dynamic": {
     "authConfig.path": "ids"
   },
-  "schema": "water-meter-reading-v3",
-  "signature": false
+  "schema": "measure-indoor-air-quality-v4"
 }
