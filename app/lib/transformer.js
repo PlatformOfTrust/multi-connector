@@ -31,7 +31,7 @@ const extractPlaceholder = (placeholder) => {
  */
 const replacePlaceholders = function (source, value) {
     try {
-        const placeholders = value.match(/\${(.*?)}/g) || [];
+        const placeholders = (value || '').match(/\${(.*?)}/g) || [];
         for (let i = 0; i < placeholders.length; i++) {
             try {
                 const current = extractPlaceholder(placeholders[i]);

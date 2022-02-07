@@ -1,0 +1,39 @@
+{
+    "plugins": [
+      "hydrolink"
+    ],
+    "protocol": "rest",
+    "authConfig": {
+      "url": "${url}",
+      "headers": {
+        "Authorization": "${authorization}"
+      },
+      "path": "/api/${idLocal}/${start}/${end}/json"
+    },
+    "dataObjects": [
+      ""
+    ],  
+    "dataPropertyMappings": {
+      "${type}": ""
+    },
+    "generalConfig": {
+      "query": {
+        "start": "",
+        "end": ""
+    },
+      "timestamp": {
+        "dataObjectProperty": "timestamp"
+      }
+    },
+    "input": {
+      "required": [
+          "parameters.targetObject",
+          "parameters.period"
+
+      ]
+  },
+  "output": {
+    "array": "process"
+  }
+  }
+  

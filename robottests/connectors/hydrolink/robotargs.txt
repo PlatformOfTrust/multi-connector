@@ -1,0 +1,3 @@
+--pythonpath lib
+--outputdir connectors/hydrolink/result
+connectors/hydrolink/connector_tests.robot

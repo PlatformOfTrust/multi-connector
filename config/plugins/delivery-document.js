@@ -11,6 +11,7 @@ const winston = require('../../logger.js');
 const cache = require('../../app/cache');
 const rsa = require('../../app/lib/rsa');
 const rp = require('request-promise');
+const cron = require('node-cron');
 const moment = require('moment');
 const net = require('net');
 const _ = require('lodash');
@@ -28,459 +29,6 @@ const DOWNLOAD_DIR = './temp/';
 const PRIMARY_PRODUCT_CODE = 'C1EC2973-8A0B-4858-BF1E-3A0D0CEFE33A';
 const orderNumberToCALSId = {};
 const productCodeToCALSId = {};
-
-// Source mapping.
-const orderConfirmationSchema = {
-    '$schema': 'http://json-schema.org/draft-06/schema#',
-    '$id': 'https://standards.oftrust.net/v2/Schema/DataProductOutput/OrderConfirmation?v=2.0',
-    'source': null,
-    'type': 'object',
-    'required': [],
-    'properties': {
-        '@context': {
-            '$id': '#/properties/@context',
-            'source': null,
-            'type': 'string',
-            'const': 'https://standards.oftrust.net/v2/Context/DataProductOutput/OrderConfirmation/?v=2.0',
-            'title': 'JSON-LD context url',
-            'description': 'JSON-LD context url with terms required to understand data product content.',
-        },
-        'data': {
-            '$id': '#/properties/data',
-            'source': null,
-            'type': 'object',
-            'title': 'Data product output',
-            'description': 'Output of data product delivered to customers.',
-            'required': [],
-            'properties': {
-                'order': {
-                    '$id': '#/properties/data/properties/order',
-                    'type': 'object',
-                    'source': null,
-                    'title': 'Order',
-                    'description': 'Order.',
-                    'required': [],
-                    'properties': {
-                        '@type': {
-                            '$id': '#/properties/data/properties/order/properties/@type',
-                            'source': 'type',
-                            'type': 'string',
-                            'title': 'Identity type',
-                            'description': 'Type of identity.',
-                        },
-                        'idLocal': {
-                            '$id': '#/properties/data/properties/order/properties/idLocal',
-                            'source': 'purchaseOrderId',
-                            'type': 'string',
-                            'title': 'Local identifier',
-                            'description': 'Locally given identifier.',
-                        },
-                        'project': {
-                            '$id': '#/properties/data/properties/order/properties/project',
-                            'source': null,
-                            'type': 'object',
-                            'title': 'Project',
-                            'description': 'Project.',
-                            'required': [],
-                            'properties': {
-                                '@type': {
-                                    '$id': '#/properties/data/properties/order/properties/project/properties/@type',
-                                    'source': 'projectType',
-                                    'type': 'string',
-                                    'title': 'Identity type',
-                                    'description': 'Type of identity.',
-                                },
-                                'idLocal': {
-                                    '$id': '#/properties/data/properties/order/properties/project/properties/idLocal',
-                                    'source': 'order_numbe',
-                                    'type': 'string',
-                                    'title': 'Local identifier',
-                                    'description': 'Locally given identifier.',
-                                },
-                                'idSystemLocal': {
-                                    '$id': '#/properties/data/properties/order/properties/project/properties/idSystemLocal',
-                                    'source': null,
-                                    'type': 'string',
-                                    'title': 'Local identifier',
-                                    'description': 'Locally given identifier.',
-                                },
-                                'name': {
-                                    '$id': '#/properties/data/properties/order/properties/project/properties/name',
-                                    'source': null,
-                                    'type': 'string',
-                                    'title': 'Name',
-                                    'description': 'Name.',
-                                },
-                            },
-                        },
-                        'orderLine': {
-                            '$id': '#/properties/data/properties/order/properties/orderLine',
-                            'source': 'elements',
-                            'type': 'array',
-                            'title': 'Order line',
-                            'description': 'Order line.',
-                            'required': [],
-                            'items': {
-                                '$id': '#/properties/data/properties/order/properties/orderLine/items',
-                                'source': null,
-                                'type': 'object',
-                                'required': [],
-                                'properties': {
-                                    '@type': {
-                                        '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/@type',
-                                        'source': 'orderLineType',
-                                        'type': 'string',
-                                        'title': 'Identity type',
-                                        'description': 'Type of identity.',
-                                    },
-                                    'idLocal': {
-                                        '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/idLocal',
-                                        'source': 'purchaseOrderItemId',
-                                        'type': 'string',
-                                        'title': 'Local identifier',
-                                        'description': 'Locally given identifier.',
-                                    },
-                                    'deliveryRequired': {
-                                        '$id': '#/properties/data/properties/order/properties/deliveryRequired',
-                                        'source': 'transfer_time',
-                                        'type': 'string',
-                                        'title': 'Required delivery time',
-                                        'description': 'Required delivery time initiated typically by the orderer.',
-                                    },
-                                    'quantity': {
-                                        '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/quantity',
-                                        'source': 'quantity',
-                                        'type': 'integer',
-                                        'title': 'Quantity',
-                                        'description': 'Quantity of specific objects.',
-                                    },
-                                    'unit': {
-                                        '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/unit',
-                                        'source': 'unitOfMeasure',
-                                        'type': 'string',
-                                        'title': 'Unit',
-                                        'description': 'Unit used (Defines unit which is used).',
-                                    },
-                                    'product': {
-                                        '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product',
-                                        'source': null,
-                                        'type': 'object',
-                                        'title': 'Product',
-                                        'description': 'Product.',
-                                        'required': [],
-                                        'properties': {
-                                            '@type': {
-                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/@type',
-                                                'source': 'orderLineType',
-                                                'type': 'string',
-                                                'title': 'Identity type',
-                                                'description': 'Type of identity.',
-                                            },
-                                            'idLocal': {
-                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/idLocal',
-                                                'source': 'purchaseOrderItemId',
-                                                'type': 'string',
-                                                'title': 'Local identifier',
-                                                'description': 'Locally given identifier.',
-                                            },
-                                            'name': {
-                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/name',
-                                                'source': 'element_name',
-                                                'type': 'string',
-                                                'title': 'Name',
-                                                'description': 'Name.',
-                                            },
-                                            'codeProduct': {
-                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/codeProduct',
-                                                'source': 'element_guid',
-                                                'type': 'string',
-                                                'title': 'Product code',
-                                                'description': 'Unique product code given by manufacturer.',
-                                            },
-                                            'assemblyControlNumber': {
-                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/assemblyControlNumber',
-                                                'source': 'element_acn',
-                                                'type': 'string',
-                                                'title': 'ACN number',
-                                                'description': 'ACN number.',
-                                            },
-                                            'locationName': {
-                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/locationName',
-                                                'source': 'building_block_name',
-                                                'type': 'string',
-                                                'title': 'Location name',
-                                                'description': 'Location name.',
-                                            },
-                                            'groupName': {
-                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/groupName',
-                                                'source': 'productgroup_name',
-                                                'type': 'integer',
-                                                'title': 'Product group name',
-                                                'description': 'Unique product group name given by manufacturer.',
-                                            },
-                                            'width': {
-                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/width',
-                                                'source': 'element_width',
-                                                'type': 'integer',
-                                                'title': 'Width',
-                                                'description': 'Object width.',
-                                            },
-                                            'height': {
-                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/height',
-                                                'source': 'element_height',
-                                                'type': 'integer',
-                                                'title': 'Height',
-                                                'description': 'Height.',
-                                            },
-                                            'length': {
-                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/length',
-                                                'source': 'element_length',
-                                                'type': 'integer',
-                                                'title': 'Length',
-                                                'description': 'Lenght.',
-                                            },
-                                            'weight': {
-                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/weight',
-                                                'source': 'element_weight',
-                                                'type': 'number',
-                                                'title': 'Weight',
-                                                'description': 'Object weight.',
-                                            },
-                                            'url': {
-                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/url',
-                                                'source': 'drawing_url',
-                                                'type': 'string',
-                                                'title': 'URL address',
-                                                'description': 'URL address.',
-                                            },
-                                            'ifcUrl': {
-                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/ifcUrl',
-                                                'source': 'ifc_url',
-                                                'type': 'string',
-                                                'title': 'IfcUrl',
-                                                'description': 'IfcUrl.',
-                                            },
-                                            'location': {
-                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/location',
-                                                'source': null,
-                                                'type': 'object',
-                                                'title': 'Location',
-                                                'description': 'Location.',
-                                                'required': [],
-                                                'properties': {
-                                                    '@type': {
-                                                        '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/location/properties/@type',
-                                                        'source': 'locationType',
-                                                        'type': 'string',
-                                                        'title': 'Identity type',
-                                                        'description': 'Type of identity.',
-                                                    },
-                                                    'name': {
-                                                        '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/location/properties/name',
-                                                        'source': 'factory_name',
-                                                        'type': 'string',
-                                                        'title': 'Name',
-                                                        'description': 'Name.',
-                                                    },
-                                                },
-                                            },
-                                        },
-                                    },
-                                    'processProduction': {
-                                        '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/processProduction',
-                                        'source': null,
-                                        'type': 'object',
-                                        'title': 'Process Production',
-                                        'description': 'Process Production.',
-                                        'required': [],
-                                        'properties': {
-                                            '@type': {
-                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/processProduction/properties/@type',
-                                                'source': null,
-                                                'type': 'string',
-                                                'title': 'Identity type',
-                                                'description': 'Type of identity.',
-                                            },
-                                            'production': {
-                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/processProduction/properties/production',
-                                                'source': null,
-                                                'type': 'string',
-                                                'title': 'Production time',
-                                                'description': 'Production time.',
-                                            },
-                                            'carbonDioxide': {
-                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/processProduction/properties/carbonDioxide',
-                                                'source': null,
-                                                'type': 'string',
-                                                'title': 'Carbon dioxide level',
-                                                'description': 'Carbon dioxide level.',
-                                            },
-                                            'location': {
-                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/processProduction/properties/location',
-                                                'source': null,
-                                                'type': 'object',
-                                                'title': 'Location',
-                                                'description': 'Location.',
-                                                'required': [],
-                                                'properties': {
-                                                    '@type': {
-                                                        '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/processProduction/properties/location/properties/@type',
-                                                        'source': null,
-                                                        'type': 'string',
-                                                        'title': 'Identity type',
-                                                        'description': 'Type of identity.',
-                                                    },
-                                                    'name': {
-                                                        '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/processProduction/properties/location/properties/name',
-                                                        'source': null,
-                                                        'type': 'string',
-                                                        'title': 'Name',
-                                                        'description': 'Name.',
-                                                    },
-                                                },
-                                            },
-                                        },
-                                    },
-                                    'processDelivery': {
-                                        '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/processDelivery',
-                                        'source': null,
-                                        'type': 'object',
-                                        'title': 'Process Delivery',
-                                        'description': 'Process Delivery.',
-                                        'required': [],
-                                        'properties': {
-                                            '@type': {
-                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/processDelivery/properties/@type',
-                                                'source': null,
-                                                'type': 'string',
-                                                'title': 'Identity type',
-                                                'description': 'Type of identity.',
-                                            },
-                                            'carbonDioxide': {
-                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/processDelivery/properties/carbonDioxide',
-                                                'source': null,
-                                                'type': 'string',
-                                                'title': 'Carbon dioxide level',
-                                                'description': 'Carbon dioxide level.',
-                                            },
-                                            'deliveryPlanned': {
-                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/processDelivery/properties/deliveryPlanned',
-                                                'source': null,
-                                                'type': 'string',
-                                                'title': 'Planned delivery time',
-                                                'description': 'Planned delivery time.',
-                                            },
-                                            'deliveryActual': {
-                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/processDelivery/properties/deliveryActual',
-                                                'source': null,
-                                                'type': 'string',
-                                                'title': 'Actual delivery time',
-                                                'description': 'Actual delivery time.',
-                                            },
-                                            'deliveryRequired': {
-                                                '$id': '#/properties/data/properties/order/properties/orderLineitems//properties/processDelivery/properties/deliveryRequired',
-                                                'source': null,
-                                                'type': 'string',
-                                                'title': 'Required delivery time',
-                                                'description': 'Required delivery time initiated typically by the orderer.',
-                                            },
-                                        },
-                                    },
-                                    'processInstallation': {
-                                        '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/processInstallation',
-                                        'source': null,
-                                        'type': 'object',
-                                        'title': 'Process Installation',
-                                        'description': 'Process Installation.',
-                                        'required': [],
-                                        'properties': {
-                                            '@type': {
-                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/processInstallation/properties/@type',
-                                                'source': null,
-                                                'type': 'string',
-                                                'title': 'Identity type',
-                                                'description': 'Type of identity.',
-                                            },
-                                            'installationPlanned': {
-                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/processInstallation/properties/installationPlanned',
-                                                'source': null,
-                                                'type': 'string',
-                                                'title': 'Planned installation time',
-                                                'description': 'Planned installation time.',
-                                            },
-                                            'installationActual': {
-                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/processInstallation/properties/installationActual',
-                                                'source': null,
-                                                'type': 'string',
-                                                'title': 'Installation Actual',
-                                                'description': 'Installation Actual.',
-                                            },
-                                        },
-                                    },
-                                    'processLoading': {
-                                        '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/processLoading',
-                                        'source': null,
-                                        'type': 'object',
-                                        'title': 'Process Loading',
-                                        'description': 'Process Loading.',
-                                        'required': [],
-                                        'properties': {
-                                            '@type': {
-                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/processLoading/properties/@type',
-                                                'source': null,
-                                                'type': 'string',
-                                                'title': 'Identity type',
-                                                'description': 'Type of identity.',
-                                            },
-                                            'idLocal': {
-                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/processLoading/properties/idLocal',
-                                                'source': null,
-                                                'type': 'string',
-                                                'title': 'Local identifier',
-                                                'description': 'Locally given identifier.',
-                                            },
-                                            'status': {
-                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/processLoading/properties/status',
-                                                'source': null,
-                                                'type': 'object',
-                                                'title': 'Life-cycle status',
-                                                'description': 'Life-cycle status.',
-                                                'required': [],
-                                                'properties': {
-                                                    '@type': {
-                                                        '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/processLoading/properties/status/properties/@type',
-                                                        'source': null,
-                                                        'type': 'string',
-                                                        'title': 'Identity type',
-                                                        'description': 'Type of identity.',
-                                                    },
-                                                    'name': {
-                                                        '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/processLoading/properties/status/properties/name',
-                                                        'source': null,
-                                                        'type': 'string',
-                                                        'title': 'Name',
-                                                        'description': 'Name.',
-                                                    },
-                                                    'statusCode': {
-                                                        '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/processLoading/properties/status/properties/statusCode',
-                                                        'source': null,
-                                                        'type': 'integer',
-                                                        'title': 'Life-cycle status code',
-                                                        'description': 'Life-cycle status code.',
-                                                    },
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-        },
-    },
-};
 
 // Source mapping.
 const deliveryInformationSchema = {
@@ -1533,6 +1081,20 @@ const handleData = function (config, id, data) {
 };
 
 /**
+ * Detect JSON data.
+ *
+ * @param {String} data
+ * @return {Boolean}
+ */
+const isJSON = (data) => {
+    try {
+        return !!JSON.parse(data);
+    } catch (e) {
+        return false;
+    }
+};
+
+/**
  * Converts CSV to JSON.
  *
  * @param {Object} config
@@ -1544,10 +1106,17 @@ const response = async (config, response) => {
         if (typeof response.data === 'string' || response.data instanceof String) {
             const fileType = await FileType.fromBuffer(Buffer.from(response.data, 'base64'));
             if (!fileType) {
-                // File is .txt, .csv, .svg, etc (not a binary-based file format).
-                response = {
-                    data: await CSVToJSON({delimiter: 'auto'}).fromString(Buffer.from(response.data, 'base64').toString('utf-8')),
-                };
+                const json = Buffer.from(response.data, 'base64').toString('utf-8');
+                // File is not a binary-based file format.
+                if (isJSON(json)) {
+                    // File is .json
+                    response.data = JSON.parse(json);
+                } else {
+                    // File is .txt, .csv, .svg, etc.
+                    response = {
+                        data: await CSVToJSON({delimiter: 'auto'}).fromString(Buffer.from(response.data, 'base64').toString('utf-8')),
+                    };
+                }
             } else {
                 response = {
                     data: {
@@ -1615,8 +1184,8 @@ const output = async (config, output) => {
 /**
  * Local handler to send error response.
  *
- * @param {Object} req
- * @param {Object} res
+ * @param {Object} [req]
+ * @param {Object} [res]
  * @param {Error} err
  */
 const errorResponse = async (req, res, err) => {
@@ -1636,11 +1205,188 @@ const errorResponse = async (req, res, err) => {
     };
 
     // Send response.
-    return res.status(err.httpStatusCode || 500).send(result);
+    if (req && res) {
+        return res.status(err.httpStatusCode || 500).send(result);
+    } else {
+        return result;
+    }
 };
 
 /**
- * Endpoint to trigger fetching of new data from CALS.
+ * Composes local connector request.
+ *
+ * @param {String} productCode
+ * @param {Object} config
+ * @param {String} idLocal
+ * @return
+ *   The connector response.
+ */
+const getData = async (productCode, config, idLocal) => {
+    // Compose triggered local connector request.
+    const triggeredReq = {
+        body: {
+            productCode,
+            timestamp: moment().format(),
+            parameters: {
+                targetObject: {
+                    idLocal,
+                },
+            },
+        },
+        connectorUrl: config.connectorUrl,
+        publicKeyUrl: config.publicKeyUrl,
+    };
+    winston.log('info', '1. Query self with path ${targetObject.idLocal} as ' + idLocal);
+    return await connector.getData(triggeredReq);
+};
+
+/**
+ * Sends triggered broker request.
+ *
+ * @param {Object} [req]
+ * @param {Object} [res]
+ * @param {String} productCode
+ * @param {Object} config
+ * @param {Object} template
+ * @param {Object} result
+ * @param {Object} options
+ */
+const sendData = async (req, res, productCode, config, template, result, options) => {
+    let receiverProductCode;
+    try {
+        // Fallback.
+        receiverProductCode = 'purchase-order-from-cals';
+        // Get receiver from config.
+        receiverProductCode = config.plugins.broker.receiver;
+    } catch (err) {
+        winston.log('info', 'Set receiver data product as ' + receiverProductCode + '.');
+    }
+
+    // 4. Send data to vendor data product with broker plugin.
+    try {
+        /** Sender data product */
+        config.productCode = productCode;
+        template = await connector.resolvePlugins(template);
+        template.config = config;
+
+        const keys = Object.keys(result.output.data);
+
+        if (keys.length === 0) {
+            const noData = new Error();
+            noData.httpStatusCode = 404;
+            noData.message = 'Not found.';
+            return errorResponse(req, res, noData);
+        }
+
+        const key = keys[0];
+        template.output.array = key;
+
+        try {
+            if (!Array.isArray(result.output.data[keys[0]])) {
+                result.output.data[key] = [result.output.data[key]];
+            }
+            // Resolve ids.
+            result.output.data[key].map((order) => {
+                // Add project details.
+                if (order['@type'] === 'Document' && !Object.hasOwnProperty.call(order, 'project')) {
+                    order.project = {
+                        '@type': 'Project',
+                        idLocal: '123124',
+                    };
+                }
+                if (!Object.hasOwnProperty.call(order, 'deliveryLine')) {
+                    return order;
+                }
+                if (!Array.isArray(order.deliveryLine)) {
+                    order.deliveryLine = [order.deliveryLine];
+                }
+                order.deliveryLine = order.deliveryLine.map((l) => {
+                    winston.log('info', 'Changed ' + l.product.codeProduct + ' to ' + productCodeToCALSId[l.product.codeProduct]);
+                    return {
+                        ...l,
+                        idLocal: productCodeToCALSId[l.product.codeProduct],
+                    };
+                });
+                return order;
+            });
+            if (result.output.data[key].length === 1) {
+                result.output.data[key] = result.output.data[key][0];
+                if (Array.isArray(result.output.data[key])) {
+                    if (result.output.data[key].length === 1) {
+                        result.output.data[key] = result.output.data[key][0];
+                    }
+                }
+            }
+        } catch (e) {
+            console.log(e.message);
+        }
+
+        if (template.plugins.find(p => p.name === 'broker') && template.config.plugins.broker) {
+            // Set isTest.
+            template.config.plugins.broker.parameters = {
+                isTest: options.isTest,
+            };
+
+            /** Sender data product */
+            template.config.productCode = productCode;
+
+            // Check for mapped receiver.
+            if (_.isObject(receiverProductCode)) {
+                if (Object.hasOwnProperty.call(receiverProductCode, key)) {
+                    receiverProductCode = receiverProductCode[key];
+                }
+            }
+
+            /** Receiver data product */
+            config.static.productCode = receiverProductCode;
+
+            winston.log('info', '2. Send received data to receiver data product ' + config.static.productCode + ', isTest=' + options.isTest);
+            await template.plugins.find(p => p.name === 'broker').stream(template, result.output);
+        }
+    } catch (err) {
+        winston.log('error', err.message);
+        return errorResponse(req, res, err);
+    }
+
+    // Detect if order confirmation was sent.
+    try {
+        if (Object.hasOwnProperty.call(result.output, 'data')) {
+            if (Object.hasOwnProperty.call(result.output.data, 'order')) {
+                if (Object.hasOwnProperty.call(result.output.data.order, 'orderLine')) {
+                    const filename = options.filename;
+                    const dirs = Array.isArray(config.static.toPath) ? config.static.toPath : [config.static.toPath];
+                    for (let i = 0; i < dirs.length; i++) {
+                        let moved = false;
+                        try {
+                            const items = await sftp.move({
+                                productCode: config.productCode,
+                                authConfig: {...config.static, toPath: dirs[i]},
+                            }, [filename], config.productCode, dirs[i] + '/Archive');
+                            if (items.length > 0) {
+                                moved = true;
+                                winston.log('info', items.toString());
+                            }
+                        } catch (err) {
+                            winston.log('error', err.message);
+                            moved = false;
+                        }
+                        if (moved) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+    return {
+        message: 'ok',
+    };
+};
+
+/**
+ * Endpoint to trigger order/delivery confirmation sending to CALS.
  *
  * @param {Object} req
  * @param {Object} res
@@ -1649,7 +1395,7 @@ const errorResponse = async (req, res, err) => {
  */
 const controller = async (req, res) => {
     let result;
-    let host;
+    // let host;
     try {
         /** Request header validation */
         /*
@@ -1720,126 +1466,18 @@ const controller = async (req, res) => {
 
         // 2. Get new data from vendor with parameters provided in the body.
         try {
-            // Compose triggered local connector request.
-            const triggeredReq = {
-                body: {
-                    productCode,
-                    'timestamp': moment().format(),
-                    'parameters': {
-                        'targetObject': {
-                            idLocal: req.body.filename,
-                        },
-                    },
-                },
-                connectorUrl: config.connectorUrl,
-                publicKeyUrl: config.publicKeyUrl,
-            };
-
-            winston.log('info', '1. Query self with path ${targetObject.idLocal} as ' + req.body.filename);
-            result = await connector.getData(triggeredReq);
+            result = await getData(productCode, config, req.body.filename);
         } catch (err) {
             winston.log('error', err.message);
             return errorResponse(req, res, err);
         }
 
         // 3. Parse receiver productCode from received confirmation and send broker request to produce confirmation.
-        let receiverProductCode;
-        try {
-            // Fallback.
-            receiverProductCode = 'purchase-order-from-cals';
-            // Get receiver from config.
-            receiverProductCode = config.plugins.broker.receiver;
-        } catch (err) {
-            winston.log('info', 'Set receiver data product as ' + receiverProductCode + '.');
-        }
-
-        // 4. Send data to vendor data product with broker plugin.
-        try {
-            /** Sender data product */
-            config.productCode = productCode;
-
-            template = await connector.resolvePlugins(template);
-            template.config = config;
-
-            const keys = Object.keys(result.output.data);
-
-            if (keys.length === 0) {
-                const noData = new Error();
-                noData.httpStatusCode = 404;
-                noData.message = 'Not found.';
-                return errorResponse(req, res, noData);
-            }
-
-            const key = keys[0];
-
-            template.output.array = key;
-
-            try {
-                if (!Array.isArray(result.output.data[keys[0]])) {
-                    result.output.data[key] = [result.output.data[key]];
-                }
-                // Resolve ids.
-                result.output.data[key].map((order) => {
-                    // Add project details.
-                    if (order['@type'] === 'Document' && !Object.hasOwnProperty.call(order, 'project')) {
-                        order.project = {
-                            '@type': 'Project',
-                            idLocal: '123124',
-                        };
-                    }
-                    if (!Object.hasOwnProperty.call(order, 'deliveryLine')) {
-                        return order;
-                    }
-                    if (!Array.isArray(order.deliveryLine)) {
-                        order.deliveryLine = [order.deliveryLine];
-                    }
-                    order.deliveryLine = order.deliveryLine.map((l) => {
-                        winston.log('info', 'Changed ' + l.product.codeProduct + ' to ' + productCodeToCALSId[l.product.codeProduct]);
-                        return {
-                            ...l,
-                            idLocal: productCodeToCALSId[l.product.codeProduct],
-                        };
-                    });
-                    return order;
-                });
-                if (result.output.data[key].length === 1) {
-                    result.output.data[key] = result.output.data[key][0];
-                    if (Array.isArray(result.output.data[key])) {
-                        if (result.output.data[key].length === 1) {
-                            result.output.data[key] = result.output.data[key][0];
-                        }
-                    }
-                }
-            } catch (e) {
-                console.log(e.message);
-            }
-
-            if (template.plugins.find(p => p.name === 'broker') && template.config.plugins.broker) {
-                // Set isTest.
-                template.config.plugins.broker.parameters = {
-                    isTest: req.body.is_test,
-                };
-
-                /** Sender data product */
-                template.config.productCode = productCode;
-
-                // Check for mapped receiver.
-                if (_.isObject(receiverProductCode)) {
-                    if (Object.hasOwnProperty.call(receiverProductCode, key)) {
-                        receiverProductCode = receiverProductCode[key];
-                    }
-                }
-
-                /** Receiver data product */
-                config.static.productCode = receiverProductCode;
-
-                winston.log('info', '2. Send received data to receiver data product ' + config.static.productCode + ', isTest=' + req.body.is_test);
-                await template.plugins.find(p => p.name === 'broker').stream(template, result.output);
-            }
-        } catch (err) {
-            winston.log('error', err.message);
-            return errorResponse(req, res, err);
-        }
+        const options = {
+            filename: req.body.filename,
+            isTest: req.body.is_test,
+        };
+        await sendData(req, res, productCode, config, template, result, options);
 
         // 5. Send signed data response.
         const created = moment().format();
@@ -1892,14 +1530,184 @@ const resolveContract = async (order, sheetId) => {
         const {body} = await request('GET', sheetUrl);
         const contracts = await CSVToJSON({delimiter: 'auto'}).fromString(body);
         const result = contracts.find((c) => c.project === project.toString());
-        const contract = result ? result.contract : null;
+        const fallback = contracts.find((c) => c.project === '*');
+        fallback.project = project.toString();
+        const contract = result ? result.contract : (fallback ? fallback.contract : null);
         order.contract = {idLocal: contract};
+        Object.entries(result || fallback || {}).forEach(([key, value]) => {
+            if (key !== 'contract') {
+                order.contract[key] = value;
+            }
+        });
         winston.log('info', 'Contract resolver result: ' + project + (contract ? ' => ' + contract : ' not found'));
     } catch (err) {
         winston.log('error', err.message);
     }
     return order;
 };
+
+// Cron tasks.
+const tasks = {};
+const DEFAULT_SCHEDULE = '*/30 * * * *';
+const DEFAULT_TIMEZONE = 'Europe/Helsinki';
+
+/**
+ * Executes scheduled task.
+ *
+ * @param {String} productCode
+ */
+const runJob = async (productCode) => {
+    try {
+        const config = cache.getDoc('configs', productCode);
+        // Download files.
+        const docs = await sftp.getData({
+            productCode,
+            plugins: [],
+            authConfig: config.static,
+            parameters: {targetObject: {}},
+        }, [''], true);
+        // Send new files and move to archive.
+        for (let i = 0; i < docs.length; i++) {
+            const d = docs[i];
+            winston.log('info', 'Send file ' + d.path);
+            // 2. Trigger file sending to receivers.
+            try {
+                const parts = d.path.split('/');
+                const result = await getData(productCode, config, parts[parts.length - 1]);
+                const options = {
+                    filename: parts[parts.length - 1],
+                    isTest: false,
+                };
+                const template = cache.getDoc('templates', config.template) || {};
+                const send = await sendData(null, null, productCode, config, template, result, options);
+                if (Object.hasOwnProperty.call(send, 'error')) {
+                    const lineLimit = 10;
+                    const path = '/error.log';
+                    const logFilePath = parts.slice(0, -1).join('/') + '/Log';
+                    // Get log.
+                    const logs = await sftp.getData({
+                        productCode,
+                        plugins: [],
+                        authConfig: {...config.static, toPath: logFilePath},
+                        parameters: {targetObject: {}},
+                    }, [path], true);
+                    // Insert new line.
+                    let log = '';
+                    const file = logs.find(f => f.name === 'error.log');
+                    if (file) {
+                        log = Buffer.from(file.data, 'base64').toString('utf-8') + '\n';
+                    }
+                    log += new Date().toISOString() + ': ' + parts[parts.length - 1] + ', ' + JSON.stringify(send.error);
+                    const content = log.split('\n').slice(-lineLimit).join('\n');
+
+                    // Upload log.
+                    const to = DOWNLOAD_DIR + productCode + logFilePath + path;
+                    await sftp.checkDir(to);
+                    await fs.writeFile(to, content);
+                    await sftp.sendData({
+                        productCode,
+                        plugins: [],
+                        authConfig: {...config.static, fromPath: logFilePath},
+                        parameters: {targetObject: {}},
+                    }, [path]);
+                }
+            } catch (err) {
+                winston.log('error', err.message);
+            }
+        }
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+};
+
+/**
+ * Restarts a cron task by product code.
+ *
+ * @param {String} productCode
+ * @param {String} [schedule]
+ * @param {String} [timezone]
+ */
+const restartTask = (productCode, schedule = DEFAULT_SCHEDULE, timezone = DEFAULT_TIMEZONE) => {
+    try {
+        stopTask(productCode);
+        destroyTask(productCode);
+        return startTask(productCode, schedule, timezone);
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+};
+
+/**
+ * Starts a cron task by product code.
+ *
+ * @param {String} productCode
+ * @param {String} [schedule]
+ * @param {String} [timezone]
+ */
+const startTask = async (productCode, schedule = DEFAULT_SCHEDULE, timezone = 'Europe/Helsinki') => {
+    try {
+        winston.log('info', `Start a job with product code ${productCode} and schedule ${schedule} at ${timezone} timezone`);
+        tasks[productCode] = cron.schedule(schedule, () => {
+            runJob(productCode);
+        }, {
+            scheduled: true,
+            timezone,
+        });
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+};
+
+/**
+ * Stops a cron task by product code.
+ *
+ * @param {String} productCode
+ */
+const stopTask = (productCode) => {
+    try {
+        if (Object.hasOwnProperty.call(tasks, productCode)) {
+            if (Object.hasOwnProperty.call(tasks[productCode], 'stop')) {
+                tasks[productCode].stop();
+            }
+        }
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+};
+
+/**
+ * Destroys a cron task by product code.
+ *
+ * @param {String} productCode
+ */
+const destroyTask = (productCode) => {
+    try {
+        if (Object.hasOwnProperty.call(tasks, productCode)) {
+            if (Object.hasOwnProperty.call(tasks[productCode], 'destroy')) {
+                tasks[productCode].destroy();
+            }
+        }
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+};
+
+// Get related configs and set schedules.
+setTimeout(() => {
+    Object.entries(cache.getKeysAndDocs('configs') || [])
+        .filter(([_key, value]) => Object.entries(value.plugins || {})
+            .filter(([key, _value]) => key === PLUGIN_NAME).length > 0)
+        .forEach(([productCode, config]) => {
+            if (Object.hasOwnProperty.call(config.plugins[PLUGIN_NAME], 'schedule')) {
+                const schedule = config.plugins[PLUGIN_NAME].schedule;
+                if (cron.validate(schedule)) {
+                    restartTask(productCode, schedule, config.plugins[PLUGIN_NAME].timezone);
+                } else {
+                    winston.log('error', 'Invalid cron expression.');
+                }
+            }
+        });
+}, 5000);
 
 /**
  * Switch querying protocol to REST.
@@ -1918,6 +1726,8 @@ const template = async (config, template) => {
                 template.output.array = 'document';
             }
         }
+
+        // Switch protocol if container not found from request.
         if (Object.hasOwnProperty.call(template.parameters.targetObject, 'sender')) {
             /** Vendor connector */
             winston.log('info', 'Received produced data from '
@@ -1954,8 +1764,8 @@ const template = async (config, template) => {
                 // console.log('Store CALS identifiers from received order.');
                 // console.log('orderNumberToCALSId: ' + JSON.stringify(orderNumberToCALSId));
                 // console.log('productCodeToCALSId: ' + JSON.stringify(productCodeToCALSId));
-
                 const path = '/' + result[id].idSystemLocal + '.json';
+                // fromPath can only contain one directory.
                 const to = DOWNLOAD_DIR + template.productCode + (template.authConfig.fromPath || '/from') + path;
                 await sftp.checkDir(to);
                 await fs.writeFile(to, JSON.stringify(template.parameters.targetObject));

@@ -23,8 +23,11 @@ const response = async (config, response) => {
         const idPath = 'generalConfig.hardwareId.dataObjectProperty';
         const idKey = _.get(config, idPath);
         config['dataObjects'].forEach((path) => {
-            // Filter objects by id.
-            response[path] = response[path].filter(object => ids.includes(_.get(object, idKey)));
+            if (Object.hasOwnProperty.call(response, path)) {
+                // Filter objects by id.
+                response[path] = (Array.isArray(response[path]) ? response[path] : [response[path]])
+                    .filter(object => ids.includes(_.get(object, idKey)));
+            }
         });
         return response;
     } catch (e) {

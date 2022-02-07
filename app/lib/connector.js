@@ -333,9 +333,9 @@ const parseTs = function (timestamp) {
  */
 const interpretMode = function (config, parameters) {
     // Some systems require always start and end time and latest values cannot be queried otherwise.
-    // Start and end times are set to match last 24 hours from given timestamp.
+    // Start and end times are set to match last 48 hours from given timestamp.
     // Limit property is used to include only latest values.
-    const defaultTimeRange = 1000 * 60 * 60 * 24;
+    const defaultTimeRange = 1000 * 60 * 60 * 24 * 2;
 
     // Latest by default.
     config.mode = 'latest';
@@ -444,11 +444,14 @@ const composeOutput = async (template, input) => {
         return rest.promiseRejectWithError(500, 'Connection protocol not defined.');
     } else {
         // Check that the protocol is supported.
-        if (!Object.hasOwnProperty.call(protocols, template.protocol)) {
+        if (!Object.hasOwnProperty.call(protocols, template.protocol) && !_.intersection(protocols, template.protocol)) {
             return rest.promiseRejectWithError(500, 'Connection protocol ' + template.protocol + ' is not supported.');
         } else {
-            items = input || await protocols[template.protocol].getData(template, pathArray);
-            if (!items) items = [];
+            const selected = Array.isArray(template.protocol) ? template.protocol : [template.protocol];
+            for (let i = 0; i < selected.length; i++) {
+                const result = input || await protocols[selected[i]].getData({...template, protocol: selected[i]}, pathArray);
+                if (result) items.push(...Array.isArray(result) ? result : [result]);
+            }
         }
     }
 

@@ -4,7 +4,7 @@
         "broker",
         "download-link"
     ],
-    "protocol": "azure-blob-storage",
+    "protocol": ["azure-blob-storage", "sftp"],
     "authConfig": {
         "account": "${account}",
         "accountKey": "${accountKey}",

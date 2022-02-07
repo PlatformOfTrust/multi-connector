@@ -7,6 +7,7 @@
 	"dynamic": {
 		"authConfig.path": "targetObject.name"
 	},
+    "schema": "service-location-v2_varda",
     "request": {
         "targetObject": {
             "name": "searchStr"

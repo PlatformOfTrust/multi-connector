@@ -65,6 +65,23 @@ const getKeys = function (collection) {
 };
 
 /**
+ * Reads documents by collection and returns indexed docs.
+ *
+ * @param {String} collection
+ * @return {Object}
+ */
+const getKeysAndDocs = function (collection) {
+    if (Object.hasOwnProperty.call(cache, collection)) {
+        const object = {};
+        const keys = cache[collection].cache.keys();
+        for (let j = 0; j < keys.length; j++) {
+            object[keys[j]] = cache[collection].cache.get(keys[j]);
+        }
+        return object;
+    } else return {};
+};
+
+/**
  * Writes a document to a collection.
  *
  * @param {String} collection
@@ -99,6 +116,7 @@ module.exports = {
     getDoc,
     getDocs,
     getKeys,
+    getKeysAndDocs,
     setDoc,
     delDoc,
 };

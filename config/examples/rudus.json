@@ -1,5 +1,5 @@
 {
-    "template": "azure-blob-storage-delivery-document",
+    "template": "rudus",
     "static": {
         "account": "<account>",
         "accountKey": "<account-key>",

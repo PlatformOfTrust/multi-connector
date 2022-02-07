@@ -53,7 +53,7 @@ const OrderInformationSchema = {
                     'type': 'object',
                     'properties': {
                         'C_Msg_OriginalID': {
-                            'source': 'timetamp',
+                            'source': 'timestamp',
                             'type': 'string',
                         },
                         'C_Msg_Sender': {
@@ -326,19 +326,19 @@ const OrderInformationSchema = {
                                                 'type': 'string',
                                             },
                                             'Contact_ID': {
-                                                'source': 'productGroup.operator.name',
+                                                'source': 'addressShipping.contact.name',
                                                 'type': 'string',
                                             },
                                             'Contact_Name': {
-                                                'source': 'productGroup.operator.contact.name',
+                                                'source': 'addressShipping.contact.contactInformation.name',
                                                 'type': 'string',
                                             },
                                             'Contact_Phone': {
-                                                'source': 'productGroup.operator.contact.phoneNumber',
+                                                'source': 'addressShipping.contact.contactInformation.phoneNumber',
                                                 'type': 'string',
                                             },
                                             'Location_Place': {
-                                                'source': 'productGroup.locationFinal.name',
+                                                'source': 'addressShipping.nameArea',
                                                 'type': 'string',
                                             },
                                             'Ref_VATNum': {
@@ -470,8 +470,8 @@ const json2xml = (input = {}) => {
     input.customer.contactInformation.country = input.customer.contactInformation.country || '';
 
     input.refSpecial = [
-        {type: 'WORKPACK', value: input.productGroup.idLocal},
-        {type: 'WORKPHASE', value: input.productGroup.process.name},
+        {type: 'WORKPACK', value: input.addressShipping.process.idLocal},
+        {type: 'WORKPHASE', value: input.addressShipping.process.name},
     ];
 
     input.orderLine = input.orderLine.map(o => {

@@ -1,5 +1,5 @@
 {
-    "plugins": ["varda-organization"],
+    "plugins": [],
     "protocol": "rest",
     "authConfig": {
         "url": "${url}",

@@ -17,7 +17,8 @@ module.exports.app = function (app, passport) {
     router.use('/:path/', require('./translator/index')(passport));
     router.param('path', (req, res, next, path) => {
         const host = req.get('host').split(':')[0];
-        req.connectorUrl = (host === 'localhost' || net.isIP(host) ? 'http' : 'https') + '://' + req.get('host') + req.baseUrl;
+        const url = (host === 'localhost' || net.isIP(host) ? 'http' : 'https') + '://' + req.get('host') + req.baseUrl;
+        req.connectorUrl = process.env.CONNECTOR_URL || url;
         req.publicKeyUrl = `${req.connectorUrl}/${path}/v1/public.key`;
         next();
     });
