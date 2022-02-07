@@ -37,17 +37,14 @@ const handleData = function (config, id, data) {
             value.locationOrganizationType = 'Organization';
 
             switch (value.Phase) {
-                case 'Defined':
-                    value.Phase = 'Defined';
-                    break;
-                case 'New':
+                case 'Undefined':
                     value.Phase = 'New';
+                    break;
+                case 'Defined':
+                    value.Phase = 'Completed';
                     break;
                 case 'UnderProgress':
                     value.Phase = 'Ongoing';
-                    break;
-                case 'Completed':
-                    value.Phase = 'Completed';
                     break;
             }
 

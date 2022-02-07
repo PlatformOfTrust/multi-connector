@@ -12,6 +12,7 @@
     "username": "${username}",
     "password": "${password}",
     "scope": "api1",
+    "headers": "${headers}",
     "path": "${url}/api/v1/objects/${targetObject.idLocal}/service-requests"
   },
   "dataObjects": [
