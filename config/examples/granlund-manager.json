@@ -6,7 +6,11 @@
     "password": "<password>",
     "clientId": "<client-id>",
     "clientSecret": "<client-secret>",
-    "type": "<type>"
+    "type": "<type>",
+    "headers": {
+      "Accept-Language": "fi",
+      "X-CustomerId": "<customer-id>"
+    }
   },
   "dynamic": {
     "authConfig.path": "targetObject.idLocal"
