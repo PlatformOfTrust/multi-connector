@@ -190,8 +190,9 @@ const handleData = async (config, path, index, data) => {
 
             try {
                 // Use type from id object.
-                if (Object.hasOwnProperty.call(idObjects[index] || {}, 'type')) {
-                    dataType = idObjects[index].type;
+                const match = idObjects.find(entry => (entry.id || entry.idLocal || entry) === hardwareId);
+                if (Object.hasOwnProperty.call(match || {}, 'type')) {
+                    dataType = match.type;
                 }
             } catch (e) {
                 dataType = null;
