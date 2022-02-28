@@ -103,7 +103,14 @@ const transform = function (source, schema) {
                     if (Object.hasOwnProperty.call(schema, 'value')) {
                         value = replacePlaceholders(source, schema.value);
                     } else if (Object.hasOwnProperty.call(schema, 'source')) {
-                        if (schema.source) value = schema.source === '' ? source : _.get(source, schema.source, schema.default);
+                        if (schema.source) {
+                            value = schema.source === '' ? source : _.get(source, schema.source, schema.default);
+                            if (value === '' && Object.hasOwnProperty.call(schema, 'default')) {
+                                value = schema.default;
+                            }
+                        }
+                    } else if (Object.hasOwnProperty.call(schema, 'const')) {
+                        value = schema.const;
                     }
                     break;
             }
