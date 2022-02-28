@@ -10,6 +10,7 @@
     "dynamic": {
         "authConfig.path": "targetObject.idLocal"
     },
+    "schema": "note_e-gate",
     "request": {
         "targetObject": {
             "idLocal": "<client>"
