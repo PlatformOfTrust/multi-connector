@@ -1206,7 +1206,7 @@ const template = async (config, template) => {
                 const items = template.parameters.targetObject.orderLine || template.parameters.targetObject.deliveryLine || [];
 
                 // 2. Parse PurchaseOrderItems - template.parameters.targetObject.orderLine or -.deliveryLine
-                data.PurchaseOrderItems = items.map(input => {
+                data.PurchaseOrderItems = (Array.isArray(items) ? items : [items]).map(input => {
                     const output = {};
                     const root = template.parameters.targetObject;
                     // Root level delivery datetime by default.
