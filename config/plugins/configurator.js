@@ -18,30 +18,8 @@ const PLUGIN_NAME = 'configurator';
 const EXPIRATION_TIME = 86400000;
 const CHECK_INTERVAL = 5 * 60 * 1000;
 let lastUpdate = null;
-let connectorURL = '';
-
-/*
-{
-    "@context": "https://standards.oftrust.net/v2/Context/Identity/Product/DataProduct/",
-    "@type": "DataProduct",
-    "@id": "https://api-sandbox.oftrust.net/products/v1/B6AA3FB2-3CD8-4DDE-833E-C740A33E63D2",
-    "productCode": "B6AA3FB2-3CD8-4DDE-833E-C740A33E63D2",
-    "dataContext": "https://standards.oftrust.net/v2/Context/DataProductOutput/",
-    "parameterContext": "https://standards.oftrust.net/v2/Context/DataProductParameters/",
-    "translatorUrl": "https://connector.oftrust.dev/translator/v1/fetch",
-    "name": "Connector",
-    "organizationPublicKeys": [
-        {
-            "type": "RsaSignature2018",
-            "url": "https://connector.oftrust.dev/translator/v1/public.key"
-        }
-    ],
-    "description": "Connector to receive purchase order",
-    "imageUrl": "https://www.pinclipart.com/picdir/big/489-4899691_connection-icon-free-clipart.png",
-    "identityId": "33fd1e30-7141-4ce5-aabe-5925cefc55f5",
-    "authorizationLayer": "None"
-}
-*/
+let connectorUrl = '';
+let publicKeyUrl = '';
 
 // Source mapping.
 const dataProductSchema = {
@@ -242,11 +220,11 @@ const handleData = function (config, id, data) {
                 value.id = 'https://api.oftrust.net/products/v1/' + encodeURI(value.productCode);
                 value.dataContext = 'https://standards.oftrust.net/v2/Context/DataProductOutput/';
                 value.parameterContext = 'https://standards.oftrust.net/v2/Context/DataProductParameters/';
-                value.translatorUrl = config.authConfig.connectorURL + '/translator/v1/fetch';
+                value.translatorUrl = config.authConfig.connectorUrl + '/translator/v1/fetch';
                 value.organizationPublicKeys = [
                     {
                         'type': 'RsaSignature2018',
-                        'url': config.authConfig.connectorURL + '/translator/v1/public.key',
+                        'url': config.authConfig.publicKeyUrl,
                     },
                 ];
                 value.authorizationLayer = 'None';
@@ -295,14 +273,14 @@ const fetchPublicKeys = async (URLs, count = 0) => {
     }
 };
 
-const sign = (response = [], url = connectorURL, client = undefined) => {
+const sign = (response = [], url = connectorUrl, client = undefined) => {
     response = Array.isArray(response) ? response : [response];
 
     // Initialize signature object.
     const signature = {
         type: 'RsaSignature2018',
         created: new Date().toISOString(),
-        creator: url + '/translator/v1/public.key',
+        creator: publicKeyUrl || (url + '/translator/v1/public.key'),
     };
 
     // Compose signed data response.
@@ -400,10 +378,11 @@ const response = async (config, res) => {
         } else {
             response = res;
         }
-        response = sign(response, config.authConfig.connectorURL);
+        response = sign(response, config.authConfig.connectorUrl);
 
         // Store connector URL for later use.
-        connectorURL = config.authConfig.connectorURL;
+        connectorUrl = config.authConfig.connectorUrl;
+        publicKeyUrl = connectorUrl + '/translator/v1/public.key';
     } catch (err) {
         winston.log('error', err.message);
     }

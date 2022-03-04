@@ -1,5 +1,5 @@
 {
-  "plugins": [],
+  "plugins": ["latest"],
   "protocol": "rest",
   "authConfig": {
     "url": "${url}",

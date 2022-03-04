@@ -67,24 +67,24 @@ const updateToken = async (authConfig, refresh) => {
  * @param {Object} authConfig
  * @return {Promise}
  */
-function getTokenWithPassword(authConfig) {
-
-    var token;
-
+function getTokenWithPassword (authConfig) {
+    
+    var token;  
+   
     const option = {
         method: 'POST',
-        url: authConfig.url + authConfig.authPath,
+        url:authConfig.url + authConfig.authPath,
         headers: {
             'Content-Type': 'application/json'
         },
         body: {
-
+            
             email: authConfig.email,
             password: authConfig.password,
-
+           
         },
         json: true,
-
+        
     };
     return rp(option).then(function (result) {
         return Promise.resolve(result);
@@ -92,6 +92,7 @@ function getTokenWithPassword(authConfig) {
         return Promise.reject(err);
     });
 }
+
 
 
 /**
@@ -107,11 +108,11 @@ const requestToken = async (authConfig, refresh) => {
     let grant;
     grant = cache.getDoc('grants', authConfig.productCode);
     if (!grant) grant = {};
-    return (authConfig ? getTokenWithPassword(authConfig) : authConfig).then(function (result) {
+    return (authConfig ? getTokenWithPassword(authConfig):authConfig).then(function (result) {
         let token;
         if (result) {
-            cache.setDoc('grants', authConfig.productCode, result);
-            return Promise.resolve(result);
+        cache.setDoc('grants', authConfig.productCode, result);
+        return Promise.resolve(result);
         }
         return Promise.resolve();
     }).catch(function (err) {
@@ -169,24 +170,24 @@ const onerror = async (authConfig, err) => {
 const request = async (config, options) => {
     // Check for necessary information.
     if (!config.authConfig.authPath || !config.authConfig.url) {
-        return promiseRejectWithError(500, 'Insufficient authentication configurations.');
+    return promiseRejectWithError(500, 'Insufficient authentication configurations.');
     }
     // Check for existing grant.
     let grant = cache.getDoc('grants', config.authConfig.productCode);
     if (!grant && config.authConfig.headers.Authorization) grant = {token: config.authConfig.headers.Authorization};
     if (!grant) grant = {};
-    if (!Object.hasOwnProperty.call(grant, 'token')) {
+        if (!Object.hasOwnProperty.call(grant, 'token')) {
         // Request access token.
         grant = await requestToken(config.authConfig);
-        if (!grant.token) return promiseRejectWithError(500, 'Authentication failed.');
-    }
-    const pathType = (options.url.split("?")[0]).split("/")[8];
-    const newpathType = config.dataPropertyMappings[pathType] != undefined ? config.dataPropertyMappings[pathType] : pathType
-    options.url = options.url.replace(pathType, newpathType);
-    config.measurementType = pathType;
-    // Authorize request.
-    options.headers.Authorization = 'Bearer ' + (grant.token);
-    return options;
+            if (!grant.token) return promiseRejectWithError(500, 'Authentication failed.');
+        }
+        const pathType = (options.url.split("?")[0]).split("/")[8];
+        const newpathType = config.dataPropertyMappings[pathType]!= undefined ? config.dataPropertyMappings[pathType]  : pathType
+        options.url=options.url.replace(pathType, newpathType);
+        config.measurementType = pathType;
+        // Authorize request.
+        options.headers.Authorization = 'Bearer ' + (grant.token);
+        return options;
 };
 
 /**
@@ -196,10 +197,10 @@ const request = async (config, options) => {
  * @param {Object} data
  * @return {Object}
  */
-const data = async (config, data) => {
+const data = async (config,data)  => {
     const tmp = {}
     tmp[config.measurementType] = data.type;
-    return tmp;
+   return tmp;
 };
 
 module.exports = {

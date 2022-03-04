@@ -5,6 +5,8 @@
 const winston = require('../../logger.js');
 const rest = require('../protocols/rest');
 const validator = require('./validator');
+const output = require('../lib/output');
+const {replacer} = require('./utils');
 const events = require('events');
 const cache = require('../cache');
 const moment = require('moment');
@@ -23,6 +25,7 @@ const {
     TIMESTAMP,
     PARAMETERS,
     IDS,
+    TARGET_OBJECT,
     START,
     END,
     DATA_TYPES,
@@ -43,14 +46,16 @@ const templatesDir = './config/templates';
 const resourcesDir = './config/resources';
 const protocolsDir = './app/protocols';
 const pluginsDir = './config/plugins';
+const schemasDir = './config/schemas';
 const configsDir = './config';
 
 // Make sure directories for templates, protocols, configs and plugins exists.
 if (!fs.existsSync(templatesDir)) fs.mkdirSync(templatesDir);
 if (!fs.existsSync(resourcesDir)) fs.mkdirSync(resourcesDir);
 if (!fs.existsSync(protocolsDir)) fs.mkdirSync(protocolsDir);
-if (!fs.existsSync(configsDir)) fs.mkdirSync(configsDir);
 if (!fs.existsSync(pluginsDir)) fs.mkdirSync(pluginsDir);
+if (!fs.existsSync(schemasDir)) fs.mkdirSync(schemasDir);
+if (!fs.existsSync(configsDir)) fs.mkdirSync(configsDir);
 
 /**
  * Handles JSON data.
@@ -71,6 +76,10 @@ function handleFile (collection, file, data) {
             if (Object.hasOwnProperty.call(object.static, 'event')) {
                 protocols['websocket'].connect(object, file);
             }
+        }
+        // Attach scheduler plugin.
+        if (process.env.SCHEDULER === 'true' && collection === 'templates') {
+            object.plugins = _.uniq(['scheduler', ...object.plugins]);
         }
     } catch (err) {
         /** File is not a valid JSON. */
@@ -209,6 +218,12 @@ function emit (collections) {
             load(configsDir, '.json', 'configs', readFile));
     })
     .then(() => {
+        return (process.env.SCHEMAS ?
+            /** Source selection for schemas. */
+            loadJSON('schemas', process.env.SCHEMAS) :
+            load(schemasDir, '.json', 'schemas', readFile));
+    })
+    .then(() => {
         return load(pluginsDir, '.js', 'plugins', readFile);
     })
     .then(() => {
@@ -216,74 +231,6 @@ function emit (collections) {
         return emit(['templates', 'configs', 'resources']);
     })
     .catch((err) => winston.log('error', err.message));
-
-/**
- * Escapes special (meta) characters.
- *
- * @param {String} string
- * @return {String}
- */
-function escapeRegExp (string) {
-    // $& means the whole matched string.
-    return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&');
-}
-
-/**
- * Replaces all occurrences with regular expression.
- *
- * @param {String} str
- * @param {String} find
- * @param {String} replace
- * @return {String}
- */
-function replaceAll (str, find, replace) {
-    // Handle undefined string.
-    if (str === undefined) return undefined;
-    return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
-}
-
-/**
- * Replaces placeholder/s with given value/s.
- *
- * @param {String/Object} template
- *   Template value.
- * @param {String} placeholder
- *   Placeholder name. Used when value is not an object.
- * @param {String/Object} value
- *   Inserted value.
- * @return {String/Object}
- *   Template value with placeholder values.
- */
-function replacer (template, placeholder, value) {
-    let r = JSON.stringify(template);
-    // Handle missing template.
-    if (r === undefined) return undefined;
-    // Convert all dates to strings.
-    if (value instanceof Date) value = value.toISOString();
-    if (_.isObject(value)) {
-        Object.keys(value).forEach(function (key) {
-            if (_.isObject(value[key])) {
-                r = replaceAll(r, '"${' + key + '}"', JSON.stringify(value[key]));
-            } else {
-                r = replaceAll(r, '${' + key + '}', value[key]);
-            }
-        });
-        // In case id placeholder is left untouched.
-        if (r === '"${id}"' && Object.keys(value).length > 0) {
-            // Place object to the id placeholder.
-            r = replaceAll(r, '"${id}"', JSON.stringify(value));
-        }
-        // In case placeholder is for the whole object.
-        if (r === '"${' + placeholder + '}"') {
-            r = replaceAll(r, '"${' + placeholder + '}"', JSON.stringify(value));
-        }
-        return JSON.parse(r);
-    } else {
-        // Handle undefined placeholders.
-        if (value === undefined && r === '"${' + placeholder + '}"') return undefined;
-        return JSON.parse(replaceAll(r, '${' + placeholder + '}', value));
-    }
-}
 
 /**
  * Configures template with data product config (static)
@@ -328,9 +275,14 @@ function replacePlaceholders (config, template, params) {
                         });
                         _.set(template, path, array);
                     } else {
+                        let value = placeholder === '' ? params : _.get(params, placeholder);
+                        // Insert current datetime to timestamp placeholder.
+                        if (value === undefined && placeholder === 'timestamp') {
+                            value = new Date().toISOString();
+                        }
                         // If not found at static parameters, replace placeholder with undefined.
                         if (_.get(params, placeholder) || !Object.keys(config.static).includes(placeholder)) {
-                            _.set(template, path, replacer(templateValue, placeholder, _.get(params, placeholder)));
+                            _.set(template, path, replacer(templateValue, placeholder, value));
                         }
                     }
                 }
@@ -381,9 +333,9 @@ const parseTs = function (timestamp) {
  */
 const interpretMode = function (config, parameters) {
     // Some systems require always start and end time and latest values cannot be queried otherwise.
-    // Start and end times are set to match last 24 hours from given timestamp.
+    // Start and end times are set to match last 48 hours from given timestamp.
     // Limit property is used to include only latest values.
-    const defaultTimeRange = 1000 * 60 * 60 * 24;
+    const defaultTimeRange = 1000 * 60 * 60 * 24 * 2;
 
     // Latest by default.
     config.mode = 'latest';
@@ -492,11 +444,14 @@ const composeOutput = async (template, input) => {
         return rest.promiseRejectWithError(500, 'Connection protocol not defined.');
     } else {
         // Check that the protocol is supported.
-        if (!Object.hasOwnProperty.call(protocols, template.protocol)) {
+        if (!Object.hasOwnProperty.call(protocols, template.protocol) && !_.intersection(protocols, template.protocol)) {
             return rest.promiseRejectWithError(500, 'Connection protocol ' + template.protocol + ' is not supported.');
         } else {
-            items = input || await protocols[template.protocol].getData(template, pathArray);
-            if (!items) items = [];
+            const selected = Array.isArray(template.protocol) ? template.protocol : [template.protocol];
+            for (let i = 0; i < selected.length; i++) {
+                const result = input || await protocols[selected[i]].getData({...template, protocol: selected[i]}, pathArray);
+                if (result) items.push(...Array.isArray(result) ? result : [result]);
+            }
         }
     }
 
@@ -506,7 +461,7 @@ const composeOutput = async (template, input) => {
     const ARRAY = _.get(template, 'output.array');
 
     // Compose output payload.
-    let output = {
+    let result = {
         [CONTEXT]: _.get(template, 'output.contextValue'),
         [OBJECT]: {
             [ARRAY]: _.flatten(items),
@@ -516,13 +471,18 @@ const composeOutput = async (template, input) => {
     // Execute output plugin function.
     for (let i = 0; i < template.plugins.length; i++) {
         if (template.plugins[i].output) {
-            output = await template.plugins[i].output(template, output);
+            result = await template.plugins[i].output(template, result);
         }
+    }
+
+    // Execute default output function.
+    if (template.schema) {
+        result = await output.handleOutput(template, result);
     }
 
     // Return output and payload key name separately for signing purposes.
     return Promise.resolve({
-        output,
+        output: result,
         payloadKey: OBJECT,
     });
 };
@@ -583,23 +543,34 @@ const getData = async (req) => {
     /** Validation of data product specific parameters */
     validation = validator.validate(reqBody, requiredParameters || {});
     if (Object.hasOwnProperty.call(validation, 'error')) {
-        if (validation.error) return rest.promiseRejectWithError(422, validation.error);
+        if (validation.error) {
+            // Try another set of  required parameters.
+            requiredParameters = {[TARGET_OBJECT]: {required: true}};
+            const revalidation = validator.validate(reqBody, requiredParameters || {});
+            if (Object.hasOwnProperty.call(revalidation, 'error')) {
+                if (revalidation.error) return rest.promiseRejectWithError(422, validation.error);
+            }
+        }
     }
 
     // Pick supported parameters from reqBody.
     const timestamp = parseTs(_.get(reqBody, TIMESTAMP) || moment.now());
     let parameters = {
-        ids: _.get(reqBody, _.get(template, 'input.ids') || IDS) || [],
+        ids: _.get(reqBody, _.get(template, 'input.ids') || IDS) || _.get(reqBody, TARGET_OBJECT) || [],
         start: parseTs(_.get(reqBody, _.get(template, 'input.start') || START)),
         end: parseTs(_.get(reqBody, _.get(template, 'input.end') || END) || timestamp),
-        dataTypes: _.uniq(_.get(reqBody, _.get(template, 'input.dataTypes') || DATA_TYPES) || []),
+        dataTypes: _.get(reqBody, _.get(template, 'input.dataTypes') || DATA_TYPES) || [],
     };
 
-    // Make sure ids is an array and remove duplicates.
+    // Make sure ids and data types are arrays and remove duplicates.
     if (!Array.isArray(parameters.ids)) {
         parameters.ids = [parameters.ids];
     }
+    if (!Array.isArray(parameters.dataTypes)) {
+        parameters.dataTypes = [parameters.dataTypes];
+    }
     parameters.ids = _.uniq(parameters.ids);
+    parameters.dataTypes = _.uniq(parameters.dataTypes);
 
     // Leave unsupported parameters untouched.
     _.unset(reqBody, IDS);
@@ -614,9 +585,11 @@ const getData = async (req) => {
     template.authConfig.productCode = productCode;
     template.productCode = productCode;
     config.productCode = productCode;
+    template.schema = config.schema;
 
     // Store connector URL.
-    template.authConfig.connectorURL = req.protocol + '://' + req.get('host');
+    template.authConfig.connectorUrl = req.connectorUrl;
+    template.authConfig.publicKeyUrl = req.publicKeyUrl;
 
     // Make sure plugins array exists.
     if (!Array.isArray(template.plugins)) {
@@ -648,6 +621,15 @@ const getData = async (req) => {
 
     // Resolve plugins.
     template = await resolvePlugins(template);
+
+    // Attach plugin options from config.
+    for (let i = 0; i < template.plugins.length; i++) {
+        try {
+            template.plugins[i].options = config.plugins[template.plugins[i].name];
+        } catch (e) {
+            template.plugins[i].options = {};
+        }
+    }
 
     // Execute template plugin function.
     for (let i = 0; i < template.plugins.length; i++) {

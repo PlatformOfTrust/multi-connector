@@ -181,7 +181,7 @@ const controller = async (req, res) => {
     try {
         let topic = req.params.topic;
         const parts = req.originalUrl.split('/');
-        const productCode = parts.splice(parts.indexOf('hooks') + 1)[0];
+        const productCode = parts.splice(parts.indexOf('hooks') + 1)[0].split('?')[0];
         const config = cache.getDoc('configs', productCode) || {};
 
         if (!Object.hasOwnProperty.call(config, 'static')) {
@@ -190,24 +190,35 @@ const controller = async (req, res) => {
 
         /** Request authentication */
         const bearer = req.headers.authorization;
-        if (Object.hasOwnProperty.call(config.static, 'bearer') && bearer !== ('Bearer ' + config.static.bearer)) {
+        const apikey = req.query.apikey;
+
+        const bearerAuthEnabled = Object.hasOwnProperty.call(config.static, 'bearer');
+        const apikeyAuthEnabled = Object.hasOwnProperty.call(config.static, 'apikey');
+        const invalidBearer = bearer !== ('Bearer ' + config.static.bearer);
+        const invalidApikey = apikey !== config.static.apikey;
+
+        const authenticated =
+            (!bearerAuthEnabled && !apikeyAuthEnabled) ||
+            (bearerAuthEnabled && !invalidBearer) ||
+            (apikeyAuthEnabled && !invalidApikey);
+
+        if (!authenticated) {
             return res.status(401).send('Unauthorized');
         }
 
         try {
             // Pick topic/id from body (important with XML converted to JSON).
             if (!topic) {
-                const template = cache.getDoc('templates', config.template) || {};
-                topic = _.get(req.body, template.generalConfig.hardwareId.dataObjectProperty);
+                const template = cache.getDoc('templates', config.template) || {generalConfig: {}};
+                topic = _.get(req.body, (template.generalConfig.hardwareId || {}).dataObjectProperty);
             }
         } catch (err) {
             console.log(err.message);
         }
 
         // Store data.
-        host = req.get('host').split(':')[0];
-        config.connectorURL = (host === 'localhost' || net.isIP(host) ? 'http' : 'https')
-            + '://' + req.get('host');
+        config.connectorUrl = req.connectorUrl;
+        config.publicKeyUrl = req.publicKeyUrl;
 
         result = await handler(productCode, config, topic, req.body);
 
@@ -220,7 +231,7 @@ const controller = async (req, res) => {
             const signature = {
                 type: 'RsaSignature2018',
                 created: moment().format(),
-                creator: config.connectorURL + '/translator/v1/public.key',
+                creator: config.publicKeyUrl,
             };
 
             // Send signed data response.

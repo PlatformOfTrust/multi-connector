@@ -1,0 +1,38 @@
+{
+    "plugins": [
+        "basic",
+        "filter-by-id",
+        "latest"
+    ],
+    "protocol": "rest",
+    "authConfig": {
+        "url": "https://vesiplus.fi/ext/api",
+        "username": "${username}",
+        "password": "${password}",
+        "path": "/reports?site=${site}&type=${type}&resolution=${resolution}"
+    },
+    "dataPropertyMappings": {
+        "MeasureAirTemperatureCelsiusDegree": "tempAvg",
+        "MeasureAirHumidityPercentage": "rhAvg",
+        "MeasureWaterColdConsumptionLitre": "consumptionCW",
+        "MeasureWaterHotConsumptionLitre": "consumptionHW"
+    },
+    "dataObjects": [
+        "measurementReportItems",
+        "waterReportItems"
+    ],
+    "generalConfig": {
+        "query": {
+            "start": "startDate"
+        },
+        "hardwareId": {
+            "dataObjectProperty": "spaceName"
+        },
+        "sourceName": {
+            "dataObjectProperty": "spaceId"
+        },
+        "timestamp": {
+            "dataObjectProperty": "timestamp"
+        }
+    }
+}

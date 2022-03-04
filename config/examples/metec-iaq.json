@@ -1,0 +1,14 @@
+{
+  "template": "metec",
+  "static": {
+    "username": "<email-address>",
+    "password": "<password>",
+    "site": "<site-id>",
+    "type": "measurement",
+    "resolution": "hour"
+  },
+  "dynamic": {
+    "authConfig.path": "ids"
+  },
+  "schema": "measure-indoor-air-quality-v4"
+}

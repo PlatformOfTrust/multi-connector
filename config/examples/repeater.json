@@ -1,0 +1,17 @@
+{
+    "template": "repeater",
+    "static": {
+        "productCode": "<product-code>"
+    },
+    "dynamic": {
+        "authConfig.body": "timestamp",
+        "authConfig.body.parameters": ""
+    },
+    "plugins": {
+        "rsa": {
+            "env": "sandbox",
+            "clientSecret": "<pot-client-secret>",
+            "appAccessToken": "<pot-app-access-secret>"
+        }
+    }
+}

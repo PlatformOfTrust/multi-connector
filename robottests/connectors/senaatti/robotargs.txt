@@ -1,0 +1,3 @@
+--pythonpath lib
+--outputdir connectors/senaatti/result
+connectors/senaatti/connector_tests.robot

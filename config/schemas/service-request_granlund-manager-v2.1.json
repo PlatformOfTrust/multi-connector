@@ -1,0 +1,951 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "$id": "https://standards.oftrust.net/v2/Schema/DataProductOutput/ServiceRequest?v=2.1",
+    "type": "object",
+    "required": [],
+    "properties": {
+        "@context": {
+            "$id": "#/properties/@context",
+            "source": null,
+            "type": "string",
+            "const": "https://standards.oftrust.net/v2/Context/DataProductOutput/ServiceRequest/?v=2.1",
+            "title": "JSON-LD context url",
+            "description": "JSON-LD context url with terms required to understand data product content."
+        },
+        "data": {
+            "$id": "#/properties/data",
+            "source": null,
+            "type": "object",
+            "title": "Data product output",
+            "description": "Output of data product delivered to customers.",
+            "required": [],
+            "properties": {
+                "serviceRequest": {
+                    "$id": "#/properties/data/properties/serviceRequest",
+                    "source": "",
+                    "type": "array",
+                    "title": "Service request",
+                    "description": "Service request.",
+                    "items": {
+                        "$id": "#/properties/data/properties/serviceRequest/items",
+                        "source": null,
+                        "type": "object",
+                        "required": [],
+                        "properties": {
+                            "@type": {
+                                "$id": "#/properties/data/properties/serviceRequest/items/properties/@type",
+                                "source": "type",
+                                "type": "string",
+                                "title": "Identity type",
+                                "description": "Type of identity."
+                            },
+                            "idLocal": {
+                                "$id": "#/properties/data/properties/serviceRequest/items/properties/idLocal",
+                                "source": "Id",
+                                "type": "string",
+                                "title": "Local identifier",
+                                "description": "Locally given identifier."
+                            },
+                            "descriptionGeneral": {
+                                "$id": "#/properties/data/properties/serviceRequest/items/properties/descriptionGeneral",
+                                "source": "Request",
+                                "type": "string",
+                                "title": "Description",
+                                "description": "Description."
+                            },
+                            "status": {
+                                "$id": "#/properties/data/properties/serviceRequest/items/properties/status",
+                                "source": "",
+                                "type": "array",
+                                "title": "Life-cycle status",
+                                "description": "Life-cycle status.  Status name.",
+                                "items": {
+                                    "$id": "#/properties/data/properties/serviceRequest/items/properties/status/items",
+                                    "source": null,
+                                    "type": "object",
+                                    "required": [],
+                                    "properties": {
+                                        "@type": {
+                                            "$id": "#/properties/data/properties/serviceRequest/items/properties/status/items/properties/@type",
+                                            "source": "statusType",
+                                            "type": "string",
+                                            "title": "Identity type",
+                                            "description": "Type of identity."
+                                        },
+                                        "name": {
+                                            "$id": "#/properties/data/properties/serviceRequest/items/properties/status/items/properties/name",
+                                            "source": "Phase",
+                                            "type": "string",
+                                            "title": "Name",
+                                            "description": "Name."
+                                        }
+                                    }
+                                }
+                            },
+                            "statusCode": {
+                                "$id": "#/properties/data/properties/serviceRequest/items/properties/statusCode",
+                                "source": "",
+                                "type": "array",
+                                "title": "Life-cycle status code",
+                                "description": "Life-cycle status code.",
+                                "items": {
+                                    "$id": "#/properties/data/properties/serviceRequest/items/properties/statusCode/items",
+                                    "source": null,
+                                    "type": "object",
+                                    "required": [],
+                                    "properties": {
+                                        "@type": {
+                                            "$id": "#/properties/data/properties/serviceRequest/items/properties/statusCode/items/properties/@type",
+                                            "source": "statusCodeType",
+                                            "type": "string",
+                                            "title": "Identity type",
+                                            "description": "Type of identity."
+                                        },
+                                        "statusCode": {
+                                            "$id": "#/properties/data/properties/serviceRequest/items/properties/statusCode/items/properties/statusCode",
+                                            "source": "PhaseValue",
+                                            "type": "string",
+                                            "title": "Life-cycle status code",
+                                            "description": "Life-cycle status code."
+                                        }
+                                    }
+                                }
+                            },
+                            "categorizationLocal": {
+                                "$id": "#/properties/data/properties/serviceRequest/items/properties/categorizationLocal",
+                                "source": "AdviceType.Name",
+                                "type": "string",
+                                "title": "Local category",
+                                "description": "Categorisation name given locally."
+                            },
+                            "categorizationLocalCode": {
+                                "$id": "#/properties/data/properties/serviceRequest/items/properties/categorizationLocalCode",
+                                "source": null,
+                                "type": "string",
+                                "title": "Local categorization code",
+                                "description": "Locally assigned categorization class code."
+                            },
+                            "categorizationLocalPriorityCode": {
+                                "$id": "#/properties/data/properties/serviceRequest/items/properties/categorizationLocalPriorityCode",
+                                "source": null,
+                                "type": "string",
+                                "title": "Local priority code",
+                                "description": "Locally assigned prioritization code."
+                            },
+                            "categorizationLocalPriority": {
+                                "$id": "#/properties/data/properties/serviceRequest/items/properties/categorizationLocalPriority",
+                                "source": null,
+                                "type": "string",
+                                "title": "Priority class",
+                                "description": "Priority based categorization given locally."
+                            },
+                            "categorizationLocalPriorityOrder": {
+                                "$id": "#/properties/data/properties/serviceRequest/items/properties/categorizationLocalPriorityOrder",
+                                "source": null,
+                                "type": "string",
+                                "title": "Local priority order",
+                                "description": "Locally assigned priority order."
+                            },
+                            "canStart": {
+                                "$id": "#/properties/data/properties/serviceRequest/items/properties/canStart",
+                                "source": null,
+                                "type": "string",
+                                "title": "Earliest start time",
+                                "description": "When something can be started.  Typically used when something is scheduled to happen within certain period."
+                            },
+                            "canEnd": {
+                                "$id": "#/properties/data/properties/serviceRequest/items/properties/canEnd",
+                                "source": null,
+                                "type": "string",
+                                "title": "Can end",
+                                "description": "Can end."
+                            },
+                            "created": {
+                                "$id": "#/properties/data/properties/serviceRequest/items/properties/created",
+                                "source": null,
+                                "type": "string",
+                                "title": "Created",
+                                "description": "Creation time."
+                            },
+                            "updated": {
+                                "$id": "#/properties/data/properties/serviceRequest/items/properties/updated",
+                                "source": "LatestHistoryItem.UpdatedDate",
+                                "type": "string",
+                                "title": "Updated",
+                                "description": "Updated time."
+                            },
+                            "duration": {
+                                "$id": "#/properties/data/properties/serviceRequest/items/properties/duration",
+                                "source": "RequestTimeSpan",
+                                "type": "string",
+                                "title": "Duration",
+                                "description": "Duration (time)."
+                            },
+                            "costLocation": {
+                                "$id": "#/properties/data/properties/serviceRequest/items/properties/costLocation",
+                                "type": "string",
+                                "title": "Cost location",
+                                "description": "Cost location."
+                            },
+                            "parentObject": {
+                                "$id": "#/properties/data/properties/serviceRequest/items/properties/parentObject",
+                                "source": null,
+                                "type": "object",
+                                "title": "Parent object",
+                                "description": "Parent object (typically same class).",
+                                "required": [],
+                                "properties": {
+                                    "@type": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/parentObject/properties/@type",
+                                        "source": "parentObjectType",
+                                        "type": "string",
+                                        "title": "Identity type",
+                                        "description": "Type of identity."
+                                    },
+                                    "idLocal": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/parentObject/properties/idLocal",
+                                        "source": "ParentId",
+                                        "type": "string",
+                                        "title": "Local identifier",
+                                        "description": "Locally given identifier."
+                                    }
+                                }
+                            },
+                            "targetObject": {
+                                "$id": "#/properties/data/properties/serviceRequest/items/properties/targetObject",
+                                "source": null,
+                                "type": "object",
+                                "title": "Target object",
+                                "description": "Target object.",
+                                "required": [],
+                                "properties": {
+                                    "@type": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/targetObject/properties/@type",
+                                        "value": "Identity",
+                                        "type": "string",
+                                        "title": "Identity type",
+                                        "description": "Type of identity."
+                                    },
+                                    "idLocal": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/targetObject/properties/idLocal",
+                                        "source": "CodedObject.Id",
+                                        "type": "string",
+                                        "title": "Local identifier",
+                                        "description": "Locally given identifier."
+                                    },
+                                    "idExternal": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/targetObject/properties/idExternal",
+                                        "source": "CodedObject.ExternalSystemId",
+                                        "type": "string",
+                                        "title": "External system Id",
+                                        "description": "External system identifier."
+                                    },
+                                    "name": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/targetObject/properties/name",
+                                        "source": "CodedObject.Name",
+                                        "type": "string",
+                                        "title": "Name",
+                                        "description": "Name."
+                                    },
+                                    "codeLong": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/targetObject/properties/codeLong",
+                                        "source": "CodedObject.LongCode",
+                                        "type": "string",
+                                        "title": "Long Code",
+                                        "description": "Long version of code type identifier."
+                                    },
+                                    "nameLong": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/targetObject/properties/nameLong",
+                                        "source": "CodedObject.FullName",
+                                        "type": "string",
+                                        "title": "Long name",
+                                        "description": "Long name."
+                                    },
+                                    "nameCombined": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/targetObject/properties/nameCombined",
+                                        "source": "CodedObject.CombinedName",
+                                        "type": "string",
+                                        "title": "Combined name",
+                                        "description": "Combined name which is formed using other names and/or codes."
+                                    },
+                                    "nameLabel": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/targetObject/properties/nameLabel",
+                                        "source": "CodedObject.DisplayName",
+                                        "type": "string",
+                                        "title": "Label name",
+                                        "description": "Label name."
+                                    },
+                                    "categorizationName": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/targetObject/properties/categorizationName",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Category name",
+                                        "description": "Name of the categorization class/type."
+                                    },
+                                    "categorizationCode": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/targetObject/properties/categorizationCode",
+                                        "source": "CodedObject.TypeId",
+                                        "type": "string",
+                                        "title": "Category code",
+                                        "description": "Code of the categorization class/type."
+                                    },
+                                    "position1": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/targetObject/properties/position1",
+                                        "source": "CodedObject.Position1",
+                                        "type": "string",
+                                        "title": "Position 1",
+                                        "description": "Information which describes position."
+                                    },
+                                    "position2": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/targetObject/properties/position2",
+                                        "source": "CodedObject.Position2",
+                                        "type": "string",
+                                        "title": "Position 2",
+                                        "description": "Information which describes position."
+                                    }
+                                }
+                            },
+                            "location": {
+                                "$id": "#/properties/data/properties/serviceRequest/items/properties/location",
+                                "source": null,
+                                "type": "object",
+                                "title": "Location",
+                                "description": "Property category for location related information.",
+                                "required": [],
+                                "properties": {
+                                    "@type": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/location/properties/@type",
+                                        "source": "locationType",
+                                        "type": "string",
+                                        "title": "Identity type",
+                                        "description": "Type of identity."
+                                    },
+                                    "streetAddressLine1": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/location/properties/streetAddressLine1",
+                                        "source": "StreetAddress",
+                                        "type": "string",
+                                        "title": "Street address line 1",
+                                        "description": "Street address line 1."
+                                    },
+                                    "idLocal": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/location/properties/idLocal",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Local identifier",
+                                        "description": "Locally given identifier."
+                                    },
+                                    "space": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/location/properties/space",
+                                        "source": null,
+                                        "type": "object",
+                                        "title": "Space",
+                                        "description": "The dimensions of height, depth, and width within which all things exist and move.",
+                                        "required": [],
+                                        "properties": {
+                                            "@type": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/location/properties/space/properties/@type",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Identity type",
+                                                "description": "Type of identity."
+                                            },
+                                            "idLocal": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/location/properties/space/properties/idLocal",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Local identifier",
+                                                "description": "Locally given identifier."
+                                            },
+                                            "name": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/location/properties/space/properties/name",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Name",
+                                                "description": "Name."
+                                            }
+                                        }
+                                    },
+                                    "organization": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/location/properties/organization",
+                                        "source": null,
+                                        "type": "object",
+                                        "title": "Organization",
+                                        "description": "An organisation is an entity comprising multiple people, such as a company, institution, association, foundation or cooperative, and which has a particular purpose.",
+                                        "required": [],
+                                        "properties": {
+                                            "@type": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/location/properties/organization/properties/@type",
+                                                "source": "locationOrganizationType",
+                                                "type": "string",
+                                                "title": "Identity type",
+                                                "description": "Type of identity."
+                                            },
+                                            "name": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/location/properties/organization/properties/name",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Name",
+                                                "description": "Name."
+                                            },
+                                            "idLocal": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/location/properties/organization/properties/idLocal",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Local identifier",
+                                                "description": "Locally given identifier."
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "creator": {
+                                "$id": "#/properties/data/properties/serviceRequest/items/properties/creator",
+                                "source": null,
+                                "type": "object",
+                                "title": "Creator",
+                                "description": "Party who has created the file or information.",
+                                "required": [],
+                                "properties": {
+                                    "@type": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/creator/properties/@type",
+                                        "source": "creatorType",
+                                        "type": "string",
+                                        "title": "Identity type",
+                                        "description": "Type of identity."
+                                    },
+                                    "idLocal": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/creator/properties/idLocal",
+                                        "source": "RequestHandler",
+                                        "type": "string",
+                                        "title": "Local identifier",
+                                        "description": "Locally given identifier."
+                                    },
+                                    "name": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/creator/properties/name",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Name",
+                                        "description": "Name."
+                                    }
+                                }
+                            },
+                            "requestor": {
+                                "$id": "#/properties/data/properties/serviceRequest/items/properties/requestor",
+                                "source": null,
+                                "type": "object",
+                                "title": "Requestor",
+                                "description": "Requestor is one who, or that which, makes a request.",
+                                "required": [],
+                                "properties": {
+                                    "@type": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/requestor/properties/@type",
+                                        "source": "requestorType",
+                                        "type": "string",
+                                        "title": "Identity type",
+                                        "description": "Type of identity."
+                                    },
+                                    "idLocal": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/requestor/properties/idLocal",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Local identifier",
+                                        "description": "Locally given identifier."
+                                    },
+                                    "name": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/requestor/properties/name",
+                                        "source": "CreatorName",
+                                        "type": "string",
+                                        "title": "Name",
+                                        "description": "Name."
+                                    },
+                                    "organization": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/requestor/properties/organization",
+                                        "source": null,
+                                        "type": "object",
+                                        "title": "Organisation",
+                                        "description": "An organisation is an entity comprising multiple people, such as a company, institution, association, foundation or cooperative, and which has a particular purpose.",
+                                        "required": [],
+                                        "properties": {
+                                            "@type": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/requestor/properties/organization/properties/@type",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Identity type",
+                                                "description": "Type of identity."
+                                            },
+                                            "name": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/requestor/properties/organization/properties/name",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Name",
+                                                "description": "Name."
+                                            }
+                                        }
+                                    },
+                                    "contact": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/requestor/properties/contact",
+                                        "source": null,
+                                        "type": "object",
+                                        "title": "Contact",
+                                        "description": "Contact.",
+                                        "required": [],
+                                        "properties": {
+                                            "@type": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/requestor/properties/contact/properties/@type",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Identity type",
+                                                "description": "Type of identity."
+                                            },
+                                            "streetAddressLine1": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/requestor/properties/contact/properties/streetAddressLine1",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Street address line 1",
+                                                "description": "Street address line 1."
+                                            },
+                                            "postalCode": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/requestor/properties/contact/properties/postalCode",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Postal code",
+                                                "description": "Postal code."
+                                            },
+                                            "postalArea": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/requestor/properties/contact/properties/postalArea",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Postal area",
+                                                "description": "Postal area."
+                                            },
+                                            "phoneNumber": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/requestor/properties/contact/properties/phoneNumber",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Phone number",
+                                                "description": "Phone number."
+                                            },
+                                            "phoneNumber2": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/requestor/properties/contact/properties/phoneNumber2",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Phone number 2",
+                                                "description": "Phone number 2."
+                                            },
+                                            "addressEmail": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/requestor/properties/contact/properties/addressEmail",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Address email",
+                                                "description": "Address email."
+                                            },
+                                            "security": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/requestor/properties/contact/properties/security",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Security level",
+                                                "description": "How data source security is confirmed."
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "requestHandler": {
+                                "$id": "#/properties/data/properties/serviceRequest/items/properties/requestHandler",
+                                "source": null,
+                                "type": "object",
+                                "title": "Request handler",
+                                "description": "Request handler (ex. handling service request).",
+                                "required": [],
+                                "properties": {
+                                    "@type": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/requestHandler/properties/@type",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Identity type",
+                                        "description": "Type of identity."
+                                    },
+                                    "idLocal": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/requestHandler/properties/idLocal",
+                                        "source": "ServiceArea.Id",
+                                        "type": "string",
+                                        "title": "Local identifier",
+                                        "description": "Locally given identifier."
+                                    },
+                                    "name": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/requestHandler/properties/name",
+                                        "source": "ServiceArea.Name",
+                                        "type": "string",
+                                        "title": "Name",
+                                        "description": "Name."
+                                    }
+                                }
+                            },
+                            "orderer": {
+                                "$id": "#/properties/data/properties/serviceRequest/items/properties/orderer",
+                                "source": null,
+                                "type": "object",
+                                "title": "Orderer",
+                                "description": "Party who makes order.",
+                                "required": [],
+                                "properties": {
+                                    "@type": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/orderer/properties/@type",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Identity type",
+                                        "description": "Type of identity."
+                                    },
+                                    "idLocal": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/orderer/properties/idLocal",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Local identifier",
+                                        "description": "Locally given identifier."
+                                    },
+                                    "name": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/orderer/properties/name",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Name",
+                                        "description": "Name."
+                                    },
+                                    "contact": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/orderer/properties/contact",
+                                        "source": null,
+                                        "type": "object",
+                                        "title": "Contact",
+                                        "description": "Contact.",
+                                        "required": [],
+                                        "properties": {
+                                            "@type": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/orderer/properties/contact/properties/@type",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Identity type",
+                                                "description": "Type of identity."
+                                            },
+                                            "streetAddressLine1": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/orderer/properties/contact/properties/streetAddressLine1",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Street address line 1",
+                                                "description": "Street address line 1."
+                                            },
+                                            "postalCode": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/orderer/properties/contact/properties/postalCode",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Postal code",
+                                                "description": "Postal code."
+                                            },
+                                            "postalArea": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/orderer/properties/contact/properties/postalArea",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Postal area",
+                                                "description": "Postal area."
+                                            },
+                                            "phoneNumber": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/orderer/properties/contact/properties/phoneNumber",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Phone number",
+                                                "description": "Phone number."
+                                            },
+                                            "phoneNumber2": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/orderer/properties/contact/properties/phoneNumber2",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Phone number 2",
+                                                "description": "Phone number 2."
+                                            },
+                                            "addressEmail": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/orderer/properties/contact/properties/addressEmail",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Address email",
+                                                "description": "Address email."
+                                            },
+                                            "security": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/orderer/properties/contact/properties/security",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Security level",
+                                                "description": "How data source security is confirmed."
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "payer": {
+                                "$id": "#/properties/data/properties/serviceRequest/items/properties/payer",
+                                "source": null,
+                                "type": "object",
+                                "title": "Payer",
+                                "description": "Payer.",
+                                "required": [],
+                                "properties": {
+                                    "@type": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/payer/properties/@type",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Identity type",
+                                        "description": "Type of identity."
+                                    },
+                                    "name": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/payer/properties/name",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Name",
+                                        "description": "Name."
+                                    },
+                                    "idLocal": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/payer/properties/idLocal",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Local identifier",
+                                        "description": "Locally given identifier."
+                                    },
+                                    "contact": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/payer/properties/contact",
+                                        "source": null,
+                                        "type": "object",
+                                        "title": "Contact",
+                                        "description": "Contact.",
+                                        "required": [],
+                                        "properties": {
+                                            "@type": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/payer/properties/contact/properties/@type",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Identity type",
+                                                "description": "Type of identity."
+                                            },
+                                            "streetAddressLine1": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/payer/properties/contact/properties/streetAddressLine1",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Street address line 1",
+                                                "description": "Street address line 1."
+                                            },
+                                            "postalCode": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/payer/properties/contact/properties/postalCode",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Postal code",
+                                                "description": "Postal code."
+                                            },
+                                            "postalArea": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/payer/properties/contact/properties/postalArea",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Postal area",
+                                                "description": "Postal area."
+                                            },
+                                            "phoneNumber": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/payer/properties/contact/properties/phoneNumber",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Phone number",
+                                                "description": "Phone number."
+                                            },
+                                            "phoneNumber2": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/payer/properties/contact/properties/phoneNumber2",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Phone number 2",
+                                                "description": "Phone number 2."
+                                            },
+                                            "addressEmail": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/payer/properties/contact/properties/addressEmail",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Address email",
+                                                "description": "Address email."
+                                            },
+                                            "security": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/payer/properties/contact/properties/security",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Security level",
+                                                "description": "How data source security is confirmed."
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "process": {
+                                "$id": "#/properties/data/properties/serviceRequest/items/properties/process",
+                                "source": null,
+                                "type": "object",
+                                "title": "Process",
+                                "description": "Process.",
+                                "required": [],
+                                "properties": {
+                                    "@type": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/process/properties/@type",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Identity type",
+                                        "description": "Type of identity."
+                                    },
+                                    "name": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/process/properties/name",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Name",
+                                        "description": "Name."
+                                    },
+                                    "descriptionGeneral": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/process/properties/descriptionGeneral",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Description",
+                                        "description": "Description."
+                                    },
+                                    "additionalInformation": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/process/properties/additionalInformation",
+                                        "source": "LatestHistoryItem.Value",
+                                        "type": "string",
+                                        "title": "Additional information",
+                                        "description": "Additional information."
+                                    },
+                                    "travelKilometers": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/process/properties/travelKilometers",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Travel kilometers",
+                                        "description": "Kilometers traveled."
+                                    },
+                                    "costEstimation": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/process/properties/costEstimation",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Cost estimation",
+                                        "description": "Cost estimation."
+                                    },
+                                    "refundAmount": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/process/properties/refundAmount",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Refund amount",
+                                        "description": "Refund amount."
+                                    },
+                                    "mustDone": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/process/properties/mustDone",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Must done",
+                                        "description": "Must done."
+                                    },
+                                    "contact": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/process/properties/contact",
+                                        "source": null,
+                                        "type": "object",
+                                        "title": "Contact",
+                                        "description": "Contact.",
+                                        "required": [],
+                                        "properties": {
+                                            "@type": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/process/properties/contact/properties/@type",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Identity type",
+                                                "description": "Type of identity."
+                                            },
+                                            "name": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/process/properties/contact/properties/name",
+                                                "source": "LatestHistoryItem.UpdatedByName",
+                                                "type": "string",
+                                                "title": "Name",
+                                                "description": "Name."
+                                            },
+                                            "phoneNumber": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/process/properties/contact/properties/phoneNumber",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Phone number",
+                                                "description": "Phone number."
+                                            }
+                                        }
+                                    },
+                                    "executor": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/process/properties/executor",
+                                        "source": null,
+                                        "type": "array",
+                                        "title": "Process executor",
+                                        "description": "Executor of the process (source of the data).",
+                                        "items": {
+                                            "$id": "#/properties/data/properties/serviceRequest/items/properties/process/properties/executor/items",
+                                            "source": null,
+                                            "type": "object",
+                                            "required": [],
+                                            "properties": {
+                                                "@type": {
+                                                    "$id": "#/properties/data/properties/serviceRequest/items/properties/process/properties/executor/items/properties/@type",
+                                                    "source": null,
+                                                    "type": "string",
+                                                    "title": "Identity type",
+                                                    "description": "Type of identity."
+                                                },
+                                                "name": {
+                                                    "$id": "#/properties/data/properties/serviceRequest/items/properties/process/properties/executor/items/properties/name",
+                                                    "source": null,
+                                                    "type": "string",
+                                                    "title": "Name",
+                                                    "description": "Name."
+                                                },
+                                                "idLocal": {
+                                                    "$id": "#/properties/data/properties/serviceRequest/items/properties/process/properties/executor/items/properties/idLocal",
+                                                    "source": "LatestHistoryItem.RequestHandler",
+                                                    "type": "string",
+                                                    "title": "Local identifier",
+                                                    "description": "Locally given identifier."
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "signature": {
+            "$id": "#/properties/signature",
+            "type": "object",
+            "title": "Signature",
+            "description": "Signature.",
+            "required": [],
+            "properties": {
+                "type": {
+                    "$id": "#/properties/signature/properties/type",
+                    "type": "string",
+                    "title": "Type",
+                    "description": "Type."
+                },
+                "created": {
+                    "$id": "#/properties/signature/properties/created",
+                    "type": "string",
+                    "title": "Created",
+                    "description": "Creation time."
+                },
+                "creator": {
+                    "$id": "#/properties/signature/properties/creator",
+                    "type": "string",
+                    "title": "Creator",
+                    "description": "Party who has created the file or information."
+                },
+                "signatureValue": {
+                    "$id": "#/properties/signature/properties/signatureValue",
+                    "type": "string",
+                    "title": "Signature value",
+                    "description": "Signature value."
+                }
+            }
+        }
+    },
+    "version": "2.1"
+}

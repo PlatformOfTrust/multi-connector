@@ -7,6 +7,7 @@ const winston = require('../../logger.js');
 const rp = require('request-promise');
 const req = require('request');
 const https = require('https');
+const http = require('http');
 const fs = require('fs');
 
 /**
@@ -346,7 +347,11 @@ const downloadFile = async (url, folder = 'unspecified') => {
         const downloadPath = dir  + '/' + filename;
         return new Promise(resolve => {
             const file = fs.createWriteStream(downloadPath);
-            https.get(url.replace('http://', 'https://'), function (response) {
+            let protocol = http;
+            if (url.includes('https://')) {
+                protocol = https;
+            }
+            protocol.get(url, function (response) {
                 response.pipe(file);
                 file.on('finish', function () {
                     file.close();
@@ -448,28 +453,48 @@ const template = async (config, template) => {
         }
 
         // TODO: Get order from CALS by WP, which is in the end of the filename.
-        // https://c4-prod-apim.azure-api.net/pot/instances/{instanceId}/purchaseorders/{purchaseOrderId}
+        // .../instances/{instanceId}/purchaseorders/{purchaseOrderId}
         // Query CALS connector through broker API.
 
         const domain = template.authConfig.url;
         const headers = template.authConfig.headers;
         const originalFilename = template.parameters.targetObject.name;
         const contentType = template.parameters.targetObject['categorizationInternetMediaType'];
-        if (!contentType) {
-            return Promise.reject(new Error('Missing field categorizationInternetMediaType.'));
-        }
 
         // TODO: Testing.
         const qualityDocumentName = originalFilename;
-        const projectCode = '123124';
+        let projectCode = '123124';
         const workSectionCode = '2.1';
         const workActivityName = 'CE-dokumentit';
 
-        /** Create document and fetch it */
+        // Pick project number from document.
+        try {
+            projectCode = template.parameters.targetObject.project.idLocal;
+            // winston.log('info', 'Project: ' + JSON.stringify(template.parameters.targetObject.project));
+        } catch (e) {
+            console.log(e.message);
+        }
+
         const projectsUrl = domain + '/v2/projects?projectCode=' + projectCode;
         const projects = await request('GET', projectsUrl, headers);
         const project = projects.body.results.find(p => p.projectCode === projectCode);
 
+        if (!contentType) {
+            // Fetch documents.
+            if (project) {
+                template.authConfig.path = '/v2/qualityDocuments?projectCode=' + projectCode;
+            } else if (projectCode) {
+                template.authConfig.path = '/v2/qualityDocuments?projectId=' + projectCode;
+            } else {
+                template.authConfig.path = '/v2/qualityDocuments';
+            }
+
+            template.dataObjects = ['results'];
+            return template;
+            // return Promise.reject(new Error('Missing field categorizationInternetMediaType.'));
+        }
+
+        /** Create document and fetch it */
         const matricesUrl = domain + '/v2/projects/' + project.id + '/matrices';
         const matrices = await request('GET', matricesUrl, headers);
         const matrix = matrices.body.results.find(p => p.projectId === project.id);

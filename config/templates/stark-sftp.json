@@ -22,7 +22,7 @@
     },
     "generalConfig": {
         "hardwareId": {
-            "dataObjectProperty": "name"
+            "dataObjectProperty": "idLocal"
         },
         "sourceName": {
             "dataObjectProperty": ""

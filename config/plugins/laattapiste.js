@@ -60,6 +60,10 @@ const OrderInformationSchema = {
                                     'source': 'idLocal',
                                     'type': 'string',
                                 },
+                                'OrderDate': {
+                                    'source': 'ordered',
+                                    'type': 'string',
+                                },
                                 'RequestedDeliveryDate': {
                                     'source': 'deliveryRequired',
                                     'type': 'string',
@@ -75,6 +79,36 @@ const OrderInformationSchema = {
                                 'FreeText': {
                                     'source': 'descriptionGeneral',
                                     'type': 'string',
+                                },
+                                'Attributes': {
+                                    'source': null,
+                                    'type': 'object',
+                                    'properties': {
+                                        'Attribute': {
+                                            'source': 'attributes',
+                                            'type': 'array',
+                                            'items': {
+                                                'source': null,
+                                                'type': 'object',
+                                                'properties': {
+                                                    '$': {
+                                                        'source': null,
+                                                        'type': 'object',
+                                                        'properties': {
+                                                            'name': {
+                                                                'source': 'name',
+                                                                'type': 'string',
+                                                            },
+                                                        },
+                                                    },
+                                                    '_': {
+                                                        'source': 'value',
+                                                        'type': 'string',
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
                                 },
                                 'Parties': {
                                     'source': null,
@@ -242,7 +276,7 @@ const OrderInformationSchema = {
                                                 'type': 'string',
                                             },
                                             'ItemEAN': {
-                                                'source': 'product.idLocal',
+                                                'source': 'product.gtin',
                                                 'type': 'string',
                                             },
                                             'ItemIDSeller': {
@@ -286,18 +320,36 @@ const json2xml = (input = {}) => {
     input.customer.contactInformation.postalCode = input.customer.contactInformation.postalCode || '';
     input.customer.contactInformation.postalArea = input.customer.contactInformation.postalArea || '';
     input.customer.contactInformation.country = input.customer.contactInformation.country || '';
+    input.attributes = [
+        {name: 'purchaseOrderQRC', value: _.get(input, 'codeQr')},
+        {name: 'workPackage', value: _.get(input, 'addressShipping.process.idLocal')},
+        {name: 'workPackageLocation', value: _.get(input, 'addressShipping.nameArea')},
+        {name: 'workPackageLocationName', value: _.get(input, 'addressShipping.location.name')},
+        {name: 'workPackageAreaName', value: _.get(input, 'addressShipping.location.zone')},
+        {name: 'workPackageInventoryLocationName', value: _.get(input, 'addressShipping.location.space')},
+        {name: 'workPackagePhase', value: _.get(input, 'addressShipping.process.name')},
+        {name: 'workPackageOperator', value: _.get(input, 'addressShipping.contact.name')},
+        {name: 'workPackageOperatorContactName', value: _.get(input, 'addressShipping.contact.contactInformation.name')},
+        {name: 'workPackageOperatorContactTelephone', value: _.get(input, 'addressShipping.contact.contactInformation.phoneNumber')},
+    ];
 
-    const output = transformer.transform({
-        ...input,
-        '$': {
-            'xsi:noNamespaceSchemaLocation': 'SalesOrderInhouse%20(ID%209326).xsd',
-            'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
-        },
-        emptyString: '',
-    }, OrderInformationSchema);
+    let output;
+    let xml;
+    try {
+        output = transformer.transform({
+            ...input,
+            '$': {
+                'xsi:noNamespaceSchemaLocation': 'SalesOrderInhouse%20(ID%209326).xsd',
+                'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+            },
+            emptyString: '',
+        }, OrderInformationSchema);
+        const builder = new xml2js.Builder();
+        xml = builder.buildObject(output);
+    } catch (err) {
+        return err;
+    }
 
-    const builder = new xml2js.Builder();
-    const xml = builder.buildObject(output);
     return xml;
 };
 
@@ -345,6 +397,11 @@ const template = async (config, template) => {
                 config.static.url = config.static.endpoint;
 
                 const xml = json2xml(result[id]);
+                if (xml instanceof Error) {
+                    xml.message = 'Failed to write XML file with error "' + xml.message + '"';
+                    return Promise.reject(xml);
+                }
+
                 const path = '/' + result[id].idSystemLocal + '.xml';
                 const to = DOWNLOAD_DIR + template.productCode + (template.authConfig.fromPath || '/from') + path;
                 await sftp.checkDir(to);

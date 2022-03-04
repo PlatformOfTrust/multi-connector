@@ -3,7 +3,6 @@
  * Module dependencies.
  */
 const winston = require('../../logger.js');
-const moment = require('moment');
 const _ = require('lodash');
 
 /**
@@ -54,7 +53,11 @@ function getValueFromResponse (config, path, object, key) {
             return _.get(object, config[key].dataObjectProperty);
         }
         if (config[key].pathIndex) {
-            return path.split('/')[config[key].pathIndex];
+            if (Array.isArray(config[key].pathIndex)) {
+                return config[key].pathIndex.map(index => path.split('/')[index]).join('/');
+            } else {
+                return path.split('/')[config[key].pathIndex];
+            }
         }
     }
     return undefined;
@@ -121,11 +124,11 @@ const handleData = async (config, path, index, data) => {
         for (let j = 0; j < dataObjects.length; j++) {
 
             // Look for hardwareId.
-            const hardwareId = getValueFromResponse(config.generalConfig, path, dataObjects[j], 'hardwareId');
+            let hardwareId = getValueFromResponse(config.generalConfig, path, dataObjects[j], 'hardwareId');
 
             // Look for timestamp.
             let timestamp = getValueFromResponse(config.generalConfig, path, dataObjects[j], 'timestamp');
-            if (!timestamp) timestamp = moment.now();
+            if (!timestamp) timestamp = new Date();
 
             // Map data from the response data.
             const measurement = {
@@ -137,6 +140,9 @@ const handleData = async (config, path, index, data) => {
             if (measurement.timestamp.getFullYear() === 1970) {
                 measurement.timestamp = new Date(timestamp * 1000);
             }
+
+            // Convert timestamp to ISO-format.
+            measurement.timestamp = measurement.timestamp.toISOString();
 
             // Map data.
             _.forIn(config.dataPropertyMappings, function (value, key) {
@@ -165,6 +171,32 @@ const handleData = async (config, path, index, data) => {
 
             // Skip to next resource if the data did not pass the parsing operation.
             if (Object.keys(measurement.data).length === 0) continue;
+            let idObjects = [];
+            let dataType;
+
+            try {
+                // Use parameter id as fallback.
+                idObjects =
+                    _.get(config, 'parameters.ids') ||
+                    _.get(config, 'parameters.targetObject') || [];
+                if (!hardwareId) {
+                    const ids = (Array.isArray(idObjects) ? idObjects : [idObjects])
+                        .map(object => object.id || object.idLocal || object);
+                    hardwareId = ids[index] || index;
+                }
+            } catch (e) {
+                hardwareId = index;
+            }
+
+            try {
+                // Use type from id object.
+                const match = idObjects.find(entry => (entry.id || entry.idLocal || entry) === hardwareId);
+                if (Object.hasOwnProperty.call(match || {}, 'type')) {
+                    dataType = match.type;
+                }
+            } catch (e) {
+                dataType = null;
+            }
 
             const item = {
                 [keys.id]: hardwareId,
@@ -173,13 +205,40 @@ const handleData = async (config, path, index, data) => {
 
             // Format data
             for (let d = 0; d < Object.entries(measurement.data).length; d++) {
+                let type = dataType || Object.entries(measurement.data)[d][0];
+                try {
+                    // Select best match from array of types.
+                    if (type.split(',').length > 1) {
+                        const match = type.split(',').map(t => ({type: t, score: _.uniq(t.split('')
+                            .filter(value => hardwareId.split('').includes(value.toUpperCase()))).length}))
+                            .sort((a, b) => b.score - a.score);
+                        type = match[0].type;
+                    }
+                } catch (err) {
+                    console.log(err.message);
+                }
+
+                // Filter data types.
+                if (Object.hasOwnProperty.call(config, 'parameters')) {
+                    if (Object.hasOwnProperty.call(config.parameters, 'dataTypes')) {
+                        let types = config.parameters.dataTypes;
+                        types = Array.isArray(types) ? types : [types];
+                        if (!types.includes(type) && types.length > 0) {
+                            continue;
+                        }
+                    }
+                }
+
                 item[keys.data].push({
-                    [keys.type]: Object.entries(measurement.data)[d][0],
+                    [keys.type]: type,
                     [keys.timestamp]: measurement.timestamp,
                     [keys.value]: Object.entries(measurement.data)[d][1],
                 });
             }
-            measurements.push(item);
+
+            if (item[keys.data].length > 0) {
+                measurements.push(item);
+            }
         }
     }
 

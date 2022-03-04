@@ -2,16 +2,16 @@
   "template": "office365",
   "static": {
     "api": "calendarview",
+    "scope": "Calendars.Read%20User.Read",
     "clientId": "<client-id>",
     "clientSecret": "<client-secret>",
     "type": "event"
   },
   "dynamic": {
-    "authConfig.path": "ids"
+    "authConfig.path": "targetObject"
   },
   "request": {
-    "ids": [
-      "<calendar-id>"
-    ]
+    "period": "<period>",
+    "targetObject": "<calendar-id>"
   }
 }

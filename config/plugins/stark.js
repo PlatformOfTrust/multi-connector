@@ -53,7 +53,7 @@ const OrderInformationSchema = {
                     'type': 'object',
                     'properties': {
                         'C_Msg_OriginalID': {
-                            'source': 'timetamp',
+                            'source': 'timestamp',
                             'type': 'string',
                         },
                         'C_Msg_Sender': {
@@ -115,6 +115,14 @@ const OrderInformationSchema = {
                                         'source': 'idLocal',
                                         'type': 'string',
                                     },
+                                    'H_Date_Order': {
+                                        'source': 'dateOrdered',
+                                        'type': 'string',
+                                    },
+                                    'H_Time_Order': {
+                                        'source': 'timeOrdered',
+                                        'type': 'string',
+                                    },
                                     'H_Date_Order_Delivery': {
                                         'source': 'dateOrderDelivery',
                                         'type': 'string',
@@ -141,6 +149,10 @@ const OrderInformationSchema = {
                                     },
                                     'H_Ref_OrderNum': {
                                         'source': 'idLocal',
+                                        'type': 'string',
+                                    },
+                                    'H_Ref_Ship_ID': {
+                                        'source': 'codeQr',
                                         'type': 'string',
                                     },
                                     'H_BuyerParty': {
@@ -314,19 +326,19 @@ const OrderInformationSchema = {
                                                 'type': 'string',
                                             },
                                             'Contact_ID': {
-                                                'source': 'productGroup.operator.name',
+                                                'source': 'addressShipping.contact.name',
                                                 'type': 'string',
                                             },
                                             'Contact_Name': {
-                                                'source': 'productGroup.operator.contact.name',
+                                                'source': 'addressShipping.contact.contactInformation.name',
                                                 'type': 'string',
                                             },
                                             'Contact_Phone': {
-                                                'source': 'productGroup.operator.contact.phoneNumber',
+                                                'source': 'addressShipping.contact.contactInformation.phoneNumber',
                                                 'type': 'string',
                                             },
                                             'Location_Place': {
-                                                'source': 'productGroup.locationFinal.name',
+                                                'source': 'addressShipping.nameArea',
                                                 'type': 'string',
                                             },
                                             'Ref_VATNum': {
@@ -353,25 +365,17 @@ const OrderInformationSchema = {
                                             },
                                         },
                                     },
-                                    'H_Freetext_Delivery#1': {
-                                        'source': 'vendor.customer.idLocal',
-                                        'type': 'string',
-                                    },
-                                    'H_Freetext_Delivery#2': {
-                                        'source': null,
-                                        'type': 'string',
-                                    },
-                                    'H_Freetext_Delivery#3': {
-                                        'source': null,
-                                        'type': 'string',
-                                    },
-                                    'H_Freetext_Delivery#4': {
-                                        'source': null,
-                                        'type': 'string',
-                                    },
-                                    'H_Freetext_Delivery#5': {
-                                        'source': null,
-                                        'type': 'string',
+                                    'H_Freetext_Delivery': {
+                                        'source': 'additionalInformation',
+                                        'type': 'array',
+                                        'items': {
+                                            'anyOf': [
+                                                {
+                                                    'source': 'value',
+                                                    'type': 'string',
+                                                },
+                                            ],
+                                        },
                                     },
                                 },
                             },
@@ -387,7 +391,7 @@ const OrderInformationSchema = {
                                             'type': 'string',
                                         },
                                         'R_Item_Num_EAN': {
-                                            'source': 'product.idLocal',
+                                            'source': 'product.gtin',
                                             'type': 'string',
                                         },
                                         'R_Item_Num_Sup': {
@@ -417,8 +421,6 @@ const OrderInformationSchema = {
     },
 };
 
-
-
 const json2xml = (input = {}) => {
     input.externalMessageType = 'ORDERS';
     input.externalVersionType = '2x20R5B';
@@ -428,6 +430,8 @@ const json2xml = (input = {}) => {
     input.externalIdTypeConsignee = 'EDI';
 
     input.timestamp = new Date().getTime();
+    input.dateOrdered = input.ordered ? input.ordered.slice(0, 10) : new Date().toISOString().slice(0, 10);
+    input.timeOrdered = input.ordered ? input.ordered.slice(11, 19) : new Date().toISOString().slice(11, 19);
     input.dateOrderDelivery = input.deliveryRequired ? input.deliveryRequired.slice(0, 10) : '';
     input.timeOrderDelivery = input.deliveryRequired ? input.deliveryRequired.slice(11, 19) : '';
 
@@ -466,26 +470,41 @@ const json2xml = (input = {}) => {
     input.customer.contactInformation.country = input.customer.contactInformation.country || '';
 
     input.refSpecial = [
-        {type: 'WORKPACK', value: input.productGroup.idLocal},
-        {type: 'WORKPHASE', value: input.productGroup.process.name},
+        {type: 'WORKPACK', value: input.addressShipping.process.idLocal},
+        {type: 'WORKPHASE', value: input.addressShipping.process.name},
     ];
 
     input.orderLine = input.orderLine.map(o => {
-        o.unit = o.unit.toUpperCase();
+        // Not required anymore.
+        // o.unit = o.unit.toUpperCase();
         return o;
     });
 
-    const output = transformer.transform({
-        ...input,
-        '$': {
-            'xsi:noNamespaceSchemaLocation': 'TCXML-V2x20R5B.xsd',
-            'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
-        },
-        emptyString: '',
-    }, OrderInformationSchema);
+    input.additionalInformation = [
+        {value: input.vendor.customer.idLocal || ''},
+        {value: ''},
+        {value: ''},
+        {value: ''},
+        {value: ''},
+    ];
 
-    const builder = new xml2js.Builder();
-    const xml = builder.buildObject(output);
+    let output;
+    let xml;
+    try {
+        output = transformer.transform({
+            ...input,
+            '$': {
+                'xsi:noNamespaceSchemaLocation': 'TCXML-V2x20R5B.xsd',
+                'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+            },
+            emptyString: '',
+        }, OrderInformationSchema);
+        const builder = new xml2js.Builder();
+        xml = builder.buildObject(output);
+    } catch (err) {
+        return err;
+    }
+
     return xml;
 };
 
@@ -530,6 +549,11 @@ const template = async (config, template) => {
                 // winston.log('info', 'productCodeToCALSId: ' + JSON.stringify(productCodeToCALSId));
 
                 const xml = json2xml(result[id]);
+                if (xml instanceof Error) {
+                    xml.message = 'Failed to write XML file with error "' + xml.message + '"';
+                    return Promise.reject(xml);
+                }
+
                 const path = '/' + result[id].idSystemLocal + '.xml';
                 const to = DOWNLOAD_DIR + template.productCode + (template.authConfig.fromPath || '/from') + path;
                 await sftp.checkDir(to);

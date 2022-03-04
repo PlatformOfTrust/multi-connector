@@ -74,7 +74,7 @@ const downloadFiles = async (client, path, productCode) => {
                 .filter(file => path.split('/').includes(file.name));
             filename = true;
         } catch (err) {
-            winston.log('error', err.message);
+            // winston.log('error', err.message);
             return;
         }
     }
@@ -82,6 +82,9 @@ const downloadFiles = async (client, path, productCode) => {
     if (path.slice(-1) === '/') {
         path = path.slice(0, -1);
     }
+    // Skip directories.
+    files = (Array.isArray(files) ? files : [files]).filter(item => item.type !== 'd');
+
     for (let i = 0; i < files.length; i++) {
         const from = path + (filename ? '' : '/' + files[i].name);
         const to = DOWNLOAD_DIR + productCode + from;
@@ -90,6 +93,8 @@ const downloadFiles = async (client, path, productCode) => {
         try {
             // Download file.
             filePath = await client.get(from, to);
+            // Attach dir.
+            files[i].path = from;
             // Read file content.
             files[i].data = fs.readFileSync(filePath, 'base64');
         } catch (err) {
@@ -103,17 +108,37 @@ const downloadFiles = async (client, path, productCode) => {
  * Uploads a file by remote filepath.
  *
  * @param {String} client
- * @param {String} path
- * @param {String} productCode
+ * @param {String} remotePath
+ * @param {String} localPath
  * @return {String}
  */
-const uploadFile = async (client, path, productCode) => {
+const uploadFile = async (client, remotePath, localPath) => {
+    if (remotePath.slice(-1) === '/') {
+        remotePath = remotePath.slice(0, -1);
+    }
+    let upload;
+    try {
+        upload = client.put(DOWNLOAD_DIR + localPath, remotePath);
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+    return upload;
+};
+
+/**
+ * Deletes a file by remote filepath.
+ *
+ * @param {String} client
+ * @param {String} path
+ * @return {String}
+ */
+const deleteFile = async (client, path) => {
     if (path.slice(-1) === '/') {
         path = path.slice(0, -1);
     }
     let upload;
     try {
-        upload = client.put(DOWNLOAD_DIR + productCode, path);
+        upload = client.delete(path);
     } catch (err) {
         winston.log('error', err.message);
     }
@@ -125,29 +150,40 @@ const uploadFile = async (client, path, productCode) => {
  *
  * @param {Object} config
  * @param {String} productCode
+ * @param {String} clientId
  * @return {Object}
  */
-const createClient = async (config= {}, productCode) => {
-    const options = {};
+const createClient = async (config = {}, productCode, clientId = uuidv4()) => {
+    const options = {
+        port: 22,
+    };
 
     if (Object.hasOwnProperty.call(config.authConfig, 'url')) {
-        options.host = config.authConfig.url;
+        config.authConfig.url !== '${url}' ? options.host = config.authConfig.url : null;
     }
 
     if (Object.hasOwnProperty.call(config.authConfig, 'port')) {
-        options.port = Number.parseInt(config.authConfig.port);
+        config.authConfig.port !== '${port}' ? options.port = Number.parseInt(config.authConfig.port) : null;
     }
 
     if (Object.hasOwnProperty.call(config.authConfig, 'username')) {
-        options.username = config.authConfig.username;
+        config.authConfig.username !== '${username}' ? options.username = config.authConfig.username : null;
     }
 
     if (Object.hasOwnProperty.call(config.authConfig, 'password')) {
-        options.password = config.authConfig.password;
+        config.authConfig.password !== '${password}' ? options.password = config.authConfig.password : null;
+    }
+
+    if (Object.hasOwnProperty.call(config.authConfig, 'privateKey')) {
+        config.authConfig.privateKey !== '${privateKey}' ? options.privateKey = Buffer.from(config.authConfig.privateKey, 'base64') : null;
     }
 
     if (!Object.hasOwnProperty.call(clients, productCode)) {
-        clients[productCode] = new Client(productCode);
+        clients[productCode] = {};
+    }
+
+    if (!Object.hasOwnProperty.call(clients[productCode], clientId)) {
+        clients[productCode][clientId] = new Client(productCode);
     }
 
     if (Object.hasOwnProperty.call(config.authConfig, 'proxyHost')) {
@@ -172,8 +208,8 @@ const createClient = async (config= {}, productCode) => {
         }
     }
 
-    await clients[productCode].connect(options);
-    return clients[productCode];
+    await clients[productCode][clientId].connect(options);
+    return clients[productCode][clientId];
 };
 
 /**
@@ -181,10 +217,12 @@ const createClient = async (config= {}, productCode) => {
  *
  * @param {Object} config
  * @param {Array} pathArray
+ * @param {Boolean} skipHandling
  * @return {Promise}
  */
-const getData = async (config= {}, pathArray) => {
+const getData = async (config= {}, pathArray, skipHandling = false) => {
     const productCode = config.productCode || uuidv4();
+    const clientId = uuidv4();
     let toPath = config.authConfig.toPath || '';
     const items = [];
 
@@ -192,6 +230,7 @@ const getData = async (config= {}, pathArray) => {
     try {
         if (config.parameters.targetObject.content || config.parameters.targetObject.url) {
             const doc = config.parameters.targetObject;
+            const encoding = config.parameters.targetObject.categorizationEncoding || 'binary';
 
             // Fetch content.
             const url = doc.url;
@@ -202,31 +241,41 @@ const getData = async (config= {}, pathArray) => {
             const path = '/' + doc.name;
             const to = DOWNLOAD_DIR + config.productCode + (config.authConfig.fromPath || '') + path;
             await checkDir(to);
-            await fs.promises.writeFile(to, Buffer.from(content, 'binary'), 'binary');
+            await fs.promises.writeFile(to, Buffer.from(content, encoding), 'binary');
 
             // Upload file to SFTP server.
-            await sendData(config, [path]);
+            await sendData(config, [path], clientId);
             toPath = config.authConfig.fromPath || '';
         }
     } catch (err) {
         winston.log('error', err.message);
     }
 
-    const client = await createClient(config, productCode);
+    const client = await createClient(config, productCode, clientId);
     for (let p = 0; p < pathArray.length; p++) {
-        let files = await downloadFiles(client, toPath + pathArray[p], productCode);
-        if (!files) continue;
-        files = Array.isArray(files) ? files : [files];
-        for (let f = 0; f < files.length; f++) {
-            if (_.isObject(files[f])) {
-                files[f].id = files[f].name;
+        const name = pathArray[p][0] === '/' ? pathArray[p] : '/' + pathArray[p];
+        const paths = Array.isArray(toPath) ? toPath : [toPath];
+        for (let l = 0; l < paths.length; l++) {
+            let files = await downloadFiles(client, paths[l] + name, productCode);
+            if (!files) continue;
+            files = (Array.isArray(files) ? files : [files]).filter(item => item.type !== 'd');
+            for (let f = 0; f < files.length; f++) {
+                if (_.isObject(files[f])) {
+                    files[f].id = files[f].name;
+                }
+                const item = skipHandling ? files[f] : await response.handleData(config, pathArray[p], p, files[f]);
+                if (item) items.push(item);
             }
-            const item = await response.handleData(config, pathArray[p], p, files[f]);
-            if (item) items.push(item);
         }
     }
 
     await client.end();
+    if (Object.hasOwnProperty.call(clients, productCode)) {
+        delete clients[productCode][clientId];
+    }
+    if (JSON.stringify(clients[productCode] === '{}')) {
+        delete clients[productCode];
+    }
     return items;
 };
 
@@ -235,18 +284,55 @@ const getData = async (config= {}, pathArray) => {
  *
  * @param {Object} config
  * @param {Array} pathArray
+ * @param {String} clientId
  * @return {Promise}
  */
-const sendData = async (config= {}, pathArray) => {
+const sendData = async (config= {}, pathArray, clientId) => {
     const productCode = config.productCode || uuidv4();
-    const client = await createClient(config, productCode);
+    const client = await createClient(config, productCode, clientId);
 
     const items = [];
-    const fromPath = config.authConfig.fromPath || '';
+    const fromPath = (Array.isArray(config.authConfig.fromPath) ? config.authConfig.fromPath[0] : config.authConfig.fromPath) || '';
 
     for (let p = 0; p < pathArray.length; p++) {
         const item = await uploadFile(client, fromPath + pathArray[p], productCode + fromPath + pathArray[p]);
         if (item) items.push(item);
+    }
+
+    await client.end();
+    return items;
+};
+
+/**
+ * Moves received file to another path at SFTP server.
+ *
+ * @param {Object} config
+ * @param {Array} pathArray
+ * @param {String} clientId
+ * @param {String} newPath
+ * @return {Promise}
+ */
+const move = async (config= {}, pathArray, clientId, newPath = '') => {
+    const productCode = config.productCode || uuidv4();
+    const client = await createClient(config, productCode, clientId);
+
+    const items = [];
+    const toPath = (Array.isArray(config.authConfig.toPath) ? config.authConfig.toPath[0] : config.authConfig.toPath) || '';
+
+    for (let p = 0; p < pathArray.length; p++) {
+        const name = pathArray[p][0] === '/' ? pathArray[p] : '/' + pathArray[p];
+        // Upload to new path.
+        const item = await uploadFile(client, newPath + name, productCode + toPath + name);
+        try {
+            await downloadFiles(client, newPath + name, productCode);
+        } catch (err) {
+            winston.log('error', err.message);
+        }
+        // Remove from old path
+        if (item) {
+            await deleteFile(client, toPath + name);
+            items.push(item);
+        }
     }
 
     await client.end();
@@ -260,4 +346,5 @@ module.exports = {
     getData,
     sendData,
     checkDir,
+    move,
 };

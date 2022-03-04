@@ -20,10 +20,11 @@ const _ = require('lodash');
 const PLUGIN_NAME = 'c4-cals';
 const orderIdToCALSInstanceId = {};
 const orderNumberToCALSId = {};
-const materialSecondaryCodeToCALSId = {};
+const vendorMaterialCodeToCALSId = {};
 
 // Source mapping.
-const orderInformationSchema = {
+const orderInformationSchema = require('../schemas/order-information-v4_cals.json');
+const orderInformationSchema_v1 = {
     '$schema': 'http://json-schema.org/draft-06/schema#',
     '$id': 'https://standards.oftrust.net/v2/Schema/DataProductOutput/OrderInformation?v=2.0',
     'source': null,
@@ -74,6 +75,13 @@ const orderInformationSchema = {
                             'type': 'string',
                             'title': 'Local system identifier',
                             'description': 'Locally given system identifier.',
+                        },
+                        'ordered': {
+                            '$id': '#/properties/data/properties/order/properties/ordered',
+                            'source': 'purchaseOrderDateTime',
+                            'type': 'string',
+                            'title': 'Order time',
+                            'description': 'Time when order was executed.',
                         },
                         'deliveryRequired': {
                             '$id': '#/properties/data/properties/order/properties/deliveryRequired',
@@ -676,14 +684,14 @@ const orderInformationSchema = {
                                             },
                                             'idLocal': {
                                                 '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/idLocal',
-                                                'source': 'materialPrimaryCode',
+                                                'source': 'materialId',
                                                 'type': 'string',
                                                 'title': 'Local identifier',
                                                 'description': 'Locally given identifier.',
                                             },
                                             'codeProduct': {
                                                 '$id': '#/properties/data/properties/order/properties/orderLine/properties/product/properties/codeProduct',
-                                                'source': 'materialSecondaryCode',
+                                                'source': 'vendorMaterialCode',
                                                 'type': 'string',
                                                 'title': 'Product code',
                                                 'description': 'Unique product code given by manufacturer.',
@@ -697,7 +705,7 @@ const orderInformationSchema = {
                                             },
                                             'gtin': {
                                                 '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/gtin',
-                                                'source': null,
+                                                'source': 'materialGlobalTradeItemNumber',
                                                 'type': 'string',
                                                 'title': 'Gtin',
                                                 'description': 'Gtin.',
@@ -755,6 +763,7 @@ const convertFinnishDateToISOString = (input, reverse = false) => {
  */
 const handleData = function (config, id, data) {
     let result = {};
+    const key = 'order';
     try {
         for (let j = 0; j < data.length; j++) {
             const value = data[j][config.output.value];
@@ -763,41 +772,41 @@ const handleData = function (config, id, data) {
                 if (Object.hasOwnProperty.call(value, 'vendor')) {
                     // Output has already been transformed.
                     result = {
-                        order: {
+                        [key]: {
                             ...value,
                         },
                     };
                 } else {
                     // Transform raw input.
-                    value.type = 'OrderInformation';
-                    value.projectType = 'Project';
-                    value.contactType = 'Person';
-                    value.contactInformationType = 'ContactInformation';
-                    value.addressShippingType = 'ContactInformation';
-                    value.addressBillingType = 'ContactInformation';
                     value.customerType = 'Organization';
                     value.vendorType = 'Organization';
                     value.vendorCustomerType = 'Organization';
-                    value.productGroupType = 'ProductGroup';
-                    value.locationFinalType = 'Location';
-                    value.productGroupProcessType = 'Process';
-                    value.productGroupProcessOperatorType = 'LegalParty';
-                    value.productGroupProcessContactType = 'ContactInformation';
-                    value.requiredDeliveryDateTime = convertFinnishDateToISOString(new Date(value.requiredDeliveryDate + 'T' + value.requiredDeliveryTime + ':00.000Z'));
+
+                    try {
+                        value.requiredDeliveryDateTime = convertFinnishDateToISOString(new Date(value.requiredDeliveryDate + 'T' + value.requiredDeliveryTime + ':00.000Z'));
+                    } catch (err) {
+                        return new Error('Invalid requiredDeliveryDate or requiredDeliveryTime');
+                    }
+
+                    try {
+                        value.purchaseOrderDateTime = convertFinnishDateToISOString(new Date(value.purchaseOrderDate + 'T' + value.purchaseOrderTime + ':00.000Z'));
+                    } catch (err) {
+                        value.purchaseOrderDateTime = new Date().toISOString()
+                    }
 
                     try {
                         orderNumberToCALSId[value.purchaseOrderNumber] = value.purchaseOrderId;
                         orderIdToCALSInstanceId[value.purchaseOrderId] = value.instanceId;
                         for (let i = 0; i < value.purchaseOrderItems.length; i++) {
-                            if (!Object.hasOwnProperty.call(materialSecondaryCodeToCALSId, value.purchaseOrderId)) {
-                                materialSecondaryCodeToCALSId[value.purchaseOrderId] = {};
+                            if (!Object.hasOwnProperty.call(vendorMaterialCodeToCALSId, value.purchaseOrderId)) {
+                                vendorMaterialCodeToCALSId[value.purchaseOrderId] = {};
                             }
-                            materialSecondaryCodeToCALSId[value.purchaseOrderId][value.purchaseOrderItems[i].materialSecondaryCode] = value.purchaseOrderItems[i].purchaseOrderItemId;
+                            vendorMaterialCodeToCALSId[value.purchaseOrderId][value.purchaseOrderItems[i].vendorMaterialCode] = value.purchaseOrderItems[i].purchaseOrderItemId;
                             value.purchaseOrderItems[i] = {
                                 orderLineType: 'OrderLine',
                                 productType: 'Product',
                                 ...value.purchaseOrderItems[i],
-                                purchaseOrderItemNumber: i + '0',
+                                purchaseOrderItemNumber: (i + 1) + '0',
                             };
                         }
                         winston.log('info', 'Store CALS identifiers from sent order.');
@@ -817,7 +826,14 @@ const handleData = function (config, id, data) {
                 };
             }
         }
-        return result;
+        try {
+            if (Array.isArray(result[key])) {
+                result[key] = result[key][0];
+            }
+            return result;
+        } catch (err) {
+            return result;
+        }
     } catch (err) {
         winston.log('error', err.message);
         return result;
@@ -930,7 +946,6 @@ const errorResponse = async (req, res, err) => {
  */
 const controller = async (req, res) => {
     let result;
-    let host;
     try {
         /** Request header validation */
         const bearer = req.headers.authorization;
@@ -1001,8 +1016,8 @@ const controller = async (req, res) => {
             winston.log('info', 'Received trigger request from ' + (req.get('x-real-ip') || req.get('origin') || req.socket.remoteAddress));
 
             template = cache.getDoc('templates', config.template) || {};
-            host = req.get('host').split(':')[0];
-            config.connectorURL = (host === 'localhost' || net.isIP(host) ? 'http' : 'https') + '://' + req.get('host');
+            config.connectorUrl = req.connectorUrl;
+            config.publicKeyUrl = req.publicKeyUrl;
         } catch (err) {
             err.httpStatusCode = 500;
             err.message = 'Failed to handle request.';
@@ -1031,10 +1046,8 @@ const controller = async (req, res) => {
                         },
                     },
                 },
-                protocol: 'http',
-                get: function () {
-                    return config.connectorURL.replace('https://', '').replace('http://', '');
-                },
+                connectorUrl: config.connectorUrl,
+                publicKeyUrl: config.publicKeyUrl,
             };
             const resource = (req.body.entity + 's').toLowerCase();
             winston.log('info', '1. Query self with REST path /instances/' + req.body.instanceId + '/' + resource + '/${entityId}');
@@ -1063,7 +1076,14 @@ const controller = async (req, res) => {
             vendorProductCode = 'vendor-purchase-order';
             vendorProductCode = result.output.data.order.vendor.idLocal;
         } catch (err) {
-            const message = 'Could not parse vendor external id from CALS response.';
+            let message = 'Failed to parse order. Could not parse vendor external id from CALS response.';
+            if (Object.hasOwnProperty.call(result, 'output') && Object.hasOwnProperty.call(result, 'payloadKey')) {
+                if (Object.hasOwnProperty.call(result.output, result.payloadKey)) {
+                    if (result.output[result.payloadKey] instanceof Error) {
+                        message = result.output[result.payloadKey].message;
+                    }
+                }
+            }
             winston.log('error', message);
             return errorResponse(req, res, new Error(message));
         }
@@ -1099,7 +1119,7 @@ const controller = async (req, res) => {
             signature: {
                 type: 'RsaSignature2018',
                 created,
-                creator: config.connectorURL + '/translator/v1/public.key',
+                creator: config.publicKeyUrl,
                 signatureValue: rsa.generateSignature({
                     __signed__: created,
                     ...(result.output[result.payloadKey || 'data'] || {}),
@@ -1186,7 +1206,7 @@ const template = async (config, template) => {
                 const items = template.parameters.targetObject.orderLine || template.parameters.targetObject.deliveryLine || [];
 
                 // 2. Parse PurchaseOrderItems - template.parameters.targetObject.orderLine or -.deliveryLine
-                data.PurchaseOrderItems = items.map(input => {
+                data.PurchaseOrderItems = (Array.isArray(items) ? items : [items]).map(input => {
                     const output = {};
                     const root = template.parameters.targetObject;
                     // Root level delivery datetime by default.
@@ -1221,7 +1241,7 @@ const template = async (config, template) => {
 
                     // Resolve CALSId.
                     try {
-                        output.PurchaseOrderItemId = materialSecondaryCodeToCALSId[data.PurchaseOrderId][input.product.codeProduct];
+                        output.PurchaseOrderItemId = vendorMaterialCodeToCALSId[data.PurchaseOrderId][input.product.codeProduct];
                     } catch (e) {
                         output.PurchaseOrderItemId = input.idSystemLocal;
                     }
@@ -1245,7 +1265,7 @@ const template = async (config, template) => {
                     if (!output.PurchaseOrderItemId) {
                         // Attach meta.
                         if (Object.hasOwnProperty.call(input, 'product')) {
-                            output.materialSecondaryCode = input.product.codeProduct;
+                            output.vendorMaterialCode = input.product.codeProduct;
                             output.materialName = input.product.name;
                         }
                     }
@@ -1273,7 +1293,8 @@ const template = async (config, template) => {
                     return Promise.reject(new Error('Could not resolve CALS instance ID. Resending the order from CALS is required.'));
                 }
 
-                config.static.url = 'https://c4-prod-apim.azure-api.net/pot/instances/' + data.InstanceId + '/confirmpurchaseorder';
+                const url = template.authConfig.url;
+                config.static.url = url + '/instances/' + data.InstanceId + '/confirmpurchaseorder';
                 config.static.headers = {
                     'CALS-API-KEY': config.static.apikey,
                     'x-is-test': template.authConfig.isTest === 'true',

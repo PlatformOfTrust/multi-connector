@@ -1,55 +1,56 @@
 {
   "plugins": [
-    "smartwatcher",
-    "millis"
-  ],
+    "smartwatcher"
+
+    ],
   "protocol": "rest",
   "authConfig": {
-    "url": "${url}",
-    "authPath":"api/auth",
-    "authContentType": "application/json",
-    "email" : "${email}",
-    "password" : "${password}",
-    "headers": {
-      "Authorization": ""
-    },
-    "path":  "api/v3/monitor/room/${id}/${type}"
+      "url": "${url}",
+      "authPath":"api/auth",
+      "authContentType": "application/json",
+      "email" : "${email}",
+      "password" : "${password}",
+      "headers": {
+        "Authorization": ""
+      },
+    "path":  "api/v3/monitor/room/${id}/${type}?startDate=${startDate}&endDate=${endDate}"
+   
   },
   "dataObjects": [
-    ""
-  ],
-  "measurementType" : "",
-  "dataPropertyMappings": {
-    "type" : "value",
-    "MeasureAirTemperatureCelsiusDegree": "temperature",
-    "MeasureAirHumidityPercentage": "humidity"
+ 
+],
+"measurementType" : "",
+"dataPropertyMappings": {
+  "type" : "value",
+  "MeasureAirTemperatureCelsiusDegree": "temperature",
+  "MeasureAirHumidityPercentage": "humidity"
+},
+"generalConfig": {
+  "query": {
+    
   },
-  "generalConfig": {
-    "query": {
-      "end": "endDate",
-      "start": "startDate"
-    },
     "sourceName": {
     "dataObjectProperty": "name"
-    },
-    "hardwareId": {
-      "pathIndex": 4
-    },
-    "measurement": {
-      "pathIndex": 5
-    },
-    "timestamp": {
-      "dataObjectProperty": "timestamp"
-    }
   },
-  "input": {
-    "required": [
-      "parameters.startDate",
-      "parameters.endDate"
-    ],
-    "start": "parameters.startDate",
-    "end": "parameters.endDate"
+  "hardwareId": {
+          "pathIndex":4
   },
+  "measurement": {
+    "pathIndex":5
+},
+  "timestamp": {
+    "dataObjectProperty": "timestamp"
+  }
+},
+"input": {
+  "required": [
+   
+    "parameters.startDate",
+    "parameters.endDate"
+    
+  ]
+},
+ 
   "output": {
     "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Sensor/",
     "timestamp": "timestamp",

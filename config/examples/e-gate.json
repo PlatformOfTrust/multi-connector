@@ -1,0 +1,19 @@
+{
+    "template": "e-gate",
+    "static": {
+        "url": "<url>",
+        "headers": {
+            "x-api-key": "<api-key>"
+        },
+        "type": "Note"
+    },
+    "dynamic": {
+        "authConfig.path": "targetObject.idLocal"
+    },
+    "schema": "note_e-gate",
+    "request": {
+        "targetObject": {
+            "idLocal": "<client>"
+        }
+    }
+}

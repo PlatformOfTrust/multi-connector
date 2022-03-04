@@ -6,6 +6,7 @@ const router = require('express').Router();
 const cache = require('../../app/cache');
 const rp = require('request-promise');
 const crypto = require('crypto');
+const _ = require('lodash');
 
 /**
  * OAuth2 authentication plugin.
@@ -185,14 +186,16 @@ const getTokenWithCode = async (authConfig) => {
         code = authConfig.code;
     }
 
-    const redirectURL = authConfig.connectorURL + '/translator/v1/plugins/oauth2/' + authConfig.productCode + '/redirect';
-    const internalAuthorizeURL = authConfig.connectorURL + '/translator/v1/plugins/oauth2/' + authConfig.productCode + '/authorize';
+    const redirectUrl = authConfig.connectorUrl + '/translator/v1/plugins/oauth2/' + authConfig.productCode + '/redirect';
+    const internalAuthorizationUrl = authConfig.connectorUrl + '/translator/v1/plugins/oauth2/' + authConfig.productCode + '/authorize?state=' + getState();
 
-    if (!code) {
+    if (!code && authConfig.path) {
         // Return authorization link.
         return promiseRejectWithError(500,
-            'Auhthentication failed. Visit ' + internalAuthorizeURL,
+            'Authentication failed. Visit ' + internalAuthorizationUrl,
             'getTokenWithCode');
+    } else if (!code) {
+        return Promise.resolve({internalAuthorizationUrl});
     }
 
     const options = {
@@ -209,7 +212,7 @@ const getTokenWithCode = async (authConfig) => {
                 code: code,
                 client_id: authConfig.clientId,
                 client_secret: authConfig.clientSecret,
-                redirect_uri: redirectURL,
+                redirect_uri: redirectUrl,
             },
         resolveWithFullResponse: true,
     };
@@ -227,9 +230,11 @@ const getTokenWithCode = async (authConfig) => {
  * @param {Object} authConfig
  * @param {Boolean} [refresh]
  *   Whether refresh token should be used or not.
+ * @param {Boolean} [store]
+ *   Whether store token or not.
  * @return {Promise} Grant
  */
-const requestToken = async (authConfig, refresh) => {
+const requestToken = async (authConfig, refresh, store = true) => {
     // Get grant from cache (only for refresh purposes)
     let grant;
     let grantType;
@@ -254,13 +259,15 @@ const requestToken = async (authConfig, refresh) => {
                 } catch (err) {
                     console.log(err.message);
                 }
-                cache.setDoc('grants', authConfig.productCode, body);
+                if (store) cache.setDoc('grants', authConfig.productCode, body);
+            } else {
+                body = result;
             }
             return Promise.resolve(body);
         }
         return Promise.resolve();
     }).catch(function (err) {
-        return onerror(authConfig, err).then(function (result) {
+        return onerror({authConfig}, err).then(function (result) {
             /** Second attempt was successful. */
             return Promise.resolve(result);
         }).catch(function (err) {
@@ -273,11 +280,11 @@ const requestToken = async (authConfig, refresh) => {
 /**
  * Handles erroneous response.
  *
- * @param {Object} authConfig
+ * @param {Object} config
  * @param {Error} err
  * @return {Promise}
  */
-const onerror = async (authConfig, err) => {
+const onerror = async (config, err) => {
     /** Internal error. */
     if (err.reference) {
         return promiseRejectWithError(err.statusCode, err.message);
@@ -288,14 +295,14 @@ const onerror = async (authConfig, err) => {
         /** 401 - Unauthorized. */
         case 401:
             /** Philips HUE specific response handling. */
-            if (authConfig.url === 'https://api.meethue.com') {
-                return updateToken(authConfig, true);
+            if (config.authConfig.url === 'https://api.meethue.com') {
+                return updateToken(config.authConfig, true);
             } else {
-                return updateToken(authConfig, false);
+                return updateToken(config.authConfig, false);
             }
         /** 403 - Token expired. */
         case 403:
-            return updateToken(authConfig, true);
+            return updateToken(config.authConfig, true);
         /** 400 - Invalid credentials / Access token is missing */
         case 400:
             return promiseRejectWithError(err.statusCode, 'Authentication failed.');
@@ -311,7 +318,8 @@ const getConfig = function (req, res, next) {
         const config = cache.getDoc('configs', productCode) || {};
         const template = config ? cache.getDoc('templates', config.template) || {} : {};
         req.authConfig = {...template.authConfig, ...config.static, productCode, code};
-        req.authConfig.connectorURL = req.protocol + '://' + req.get('host');
+        req.authConfig.connectorUrl = req.connectorUrl;
+        req.authConfig.publicKeyUrl = req.publicKeyUrl;
     } catch (err) {
         // Compose error response object.
         const result = {
@@ -391,6 +399,35 @@ const limiter = function (req, res, next) {
 };
 
 /**
+ * Generates and stores state.
+ *
+ * @return {string}
+ */
+const getState = () => {
+    const state = crypto.randomBytes(48).toString('hex');
+    cache.setDoc('states', state, new Date, 5 * 60 * 1000);
+    return state;
+};
+
+/**
+ * Generates link to authorization.
+ *
+ * @param {Object} req
+ * @param {String} state
+ * @return {string}
+ */
+const generateAuthorizationUrl = (req, state= getState()) => {
+    const redirectUrl = req.connectorUrl + '/translator/v1/plugins/oauth2/' + req.authConfig.productCode + '/redirect';
+    // Generate link to authorization page.
+    return req.authConfig.url + req.authConfig.authPath + '/authorize'
+        + '?client_id=' + req.authConfig.clientId
+        + '&response_type=code'
+        + '&redirect_uri=' + redirectUrl
+        + '&scope=' + req.authConfig.scope
+        + '&state=' + state;
+};
+
+/**
  * Returns plugin HTTP endpoints.
  *
  * @param {Object} passport
@@ -399,12 +436,9 @@ const limiter = function (req, res, next) {
 const endpoints = function (passport) {
     // GET endpoints.
     router.get('/*', getConfig, async (req, res, next) => {
-        res.writeHead(200, {
-            'Content-Type': 'text/html',
-        });
-        res.write('<!doctype html><html>' +
+        let html = '<!doctype html><html>' +
             '<head><title>OAuth2 plugin</title></head>' +
-            '<body style="margin-top: 50px; text-align: center;"><h2><b>OAuth2 Authorization</b></h2>');
+            '<body style="margin-top: 50px; text-align: center;"><h2><b>OAuth2 Authorization</b></h2>';
         /** Pages. */
         switch (req.endpoint) {
             /** Redirect page. */
@@ -412,43 +446,81 @@ const endpoints = function (passport) {
                 let accessToken;
                 let token;
                 try {
-                    accessToken = await requestToken(req.authConfig);
+                    // Store received token only if it's meant to be used to query data.
+                    accessToken = await requestToken(req.authConfig, false, !!req.authConfig.path);
                     token = accessToken.access_token;
                 } catch (err) {
                     console.log(err.message);
                 }
 
                 if (!token) {
-                    const redirectURL = req.protocol + '://' + req.get('host') + '/translator/v1/plugins/oauth2/' + req.authConfig.productCode + '/authorize';
-                    res.write(
-                        '<h4>Authentication configurator</h4>' +
-                        '<p>Authorization failed. Requesting access token with authorization code failed.</p><br><input type="button" onclick="location.href=\'' + redirectURL + '\';" value="Try again" />');
+                    const redirectURL = req.connectorUrl + '/translator/v1/plugins/oauth2/' + req.authConfig.productCode + '/authorize';
+                    html += '<h4>Authentication configurator</h4>' +
+                        '<p>Authorization failed. Requesting access token with authorization code failed.</p><br><input type="button" onclick="location.href=\'' + redirectURL + '\';" value="Try again" />';
                 } else {
-                    res.write(
-                        '<h4>Access token stored successfully!</h4>' +
-                        '<p>Connector authentication configuration is now complete.' +
-                        '<br>To avoid the need of doing this again on container redeploy<br>' +
-                        'you can store the access token to the environment.<br>To do this follow these instructions: </p>' +
-                        '<p>Place the following key and value<br>' +
-                        'to a config with product code <code><b>' + req.authConfig.productCode + '</b></code><br>' +
-                        'in the environment variable <code><b>CONFIGS</b></code><br></p>' +
-                        '<b>accessToken</b>:<br><textarea readonly name="text" cols="25" rows="5">' +
-                        token + '</textarea></body></html>');
+                    if (!req.authConfig.path) {
+                        // Connector is used to hand over the token.
+                        html += '<script type="text/javascript">' +
+                            'window.location.href = "' + req.authConfig.redirectUri + '?token=' +
+                            Buffer.from(JSON.stringify(accessToken)).toString('base64') + '"' +
+                            '</script>';
+                    } else {
+                        // Connector is used to query data with the token.
+                        html += '<h4>Access token stored successfully!</h4>' +
+                            '<p>Connector authentication configuration is now complete.' +
+                            '<br>To avoid the need of doing this again on container redeploy<br>' +
+                            'you can store the access token to the environment.<br>To do this follow these instructions: </p>' +
+                            '<p>Place the following key and value<br>' +
+                            'to a config with product code <code><b>' + req.authConfig.productCode + '</b></code><br>' +
+                            'in the environment variable <code><b>CONFIGS</b></code><br></p>' +
+                            '<b>accessToken</b>:<br><textarea readonly name="text" cols="25" rows="5">' +
+                            token + '</textarea></body></html>';
+                    }
                 }
                 break;
             /** Authorize page. */
             case 'authorize':
-                res.write('<h4>Authentication configurator</h4>' +
-                    '<p>To configure the connector input the following information for identification.</p><br>' +
-                    '<form action="?" method="post">' +
-                    '<label for="client_secret"><b>clientSecret</b>:</label><br>' +
-                    '<input type="text" id="client_secret" name="client_secret" style="margin: 10px"><br>' +
-                    '<input type="submit" value="Submit">' +
-                    '</form>');
+                if (!req.authConfig.path) {
+                    // Connector is used to login with any credentials.
+                    const stateExists = Object.hasOwnProperty.call(req.query, 'state')
+                        ? cache.getDoc('states', req.query.state)
+                        : null;
+                    // Validate state.
+                    if (!stateExists) {
+                        authFailed(req);
+                        // State was not recognized.
+                        html += '<p>Authentication failed.</p>';
+                    } else {
+                        // Redirect to login page.
+                        html += '<script type="text/javascript">' +
+                            'window.location.href = "' + generateAuthorizationUrl(req, req.query.state) + '"' +
+                            '</script>';
+                    }
+                } else {
+                    // Connector is used to query data with same credentials.
+                    html += '<h4>Authentication configurator</h4>' +
+                        '<p>To configure the connector input the following information for identification.</p><br>' +
+                        '<form action="?" method="post">' +
+                        '<label for="client_secret"><b>clientSecret</b>:</label><br>' +
+                        '<input type="text" id="client_secret" name="client_secret" style="margin: 10px"><br>' +
+                        '<input type="submit" value="Submit">' +
+                        '</form>';
+                }
+                break;
+            /** Login page. */
+            case 'fetch':
+                html = '';
+                res.setHeader('content-type', 'application/json');
+                res.json({value: {
+                    id: req.authConfig.productCode,
+                    url: req.authConfig.connectorUrl + req.originalUrl.replace('fetch', 'authorize')}});
                 break;
         }
-        res.write('</body></html>');
-        res.end();
+        if (html) {
+            res.setHeader('content-type', 'text/html');
+            res.write(html +'</body></html>');
+            res.end();
+        }
     });
     // POST endpoints.
     router.post('/*', limiter, getConfig, async (req, res, next) => {
@@ -483,19 +555,9 @@ const endpoints = function (passport) {
                             // Validate client secret.
                             if (clientSecret === req.authConfig.clientSecret) {
                                 authSuccess(req);
-                                const redirectURL = req.protocol + '://' + req.get('host') + '/translator/v1/plugins/oauth2/' + req.authConfig.productCode + '/redirect';
-                                // Generate state.
-                                const state = crypto.randomBytes(48).toString('hex');
-                                // Generate link to authorization page.
-                                const authorizationURL = req.authConfig.url + req.authConfig.authPath + '/authorize'
-                                    + '?client_id=' + req.authConfig.clientId
-                                    + '&response_type=code'
-                                    + '&redirect_uri=' + redirectURL
-                                    + '&scope=' + req.authConfig.scope
-                                    + '&state=' + state;
                                 message = 'User authenticated. Visit the following link<br>';
                                 message += 'to complete the authorization.<br>';
-                                message += '<p><a href="' + authorizationURL + '">Authorize access to resources</a></p>';
+                                message += '<p><a href="' + generateAuthorizationUrl(req) + '">Authorize access to resources</a></p>';
                             } else {
                                 authFailed(req);
                                 message = '<p>Authentication failed. Wrong <code><b>client_secret</b></code>.</p><br>' +
@@ -524,12 +586,22 @@ module.exports = {
 
         // Check for existing grant.
         let grant = cache.getDoc('grants', config.authConfig.productCode);
-        if (!grant && config.authConfig.accessToken) grant = {access_token: config.authConfig.accessToken};
+        if (!grant && config.authConfig.accessToken) {
+            if (config.authConfig.accessToken !== '${accessToken}') {
+                grant = {access_token: config.authConfig.accessToken};
+            }
+        }
         if (!grant) grant = {};
         if (!Object.hasOwnProperty.call(grant, 'access_token')
             && !Object.hasOwnProperty.call(grant, 'token')) {
             // Request access token.
             grant = await requestToken(config.authConfig);
+            if (_.isObject(grant)) {
+                if (Object.hasOwnProperty.call(grant, 'internalAuthorizationUrl')) {
+                    options.url = grant.internalAuthorizationUrl.replace('authorize', 'fetch');
+                    grant.access_token = true;
+                }
+            }
             if (!grant.access_token && !grant.token) return promiseRejectWithError(500, 'Authentication failed.');
         }
 

@@ -1,0 +1,19 @@
+{
+    "template": "saint-gobain",
+    "static": {
+        "url": "https://api.saint-gobain.dk",
+        "path": "/service-call/<service-call>",
+        "username": "<username>",
+        "password": "<password>",
+        "clientId": "<client-id>",
+        "clientSecret": "<client-secret>",
+        "type": "ProductCatalog"
+    },
+    "schema": "product-catalog_saint-gobain",
+    "dynamic": {
+        "authConfig.path": "period"
+    },
+    "request": {
+        "period": "<period>"
+    }
+}

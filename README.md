@@ -12,6 +12,7 @@ Following data sources are supported out of the box. Example configs can be foun
 - Digital Supply Chain
 - Digitraffic Live Trains API
 - Digitraffic Marine API
+- eGate
 - EnerKey Data API
 - ENTSO-E Transparency Platform
 - Fidelix Pilvivalvomo
@@ -19,6 +20,7 @@ Following data sources are supported out of the box. Example configs can be foun
 - Finavia Queues API
 - SFTP Server
 - GeoServer Web Feature Service
+- Granlund Manager API
 - Haltian Thingsee API
 - HubSpot API
 - Trend Controls IQ Vision MQTT
@@ -28,13 +30,16 @@ Following data sources are supported out of the box. Example configs can be foun
 - LVI-Info.fi API
 - Orfer Production Line
 - Rakennustieto API
+- Saint Gobain
 - Sähkönumerot.fi API
 - Schneider EcoStruxure Cloud
+- Senaatti Smartwatcher
 - Siemens Mindsphere
 - Siemens Navigator
 - Smartwatcher API
 - Talotohtori API
 - Trackinno Service API
+- Varda API
 - Vastuu Group Company API
 - VTT Transport Data Platform
 - Wapice IoT-Ticket

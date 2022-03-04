@@ -12,11 +12,13 @@
  * @return {Object}
  */
 const request = async (config, options) => {
-    // Authorize request.
     try {
-        options.headers = {
-            Authorization: 'Basic ' + Buffer.from(config.authConfig.username + ':' + config.authConfig.password).toString('base64'),
-        };
+        // Initialize headers if required.
+        if (!Object.hasOwnProperty.call(options, 'headers')) {
+            options.headers = {};
+        }
+        // Authorize request.
+        options.headers['Authorization'] = 'Basic ' + Buffer.from(config.authConfig.username + ':' + config.authConfig.password).toString('base64')
     } catch (err) {
         console.log(err.message);
     }

@@ -3,6 +3,7 @@
  * Module dependencies.
  */
 const connector = require('../../app/lib/connector');
+const cache = require('../../app/cache');
 
 /**
  * Scheduler.
@@ -14,24 +15,31 @@ const schedules = {};
 /**
  * Initiates broker request.
  *
- * @param {Object} productCode
- * @param {Object} parameters
+ * @param {String} productCode
+ * @param {String} [mode]
  */
-const brokerRequest = async (productCode, parameters) => {
+const brokerRequest = async (productCode, mode = 'latest') => {
     try {
-        delete parameters.scheduler;
-        const triggeredReq = {
-            body: {
-                productCode,
-                timestamp: new Date().toISOString(),
-                parameters: {...parameters},
-            },
-            protocol: 'http',
-            get: function () {
-                return '';
-            },
-        };
-        return await connector.getData(triggeredReq);
+        const parameters = cache.getDoc('parameters', productCode);
+        if (parameters) {
+            // Detect mode from scheduler options.
+            if (mode === 'latest') {
+                delete parameters.start;
+                delete parameters.end;
+            }
+            const triggeredReq = {
+                body: {
+                    productCode,
+                    timestamp: new Date().toISOString(),
+                    parameters,
+                },
+                connectorUrl: '',
+                publicKeyUrl: '',
+            };
+            return await connector.getData(triggeredReq);
+        } else {
+            return Promise.resolve(null);
+        }
     } catch (e) {
         console.log(e.message);
     }
@@ -78,18 +86,15 @@ const parameters = async (config, parameters) => {
                 if (Object.hasOwnProperty.call(schedules, config.productCode)) {
                     clearInterval(schedules[config.productCode]);
                 }
+                // Store parameters to cache.
+                cache.setDoc('parameters', config.productCode, {...parameters, scheduler: undefined});
                 // Set new schedule if provided interval is valid.
                 if (Number.isInteger(parameters.scheduler.interval)) {
                     schedules[config.productCode] = setInterval(async (scheduler) => {
-                        // Detect mode from scheduler options.
-                        if (scheduler.mode === 'latest') {
-                            delete parameters.start;
-                            delete parameters.end;
-                        }
                         // Trigger broker request.
-                        const result = await brokerRequest(config.productCode, parameters);
+                        const result = await brokerRequest(config.productCode, scheduler.mode);
                         // Stream result.
-                        await stream(config, scheduler, result);
+                        if (result) await stream(config, scheduler, result);
                     }, Math.max(DEFAULT_INTERVAL, parameters.scheduler.interval), parameters.scheduler);
                 }
             }

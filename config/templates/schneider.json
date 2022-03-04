@@ -18,6 +18,9 @@
     "${type}": "Value"
   },
   "generalConfig": {
+    "query": {
+      "start": "SampledOnOrAfter"
+    },
     "sourceName": {
       "dataObjectProperty": "Name"
     },

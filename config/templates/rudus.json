@@ -4,11 +4,21 @@
         "broker",
         "download-link"
     ],
-    "protocol": "azure-blob-storage",
+    "protocol": ["azure-blob-storage", "sftp"],
     "authConfig": {
         "account": "${account}",
         "accountKey": "${accountKey}",
         "container": "${container}",
+        "contractSheet": "${contractSheet}",
+        "url": "${url}",
+        "port": "${port}",
+        "fromPath": "${fromPath}",
+        "toPath": "${toPath}",
+        "proxyHost": "${proxyHost}",
+        "proxyPort": "${proxyPort}",
+        "username": "${username}",
+        "password": "${password}",
+        "privateKey": "${privateKey}",
         "path": "${targetObject.idLocal}"
     },
     "dataObjects": [

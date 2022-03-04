@@ -14,6 +14,7 @@ const definitions = {
     TIMESTAMP: 'timestamp',
     PARAMETERS: 'parameters',
     IDS: 'parameters.ids',
+    TARGET_OBJECT: 'parameters.targetObject',
     START: 'parameters.startTime',
     END: 'parameters.endTime',
     DATA_TYPES:  'parameters.dataTypes',

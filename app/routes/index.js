@@ -2,7 +2,9 @@
 /**
  * Module dependencies.
  */
+const net = require('net');
 const cors = require('cors');
+const router = require('express').Router();
 
 /**
  * Root routes.
@@ -12,13 +14,22 @@ module.exports.app = function (app, passport) {
     app.options('*', cors());
 
     /** Translator endpoints. */
-    app.use('/translator/', require('./translator/index')(passport));
-    app.use('/connector/', require('./translator/index')(passport));
+    router.use('/:path/', require('./translator/index')(passport));
+    router.param('path', (req, res, next, path) => {
+        const host = req.get('host').split(':')[0];
+        const url = (host === 'localhost' || net.isIP(host) ? 'http' : 'https') + '://' + req.get('host') + req.baseUrl;
+        req.connectorUrl = process.env.CONNECTOR_URL || url;
+        req.publicKeyUrl = `${req.connectorUrl}/${path}/v1/public.key`;
+        next();
+    });
 
     /** Default endpoint. */
-    app.use('', function (req, res) {
+    router.use('', (req, res) => {
         return res.json({
             message: 'Hello there!',
         });
     });
+
+    // Attach router.
+    app.use('', router);
 };

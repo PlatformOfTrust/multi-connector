@@ -1,0 +1,32 @@
+{
+    "plugins": [
+        "rsa",
+        "repeater"
+    ],
+    "protocol": "rest",
+    "authConfig": {
+        "url": "${url}",
+        "method" : "POST",
+        "body": {
+            "productCode": "${productCode}",
+            "timestamp": "${timestamp}",
+            "parameters": "${}"
+        },
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "path": ""
+    },
+    "dataPropertyMappings": {
+        "response": ""
+    },
+    "dataObjects": [
+        ""
+    ],
+    "generalConfig": {},
+    "input": {
+        "required": [
+            "parameters"
+        ]
+    }
+}

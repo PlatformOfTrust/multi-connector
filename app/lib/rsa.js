@@ -133,7 +133,7 @@ const stringifyBody = function (body) {
     let isEscaped = false;
     let isValue = false;
 
-    for (let i = 0; i < json.length; i++) {
+    for (let i = 0; i < (json || '').length; i++) {
         let b = json[i];
 
         // Escape non ASCII characters

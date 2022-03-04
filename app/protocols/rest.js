@@ -126,6 +126,7 @@ const handleError = async (config, err) => {
 const getData = async (config, pathArray) => {
     const items = [];
     for (let p = 0; p < pathArray.length; p++) {
+        config.index = p;
         const item = await requestData(config, pathArray[p], p);
         if (item) items.push(item);
     }
@@ -198,6 +199,10 @@ const requestData = async (config, path, index) => {
         }
     }
 
+    if (_.isObject(options.body)) {
+        options.body = JSON.stringify(options.body);
+    }
+
     /** First attempt */
     return getDataByOptions(config.authConfig, options, path).then(function (result) {
         // Handle received data.
@@ -213,9 +218,16 @@ const requestData = async (config, path, index) => {
                 return Promise.resolve([]);
             }
         }
-        return handleError(config, err).then(function () {
+        return handleError(config, err).then(async () => {
+
             /** Second attempt */
             // If error handler recovers from the error, another attempt is initiated.
+            // Execute request plugin function.
+            for (let i = 0; i < config.plugins.length; i++) {
+                if (config.plugins[i].request) {
+                    options = await config.plugins[i].request(config, options);
+                }
+            }
             return getDataByOptions(config.authConfig, options, path);
         }).then(function (result) {
             // Handle received data.

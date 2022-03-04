@@ -17,7 +17,14 @@ const parser = require('fast-xml-parser');
  */
 const response = async (config, response) => {
     try {
-        response = parser.parse(response.body.toString().replace(/\.(?=[^<>]*>)/g, ''));
+        // Try to parse options from the config.
+        let options;
+        try {
+            options = config.plugins.find(p => p.name === 'xml-parser').options;
+        } catch (err) {
+            options = {};
+        }
+        response = parser.parse(response.body.toString().replace(/(?=[^<>]*>)/g, ''), options);
         return response;
     } catch (e) {
         return response;
