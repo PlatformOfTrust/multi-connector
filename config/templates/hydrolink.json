@@ -31,6 +31,7 @@
       ]
   },
   "output": {
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Process/Measure/WaterMeterReading/",
     "array": "process"
   }
   }

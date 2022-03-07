@@ -341,8 +341,8 @@ const handleData = function (config, id, data) {
             const valuesArray = value.company.apartments.flatMap(apartment => {
                 apartment.companyId = value.company_id;
                 apartment.physicalProperty = 'Volume';
-                const waterCold = { value: (apartment.apartment.meters['meter-cold'].value * 1000), period: config.parameters.period, unitOfMeasure: 'l', valueType: 'Value' };
-                const waterWarm = { value: (apartment.apartment.meters['meter-warm'].value * 1000), period: config.parameters.period, unitOfMeasure: 'l', valueType: 'Value' };
+                const waterCold = { value: (apartment.apartment.meters['meter-cold'].value * 1000), period: config.parameters.period, unitOfMeasure: 'Liter', valueType: 'Value' };
+                const waterWarm = { value: (apartment.apartment.meters['meter-warm'].value * 1000), period: config.parameters.period, unitOfMeasure: 'Liter', valueType: 'Value' };
                 const coldValues = { ...apartment, readings: waterCold, processTarget: 'WaterCold', measureType: 'Measure', organizationType: 'Organization', locationType: 'Location' };
                 const warmValues = { ...apartment, readings: waterWarm, processTarget: 'WaterWarm', measureType: 'Measure', organizationType: 'Organization', locationType: 'Location' };
                 return [warmValues, coldValues];
