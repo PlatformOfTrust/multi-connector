@@ -357,8 +357,8 @@ const handleData = function (config, id, data) {
             const warmDaily = value.readings.map(reading => reading.warm.delta);
             const warmDailySum = warmDaily.reduce((partial_sum, a) => partial_sum + a, 0);
 
-            const WaterCold = { value: coldDailySum, period: config.parameters.period, unitOfMeasure: 'Liter', valueType: 'Value', startValue: value.readings[0].cold.reading - value.readings[0].cold.dailyAverage, endValue: value.readings[value.readings.length - 1].cold.reading };
-            const WaterWarm = { value: warmDailySum, period: config.parameters.period, unitOfMeasure: 'Liter', valueType: 'Value', startValue: value.readings[0].warm.reading - value.readings[0].warm.dailyAverage, endValue: value.readings[value.readings.length - 1].warm.reading }
+            const WaterCold = { value: coldDailySum, period: config.parameters.period, unitOfMeasure: 'Liter', valueType: 'Value', startValue: value.readings[0].cold.reading - value.readings[0].cold.delta, endValue: value.readings[value.readings.length - 1].cold.reading };
+            const WaterWarm = { value: warmDailySum, period: config.parameters.period, unitOfMeasure: 'Liter', valueType: 'Value', startValue: value.readings[0].warm.reading - value.readings[0].warm.delta, endValue: value.readings[value.readings.length - 1].warm.reading }
 
             const coldValues = { ...value, readings: [WaterCold], processTarget: 'WaterCold', measureType: 'Measure', locationType: 'Location', physicalProperty: 'Volume' };
             const warmValues = { ...value, readings: [WaterWarm], processTarget: 'WaterWarm', measureType: 'Measure', locationType: 'Location', physicalProperty: 'Volume' };
