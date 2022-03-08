@@ -1,0 +1,610 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "$id": "https://standards.oftrust.net/v2/Schema/DataProductOutput/ProductCatalog/?v=4.1",
+    "source": null,
+    "type": "object",
+    "required": [],
+    "properties": {
+        "@context": {
+            "$id": "#/properties/@context",
+            "source": null,
+            "type": "string",
+            "const": "https://standards.oftrust.net/v2/Context/DataProductOutput/ProductCatalog/?v=4.1",
+            "title": "JSON-LD context url",
+            "description": "JSON-LD context url with terms required to understand data product content."
+        },
+        "data": {
+            "$id": "#/properties/data",
+            "source": null,
+            "type": "object",
+            "title": "Data product output",
+            "description": "Output of data product delivered to customers.",
+            "required": [],
+            "properties": {
+                "product": {
+                    "$id": "#/properties/data/properties/product",
+                    "source": "",
+                    "type": "array",
+                    "title": "Product",
+                    "description": "Product returned from catalog.",
+                    "items": {
+                        "$id": "#/properties/data/properties/product/items",
+                        "source": null,
+                        "type": "object",
+                        "required": [],
+                        "properties": {
+                            "codeProductCatalog": {
+                                "$id": "#/properties/data/properties/product/items/properties/codeProductCatalog",
+                                "source": "data.value.ItemRTNumber",
+                                "type": "string",
+                                "title": "Product code as specified in catalog",
+                                "description": "Catalog specific product code should be used as parameter. Please reffer specific catalog utilized by connector for details."
+                            },
+                            "codeProduct": {
+                                "$id": "#/properties/data/properties/product/items/properties/codeProduct",
+                                "source": "data.value.ItemSupplierProductCode",
+                                "type": "string",
+                                "title": "Product code",
+                                "description": "Unique product code given by manufacturer."
+                            },
+                            "gTIN": {
+                                "$id": "#/properties/data/properties/product/items/properties/gTIN",
+                                "source": "data.value.ItemGTINCode",
+                                "type": "string",
+                                "title": "GTIN code",
+                                "description": "GTIN standard based identifier."
+                            },
+                            "idSystemLocal": {
+                                "$id": "#/properties/data/properties/product/items/properties/idSystemLocal",
+                                "source": "data.value.ItemNumber",
+                                "type": "string",
+                                "title": "Source system id",
+                                "description": "Id given by source system."
+                            },
+                            "name": {
+                                "$id": "#/properties/data/properties/product/items/properties/name",
+                                "source": "data.value.ItemLongProductName_fi",
+                                "type": "string",
+                                "title": "Name",
+                                "description": "Name."
+                            },
+                            "nameBrand": {
+                                "$id": "#/properties/data/properties/product/items/properties/nameBrand",
+                                "source": "data.value.ItemSupplierBrand_fi",
+                                "type": "string",
+                                "title": "Brand name",
+                                "description": "Brand name."
+                            },
+                            "descriptionGeneral": {
+                                "$id": "#/properties/data/properties/product/items/properties/descriptionGeneral",
+                                "source": "data.value.ItemProductDescription_fi",
+                                "type": "string",
+                                "title": "Description",
+                                "description": "Description."
+                            },
+                            "groupName": {
+                                "$id": "#/properties/data/properties/product/items/properties/groupName",
+                                "source": "data.value.ItemProductSeries",
+                                "type": "string",
+                                "title": "Product group name",
+                                "description": "Unique product group name given by manufacturer."
+                            },
+                            "nameTechnical": {
+                                "$id": "#/properties/data/properties/product/items/properties/nameTechnical",
+                                "source": "data.value.ItemSystemName_fi",
+                                "type": "string",
+                                "title": "Technical name",
+                                "description": "Technical name."
+                            },
+                            "image": {
+                                "$id": "#/properties/data/properties/product/items/properties/image",
+                                "source": null,
+                                "type": "string",
+                                "title": "Image",
+                                "description": "Image or picture."
+                            },
+                            "unitUsage": {
+                                "$id": "#/properties/data/properties/product/items/properties/unitUsage",
+                                "source": "data.value.ItemUsageUnit",
+                                "type": "string",
+                                "title": "Usage unit",
+                                "description": "Unit which is applied in usage."
+                            },
+                            "unitSales": {
+                                "$id": "#/properties/data/properties/product/items/properties/unitSales",
+                                "source": "data.value.ItemSalesUnit",
+                                "type": "string",
+                                "title": "Sales unit",
+                                "description": "Unit which is used in selling."
+                            },
+                            "updated": {
+                                "$id": "#/properties/data/properties/product/items/properties/updated",
+                                "source": null,
+                                "type": "string",
+                                "title": "Update time",
+                                "description": "Last update time."
+                            },
+                            "categorizationRakennustieto": {
+                                "$id": "#/properties/data/properties/product/items/properties/categorizationRakennustieto",
+                                "source": null,
+                                "type": "string",
+                                "title": "RT product category",
+                                "description": "RT product category (general name)."
+                            },
+                            "categorizationTalo2000": {
+                                "$id": "#/properties/data/properties/product/items/properties/categorizationTalo2000",
+                                "source": null,
+                                "type": "string",
+                                "title": "Talo 2000 product category",
+                                "description": "Product category name based on Talo 2000 standard (Finland)."
+                            },
+                            "categorizationCN": {
+                                "$id": "#/properties/data/properties/product/items/properties/categorizationCN",
+                                "source": null,
+                                "type": "string",
+                                "title": "CN Code",
+                                "description": "“CN” means “combined nomenclature.” A CN code is a customs/tariff designation required in box 13 of export certificates for the EU. CN codes are published in the Official Journal of the European Union."
+                            },
+                            "categoriztionM1": {
+                                "$id": "#/properties/data/properties/product/items/properties/categoriztionM1",
+                                "source": null,
+                                "type": "string",
+                                "title": "M1 product category",
+                                "description": "M1 product category (Finland)."
+                            },
+                            "categorizationCE": {
+                                "$id": "#/properties/data/properties/product/items/properties/categorizationCE",
+                                "source": null,
+                                "type": "string",
+                                "title": "CE certification",
+                                "description": "The letters ‘CE’ appear on many products traded on the extended Single Market in the European Economic Area (EEA). They signify that products sold in the EEA have been assessed to meet high safety, health, and environmental protection requirements."
+                            },
+                            "categorizationLviInfo": {
+                                "$id": "#/properties/data/properties/product/items/properties/categorizationLviInfo",
+                                "source": null,
+                                "type": "string",
+                                "title": "LVI-info category",
+                                "description": ""
+                            },
+                            "categorizationLviInfoSwedish": {
+                                "$id": "#/properties/data/properties/product/items/properties/categorizationLviInfoSwedish",
+                                "source": null,
+                                "type": "string",
+                                "title": "LVI-Info category (SWE)",
+                                "description": ""
+                            },
+                            "categorizationLviInfoEnglish": {
+                                "$id": "#/properties/data/properties/product/items/properties/categorizationLviInfoEnglish",
+                                "source": null,
+                                "type": "string",
+                                "title": "LVI-Info category (ENG)",
+                                "description": ""
+                            },
+                            "lenght": {
+                                "$id": "#/properties/data/properties/product/items/properties/lenght",
+                                "source": null,
+                                "type": "string",
+                                "title": "Length",
+                                "description": "Length."
+                            },
+                            "width": {
+                                "$id": "#/properties/data/properties/product/items/properties/width",
+                                "source": null,
+                                "type": "string",
+                                "title": "Width",
+                                "description": "Width."
+                            },
+                            "origin": {
+                                "$id": "#/properties/data/properties/product/items/properties/origin",
+                                "source": null,
+                                "type": "string",
+                                "title": "Origin",
+                                "description": "Origin (typically country of orgiin)"
+                            },
+                            "status": {
+                                "$id": "#/properties/data/properties/product/items/properties/status",
+                                "source": null,
+                                "type": "string",
+                                "title": "Life-cycle status",
+                                "description": "Life-cycle status."
+                            },
+                            "supplier": {
+                                "$id": "#/properties/data/properties/product/items/properties/supplier",
+                                "source": null,
+                                "type": "object",
+                                "title": "The supplier schema",
+                                "description": "An explanation about the purpose of this instance.",
+                                "required": [],
+                                "properties": {
+                                    "@type": {
+                                        "$id": "#/properties/data/properties/product/items/properties/supplier/properties/@type",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Identity type",
+                                        "description": "Type of identity."
+                                    },
+                                    "name": {
+                                        "$id": "#/properties/data/properties/product/items/properties/supplier/properties/name",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Name",
+                                        "description": "Name."
+                                    },
+                                    "taxVATCode": {
+                                        "$id": "#/properties/data/properties/product/items/properties/supplier/properties/taxVATCode",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "VAT code",
+                                        "description": "Value-added taxation identifier."
+                                    }
+                                }
+                            },
+                            "package": {
+                                "$id": "#/properties/data/properties/product/items/properties/package",
+                                "type": "object",
+                                "title": "The package schema",
+                                "description": "An explanation about the purpose of this instance.",
+                                "required": [],
+                                "properties": {
+                                    "@type": {
+                                        "$id": "#/properties/data/properties/product/items/properties/package/properties/@type",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Identity type",
+                                        "description": "Type of identity."
+                                    },
+                                    "amountPerPackage": {
+                                        "$id": "#/properties/data/properties/product/items/properties/package/properties/amountPerPackage",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Package size",
+                                        "description": "Amount of products (goods) in the package."
+                                    },
+                                    "gTIN": {
+                                        "$id": "#/properties/data/properties/product/items/properties/package/properties/gTIN",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "GTIN code",
+                                        "description": "GTIN standard based identifier."
+                                    },
+                                    "size": {
+                                        "$id": "#/properties/data/properties/product/items/properties/package/properties/size",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Size",
+                                        "description": "Size (can be defined multiple ways depending on context)"
+                                    },
+                                    "length": {
+                                        "$id": "#/properties/data/properties/product/items/properties/package/properties/length",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Length",
+                                        "description": "Lenght."
+                                    },
+                                    "width": {
+                                        "$id": "#/properties/data/properties/product/items/properties/package/properties/width",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Width",
+                                        "description": "Object width."
+                                    },
+                                    "height": {
+                                        "$id": "#/properties/data/properties/product/items/properties/package/properties/height",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Height",
+                                        "description": "Height."
+                                    },
+                                    "weight": {
+                                        "$id": "#/properties/data/properties/product/items/properties/package/properties/weight",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Weight",
+                                        "description": "Object weight."
+                                    },
+                                    "volume": {
+                                        "$id": "#/properties/data/properties/product/items/properties/package/properties/volume",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Volume",
+                                        "description": "Volume of the object."
+                                    }
+                                }
+                            },
+                            "safety": {
+                                "$id": "#/properties/data/properties/product/items/properties/safety",
+                                "type": "array",
+                                "title": "Safety information",
+                                "description": "Safety related information.",
+                                "items": {
+                                    "$id": "#/properties/data/properties/product/items/properties/safety/items",
+                                    "source": null,
+                                    "type": "object",
+                                    "required": [],
+                                    "properties": {
+                                        "@type": {
+                                            "$id": "#/properties/data/properties/product/items/properties/safety/items/properties/@type",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Identity type",
+                                            "description": "Type of identity."
+                                        },
+                                        "idSystemLocal": {
+                                            "$id": "#/properties/data/properties/product/items/properties/safety/items/properties/idSystemLocal",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Source system id",
+                                            "description": "Id given by source system."
+                                        },
+                                        "safetyNameDocument": {
+                                            "$id": "#/properties/data/properties/product/items/properties/safety/items/properties/safetyNameDocument",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Safety document name",
+                                            "description": "Safety document name."
+                                        },
+                                        "safetyNameCommercial": {
+                                            "$id": "#/properties/data/properties/product/items/properties/safety/items/properties/safetyNameCommercial",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Safety commercial name",
+                                            "description": "Safety document commercial name."
+                                        },
+                                        "updated": {
+                                            "$id": "#/properties/data/properties/product/items/properties/safety/items/properties/updated",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Update time",
+                                            "description": "Last update time."
+                                        },
+                                        "safetyUsageIntended": {
+                                            "$id": "#/properties/data/properties/product/items/properties/safety/items/properties/safetyUsageIntended",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Intended usage purpose",
+                                            "description": "Intended usage of the product."
+                                        },
+                                        "safetyFirstAidInstructions": {
+                                            "$id": "#/properties/data/properties/product/items/properties/safety/items/properties/safetyFirstAidInstructions",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "First aid instructions",
+                                            "description": "First aid instructions."
+                                        },
+                                        "safetyPreventionAndProtection": {
+                                            "$id": "#/properties/data/properties/product/items/properties/safety/items/properties/safetyPreventionAndProtection",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "The safetyPreventionAndProtection schema",
+                                            "description": "An explanation about the purpose of this instance."
+                                        },
+                                        "safetyDisposalInstructions": {
+                                            "$id": "#/properties/data/properties/product/items/properties/safety/items/properties/safetyDisposalInstructions",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "The safetyDisposalInstructions schema",
+                                            "description": "An explanation about the purpose of this instance."
+                                        },
+                                        "safetyCasNumber": {
+                                            "$id": "#/properties/data/properties/product/items/properties/safety/items/properties/safetyCasNumber",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "CAS number",
+                                            "description": "CAS number."
+                                        }
+                                    }
+                                }
+                            },
+                            "thermalConductivity": {
+                                "$id": "#/properties/data/properties/product/items/properties/thermalConductivity",
+                                "source": null,
+                                "type": "string",
+                                "title": "Thermal conductivity",
+                                "description": "The thermal conductivity of a material is a measure of its ability to conduct heat. It is commonly denoted by {displaystyle k}k, {displaystyle lambda }lambda , or {displaystyle kappa }kappa ."
+                            },
+                            "gypsumBoardType": {
+                                "$id": "#/properties/data/properties/product/items/properties/gypsumBoardType",
+                                "source": null,
+                                "type": "string",
+                                "title": "Gypsum board type",
+                                "description": "Gypsum board type."
+                            },
+                            "fireClassification": {
+                                "$id": "#/properties/data/properties/product/items/properties/fireClassification",
+                                "source": null,
+                                "type": "string",
+                                "title": "Circuit integrity",
+                                "description": "Circuit integrity."
+                            },
+                            "fireSmokeClassification": {
+                                "$id": "#/properties/data/properties/product/items/properties/fireSmokeClassification",
+                                "source": null,
+                                "type": "string",
+                                "title": "",
+                                "description": ""
+                            },
+                            "fireFlamingParticlesDevelopment": {
+                                "$id": "#/properties/data/properties/product/items/properties/fireFlamingParticlesDevelopment",
+                                "source": null,
+                                "type": "string",
+                                "title": "Flaming droplets/particles",
+                                "description": "Euro class flaming droplets/particles according to EN 13501-6."
+                            },
+                            "waterVaporResistance": {
+                                "$id": "#/properties/data/properties/product/items/properties/waterVaporResistance",
+                                "source": null,
+                                "type": "string",
+                                "title": "Water vapor resistance",
+                                "description": "The vapour resistance of a material is a measure of the material’s reluctance to let water vapour pass through."
+                            },
+                            "bendingStregthLongitudinally": {
+                                "$id": "#/properties/data/properties/product/items/properties/bendingStregthLongitudinally",
+                                "source": null,
+                                "type": "string",
+                                "title": "Bending strength longitudinally",
+                                "description": ""
+                            },
+                            "bendingStregthDiagonally": {
+                                "$id": "#/properties/data/properties/product/items/properties/bendingStregthDiagonally",
+                                "source": null,
+                                "type": "string",
+                                "title": "Bending strength diagonally",
+                                "description": ""
+                            },
+                            "edgeFinishingLongSide": {
+                                "$id": "#/properties/data/properties/product/items/properties/edgeFinishingLongSide",
+                                "source": null,
+                                "type": "string",
+                                "title": "Edge finishing long side",
+                                "description": ""
+                            },
+                            "edgeFinishingHeadEnd": {
+                                "$id": "#/properties/data/properties/product/items/properties/edgeFinishingHeadEnd",
+                                "source": null,
+                                "type": "string",
+                                "title": "Edge finishing head end",
+                                "description": ""
+                            },
+                            "document": {
+                                "$id": "#/properties/data/properties/product/items/properties/document",
+                                "source": null,
+                                "type": "array",
+                                "title": "The documents schema",
+                                "description": "An explanation about the purpose of this instance.",
+                                "items": {
+                                    "$id": "#/properties/data/properties/product/items/properties/document/items",
+                                    "source": null,
+                                    "type": "object",
+                                    "required": [],
+                                    "properties": {
+                                        "@type": {
+                                            "$id": "#/properties/data/properties/product/items/properties/document/items/properties/@type",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Identity type",
+                                            "description": "Type of identity."
+                                        },
+                                        "name": {
+                                            "$id": "#/properties/data/properties/product/items/properties/document/items/properties/name",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Name",
+                                            "description": "Name."
+                                        },
+                                        "updated": {
+                                            "$id": "#/properties/data/properties/product/items/properties/document/items/properties/updated",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Update time",
+                                            "description": "Last update time."
+                                        },
+                                        "url": {
+                                            "$id": "#/properties/data/properties/product/items/properties/document/items/properties/url",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "URL address",
+                                            "description": "URL address."
+                                        }
+                                    }
+                                }
+                            },
+                            "etimFeature": {
+                                "$id": "#/properties/data/properties/product/items/properties/etimFeature",
+                                "source": null,
+                                "type": "array",
+                                "title": "",
+                                "description": "",
+                                "items": {
+                                    "$id": "#/properties/data/properties/product/items/properties/etimFeature/items",
+                                    "source": null,
+                                    "type": "object",
+                                    "required": [],
+                                    "properties": {
+                                        "@type": {
+                                            "$id": "#/properties/data/properties/product/items/properties/etimFeature/items/properties/@type",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Identity type",
+                                            "description": "Type of identity."
+                                        },
+                                        "etimFeatureValueId": {
+                                            "$id": "#/properties/data/properties/product/items/properties/etimFeature/items/properties/etimFeatureValueId",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "ETIM feature value id",
+                                            "description": ""
+                                        },
+                                        "etimFeatureId": {
+                                            "$id": "#/properties/data/properties/product/items/properties/etimFeature/items/properties/etimFeatureId",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "ETIM feature id",
+                                            "description": ""
+                                        },
+                                        "etimClassId": {
+                                            "$id": "#/properties/data/properties/product/items/properties/etimFeature/items/properties/etimClassId",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "ETIM class id",
+                                            "description": ""
+                                        },
+                                        "etimFeatureType": {
+                                            "$id": "#/properties/data/properties/product/items/properties/etimFeature/items/properties/etimFeatureType",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "ETIM feature type",
+                                            "description": ""
+                                        },
+                                        "etimValue": {
+                                            "$id": "#/properties/data/properties/product/items/properties/etimFeature/items/properties/etimValue",
+                                            "source": null,
+                                            "type": [
+                                                "boolean",
+                                                "string"
+                                            ],
+                                            "title": "ETIM value",
+                                            "description": ""
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "signature": {
+            "$id": "#/properties/signature",
+            "type": "object",
+            "title": "Signature",
+            "description": "Signature.",
+            "required": [],
+            "properties": {
+                "type": {
+                    "$id": "#/properties/signature/properties/type",
+                    "type": "string",
+                    "title": "Signature type",
+                    "description": "Signature type."
+                },
+                "created": {
+                    "$id": "#/properties/signature/properties/created",
+                    "type": "string",
+                    "title": "Created",
+                    "description": "Creation time."
+                },
+                "creator": {
+                    "$id": "#/properties/signature/properties/creator",
+                    "type": "string",
+                    "title": "Signature creator",
+                    "description": "Signature creator."
+                },
+                "signatureValue": {
+                    "$id": "#/properties/signature/properties/signatureValue",
+                    "type": "string",
+                    "title": "Generated signature",
+                    "description": "Generated signature."
+                }
+            }
+        }
+    }
+}
