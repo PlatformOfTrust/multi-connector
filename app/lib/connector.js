@@ -103,11 +103,11 @@ function readFile (dir, ext, collection, file) {
                 switch (ext) {
                     /** JSON. */
                     case '.json':
-                        handleFile(collection, file.split('.')[0], data);
+                        handleFile(collection, file.split('.').slice(0, -1).join('.'), data);
                         break;
                     /** JavaScript. */
                     case '.js':
-                        eval(collection)[file.split('.')[0]] = require('../.' + dir + '/' + file);
+                        eval(collection)[file.split('.').slice(0, -1).join('.')] = require('../.' + dir + '/' + file);
                         break;
                     /** Resources. */
                     case '.*':
