@@ -113,7 +113,7 @@
                             },
                             "categorizationLocal": {
                                 "$id": "#/properties/data/properties/serviceRequest/items/properties/categorizationLocal",
-                                "source": "data.value.Type",
+                                "source": "data.value.Reason",
                                 "type": "string",
                                 "title": "Local category",
                                 "description": "Categorisation name given locally."
@@ -390,7 +390,7 @@
                                             },
                                             "name": {
                                                 "$id": "#/properties/data/properties/serviceRequest/items/properties/location/properties/organization/properties/name",
-                                                "source": null,
+                                                "source": "data.value.Order_Account__c",
                                                 "type": "string",
                                                 "title": "Name",
                                                 "description": "Name."
@@ -483,14 +483,14 @@
                                             },
                                             "idLocal": {
                                                 "$id": "#/properties/data/properties/serviceRequest/items/properties/requestor/properties/organization/properties/idLocal",
-                                                "source": "data.value.AccountId",
+                                                "source": null,
                                                 "type": "string",
                                                 "title": "Identity type",
                                                 "description": "Type of identity."
                                             },
                                             "name": {
                                                 "$id": "#/properties/data/properties/serviceRequest/items/properties/requestor/properties/organization/properties/name",
-                                                "source": "data.value.Order_Account__c",
+                                                "source": null,
                                                 "type": "string",
                                                 "title": "Name",
                                                 "description": "Name."
@@ -582,7 +582,7 @@
                                 "properties": {
                                     "@type": {
                                         "$id": "#/properties/data/properties/serviceRequest/items/properties/requestHandler/properties/@type",
-                                        "value": "Organization",
+                                        "value": "Person",
                                         "type": "string",
                                         "title": "Identity type",
                                         "description": "Type of identity."
