@@ -321,19 +321,26 @@
                                         "title": "Identity type",
                                         "description": "Type of identity."
                                     },
-                                    "streetAddressLine1": {
-                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/location/properties/streetAddressLine1",
-                                        "source": null,
-                                        "type": "string",
-                                        "title": "Street address line 1",
-                                        "description": "Street address line 1."
-                                    },
                                     "idLocal": {
                                         "$id": "#/properties/data/properties/serviceRequest/items/properties/location/properties/idLocal",
                                         "source": "data.value.Location__c",
                                         "type": "string",
                                         "title": "Local identifier",
                                         "description": "Locally given identifier."
+                                    },
+                                    "name": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/location/properties/name",
+                                        "source": null,
+                                        "type": "string",
+                                        "title": "Name",
+                                        "description": "Name."
+                                    },
+                                    "streetAddressLine1": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/location/properties/streetAddressLine1",
+                                        "source": "data.value.Address__c",
+                                        "type": "string",
+                                        "title": "Street address line 1",
+                                        "description": "Street address line 1."
                                     },
                                     "space": {
                                         "$id": "#/properties/data/properties/serviceRequest/items/properties/location/properties/space",
@@ -469,14 +476,21 @@
                                         "properties": {
                                             "@type": {
                                                 "$id": "#/properties/data/properties/serviceRequest/items/properties/requestor/properties/organization/properties/@type",
-                                                "source": null,
+                                                "source": "Organization",
+                                                "type": "string",
+                                                "title": "Local identifier",
+                                                "description": "Locally given identifier."
+                                            },
+                                            "idLocal": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/requestor/properties/organization/properties/idLocal",
+                                                "source": "data.value.AccountId",
                                                 "type": "string",
                                                 "title": "Identity type",
                                                 "description": "Type of identity."
                                             },
                                             "name": {
                                                 "$id": "#/properties/data/properties/serviceRequest/items/properties/requestor/properties/organization/properties/name",
-                                                "source": null,
+                                                "source": "data.value.Order_Account__c",
                                                 "type": "string",
                                                 "title": "Name",
                                                 "description": "Name."
@@ -493,14 +507,14 @@
                                         "properties": {
                                             "@type": {
                                                 "$id": "#/properties/data/properties/serviceRequest/items/properties/requestor/properties/contact/properties/@type",
-                                                "source": "ContactId",
+                                                "value": "Person",
                                                 "type": "string",
                                                 "title": "Identity type",
                                                 "description": "Locally given identifier."
                                             },
                                             "idLocal": {
                                                 "$id": "#/properties/data/properties/serviceRequest/items/properties/requestor/properties/contact/properties/idLocal",
-                                                "source": null,
+                                                "source": "data.value.ContactId",
                                                 "type": "string",
                                                 "title": "Local identifier",
                                                 "description": "Type of identity."
@@ -568,14 +582,14 @@
                                 "properties": {
                                     "@type": {
                                         "$id": "#/properties/data/properties/serviceRequest/items/properties/requestHandler/properties/@type",
-                                        "source": null,
+                                        "value": "Organization",
                                         "type": "string",
                                         "title": "Identity type",
                                         "description": "Type of identity."
                                     },
                                     "idLocal": {
                                         "$id": "#/properties/data/properties/serviceRequest/items/properties/requestHandler/properties/idLocal",
-                                        "source": null,
+                                        "source": "data.value.OwnerId",
                                         "type": "string",
                                         "title": "Local identifier",
                                         "description": "Locally given identifier."
@@ -819,6 +833,13 @@
                                         "title": "Identity type",
                                         "description": "Type of identity."
                                     },
+                                    "idLocal": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/process/properties/idLocal",
+                                        "source": "data.value.Work_Order__c",
+                                        "type": "string",
+                                        "title": "Local identifier",
+                                        "description": "Locally given identifier."
+                                    },
                                     "name": {
                                         "$id": "#/properties/data/properties/serviceRequest/items/properties/process/properties/name",
                                         "source": "data.value.Subject",
@@ -835,7 +856,7 @@
                                     },
                                     "additionalInformation": {
                                         "$id": "#/properties/data/properties/serviceRequest/items/properties/process/properties/additionalInformation",
-                                        "source": null,
+                                        "source": "data.value.Comments",
                                         "type": "string",
                                         "title": "Additional information",
                                         "description": "Additional information."
@@ -883,6 +904,13 @@
                                                 "title": "Identity type",
                                                 "description": "Type of identity."
                                             },
+                                            "idLocal": {
+                                                "$id": "#/properties/data/properties/serviceRequest/items/properties/process/properties/contact/properties/idLocal",
+                                                "source": null,
+                                                "type": "string",
+                                                "title": "Local identifier",
+                                                "description": "Locally given identifier."
+                                            },
                                             "name": {
                                                 "$id": "#/properties/data/properties/serviceRequest/items/properties/process/properties/contact/properties/name",
                                                 "source": null,
@@ -901,7 +929,7 @@
                                     },
                                     "executor": {
                                         "$id": "#/properties/data/properties/serviceRequest/items/properties/process/properties/executor",
-                                        "source": "",
+                                        "source": null,
                                         "type": "array",
                                         "title": "Process executor",
                                         "description": "Executor of the process (source of the data).",
@@ -920,7 +948,7 @@
                                                 },
                                                 "name": {
                                                     "$id": "#/properties/data/properties/serviceRequest/items/properties/process/properties/executor/items/properties/name",
-                                                    "source": "data.value.Order_Account__c",
+                                                    "source": null,
                                                     "type": "string",
                                                     "title": "Name",
                                                     "description": "Name."

@@ -2,6 +2,7 @@
 /**
  * Module dependencies.
  */
+const _ = require('lodash');
 const common = require('../../config/definitions/common');
 const transformer = require('./transformer');
 const cache = require('../cache');
@@ -65,9 +66,14 @@ const handleOutput = async (config, output) => {
     }
 
     try {
-        const schema = cache.getDoc('schemas', config.schema);
-        if (!schema) {
-            return output;
+        let schema;
+        if (!_.isObject(config.schema)) {
+            schema = cache.getDoc('schemas', config.schema);
+            if (!schema) {
+                return output;
+            }
+        } else if (_.isObject(config.schema)) {
+            schema = config.schema;
         }
 
         // Initialize harmonized output.
