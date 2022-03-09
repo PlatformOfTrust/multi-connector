@@ -2,6 +2,9 @@
 /**
  * Module dependencies.
  */
+const _ = require('lodash');
+const rp = require('request-promise');
+const winston = require('../../logger.js');
 const transformer = require('../../app/lib/transformer');
 const schema = require('../schemas/service-request_granlund-manager-v2.1.json');
 
@@ -115,9 +118,89 @@ const output = async (config, output) => {
 };
 
 /**
+ * Sends http request.
+ *
+ * @param {String} method
+ * @param {String} url
+ * @param {Object} [headers]
+ * @param {String/Object/Array} [body]
+ * @return {Promise}
+ */
+function request (method, url, headers, body) {
+    const options = {
+        method: method,
+        uri: url,
+        json: true,
+        body: body,
+        resolveWithFullResponse: true,
+        headers: headers,
+    };
+
+    return rp(options).then(result => Promise.resolve(result))
+        .catch((error) => {
+            return Promise.reject(error);
+        });
+}
+
+/**
+ * Switch querying protocol to REST.
+ *
+ * @param {Object} config
+ * @param {Object} template
+ * @return {Object}
+ */
+const template = async (config, template) => {
+    try {
+        if (_.get(template.parameters, 'targetObject.@type')) {
+            if (_.get(template.parameters, 'targetObject.idLocal')) {
+                const oauth2 = template.plugins.find(p => p.name === 'oauth2');
+                if (!oauth2) {
+                    return Promise.reject();
+                }
+                const options = await oauth2.request(template, {});
+                // Update document.
+                // /service-requests/{{serviceRequestId}}/Phase
+                const update = {};
+                if (_.get(template.parameters, 'targetObject.status.0.name')) {
+                    update.Phase = template.parameters.targetObject.status[0].name;
+                    switch (update.Phase) {
+                        case 'New':
+                            update.Phase = 'Undefined';
+                            break;
+                        case 'Completed':
+                            update.Phase = 'Defined';
+                            break;
+                        case 'Ongoing':
+                            update.Phase = 'UnderProgress';
+                            break;
+                    }
+                }
+                if (_.get(template.parameters, 'targetObject.process.additionalInformation')) {
+                    update.Comment = template.parameters.targetObject.process.additionalInformation;
+                }
+                if (!_.isEmpty(update)) {
+                    const url = template.authConfig.path.split('/').slice(0, 5).join('/') + '/service-requests/' + template.parameters.targetObject.idLocal + '/Phase';
+                    const {body} = await request('PUT', url, {...options.headers, 'Content-Type': 'application/json'}, update);
+                    winston.log('info', 'Updated ' + template.parameters.targetObject.idLocal);
+                    template.authConfig.path = body;
+                } else {
+                    template.authConfig.path = [];
+                }
+                template.protocol = 'custom';
+            }
+        }
+    } catch (err) {
+        winston.log('error', err.message);
+        return template;
+    }
+    return template;
+};
+
+/**
  * Expose plugin methods.
  */
 module.exports = {
     name: 'granlund-manager',
+    template,
     output,
 };
