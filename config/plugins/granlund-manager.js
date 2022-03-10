@@ -175,8 +175,12 @@ const template = async (config, template) => {
                             break;
                     }
                 }
+                // Comment is required.
+                const defaultComment = 'Päivitys';
                 if (_.get(template.parameters, 'targetObject.process.additionalInformation')) {
-                    update.Comment = template.parameters.targetObject.process.additionalInformation;
+                    update.Comment = template.parameters.targetObject.process.additionalInformation || defaultComment;
+                } else {
+                    update.Comment = defaultComment;
                 }
                 if (!_.isEmpty(update)) {
                     const url = template.authConfig.path.split('/').slice(0, 5).join('/') + '/service-requests/' + template.parameters.targetObject.idLocal + '/Phase';
