@@ -51,6 +51,34 @@ function request (method, url, headers, body) {
 }
 
 /**
+ * Map status.
+ *
+ * @param {Object} config
+ * @param {Object} response
+ * @return {Object}
+ */
+const response = async (config, response) => {
+    try {
+        if (_.get(response, 'Status')) {
+            switch (response.Status) {
+                case 'New':
+                    response.Status = 'New';
+                    break;
+                case 'Closed':
+                    response.Status = 'Completed';
+                    break;
+                case 'In Progress':
+                    response.Status = 'Ongoing';
+                    break;
+            }
+        }
+        return response;
+    } catch (e) {
+        return response;
+    }
+};
+
+/**
  * Switch querying protocol to REST.
  *
  * @param {Object} config
@@ -149,4 +177,5 @@ const template = async (config, template) => {
 module.exports = {
     name: 'salesforce',
     template,
+    response
 };
