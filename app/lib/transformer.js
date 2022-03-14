@@ -164,7 +164,7 @@ const transform = function (source, schema) {
                             value = handle(value, schema.function);
                         }
                     } else if (Object.hasOwnProperty.call(schema, 'source')) {
-                        if (schema.source) {
+                        if (schema.source || schema.source === '') {
                             value = schema.source === '' ? source : _.get(source, schema.source, schema.default);
                             if (value === '' && Object.hasOwnProperty.call(schema, 'default')) {
                                 value = schema.default;
