@@ -16,11 +16,24 @@ const functions = {
     Date: {
         getMonthName: date => ['January', 'February', 'March', 'April', 'May', 'June',
             'July', 'August', 'September', 'October', 'November', 'December'][date.getUTCMonth()],
+        dateStringToISOString: dateString => {
+            try {
+                const year = dateString.substring(0, 4);
+                const month = dateString.substring(4, 6);
+                const day = dateString.substring(6, 8);
+                let date = new Date(year, month - 1, day);
+                const offset = date.getTimezoneOffset();
+                date = new Date(date.getTime() - (offset * 60 * 1000));
+                return date.toISOString();
+            } catch (err) {
+                return dateString;
+            }
+        },
     },
 };
 
 /**
- * Checks if value is millis timestamp.
+ * Checks if value is millis timestamp string.
  *
  * @param {String/Number} value
  * @return {Boolean}
@@ -30,6 +43,19 @@ const isMillisString = (value) => {
         return false;
     }
     return value.length === 13 && !Number.isNaN(Number.parseInt(value));
+};
+
+/**
+ * Checks if value is date string.
+ *
+ * @param {String/Number} value
+ * @return {Boolean}
+ */
+const isDateString = (value) => {
+    if (!Object.hasOwnProperty.call(value, 'length')) {
+        return false;
+    }
+    return value.length === 8 && !Number.isNaN(Number.parseInt(value));
 };
 
 /**
@@ -53,13 +79,15 @@ const handle = (value, f) => {
         }
         const parts = method.split('.');
         if (parts[0] === 'Date' && !(value instanceof Date)) {
-            value = value === '' ? new Date() : new Date(isMillisString(value) ? Number.parseInt(value) : value);
+            value = value === '' ? new Date() : isDateString(value) ? value : (new Date(isMillisString(value) ? Number.parseInt(value) : value));
         }
         if (parts[0] === 'String' && !(value instanceof String)) {
             value = value.toString();
         }
         if (typeof value[parts[1]] === 'function') {
             value = value[parts[1]](...args);
+        } else if (parts[0] === 'Object' && Object.hasOwnProperty.call(Object, parts[1])) {
+            value = Object[parts[1]](value);
         } else {
             value = _.get(functions, method)(value);
         }
@@ -127,7 +155,12 @@ const transform = function (source, schema) {
                     value = {};
                     Object.entries(schema.properties || {})
                         .forEach(entry => {
-                            const result = transform(source, entry[1]);
+                            let result;
+                            if (Object.hasOwnProperty.call(schema, 'function')) {
+                                result = transform(handle(source, schema.function), entry[1]);
+                            } else {
+                                result = transform(source, entry[1]);
+                            }
                             if (result !== undefined) value[entry[0]] = result;
                         });
                     if (_.isEmpty(value)) value = undefined;
