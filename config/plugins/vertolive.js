@@ -233,12 +233,26 @@ const schema = {
                                             'title': 'Identity type',
                                             'description': 'Type of identity.',
                                         },
+                                        'processValueStart': {
+                                            '$id': '#/properties/data/properties/process/items/properties/processValue/items/properties/processValueStart',
+                                            'type': 'string',
+                                            'source': 'startValue',
+                                            'title': 'Process value start',
+                                            'description': 'Process value start.',
+                                        },
                                         'processValue': {
                                             '$id': '#/properties/data/properties/process/items/properties/processValue/items/properties/processValue',
                                             'type': 'string',
                                             'source': 'value',
                                             'title': 'Output value',
                                             'description': 'Output value of the process.',
+                                        },
+                                        'processValueEnd': {
+                                            '$id': '#/properties/data/properties/process/items/properties/processValue/items/properties/processValueEnd',
+                                            'type': 'string',
+                                            'source': 'endValue',
+                                            'title': 'Process value end',
+                                            'description': 'Process value end.',
                                         },
                                         'unitOfMeasure': {
                                             '$id': '#/properties/data/properties/process/items/properties/processValue/items/properties/unitOfMeasure',
@@ -337,14 +351,14 @@ const handleData = function (config, id, data) {
 
             // Transform raw input.
 
-            const coldDaily = value.readings.map(reading => reading.cold.dailyAverage);
+            const coldDaily = value.readings.map(reading => reading.cold.delta);
             const coldDailySum = coldDaily.reduce((partial_sum, a) => partial_sum + a, 0);
 
-            const warmDaily = value.readings.map(reading => reading.warm.dailyAverage);
+            const warmDaily = value.readings.map(reading => reading.warm.delta);
             const warmDailySum = warmDaily.reduce((partial_sum, a) => partial_sum + a, 0);
 
-            const WaterCold = { value: coldDailySum, period: config.parameters.period, unitOfMeasure: 'l', valueType: 'Value' };
-            const WaterWarm = { value: warmDailySum, period: config.parameters.period, unitOfMeasure: 'l', valueType: 'Value' }
+            const WaterCold = { value: coldDailySum, period: config.parameters.period, unitOfMeasure: 'Liter', valueType: 'Value', startValue: value.readings[0].cold.reading - value.readings[0].cold.delta, endValue: value.readings[value.readings.length - 1].cold.reading };
+            const WaterWarm = { value: warmDailySum, period: config.parameters.period, unitOfMeasure: 'Liter', valueType: 'Value', startValue: value.readings[0].warm.reading - value.readings[0].warm.delta, endValue: value.readings[value.readings.length - 1].warm.reading }
 
             const coldValues = { ...value, readings: [WaterCold], processTarget: 'WaterCold', measureType: 'Measure', locationType: 'Location', physicalProperty: 'Volume' };
             const warmValues = { ...value, readings: [WaterWarm], processTarget: 'WaterWarm', measureType: 'Measure', locationType: 'Location', physicalProperty: 'Volume' };

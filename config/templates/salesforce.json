@@ -1,0 +1,46 @@
+{
+    "plugins": [
+        "oauth2",
+        "salesforce"
+    ],
+    "protocol": "rest",
+    "authConfig": {
+        "url": "${url}",
+        "authPath": "/services/oauth2/token",
+        "clientId": "${clientId}",
+        "clientSecret": "${clientSecret}",
+        "username": "${username}",
+        "password": "${password}${securityToken}",
+        "path": "/services/data/v${version}/sobjects/${type}/updated/"
+    },
+    "dataObjects": [
+        ""
+    ],
+    "dataPropertyMappings": {
+        "${type}": ""
+    },
+    "generalConfig": {
+        "query": {
+            "start": "start",
+            "end": "end"
+        },
+        "timestamp": {
+            "dataObjectProperty": "CreatedDate"
+        },
+        "sourceName": {
+            "dataObjectProperty": "Subject"
+        },
+        "hardwareId": {
+            "dataObjectProperty": "Id"
+        }
+    },
+    "input": {
+        "required": [
+            "parameters.targetObject.idLocal"
+        ]
+    },
+    "output": {
+        "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/ServiceRequest/?v=2.0",
+        "array": "serviceRequest"
+    }
+}

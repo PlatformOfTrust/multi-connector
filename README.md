@@ -31,6 +31,7 @@ Following data sources are supported out of the box. Example configs can be foun
 - Orfer Production Line
 - Rakennustieto API
 - Saint Gobain
+- Salesforce API
 - Sähkönumerot.fi API
 - Schneider EcoStruxure Cloud
 - Senaatti Smartwatcher
