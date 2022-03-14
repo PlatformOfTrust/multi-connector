@@ -165,7 +165,7 @@ const template = async (config, template) => {
                     update.Phase = template.parameters.targetObject.status[0].name;
                     switch (update.Phase) {
                         case 'New':
-                            update.Phase = 'Undefined';
+                            update.Phase = 'New';
                             break;
                         case 'Completed':
                             update.Phase = 'Defined';
