@@ -119,10 +119,11 @@
                             },
                             "updated": {
                                 "$id": "#/properties/data/properties/product/items/properties/updated",
-                                "source": null,
+                                "value": "${data.value.Time Imported}000",
                                 "type": "string",
                                 "title": "Update time",
-                                "description": "Last update time."
+                                "description": "Last update time.",
+                                "function": "Date.toISOString"
                             },
                             "categorizationRakennustieto": {
                                 "$id": "#/properties/data/properties/product/items/properties/categorizationRakennustieto",
@@ -133,28 +134,28 @@
                             },
                             "categorizationTalo2000": {
                                 "$id": "#/properties/data/properties/product/items/properties/categorizationTalo2000",
-                                "source": null,
+                                "source": "data.value.ItemTalo2000Classes",
                                 "type": "string",
                                 "title": "Talo 2000 product category",
                                 "description": "Product category name based on Talo 2000 standard (Finland)."
                             },
                             "categorizationCN": {
                                 "$id": "#/properties/data/properties/product/items/properties/categorizationCN",
-                                "source": null,
+                                "source": "data.value.ItemCN8Code",
                                 "type": "string",
                                 "title": "CN Code",
                                 "description": "“CN” means “combined nomenclature.” A CN code is a customs/tariff designation required in box 13 of export certificates for the EU. CN codes are published in the Official Journal of the European Union."
                             },
                             "categoriztionM1": {
                                 "$id": "#/properties/data/properties/product/items/properties/categoriztionM1",
-                                "source": null,
+                                "source": "data.value.ItemM1Mark",
                                 "type": "string",
                                 "title": "M1 product category",
                                 "description": "M1 product category (Finland)."
                             },
                             "categorizationCE": {
                                 "$id": "#/properties/data/properties/product/items/properties/categorizationCE",
-                                "source": null,
+                                "source": "data.value.TT780",
                                 "type": "string",
                                 "title": "CE certification",
                                 "description": "The letters ‘CE’ appear on many products traded on the extended Single Market in the European Economic Area (EEA). They signify that products sold in the EEA have been assessed to meet high safety, health, and environmental protection requirements."
@@ -180,30 +181,30 @@
                                 "title": "LVI-Info category (ENG)",
                                 "description": ""
                             },
-                            "lenght": {
-                                "$id": "#/properties/data/properties/product/items/properties/lenght",
-                                "source": null,
+                            "length": {
+                                "$id": "#/properties/data/properties/product/items/properties/length",
+                                "source": "data.value.ItemLength",
                                 "type": "string",
                                 "title": "Length",
                                 "description": "Length."
                             },
                             "width": {
                                 "$id": "#/properties/data/properties/product/items/properties/width",
-                                "source": null,
+                                "source": "data.value.ItemWidth",
                                 "type": "string",
                                 "title": "Width",
                                 "description": "Width."
                             },
                             "origin": {
                                 "$id": "#/properties/data/properties/product/items/properties/origin",
-                                "source": null,
+                                "source": "data.value.ItemCountryOfOrigin",
                                 "type": "string",
                                 "title": "Origin",
-                                "description": "Origin (typically country of orgiin)"
+                                "description": "Origin (typically country of origin)"
                             },
                             "status": {
                                 "$id": "#/properties/data/properties/product/items/properties/status",
-                                "source": null,
+                                "source": "data.value.ItemStatus",
                                 "type": "string",
                                 "title": "Life-cycle status",
                                 "description": "Life-cycle status."
@@ -218,14 +219,14 @@
                                 "properties": {
                                     "@type": {
                                         "$id": "#/properties/data/properties/product/items/properties/supplier/properties/@type",
-                                        "source": null,
+                                        "value": "Organization",
                                         "type": "string",
                                         "title": "Identity type",
                                         "description": "Type of identity."
                                     },
                                     "name": {
                                         "$id": "#/properties/data/properties/product/items/properties/supplier/properties/name",
-                                        "source": null,
+                                        "source": "data.value.ItemSupplierBrand_fi",
                                         "type": "string",
                                         "title": "Name",
                                         "description": "Name."
@@ -248,28 +249,28 @@
                                 "properties": {
                                     "@type": {
                                         "$id": "#/properties/data/properties/product/items/properties/package/properties/@type",
-                                        "source": null,
+                                        "value": "Package",
                                         "type": "string",
                                         "title": "Identity type",
                                         "description": "Type of identity."
                                     },
                                     "amountPerPackage": {
                                         "$id": "#/properties/data/properties/product/items/properties/package/properties/amountPerPackage",
-                                        "source": null,
+                                        "source": "data.value.ItemPackage1Items",
                                         "type": "string",
                                         "title": "Package size",
                                         "description": "Amount of products (goods) in the package."
                                     },
                                     "gTIN": {
                                         "$id": "#/properties/data/properties/product/items/properties/package/properties/gTIN",
-                                        "source": null,
+                                        "source": "data.value.ItemPackage1GTIN",
                                         "type": "string",
                                         "title": "GTIN code",
                                         "description": "GTIN standard based identifier."
                                     },
                                     "size": {
                                         "$id": "#/properties/data/properties/product/items/properties/package/properties/size",
-                                        "source": null,
+                                        "source": "data.value.ItemPackage1Size",
                                         "type": "string",
                                         "title": "Size",
                                         "description": "Size (can be defined multiple ways depending on context)"
@@ -297,14 +298,14 @@
                                     },
                                     "weight": {
                                         "$id": "#/properties/data/properties/product/items/properties/package/properties/weight",
-                                        "source": null,
+                                        "source": "data.value.ItemPackage1Weight",
                                         "type": "string",
                                         "title": "Weight",
                                         "description": "Object weight."
                                     },
                                     "volume": {
                                         "$id": "#/properties/data/properties/product/items/properties/package/properties/volume",
-                                        "source": null,
+                                        "source": "data.value.ItemPackage1Volume",
                                         "type": "string",
                                         "title": "Volume",
                                         "description": "Volume of the object."
@@ -324,7 +325,7 @@
                                     "properties": {
                                         "@type": {
                                             "$id": "#/properties/data/properties/product/items/properties/safety/items/properties/@type",
-                                            "source": null,
+                                            "value": "SafetyInformation",
                                             "type": "string",
                                             "title": "Identity type",
                                             "description": "Type of identity."
@@ -397,21 +398,21 @@
                             },
                             "thermalConductivity": {
                                 "$id": "#/properties/data/properties/product/items/properties/thermalConductivity",
-                                "source": null,
+                                "source": "data.value.ItemThermalConductivity",
                                 "type": "string",
                                 "title": "Thermal conductivity",
                                 "description": "The thermal conductivity of a material is a measure of its ability to conduct heat. It is commonly denoted by {displaystyle k}k, {displaystyle lambda }lambda , or {displaystyle kappa }kappa ."
                             },
                             "gypsumBoardType": {
                                 "$id": "#/properties/data/properties/product/items/properties/gypsumBoardType",
-                                "source": null,
+                                "source": "data.value.ItemGypsumBoardType",
                                 "type": "string",
                                 "title": "Gypsum board type",
                                 "description": "Gypsum board type."
                             },
                             "fireClassification": {
                                 "$id": "#/properties/data/properties/product/items/properties/fireClassification",
-                                "source": null,
+                                "source": "data.value.ItemFireClass",
                                 "type": "string",
                                 "title": "Circuit integrity",
                                 "description": "Circuit integrity."
@@ -425,68 +426,68 @@
                             },
                             "fireFlamingParticlesDevelopment": {
                                 "$id": "#/properties/data/properties/product/items/properties/fireFlamingParticlesDevelopment",
-                                "source": null,
+                                "source": "data.value.ItemSmokeClass",
                                 "type": "string",
                                 "title": "Flaming droplets/particles",
                                 "description": "Euro class flaming droplets/particles according to EN 13501-6."
                             },
                             "waterVaporResistance": {
                                 "$id": "#/properties/data/properties/product/items/properties/waterVaporResistance",
-                                "source": null,
+                                "source": "data.value.ItemWaterVaporResistance",
                                 "type": "string",
                                 "title": "Water vapor resistance",
                                 "description": "The vapour resistance of a material is a measure of the material’s reluctance to let water vapour pass through."
                             },
-                            "bendingStregthLongitudinally": {
-                                "$id": "#/properties/data/properties/product/items/properties/bendingStregthLongitudinally",
-                                "source": null,
+                            "bendingStrengthLongitudinally": {
+                                "$id": "#/properties/data/properties/product/items/properties/bendingStrengthLongitudinally",
+                                "source": "data.value.ItemBendingStregthLongitudinally",
                                 "type": "string",
                                 "title": "Bending strength longitudinally",
                                 "description": ""
                             },
-                            "bendingStregthDiagonally": {
-                                "$id": "#/properties/data/properties/product/items/properties/bendingStregthDiagonally",
-                                "source": null,
+                            "bendingStrengthDiagonally": {
+                                "$id": "#/properties/data/properties/product/items/properties/bendingStrengthDiagonally",
+                                "source": "data.value.ItemBendingStregthDiagonally",
                                 "type": "string",
                                 "title": "Bending strength diagonally",
                                 "description": ""
                             },
                             "edgeFinishingLongSide": {
                                 "$id": "#/properties/data/properties/product/items/properties/edgeFinishingLongSide",
-                                "source": null,
+                                "source": "data.value.ItemEdgeFinishingLongSide",
                                 "type": "string",
                                 "title": "Edge finishing long side",
                                 "description": ""
                             },
                             "edgeFinishingHeadEnd": {
                                 "$id": "#/properties/data/properties/product/items/properties/edgeFinishingHeadEnd",
-                                "source": null,
+                                "source": "data.value.ItemEdgeFinishingHeadEnd",
                                 "type": "string",
                                 "title": "Edge finishing head end",
                                 "description": ""
                             },
                             "document": {
                                 "$id": "#/properties/data/properties/product/items/properties/document",
-                                "source": null,
+                                "source": "data.value.General_A-Assets",
                                 "type": "array",
                                 "title": "The documents schema",
                                 "description": "An explanation about the purpose of this instance.",
                                 "items": {
                                     "$id": "#/properties/data/properties/product/items/properties/document/items",
-                                    "source": null,
+                                    "source": "",
                                     "type": "object",
                                     "required": [],
                                     "properties": {
                                         "@type": {
                                             "$id": "#/properties/data/properties/product/items/properties/document/items/properties/@type",
-                                            "source": null,
+                                            "value": "Document",
                                             "type": "string",
                                             "title": "Identity type",
                                             "description": "Type of identity."
                                         },
                                         "name": {
                                             "$id": "#/properties/data/properties/product/items/properties/document/items/properties/name",
-                                            "source": null,
+                                            "source": "",
                                             "type": "string",
                                             "title": "Name",
                                             "description": "Name."
