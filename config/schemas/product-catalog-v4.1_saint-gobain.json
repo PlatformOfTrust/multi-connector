@@ -476,6 +476,7 @@
                                     "$id": "#/properties/data/properties/product/items/properties/document/items",
                                     "source": "",
                                     "type": "object",
+                                    "function": "Object.values",
                                     "required": [],
                                     "properties": {
                                         "@type": {
@@ -487,21 +488,22 @@
                                         },
                                         "name": {
                                             "$id": "#/properties/data/properties/product/items/properties/document/items/properties/name",
-                                            "source": "",
+                                            "source": "1",
                                             "type": "string",
                                             "title": "Name",
                                             "description": "Name."
                                         },
                                         "updated": {
                                             "$id": "#/properties/data/properties/product/items/properties/document/items/properties/updated",
-                                            "source": null,
+                                            "source": "2",
                                             "type": "string",
+                                            "function": "Date.dateStringToISOString",
                                             "title": "Update time",
                                             "description": "Last update time."
                                         },
                                         "url": {
                                             "$id": "#/properties/data/properties/product/items/properties/document/items/properties/url",
-                                            "source": null,
+                                            "source": "0",
                                             "type": "string",
                                             "title": "URL address",
                                             "description": "URL address."
