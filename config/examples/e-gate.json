@@ -1,16 +1,16 @@
 {
     "template": "e-gate",
     "static": {
-        "url": "<url>",
+        "url": "https://thirdparty.e-gate.fi",
         "headers": {
             "x-api-key": "<api-key>"
         },
-        "type": "Note"
+        "type": "Alarm"
     },
     "dynamic": {
         "authConfig.path": "targetObject.idLocal"
     },
-    "schema": "note_e-gate",
+    "schema": "alarm-v2.0_e-gate",
     "request": {
         "targetObject": {
             "idLocal": "<client>"

@@ -24,8 +24,8 @@
     }
   },
   "output": {
-    "contextValue": "https://standards.oftrust.net/v2/Schema/DataProductOutput/Note",
-    "array": "notes",
+    "contextValue": "https://standards.oftrust.net/v2/Schema/DataProductOutput/Note/Alarm",
+    "array": "alarm",
     "data": "data"
   }
 }
