@@ -265,24 +265,31 @@ function replacePlaceholders (config, template, params) {
                 placeholders = [placeholders];
             }
             placeholders.forEach(function (placeholder) {
+                const root = placeholder.split('.')[0];
+                const rootValue = _.get(params, root);
                 const templateValue = _.get(template, path);
                 if (templateValue) {
-                    if (Array.isArray(_.get(params, placeholder))) {
-                        // Transform placeholder to array, if given parameters are in an array.
-                        const array = [];
-                        _.get(params, placeholder).forEach(function (element) {
-                            array.push(replacer(templateValue, placeholder, element));
-                        });
-                        _.set(template, path, array);
-                    } else {
-                        let value = placeholder === '' ? params : _.get(params, placeholder);
-                        // Insert current datetime to timestamp placeholder.
-                        if (value === undefined && placeholder === 'timestamp') {
-                            value = new Date().toISOString();
-                        }
-                        // If not found at static parameters, replace placeholder with undefined.
-                        if (_.get(params, placeholder) || !Object.keys(config.static).includes(placeholder)) {
-                            _.set(template, path, replacer(templateValue, placeholder, value));
+                    const items = Array.isArray(rootValue) ? rootValue : [rootValue];
+                    for (let i = 0; i < items.length; i++) {
+                        const suffix = placeholder.split('.').slice(1).join('.');
+                        const valuePath = Array.isArray(rootValue) ? `${root}.${i}.${suffix}` : placeholder;
+                        if (Array.isArray(_.get(params, valuePath))) {
+                            // Transform placeholder to array, if given parameters are in an array.
+                            const array = [];
+                            _.get(params, valuePath).forEach(function (element) {
+                                array.push(replacer(templateValue, placeholder, element));
+                            });
+                            _.set(template, path, array);
+                        } else {
+                            let value = valuePath === '' ? params : _.get(params, valuePath);
+                            // Insert current datetime to timestamp placeholder.
+                            if (value === undefined && valuePath === 'timestamp') {
+                                value = new Date().toISOString();
+                            }
+                            // If not found at static parameters, replace placeholder with undefined.
+                            if (_.get(params, valuePath) || !Object.keys(config.static).includes(placeholder)) {
+                                _.set(template, path, replacer(templateValue, placeholder, value));
+                            }
                         }
                     }
                 }

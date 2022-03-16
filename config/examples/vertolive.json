@@ -6,6 +6,6 @@
         "type": "water"
     },
     "dynamic": {
-        "authConfig.path": "targetObject"
+        "authConfig.path": "targetObject.idLocal"
     }
 }

@@ -8,11 +8,11 @@
       "headers": {
         "X-Vertolive-Api-Key": "${apikey}"
       },
-      "path": "/rest/integration/apartment/${idLocal}"
+      "path": "/rest/integration/apartment/${targetObject.idLocal}"
     },
     "dataObjects": [
       ""
-    ],  
+    ],
     "dataPropertyMappings": {
       "${type}": ""
     },
@@ -29,7 +29,6 @@
       "required": [
           "parameters.targetObject",
           "parameters.period"
-
       ]
   },
     "output": {
