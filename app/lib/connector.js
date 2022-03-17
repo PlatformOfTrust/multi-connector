@@ -272,7 +272,7 @@ function replacePlaceholders (config, template, params) {
                     const items = Array.isArray(rootValue) ? rootValue : [rootValue];
                     for (let i = 0; i < items.length; i++) {
                         const suffix = placeholder.split('.').slice(1).join('.');
-                        const valuePath = Array.isArray(rootValue) ? `${root}.${i}.${suffix}` : placeholder;
+                        const valuePath = Array.isArray(rootValue) && suffix !== '' ? `${root}.${i}.${suffix}` : placeholder;
                         if (Array.isArray(_.get(params, valuePath))) {
                             // Transform placeholder to array, if given parameters are in an array.
                             const array = [];
