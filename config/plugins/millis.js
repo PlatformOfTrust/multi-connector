@@ -27,7 +27,7 @@ const toMillis = function (config, path, target, seconds = false) {
         target = target.map((q) => {
             if (Object.keys(q).includes(key)) {
                 /** Conversion to millis. */
-                q[key] = seconds ? new Date(q[key]).getTime().toString().substring(0, 9) : new Date(q[key]).getTime();
+                q[key] = seconds ? new Date(q[key]).getTime().toString().substring(0, 10) : new Date(q[key]).getTime();
             }
             return q;
         });

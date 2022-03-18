@@ -17,7 +17,7 @@ ${CLIENT_SECRET}             %{POT_CLIENT_SECRET}
 ${PRODUCT_CODE}              %{POT_PRODUCT_CODE}
 ${CONTEXT}                   https://standards.oftrust.net/v2/Schema/DataProductOutput/ProductCatalog/?v=4.1
 ${START_TIME}                2022-03-01T00:00:00.000Z
-${END_TIME}                  2022-03-18T00:00:00.000Z
+${END_TIME}                  2022-03-20T00:00:00.000Z
 &{BROKER_BODY_PARAMETERS}    period=${START_TIME}/${END_TIME}
 &{BROKER_BODY}               productCode=${PRODUCT_CODE}
 ...                          parameters=${BROKER_BODY_PARAMETERS}
@@ -65,15 +65,26 @@ Fetch Data Product With Timestamp 422
 fetch, 200
     [Tags]                bug-0001
     ${body}               Get Body
+    Pop From Dictionary   ${body["parameters"]}                                   period
     Fetch Data Product    ${body}
     Integer               response status                                         200
     String                response body @context                                  ${CONTEXT}
     Object                response body data
     Array                 response body data products
-    String                response body data products 0 @type                        Product
+    String                response body data products 0 @type                     Product
+
+fetch, 200, history
+    [Tags]                bug-0002
+    ${body}               Get Body
+    Fetch Data Product    ${body}
+    Integer               response status                                         200
+    String                response body @context                                  ${CONTEXT}
+    Object                response body data
+    Array                 response body data products
+    String                response body data products 0 @type                     Product
 
 fetch, 422, Missing data for timestamp required field
-    [Tags]                 bug-0002
+    [Tags]                 bug-0003
     ${body}                Get Body
     Pop From Dictionary    ${body}                              timestamp
     Fetch Data Product     ${body}
@@ -82,10 +93,19 @@ fetch, 422, Missing data for timestamp required field
     String     response body error message timestamp 0          Missing data for required field.
 
 fetch, 422, Missing data for parameters required field
-    [Tags]                 bug-0003
+    [Tags]                 bug-0004
     ${body}                Get Body
     Pop From Dictionary    ${body}                              parameters
     Fetch Data Product     ${body}
     Integer    response status                                  422
     Integer    response body error status                       422
     String     response body error message parameters 0         Missing data for required field.
+
+fetch, 200, Empty range
+    [Tags]                 bug-0005
+    ${body}                Get Body
+    Set To Dictionary      ${body["parameters"]}                period=${END_TIME}/${END_TIME}
+    Fetch Data Product     ${body}
+    Integer    response status                                  200
+    String     response body @context                           ${CONTEXT}
+    Array      response body data products                      maxItems=0

@@ -347,6 +347,19 @@ const interpretMode = function (config, parameters) {
     // Latest by default.
     config.mode = 'latest';
 
+    // Parse period to start and end.
+    try {
+        if (Object.hasOwnProperty.call(parameters, 'period')
+        && parameters.start === undefined) {
+            let time = parameters.period;
+            time = time.split('/');
+            parameters.start = new Date(Date.parse(time[0]));
+            parameters.end = new Date(Date.parse(time[1]));
+        }
+    } catch (err) {
+        console.log(err.message);
+    }
+
     // Detect history request from start and end time.
     if (parameters.start && parameters.end) {
         // Sort timestamps to correct order.

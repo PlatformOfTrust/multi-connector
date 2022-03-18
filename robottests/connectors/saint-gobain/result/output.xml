@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot generator="Robot 3.2.1 (Python 3.8.3 on win32)" generated="20220318 10:31:11.553" rpa="false">
+<robot generator="Robot 3.2.1 (Python 3.8.3 on win32)" generated="20220319 00:40:28.227" rpa="false">
 <suite id="s1" name="Connector Tests" source="C:\Users\artor\WebstormProjects\multi-connector\robottests\connectors\saint-gobain\connector_tests.robot">
 <test id="s1-t1" name="fetch, 200">
 <kw name="Get Body">
@@ -15,8 +15,8 @@
 <assign>
 <var>${body}</var>
 </assign>
-<msg timestamp="20220318 10:31:11.810" level="INFO">${body} = {'productCode': 'saint', 'parameters': {'period': '2022-03-01T00:00:00.000Z/2022-03-18T00:00:00.000Z'}}</msg>
-<status status="PASS" starttime="20220318 10:31:11.810" endtime="20220318 10:31:11.810"></status>
+<msg timestamp="20220319 00:40:28.490" level="INFO">${body} = {'productCode': 'saint', 'parameters': {'period': '2022-03-01T00:00:00.000Z/2022-03-20T00:00:00.000Z'}}</msg>
+<status status="PASS" starttime="20220319 00:40:28.490" endtime="20220319 00:40:28.490"></status>
 </kw>
 <kw name="Get Current Date" library="DateTime">
 <doc>Returns current local or UTC time with an optional increment.</doc>
@@ -27,8 +27,8 @@
 <assign>
 <var>${now}</var>
 </assign>
-<msg timestamp="20220318 10:31:11.810" level="INFO">${now} = 2022-03-18T08:31:11+00:00</msg>
-<status status="PASS" starttime="20220318 10:31:11.810" endtime="20220318 10:31:11.810"></status>
+<msg timestamp="20220319 00:40:28.490" level="INFO">${now} = 2022-03-18T22:40:28+00:00</msg>
+<status status="PASS" starttime="20220319 00:40:28.490" endtime="20220319 00:40:28.490"></status>
 </kw>
 <kw name="Set To Dictionary" library="Collections">
 <doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
@@ -37,7 +37,7 @@
 <arg>timestamp</arg>
 <arg>${now}</arg>
 </arguments>
-<status status="PASS" starttime="20220318 10:31:11.811" endtime="20220318 10:31:11.811"></status>
+<status status="PASS" starttime="20220319 00:40:28.490" endtime="20220319 00:40:28.491"></status>
 </kw>
 <kw name="Set To Dictionary" library="Collections">
 <doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
@@ -45,7 +45,7 @@
 <arg>${body}</arg>
 <arg>&amp;{kwargs}</arg>
 </arguments>
-<status status="PASS" starttime="20220318 10:31:11.811" endtime="20220318 10:31:11.811"></status>
+<status status="PASS" starttime="20220319 00:40:28.491" endtime="20220319 00:40:28.491"></status>
 </kw>
 <kw name="Evaluate" library="BuiltIn">
 <doc>Evaluates the given expression in Python and returns the result.</doc>
@@ -56,11 +56,19 @@
 <assign>
 <var>${json_string}</var>
 </assign>
-<msg timestamp="20220318 10:31:11.811" level="INFO">${json_string} = {"productCode": "saint", "parameters": {"period": "2022-03-01T00:00:00.000Z/2022-03-18T00:00:00.000Z"}, "timestamp": "2022-03-18T08:31:11+00:00"}</msg>
-<status status="PASS" starttime="20220318 10:31:11.811" endtime="20220318 10:31:11.811"></status>
+<msg timestamp="20220319 00:40:28.492" level="INFO">${json_string} = {"productCode": "saint", "parameters": {"period": "2022-03-01T00:00:00.000Z/2022-03-20T00:00:00.000Z"}, "timestamp": "2022-03-18T22:40:28+00:00"}</msg>
+<status status="PASS" starttime="20220319 00:40:28.491" endtime="20220319 00:40:28.492"></status>
 </kw>
-<msg timestamp="20220318 10:31:11.811" level="INFO">${body} = {'productCode': 'saint', 'parameters': {'period': '2022-03-01T00:00:00.000Z/2022-03-18T00:00:00.000Z'}, 'timestamp': '2022-03-18T08:31:11+00:00'}</msg>
-<status status="PASS" starttime="20220318 10:31:11.809" endtime="20220318 10:31:11.811"></status>
+<msg timestamp="20220319 00:40:28.492" level="INFO">${body} = {'productCode': 'saint', 'parameters': {'period': '2022-03-01T00:00:00.000Z/2022-03-20T00:00:00.000Z'}, 'timestamp': '2022-03-18T22:40:28+00:00'}</msg>
+<status status="PASS" starttime="20220319 00:40:28.489" endtime="20220319 00:40:28.492"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body["parameters"]}</arg>
+<arg>period</arg>
+</arguments>
+<status status="PASS" starttime="20220319 00:40:28.492" endtime="20220319 00:40:28.493"></status>
 </kw>
 <kw name="Fetch Data Product">
 <arguments>
@@ -74,8 +82,8 @@
 <assign>
 <var>${signature}</var>
 </assign>
-<msg timestamp="20220318 10:31:11.812" level="INFO">${signature} = zIpNmk9xkq7xiJnN+fzpSD+7hdBKGwsp4ugxZ4Gg36g=</msg>
-<status status="PASS" starttime="20220318 10:31:11.812" endtime="20220318 10:31:11.813"></status>
+<msg timestamp="20220319 00:40:28.494" level="INFO">${signature} = yA4r1dWN8Hp2EBsh/ySdX6visH70JzuVtsU9W2LkMTc=</msg>
+<status status="PASS" starttime="20220319 00:40:28.494" endtime="20220319 00:40:28.494"></status>
 </kw>
 <kw name="Set Headers" library="REST">
 <tags>
@@ -85,7 +93,7 @@
 <arguments>
 <arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
 </arguments>
-<status status="PASS" starttime="20220318 10:31:11.813" endtime="20220318 10:31:11.813"></status>
+<status status="PASS" starttime="20220319 00:40:28.494" endtime="20220319 00:40:28.495"></status>
 </kw>
 <kw name="Post" library="REST">
 <tags>
@@ -96,7 +104,7 @@
 <arg>${CONNECTOR_PATH}</arg>
 <arg>${body}</arg>
 </arguments>
-<status status="PASS" starttime="20220318 10:31:11.813" endtime="20220318 10:31:14.177"></status>
+<status status="PASS" starttime="20220319 00:40:28.495" endtime="20220319 00:40:30.965"></status>
 </kw>
 <kw name="Output Schema" library="REST">
 <tags>
@@ -106,7 +114,7 @@
 <arguments>
 <arg>response body</arg>
 </arguments>
-<msg timestamp="20220318 10:31:14.179" level="INFO">
+<msg timestamp="20220319 00:40:30.966" level="INFO">
 {
     "type": "object",
     "properties": {
@@ -301,7 +309,7 @@
                             "nameTechnical": "GYPSTEEL ELPR 66/40 Ranka 2700",
                             "unitUsage": "m-Metri",
                             "unitSales": "PK-Package",
-                            "updated": "2022-03-17T18:15:01.000Z",
+                            "updated": "2022-03-18T18:15:02.000Z",
                             "categorizationTalo2000": "341",
                             "categorizationCN": "73089098",
                             "length": "2700 mm",
@@ -366,7 +374,7 @@
                             "nameTechnical": "GYPROC GEK 13 Erikoiskova 1200x2700",
                             "unitUsage": "m²-Neliömetri",
                             "unitSales": "PK-Package",
-                            "updated": "2022-03-17T18:15:01.000Z",
+                            "updated": "2022-03-18T18:15:02.000Z",
                             "categorizationTalo2000": "261",
                             "categorizationCN": "68091100",
                             "categoriztionM1": "YES",
@@ -452,7 +460,7 @@
                             "nameTechnical": "weber OL 15 Ohutsaumalaasti 25 kg K",
                             "unitUsage": "kg",
                             "unitSales": "BAG",
-                            "updated": "2022-03-17T18:00:02.000Z",
+                            "updated": "2022-03-18T13:15:01.000Z",
                             "categorizationTalo2000": "235p2",
                             "categorizationCN": "38245090",
                             "categoriztionM1": "CE, M1, FI, Avainlippu",
@@ -515,7 +523,7 @@
                             "nameTechnical": "weber Ohutsaumakelkka 85/88",
                             "unitUsage": "PC",
                             "unitSales": "PC",
-                            "updated": "2022-03-17T18:00:02.000Z",
+                            "updated": "2022-03-18T13:15:01.000Z",
                             "categorizationTalo2000": "774",
                             "categorizationCN": "82055910",
                             "origin": "FI",
@@ -553,7 +561,7 @@
                             "nameTechnical": "Leca® EasyLex 88 VS harkko 66 kpl",
                             "unitUsage": "PC",
                             "unitSales": "PAL",
-                            "updated": "2022-03-17T18:00:02.000Z",
+                            "updated": "2022-03-18T13:15:01.000Z",
                             "categorizationTalo2000": "232p9",
                             "categorizationCN": "68101110",
                             "categoriztionM1": "CE, M1",
@@ -609,7 +617,7 @@
                             "nameTechnical": "GYPROC GH 13 Habito 1200x2500 P",
                             "unitUsage": "m²-Neliömetri",
                             "unitSales": "kpl-Kappale",
-                            "updated": "2022-03-17T18:15:01.000Z",
+                            "updated": "2022-03-18T18:15:02.000Z",
                             "categorizationTalo2000": "261",
                             "categorizationCN": "68091100",
                             "categoriztionM1": "YES",
@@ -955,7 +963,7 @@
                 },
                 "created": {
                     "type": "string",
-                    "default": "2022-03-18T10:31:14+02:00"
+                    "default": "2022-03-19T00:40:30+02:00"
                 },
                 "creator": {
                     "type": "string",
@@ -963,7 +971,7 @@
                 },
                 "signatureValue": {
                     "type": "string",
-                    "default": "1HZfRJ76JTydwfWyDaFbmDf7mxUcxz2uHP58lX+gZIzsMi8n5LjAVUglhgIGVbIyOxEPqVrPqyIMLS75VpQejRrAsTLtBpue83i2yMpNFcQYoqeM3qhviiW5NsoZfJ+xoWdGCXKO7ZGCQoYrKqGQLcmuIyIo5wkMbxeEhKQW0tXSxseLHrl6a8d93J8p9Rhz7dTDn2358vfm87ebJQGdK2YmcXKULvT44E0ha4VgaajJ9vGLFZO3viD6rggrF1ATt9Yju7CzieJQe0ZEyqDj5LUB3sgyfYNRU0VAYijRfKMiUl3Rs2dLeGGFHtrPc72UYg2GFSXW6QQKdz2Xda0d1jqSdsrBNoDfW7szFzT+XWyWbYld50mHgBbJqzGf0GJr3dmcHGTVUdCk/oSjIyG4ruXql9MxxiTm9XE8VnhYV1jD8i/LBvLGuocYBup+Pogaz2E++BYSsys+QQ5NoQc+Jul8fb12Cv7VypweigDYjbmu10ycF1b/7wotCyr7AQqj6qaybgBwS5W3ahYaJ1IqIPWhS1/+kyYq7WZsSrusmCxidX44BvVYLTyo+eb+G26Et/5tIbAoH0VNQs3+tO5WY3JBOZS7cx/usxnOZykeKAD3yNcVjkCBZmQFtgmoMSuEPUZ8nyjF0rWsPQ3BgFUJ2x2+WCQy0sEtojtzOsFUvh4="
+                    "default": "TnM8KbSFXNRY/tNIp6315KgysCmNOoFeqWNXPiCxDHVKomyzvvUrYybufIHNwftY68uQtSsjDvSb7MikiiEJ+TEUa+K8SiHlWQvW4vOkZc9ehszahalMN077Tlqf7wVn2BNcKNWoXtParIj5COP1EJDpYM80BUznpVC2Gq8qdvTazMAFifuJ9JlO/x1+n4OZI7s/OIpTdw6L23zTdCwOY815vrdw9sLVpxDZGlsGPTIS7wgsn7pnoslvyZms7BEYnDinqUwrP3Z/FW9Z7m2LSLwwz9GZ9UMFEp+4ovGRJXajJWgm4dINBCBKY4DmH2mqLmOX1VVSGAQgsVljil57p5SB2XkZWJQWMpEBS2vHqawlvP2jkie/wAQNDoAM5QGgE7jDvDG/5QPdR5JZ02j4ybe0+3KV54nWmVn6CBLdqQ3hnqi/QxEUHwZBAsOI6Gn+dZpI3PVe6kLRpHcr3GdZ4v+vGMeQOggMDgjReQILqZZpod40fDqI2kFHkKGVkHgsCM+5PpLY9+Jv4FT8qKvyQsy29QqeMv9oYK01+2ytsqTirihZ5pfGtq07vY90pUTpYo1ieUYwqpzRtOerY2yegXw1VA38L5W12MAz9sDxedgE8qHQI28lHSH1wl0klbuYRShGWuibmI4X1WD/HaVS/Z2FuVteOYKJRrwqOl3HD6Y="
                 }
             },
             "required": [
@@ -980,9 +988,9 @@
         "signature"
     ]
 }</msg>
-<status status="PASS" starttime="20220318 10:31:14.177" endtime="20220318 10:31:14.287"></status>
+<status status="PASS" starttime="20220319 00:40:30.965" endtime="20220319 00:40:31.058"></status>
 </kw>
-<status status="PASS" starttime="20220318 10:31:11.812" endtime="20220318 10:31:14.288"></status>
+<status status="PASS" starttime="20220319 00:40:28.493" endtime="20220319 00:40:31.058"></status>
 </kw>
 <kw name="Integer" library="REST">
 <tags>
@@ -993,7 +1001,7 @@
 <arg>response status</arg>
 <arg>200</arg>
 </arguments>
-<status status="PASS" starttime="20220318 10:31:14.308" endtime="20220318 10:31:14.309"></status>
+<status status="PASS" starttime="20220319 00:40:31.075" endtime="20220319 00:40:31.075"></status>
 </kw>
 <kw name="String" library="REST">
 <tags>
@@ -1004,7 +1012,7 @@
 <arg>response body @context</arg>
 <arg>${CONTEXT}</arg>
 </arguments>
-<status status="PASS" starttime="20220318 10:31:14.309" endtime="20220318 10:31:14.310"></status>
+<status status="PASS" starttime="20220319 00:40:31.076" endtime="20220319 00:40:31.077"></status>
 </kw>
 <kw name="Object" library="REST">
 <tags>
@@ -1014,7 +1022,7 @@
 <arguments>
 <arg>response body data</arg>
 </arguments>
-<status status="PASS" starttime="20220318 10:31:14.310" endtime="20220318 10:31:14.316"></status>
+<status status="PASS" starttime="20220319 00:40:31.077" endtime="20220319 00:40:31.084"></status>
 </kw>
 <kw name="Array" library="REST">
 <tags>
@@ -1024,7 +1032,7 @@
 <arguments>
 <arg>response body data products</arg>
 </arguments>
-<status status="PASS" starttime="20220318 10:31:14.317" endtime="20220318 10:31:14.321"></status>
+<status status="PASS" starttime="20220319 00:40:31.084" endtime="20220319 00:40:31.087"></status>
 </kw>
 <kw name="String" library="REST">
 <tags>
@@ -1035,14 +1043,14 @@
 <arg>response body data products 0 @type</arg>
 <arg>Product</arg>
 </arguments>
-<status status="PASS" starttime="20220318 10:31:14.322" endtime="20220318 10:31:14.323"></status>
+<status status="PASS" starttime="20220319 00:40:31.088" endtime="20220319 00:40:31.089"></status>
 </kw>
 <tags>
 <tag>bug-0001</tag>
 </tags>
-<status status="PASS" starttime="20220318 10:31:11.809" endtime="20220318 10:31:14.323" critical="yes"></status>
+<status status="PASS" starttime="20220319 00:40:28.489" endtime="20220319 00:40:31.089" critical="yes"></status>
 </test>
-<test id="s1-t2" name="fetch, 422, Missing data for timestamp required field">
+<test id="s1-t2" name="fetch, 200, history">
 <kw name="Get Body">
 <assign>
 <var>${body}</var>
@@ -1056,8 +1064,8 @@
 <assign>
 <var>${body}</var>
 </assign>
-<msg timestamp="20220318 10:31:14.326" level="INFO">${body} = {'productCode': 'saint', 'parameters': {'period': '2022-03-01T00:00:00.000Z/2022-03-18T00:00:00.000Z'}}</msg>
-<status status="PASS" starttime="20220318 10:31:14.325" endtime="20220318 10:31:14.326"></status>
+<msg timestamp="20220319 00:40:31.091" level="INFO">${body} = {'productCode': 'saint', 'parameters': {'period': '2022-03-01T00:00:00.000Z/2022-03-20T00:00:00.000Z'}}</msg>
+<status status="PASS" starttime="20220319 00:40:31.091" endtime="20220319 00:40:31.091"></status>
 </kw>
 <kw name="Get Current Date" library="DateTime">
 <doc>Returns current local or UTC time with an optional increment.</doc>
@@ -1068,8 +1076,8 @@
 <assign>
 <var>${now}</var>
 </assign>
-<msg timestamp="20220318 10:31:14.326" level="INFO">${now} = 2022-03-18T08:31:14+00:00</msg>
-<status status="PASS" starttime="20220318 10:31:14.326" endtime="20220318 10:31:14.326"></status>
+<msg timestamp="20220319 00:40:31.092" level="INFO">${now} = 2022-03-18T22:40:31+00:00</msg>
+<status status="PASS" starttime="20220319 00:40:31.091" endtime="20220319 00:40:31.092"></status>
 </kw>
 <kw name="Set To Dictionary" library="Collections">
 <doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
@@ -1078,7 +1086,7 @@
 <arg>timestamp</arg>
 <arg>${now}</arg>
 </arguments>
-<status status="PASS" starttime="20220318 10:31:14.326" endtime="20220318 10:31:14.326"></status>
+<status status="PASS" starttime="20220319 00:40:31.092" endtime="20220319 00:40:31.092"></status>
 </kw>
 <kw name="Set To Dictionary" library="Collections">
 <doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
@@ -1086,7 +1094,7 @@
 <arg>${body}</arg>
 <arg>&amp;{kwargs}</arg>
 </arguments>
-<status status="PASS" starttime="20220318 10:31:14.326" endtime="20220318 10:31:14.327"></status>
+<status status="PASS" starttime="20220319 00:40:31.092" endtime="20220319 00:40:31.092"></status>
 </kw>
 <kw name="Evaluate" library="BuiltIn">
 <doc>Evaluates the given expression in Python and returns the result.</doc>
@@ -1097,19 +1105,11 @@
 <assign>
 <var>${json_string}</var>
 </assign>
-<msg timestamp="20220318 10:31:14.327" level="INFO">${json_string} = {"productCode": "saint", "parameters": {"period": "2022-03-01T00:00:00.000Z/2022-03-18T00:00:00.000Z"}, "timestamp": "2022-03-18T08:31:14+00:00"}</msg>
-<status status="PASS" starttime="20220318 10:31:14.327" endtime="20220318 10:31:14.327"></status>
+<msg timestamp="20220319 00:40:31.092" level="INFO">${json_string} = {"productCode": "saint", "parameters": {"period": "2022-03-01T00:00:00.000Z/2022-03-20T00:00:00.000Z"}, "timestamp": "2022-03-18T22:40:31+00:00"}</msg>
+<status status="PASS" starttime="20220319 00:40:31.092" endtime="20220319 00:40:31.092"></status>
 </kw>
-<msg timestamp="20220318 10:31:14.327" level="INFO">${body} = {'productCode': 'saint', 'parameters': {'period': '2022-03-01T00:00:00.000Z/2022-03-18T00:00:00.000Z'}, 'timestamp': '2022-03-18T08:31:14+00:00'}</msg>
-<status status="PASS" starttime="20220318 10:31:14.325" endtime="20220318 10:31:14.327"></status>
-</kw>
-<kw name="Pop From Dictionary" library="Collections">
-<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
-<arguments>
-<arg>${body}</arg>
-<arg>timestamp</arg>
-</arguments>
-<status status="PASS" starttime="20220318 10:31:14.327" endtime="20220318 10:31:14.328"></status>
+<msg timestamp="20220319 00:40:31.093" level="INFO">${body} = {'productCode': 'saint', 'parameters': {'period': '2022-03-01T00:00:00.000Z/2022-03-20T00:00:00.000Z'}, 'timestamp': '2022-03-18T22:40:31+00:00'}</msg>
+<status status="PASS" starttime="20220319 00:40:31.091" endtime="20220319 00:40:31.093"></status>
 </kw>
 <kw name="Fetch Data Product">
 <arguments>
@@ -1123,8 +1123,8 @@
 <assign>
 <var>${signature}</var>
 </assign>
-<msg timestamp="20220318 10:31:14.329" level="INFO">${signature} = IWqly90P2H1+vFtCmNh2D+FCAvJXehAAR2yL6t3bzGE=</msg>
-<status status="PASS" starttime="20220318 10:31:14.328" endtime="20220318 10:31:14.329"></status>
+<msg timestamp="20220319 00:40:31.093" level="INFO">${signature} = 7a+fkR1PPqyWYH9B8D2Gi081jQaQRs4h8qKWD+vq1ME=</msg>
+<status status="PASS" starttime="20220319 00:40:31.093" endtime="20220319 00:40:31.094"></status>
 </kw>
 <kw name="Set Headers" library="REST">
 <tags>
@@ -1134,7 +1134,7 @@
 <arguments>
 <arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
 </arguments>
-<status status="PASS" starttime="20220318 10:31:14.330" endtime="20220318 10:31:14.331"></status>
+<status status="PASS" starttime="20220319 00:40:31.094" endtime="20220319 00:40:31.094"></status>
 </kw>
 <kw name="Post" library="REST">
 <tags>
@@ -1145,7 +1145,7 @@
 <arg>${CONNECTOR_PATH}</arg>
 <arg>${body}</arg>
 </arguments>
-<status status="PASS" starttime="20220318 10:31:14.331" endtime="20220318 10:31:16.384"></status>
+<status status="PASS" starttime="20220319 00:40:31.094" endtime="20220319 00:40:33.579"></status>
 </kw>
 <kw name="Output Schema" library="REST">
 <tags>
@@ -1155,7 +1155,1056 @@
 <arguments>
 <arg>response body</arg>
 </arguments>
-<msg timestamp="20220318 10:31:16.385" level="INFO">
+<msg timestamp="20220319 00:40:33.581" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "@context": {
+            "type": "string",
+            "default": "https://standards.oftrust.net/v2/Schema/DataProductOutput/ProductCatalog/?v=4.1"
+        },
+        "data": {
+            "type": "object",
+            "properties": {
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "@type": {
+                                "type": "string"
+                            },
+                            "codeProductCatalog": {
+                                "type": "string"
+                            },
+                            "codeProduct": {
+                                "type": "string"
+                            },
+                            "gTIN": {
+                                "type": "string"
+                            },
+                            "nameBrand": {
+                                "type": "string"
+                            },
+                            "descriptionGeneral": {
+                                "type": "string"
+                            },
+                            "nameTechnical": {
+                                "type": "string"
+                            },
+                            "unitUsage": {
+                                "type": "string"
+                            },
+                            "unitSales": {
+                                "type": "string"
+                            },
+                            "updated": {
+                                "type": "string"
+                            },
+                            "categorizationTalo2000": {
+                                "type": "string"
+                            },
+                            "categorizationCN": {
+                                "type": "string"
+                            },
+                            "length": {
+                                "type": "string"
+                            },
+                            "width": {
+                                "type": "string"
+                            },
+                            "origin": {
+                                "type": "string"
+                            },
+                            "status": {
+                                "type": "string"
+                            },
+                            "supplier": {
+                                "type": "object",
+                                "properties": {
+                                    "@type": {
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "@type"
+                                ]
+                            },
+                            "package": {
+                                "type": "object",
+                                "properties": {
+                                    "@type": {
+                                        "type": "string"
+                                    },
+                                    "amountPerPackage": {
+                                        "type": "string"
+                                    },
+                                    "gTIN": {
+                                        "type": "string"
+                                    },
+                                    "size": {
+                                        "type": "string"
+                                    },
+                                    "weight": {
+                                        "type": "string"
+                                    },
+                                    "volume": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "@type"
+                                ]
+                            },
+                            "safety": {
+                                "type": "array"
+                            },
+                            "gypsumBoardType": {
+                                "type": "string"
+                            },
+                            "document": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "@type": {
+                                            "type": "string"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "updated": {
+                                            "type": "string"
+                                        },
+                                        "url": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "@type",
+                                        "name",
+                                        "updated",
+                                        "url"
+                                    ]
+                                }
+                            },
+                            "etimFeature": {
+                                "type": "array"
+                            },
+                            "categoriztionM1": {
+                                "type": "string"
+                            },
+                            "thermalConductivity": {
+                                "type": "string"
+                            },
+                            "fireClassification": {
+                                "type": "string"
+                            },
+                            "fireFlamingParticlesDevelopment": {
+                                "type": "string"
+                            },
+                            "waterVaporResistance": {
+                                "type": "string"
+                            },
+                            "bendingStrengthLongitudinally": {
+                                "type": "string"
+                            },
+                            "bendingStrengthDiagonally": {
+                                "type": "string"
+                            },
+                            "edgeFinishingLongSide": {
+                                "type": "string"
+                            },
+                            "edgeFinishingHeadEnd": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "@type",
+                            "categorizationCN",
+                            "categorizationTalo2000",
+                            "codeProductCatalog",
+                            "document",
+                            "etimFeature",
+                            "nameTechnical",
+                            "package",
+                            "safety",
+                            "status",
+                            "supplier",
+                            "unitSales",
+                            "unitUsage",
+                            "updated"
+                        ]
+                    },
+                    "default": [
+                        {
+                            "@type": "Product",
+                            "codeProductCatalog": "1405541",
+                            "codeProduct": "15456",
+                            "gTIN": "7318931984911",
+                            "nameBrand": "Gypsteel",
+                            "descriptionGeneral": "Ergonomiset Gypsteel Teräsprofiilit ovat tavallisia teräsrankoja kevyempiä ja nopeampia asentaa. Myös ruuvit uppoavat ja pureutuvat paremmin Gypsteel Rankaan. Pintastruktuurin tuoman kitkan ansiosta Gypsteel Rangat ja Kiskot pysyvät hyvin yhdessä ilman erillistä kiinnitystä. Tämä helpottaa työskentelyä ja lisää työturvallisuutta. Gypsteel Teräsprofiilit valmistetaan Hadley Groupin patentoimalla UltraSTEEL™ -tekniikalla, jossa sinkityn teräsohutlevyn tehollista paksuutta kasvatetaan ja lujitetaan. Näin teräksen ominaisuuksista saadaan kaikki hyöty irti tinkimättä suorituskyvystä asennusvaiheessa tai valmiissa rakenteessa. ELPR-rangan poikkileikkaus on epäsymmetrinen ja siten kaksi rankaa on limitettävissä sisäkkäin. ELPR-rangassa on läpälliset reiät seinän sisään jääville putkituksille.",
+                            "nameTechnical": "GYPSTEEL ELPR 66/40 Ranka 2700",
+                            "unitUsage": "m-Metri",
+                            "unitSales": "PK-Package",
+                            "updated": "2022-03-18T18:15:02.000Z",
+                            "categorizationTalo2000": "341",
+                            "categorizationCN": "73089098",
+                            "length": "2700 mm",
+                            "width": "66 mm",
+                            "origin": "FI",
+                            "status": "Active",
+                            "supplier": {
+                                "@type": "Organization",
+                                "name": "Gypsteel"
+                            },
+                            "package": {
+                                "@type": "Package",
+                                "amountPerPackage": "2.7",
+                                "gTIN": "7318931984911",
+                                "size": "2.7",
+                                "weight": "1.539 kg",
+                                "volume": "0,007 m³"
+                            },
+                            "safety": [],
+                            "gypsumBoardType": "X",
+                            "document": [
+                                {
+                                    "@type": "Document",
+                                    "name": "01/10/2010",
+                                    "updated": "2020-06-02T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/6E47B50B8E544CF2B6E9A38C9516A27A/Gypsteel_Tersrankajrjestelmt_1.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "Gyproc ELPR steel profile",
+                                    "updated": "2020-11-17T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/8A04AFF8BCB74E39895DDF83C54A05FA/_AR00089977_1.jpg"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "01/07/2013",
+                                    "updated": "2020-06-02T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/0F856B82BD4041E3875C3896DFDC623D/Suoritustasoilmoitus_DoP_Nr__GSP14195_-_Gyproc_Tersprofiilit.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "EPD Gypsteel steel profiles, Finland. Valid until 22.10.2024.",
+                                    "updated": "2021-09-29T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/EE612973023349F0A6709BD7897479AB/EPD_FI_Gypsteel-profiles.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "Gypsteel ELPR 66/40",
+                                    "updated": "2022-01-19T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/BBE6FA80421E4F858CCC5E4CEF6D3AD8/Gyproc_Gypsteel_ELPR_66-40.pdf"
+                                }
+                            ],
+                            "etimFeature": []
+                        },
+                        {
+                            "@type": "Product",
+                            "codeProductCatalog": "1406024",
+                            "codeProduct": "86752",
+                            "gTIN": "6438127011182",
+                            "nameBrand": "Gyproc",
+                            "descriptionGeneral": "Gyproc GEK 13 ERIKOISKOVA -levy on normaalia kipsilevyä huomattavasti vahvempi rakennuslevy. Levyä käytetään seinissä, joissa tarvitaan normaalia suurempaa kovuutta ja jäykkyyttä. Uuden teknologian ansiosta levy on aikaisempaa kevyempi, mutta levyn tekniset ominaisuudet ovat ennallaan. Levyä on saatavana reunamuodoltaan reunaohennettuna, jolloin muodostuu syvennys saumanauhaa varten. Paino n. 9,9 kg/m².",
+                            "nameTechnical": "GYPROC GEK 13 Erikoiskova 1200x2700",
+                            "unitUsage": "m²-Neliömetri",
+                            "unitSales": "PK-Package",
+                            "updated": "2022-03-18T18:15:02.000Z",
+                            "categorizationTalo2000": "261",
+                            "categorizationCN": "68091100",
+                            "categoriztionM1": "YES",
+                            "length": "2700 mm",
+                            "width": "1200 mm",
+                            "origin": "FI",
+                            "status": "Active",
+                            "supplier": {
+                                "@type": "Organization",
+                                "name": "Gyproc"
+                            },
+                            "package": {
+                                "@type": "Package",
+                                "amountPerPackage": "3.24",
+                                "gTIN": "6438127011182",
+                                "size": "3.24",
+                                "weight": "32.076 kg",
+                                "volume": "0,042 m³"
+                            },
+                            "safety": [],
+                            "thermalConductivity": "0.25 W/m.K",
+                            "gypsumBoardType": "DIR",
+                            "fireClassification": "A2-s1, d0",
+                            "fireFlamingParticlesDevelopment": "A2-s1, d0",
+                            "waterVaporResistance": "4500 m³/m²·s·Pa",
+                            "bendingStrengthLongitudinally": "8.0 MPa",
+                            "bendingStrengthDiagonally": "3.4 MPa",
+                            "edgeFinishingLongSide": "Ohennettu reuna",
+                            "edgeFinishingHeadEnd": "Suorareuna",
+                            "document": [
+                                {
+                                    "@type": "Document",
+                                    "name": "01/03/2017",
+                                    "updated": "2020-06-02T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/336288AB8E1E4C47BF1C666C1E0E20D4/Gyproc_ripustusohjeet_032017.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "M1 certification Finnish, Classification is valid until 16.08.2023",
+                                    "updated": "2020-09-22T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/55C97BB6DD774A9B8B941B62F9088CB6/Saint-Gobain_Finland_Oy_Gyproc_2654_kipsilevyt_FI.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "EPD FI Gyproc GEK 13 ERIKOISKOVA - Impact Board\nValid: 31.12.2018 - 31.12.2023 ",
+                                    "updated": "2021-02-22T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/0A5A9AE537FA4EDF8307A5996809ED41/EPD_FI_Gyproc_Erikoiskova.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "Gyproc GR",
+                                    "updated": "2020-11-17T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/8A5B873D4B2C49F6A652C408905A6F6E/_AR00090429_1.png"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "19/12/2016",
+                                    "updated": "2020-06-02T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/4F5306877F0944A8BE2612A04AD96583/Suoritustasoilmoitus_DoP_Nr-_G520_-_Gyproc_Kipsilevyt.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "10/06/2015",
+                                    "updated": "2020-06-02T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/F68FE930322944ABB4F26EEA79FB167B/KTT_Kipsikartonkilevyt.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "15/09/2021",
+                                    "updated": "2021-09-17T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/930BE8F98A044B34967DE8E818E29E7B/Gyproc_GEK_13_ERIKOISKOVA.pdf"
+                                }
+                            ],
+                            "etimFeature": []
+                        },
+                        {
+                            "@type": "Product",
+                            "codeProductCatalog": "1406733",
+                            "codeProduct": "1015119",
+                            "gTIN": "6415910021313",
+                            "nameBrand": "Weber",
+                            "descriptionGeneral": "weber OL 15 Ohutsaumalaasti on vaalea kuivalaasti ohutsaumamuuraukseen. Tuotetta käytetään Kahi-kalkkihiekkaharkkojen ja -tiilien, Leca® EasyLex -väliseinäharkkojen sekä kevytbetoniharkkojen ohutsaumamuuraukseen n. 2 mm paksulla saumalla.",
+                            "nameTechnical": "weber OL 15 Ohutsaumalaasti 25 kg K",
+                            "unitUsage": "kg",
+                            "unitSales": "BAG",
+                            "updated": "2022-03-18T13:15:01.000Z",
+                            "categorizationTalo2000": "235p2",
+                            "categorizationCN": "38245090",
+                            "categoriztionM1": "CE, M1, FI, Avainlippu",
+                            "origin": "FI",
+                            "status": "Active",
+                            "supplier": {
+                                "@type": "Organization",
+                                "name": "Weber"
+                            },
+                            "package": {
+                                "@type": "Package",
+                                "amountPerPackage": "25",
+                                "gTIN": "6415910021313",
+                                "size": "25",
+                                "weight": "25 kg",
+                                "volume": "0,018 m³"
+                            },
+                            "safety": [],
+                            "document": [
+                                {
+                                    "@type": "Document",
+                                    "name": "weber OL 15 Ohutsaumalaasti, 25 kg:n paperisäkki ",
+                                    "updated": "2021-11-17T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/FF816698E0284AC4B7FAF26C3B3202F2/_AR00122071_1.jpg"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "26/01/2022",
+                                    "updated": "2022-01-26T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/7C656226C4D24E8CA33F7837B849C9B0/weber-OL-15-Ohutsaumalaasti-Tuotekortti.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "16/11/2021",
+                                    "updated": "2021-11-17T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/2F6411D3D77542BFA62C1348AE396174/weber-OL-15-Ohutsaumalaasti-Suoritustasoilmoitus.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "08/05/2020",
+                                    "updated": "2021-11-18T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/7C6C008B8E654AB18C174B033F53721C/weber-OL-15-Ohutsaumalaasti-Kayttoturvallisuustiedote.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "Luokitus on voimassa 24.4.2024 asti.",
+                                    "updated": "2021-11-18T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/0B8299E30AC3498C8FDA87AC33D6113A/weber-OL-15-Ohutsaumalaasti-M1-luokitus.pdf"
+                                }
+                            ],
+                            "etimFeature": []
+                        },
+                        {
+                            "@type": "Product",
+                            "codeProductCatalog": "1406289",
+                            "codeProduct": "1005136",
+                            "gTIN": "6419139602117",
+                            "nameBrand": "Kahi",
+                            "descriptionGeneral": "Kahi Ohutsaumakelkka 85/88 on muurauskelkka, joka soveltuu weber OL 15 Ohutsaumalaastin ja OL 15 P Pakkasohutsaumalaastin levitykseen.",
+                            "nameTechnical": "weber Ohutsaumakelkka 85/88",
+                            "unitUsage": "PC",
+                            "unitSales": "PC",
+                            "updated": "2022-03-18T13:15:01.000Z",
+                            "categorizationTalo2000": "774",
+                            "categorizationCN": "82055910",
+                            "origin": "FI",
+                            "status": "Active",
+                            "supplier": {
+                                "@type": "Organization",
+                                "name": "Kahi"
+                            },
+                            "package": {
+                                "@type": "Package",
+                                "amountPerPackage": "1",
+                                "gTIN": "6419139602117",
+                                "size": "1",
+                                "weight": "2.5 kg",
+                                "volume": "7,246 dm³"
+                            },
+                            "safety": [],
+                            "document": [
+                                {
+                                    "@type": "Document",
+                                    "name": "Kahi Ohutsaumakelkka 85/88, 1 kpl ",
+                                    "updated": "2020-01-20T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/971CAA34FA6A4810AD7A3FB94079FBCB/_AR00139512_1.jpg"
+                                }
+                            ],
+                            "etimFeature": []
+                        },
+                        {
+                            "@type": "Product",
+                            "codeProductCatalog": "1406373",
+                            "codeProduct": "1009362",
+                            "gTIN": "6415910009427",
+                            "nameBrand": "Leca",
+                            "descriptionGeneral": "Leca® EasyLex 88 VS -harkko on ympäripontattu, mittatarkka ja pinnaltaan tasainen väliseinäharkko. Suurien ponttiensa ansiosta lukitus on jämpti, muuraus on nopeaa ja helppoa, muurauksesta tulee tukeva ja näin normaalin huoneen korkuiset seinät voidaan muurata kerralla ylös asti. Laastimenekki 0,22-0,3 kg/harkko (weber OL 15 Ohutsaumalaasti). Lavan sisältö: Leca® EasyLex 88 VS -harkkoja 57 kpl, EasyLex 88 VS pääty 6 kpl, EasyLex 88 VS puolikas 6 kpl.",
+                            "nameTechnical": "Leca® EasyLex 88 VS harkko 66 kpl",
+                            "unitUsage": "PC",
+                            "unitSales": "PAL",
+                            "updated": "2022-03-18T13:15:01.000Z",
+                            "categorizationTalo2000": "232p9",
+                            "categorizationCN": "68101110",
+                            "categoriztionM1": "CE, M1",
+                            "origin": "FI",
+                            "status": "Active",
+                            "supplier": {
+                                "@type": "Organization",
+                                "name": "Leca"
+                            },
+                            "package": {
+                                "@type": "Package",
+                                "amountPerPackage": "66",
+                                "gTIN": "6415910009427",
+                                "size": "66",
+                                "weight": "735 kg",
+                                "volume": "0,868 m³"
+                            },
+                            "safety": [],
+                            "document": [
+                                {
+                                    "@type": "Document",
+                                    "name": "Leca® EasyLex 88 VS -harkko, 1 kpl eri tyyppejä ",
+                                    "updated": "2020-01-20T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/6FC20FFD3C724026BDB59E3B4FDE649D/_AR00139584_1.jpg"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "27/03/2019",
+                                    "updated": "2021-08-27T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/20878ABF8920481E86CE8736463D4F9A/Leca-valiseinaharkot-Suoritustasoilmoitus.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "Luokitus on voimassa 30.1.2023 asti.",
+                                    "updated": "2021-05-07T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/6403A74F3C734208829671F04C213BD3/Leca-harkot-M1-luokitus.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "01/09/2012",
+                                    "updated": "2021-05-07T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/4224754EB1A846AD97C96A3B33E89488/4-20-Leca-valiseinat-Leca-EasyLex-88-Leca-Lex.pdf"
+                                }
+                            ],
+                            "etimFeature": []
+                        },
+                        {
+                            "@type": "Product",
+                            "codeProductCatalog": "1406821",
+                            "gTIN": "6438127019478",
+                            "nameBrand": "Gyproc",
+                            "descriptionGeneral": "Gyproc Habito® on erityisen luja kartonkipintainen rakennuslevy, joka tarjoaa erinomaisen ripustuslujuuden ja iskunkestävyyden. Levy kestää yhden tavallisen puuruuvin varassa jopa 40 kg ripustuskuorman ja se on merkittävästi muita levytyyppejä lujempi. Habito®-levyllä on kipsikartonkilevyjen kaikkien aikojen paras jäykistyskapasiteetti ja levyn iskunkestävyys on jopa 10-kertainen tavallisiin kipsilevyihin verrattuna. Reunaohennettu ja vaaleapintainen levy on helppo saumata ja pinnoittaa. Gyproc Habito® -levy soveltuu erityisesti kohteisiin, joissa vaaditaan erityistä kulutuskestävyyttä, kuten keittiöt, tekniset tilat, autotallit, koulut, päiväkodit ja sairaalat.&amp;nbsp; Habito® soveltuu käytettäväksi myös märkätiloissa jopa K600 rankajaolla. Suomessa valmistetulla levyllä on EPD -ympäristöseloste, M1-sisäilmaluokitus ja CE-merkintä.&amp;nbsp; Levyn paino on 12,2 kg/m2.",
+                            "nameTechnical": "GYPROC GH 13 Habito 1200x2500 P",
+                            "unitUsage": "m²-Neliömetri",
+                            "unitSales": "kpl-Kappale",
+                            "updated": "2022-03-18T18:15:02.000Z",
+                            "categorizationTalo2000": "261",
+                            "categorizationCN": "68091100",
+                            "categoriztionM1": "YES",
+                            "length": "2500 mm",
+                            "width": "1200 mm",
+                            "origin": "FI",
+                            "status": "Active",
+                            "supplier": {
+                                "@type": "Organization",
+                                "name": "Gyproc"
+                            },
+                            "package": {
+                                "@type": "Package",
+                                "gTIN": "6438127019478"
+                            },
+                            "safety": [],
+                            "thermalConductivity": "0.25 W/m.K",
+                            "gypsumBoardType": "DFIR 12,5",
+                            "fireClassification": "A2-s1, d0",
+                            "fireFlamingParticlesDevelopment": "A2-s1, d0",
+                            "waterVaporResistance": "4500 m³/m²·s·Pa",
+                            "bendingStrengthLongitudinally": "8.6 MPa",
+                            "bendingStrengthDiagonally": "3.4 MPa",
+                            "edgeFinishingLongSide": "Ohennettu reuna",
+                            "edgeFinishingHeadEnd": "Suorareuna",
+                            "document": [
+                                {
+                                    "@type": "Document",
+                                    "name": "04/03/2016",
+                                    "updated": "2020-06-02T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/6AA4CC7C29F445B9BD578EDEDD27BC49/SUIS_FI_Habito.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "Gyproc GH 13 HABITO ",
+                                    "updated": "2020-11-17T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/829C9BD33B954907803A502D785C573B/_AR00158385_1.png"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "17/01/2020",
+                                    "updated": "2020-06-02T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/37BAB33F733F446C94260F55F90E4FA3/DoP-FI-Nr_HABITO002-FI.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "17/01/2020",
+                                    "updated": "2020-06-02T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/C891CE5185DB43B3854D8504D110F7B7/DoP-FI-Nr_HABITO002-EN.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "12/10/2017",
+                                    "updated": "2020-09-25T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/CC8264F63C7A4774B84A1DDB446CC1A1/GyprocHabito_A4_paivitettySYYS20.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "10/06/2019",
+                                    "updated": "2020-06-02T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/6C40E45C5D8B41668BC9A637DF5FD14A/GyprocHabitoSlim_A4-web.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "M1 certification Finnish, Certification valid until 19.03.2022",
+                                    "updated": "2021-11-08T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/A125D4E6F4F04B419B2B7C31383064EA/SaintGobainFinland_2988_Habito_FIN.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "EPD FI 12.5 mm Gyproc Habito ",
+                                    "updated": "2021-02-22T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/D7FD6D20EAA345D5804D552245A9A76E/EPD_FI_Gyproc_Habito.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "10/06/2015",
+                                    "updated": "2020-06-02T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/F68FE930322944ABB4F26EEA79FB167B/KTT_Kipsikartonkilevyt.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "15/09/2021",
+                                    "updated": "2021-09-17T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/DF9BE6F095234B6C9605F2AC516D2AF0/Gyproc_GH_13_Habito.pdf"
+                                }
+                            ],
+                            "etimFeature": []
+                        },
+                        {
+                            "@type": "Product",
+                            "codeProductCatalog": "1405735",
+                            "codeProduct": "31360",
+                            "nameTechnical": "ISOVER PREMIUM 33 MUL 50*610*1170",
+                            "unitUsage": "m²-Neliömetri",
+                            "unitSales": "kpl-Kappale",
+                            "updated": "2022-03-18T08:00:02.000Z",
+                            "categorizationTalo2000": "271p1",
+                            "categorizationCN": "70198010",
+                            "categoriztionM1": "YES",
+                            "status": "Active",
+                            "supplier": {
+                                "@type": "Organization"
+                            },
+                            "package": {
+                                "@type": "Package",
+                                "amountPerPackage": "0.714",
+                                "size": "0.714"
+                            },
+                            "safety": [],
+                            "thermalConductivity": "0.033 W/m.K",
+                            "document": [
+                                {
+                                    "@type": "Document",
+                                    "name": "ISOVER PREMIUM 33",
+                                    "updated": "2020-12-16T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/C8BD794AE4CC4512A77B9330047A5115/_AR00207045_1.jpg"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "10/02/2020",
+                                    "updated": "2020-07-10T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/89C9910A79FC4F4F808CB25DB7393DC5/dop_isover_premium_33_10.2.2020_fi.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "27/02/2020",
+                                    "updated": "2022-01-07T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/F76D608ADD7E4910B4D5C11B6B65C74A/ktt_isover_lasivilla.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "Valid: 23.03.2020 - 23.03.2025",
+                                    "updated": "2020-07-10T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/C8BBD3B08D14481DACF7B71441D20383/nepd-2090-947_premium-33.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "Classification valid until 03.02.2023",
+                                    "updated": "2020-11-20T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/BC1E0B24031747BC8DA9C652943F3FEF/M1_saint-gobainfinland_2827_lightweight_FI.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "ISOVER Premium 33 tuotekortti",
+                                    "updated": "2022-01-12T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/C5EA2DA6F2E7469DAB76CC0CC32C56A6/ISOVER_PREMIUM_33.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "27/02/2020",
+                                    "updated": "2021-06-24T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/33A39B7A876E41F38370EE64498B9782/MSDS_FI_isover_glaswool.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "03/01/2022",
+                                    "updated": "2022-01-03T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/E9435843BAB24D419B7E539A7E0E431B/ISOVER_A4_valintataulukko_01_2022.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "10/02/2020",
+                                    "updated": "2022-01-14T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/C3372F02AACE46DDB1E15F6155F36F6B/dop_en_isover_premium-33.pdf"
+                                }
+                            ],
+                            "etimFeature": []
+                        },
+                        {
+                            "@type": "Product",
+                            "codeProductCatalog": "1405754",
+                            "codeProduct": "31660",
+                            "nameTechnical": "ISOVER EXTREME 31 MUL 50*560*1170",
+                            "unitUsage": "m²-Neliömetri",
+                            "unitSales": "kpl-Kappale",
+                            "updated": "2022-03-18T08:00:02.000Z",
+                            "categorizationTalo2000": "271p1",
+                            "categorizationCN": "70198010",
+                            "categoriztionM1": "YES",
+                            "status": "Active",
+                            "supplier": {
+                                "@type": "Organization"
+                            },
+                            "package": {
+                                "@type": "Package",
+                                "amountPerPackage": "0.655",
+                                "size": "0.655"
+                            },
+                            "safety": [],
+                            "thermalConductivity": "0.031 W/m.K",
+                            "document": [
+                                {
+                                    "@type": "Document",
+                                    "name": "ISOVER EXTREME 31",
+                                    "updated": "2020-07-17T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/0F770C19B36040F78AB31D9BB326E21D/_AR00207110_1.jpg"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "27/02/2020",
+                                    "updated": "2022-01-07T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/F76D608ADD7E4910B4D5C11B6B65C74A/ktt_isover_lasivilla.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "10/02/2020",
+                                    "updated": "2020-07-10T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/FA617776EE22489BB495EA22A06FD596/dop_isover_extreme_31_10.2.2020_fi.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "Valid: 23.03.2020 - 23.03.2025",
+                                    "updated": "2020-07-10T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/F511DA08EAF843199DF4C1EA78BEA975/nepd-2088-947_extreme-31.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "Classification valid until 03.02.2023",
+                                    "updated": "2020-11-20T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/BC1E0B24031747BC8DA9C652943F3FEF/M1_saint-gobainfinland_2827_lightweight_FI.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "ISOVER EXTREME 31 tuotekortti",
+                                    "updated": "2022-01-12T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/CB9FDF544F334A1BB79D7B92166804D4/ISOVER_EXTREME_31.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "27/02/2020",
+                                    "updated": "2021-06-24T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/33A39B7A876E41F38370EE64498B9782/MSDS_FI_isover_glaswool.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "03/01/2022",
+                                    "updated": "2022-01-03T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/E9435843BAB24D419B7E539A7E0E431B/ISOVER_A4_valintataulukko_01_2022.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "10.02.2020",
+                                    "updated": "2022-01-11T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/8AA3B13AFB8B4782817BEB6F2AC0104E/dop_en_isover_extreme-31.pdf"
+                                }
+                            ],
+                            "etimFeature": []
+                        },
+                        {
+                            "@type": "Product",
+                            "codeProductCatalog": "1405768",
+                            "codeProduct": "31697",
+                            "nameTechnical": "ISOVER ACOUSTIC MUL 50*565*1310",
+                            "unitUsage": "m²-Neliömetri",
+                            "unitSales": "kpl-Kappale",
+                            "updated": "2022-03-18T08:00:02.000Z",
+                            "categorizationTalo2000": "271p1",
+                            "categorizationCN": "70198010",
+                            "categoriztionM1": "YES",
+                            "status": "Active",
+                            "supplier": {
+                                "@type": "Organization"
+                            },
+                            "package": {
+                                "@type": "Package",
+                                "amountPerPackage": "0.74",
+                                "size": "0.74"
+                            },
+                            "safety": [],
+                            "thermalConductivity": "0.040 W/m.K",
+                            "document": [
+                                {
+                                    "@type": "Document",
+                                    "name": "ISOVER Acoustic",
+                                    "updated": "2020-07-17T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/7E8CC5C91A364A9383D606C2199E7C1E/_AR00207123_1.jpg"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "27/02/2020",
+                                    "updated": "2022-01-07T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/F76D608ADD7E4910B4D5C11B6B65C74A/ktt_isover_lasivilla.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "10/02/2020",
+                                    "updated": "2020-07-10T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/17E35570DC3843FFB3B72B3953144806/dop_isover_acoustic_10.2.2020_fi.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "Valid: 23.03.2020 - 23.03.2025",
+                                    "updated": "2020-07-10T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/D3423E275AEF476799C89C1C8A552685/nepd-2087-947_acoustic.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "Classification valid until 03.02.2023",
+                                    "updated": "2020-11-20T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/BC1E0B24031747BC8DA9C652943F3FEF/M1_saint-gobainfinland_2827_lightweight_FI.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "ISOVER ACOUSTIC tuotekortti",
+                                    "updated": "2022-01-12T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/5F213D960FB2436982FA61CBABF60545/ISOVER_ACOUSTIC.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "27/02/2020",
+                                    "updated": "2021-06-24T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/33A39B7A876E41F38370EE64498B9782/MSDS_FI_isover_glaswool.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "03/01/2022",
+                                    "updated": "2022-01-03T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/E9435843BAB24D419B7E539A7E0E431B/ISOVER_A4_valintataulukko_01_2022.pdf"
+                                },
+                                {
+                                    "@type": "Document",
+                                    "name": "10.02.2020",
+                                    "updated": "2022-01-11T00:00:00.000Z",
+                                    "url": "https://cdn.saint-gobain.dk/cdn/3917/A6D8CFECFB7C4192A043515F749A3E1E/dop_en_isover_acoustic.pdf"
+                                }
+                            ],
+                            "etimFeature": []
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "products"
+            ]
+        },
+        "signature": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "default": "RsaSignature2018"
+                },
+                "created": {
+                    "type": "string",
+                    "default": "2022-03-19T00:40:33+02:00"
+                },
+                "creator": {
+                    "type": "string",
+                    "default": "http://localhost:8080/translator/v1/public.key"
+                },
+                "signatureValue": {
+                    "type": "string",
+                    "default": "Lv4MyYv6V7Tdja8fodvqpmawZFmAsgohZfilaso1DSc6CW4cVDu21Tj/HQ1OUzyRv2msWUs71ti+tOysteyb8Vjns3jk5h8pQV2E9BG6n7GkfSlDnSZYAT+jvXUUUIQftNSPdFGido2a13HzCb8ucfsGS40ucs4i1F8MsuGwLVyzwaQr/pUGlA1kNiZJuZfgOvEeg8DWxOKRAxTN7NnVNFUek4+UeOA5vIIhpD88gO6N5li93921R8BFDHDmlXQMLZvrgePFCXTy1Nozn8/rkQa98UuhdIt9prh3I1Mw6kggFHUjEem5SXYwHvjkxxOcXHRqwrqN0cG6O09Uo4mhn2NSyEC+cAB3Ighq66ykBAW1lZ6WjDAkeCP0Wc4jeD7OFu8m+pd4h0TYtZ3aEMEqimpnehNuUNfGN+/eDEcv3i+3mmxYwZLY0CwYZtF9ilLxuMJkcHX1luvxAwG1Ok/uss3g+r6iwmeEVF1DRQQzpc85TjvNSc5u0DVtDRQzeJxICgpsTGv374fBecimuP/vbieggUd/d/22KTHeYas0fiGQSFX1LMuG77lQa2PdzGPIki7tr8CJy0tQzTpRuEcYnk6zLKSIR74P5pPPKE7+Mg7JF9gzjJEgTRjEH7u54MuPJkkfHLYDGxpNoy1cbgmgFiYtoV5UYF11yP8++kGmtm8="
+                }
+            },
+            "required": [
+                "created",
+                "creator",
+                "signatureValue",
+                "type"
+            ]
+        }
+    },
+    "required": [
+        "@context",
+        "data",
+        "signature"
+    ]
+}</msg>
+<status status="PASS" starttime="20220319 00:40:33.579" endtime="20220319 00:40:33.622"></status>
+</kw>
+<status status="PASS" starttime="20220319 00:40:31.093" endtime="20220319 00:40:33.622"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>200</arg>
+</arguments>
+<status status="PASS" starttime="20220319 00:40:33.624" endtime="20220319 00:40:33.625"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body @context</arg>
+<arg>${CONTEXT}</arg>
+</arguments>
+<status status="PASS" starttime="20220319 00:40:33.639" endtime="20220319 00:40:33.640"></status>
+</kw>
+<kw name="Object" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON object.*</doc>
+<arguments>
+<arg>response body data</arg>
+</arguments>
+<status status="PASS" starttime="20220319 00:40:33.641" endtime="20220319 00:40:33.645"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data products</arg>
+</arguments>
+<status status="PASS" starttime="20220319 00:40:33.645" endtime="20220319 00:40:33.648"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body data products 0 @type</arg>
+<arg>Product</arg>
+</arguments>
+<status status="PASS" starttime="20220319 00:40:33.649" endtime="20220319 00:40:33.650"></status>
+</kw>
+<tags>
+<tag>bug-0002</tag>
+</tags>
+<status status="PASS" starttime="20220319 00:40:31.090" endtime="20220319 00:40:33.650" critical="yes"></status>
+</test>
+<test id="s1-t3" name="fetch, 422, Missing data for timestamp required field">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20220319 00:40:33.653" level="INFO">${body} = {'productCode': 'saint', 'parameters': {'period': '2022-03-01T00:00:00.000Z/2022-03-20T00:00:00.000Z'}}</msg>
+<status status="PASS" starttime="20220319 00:40:33.652" endtime="20220319 00:40:33.653"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20220319 00:40:33.654" level="INFO">${now} = 2022-03-18T22:40:33+00:00</msg>
+<status status="PASS" starttime="20220319 00:40:33.653" endtime="20220319 00:40:33.654"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20220319 00:40:33.654" endtime="20220319 00:40:33.654"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20220319 00:40:33.654" endtime="20220319 00:40:33.655"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20220319 00:40:33.655" level="INFO">${json_string} = {"productCode": "saint", "parameters": {"period": "2022-03-01T00:00:00.000Z/2022-03-20T00:00:00.000Z"}, "timestamp": "2022-03-18T22:40:33+00:00"}</msg>
+<status status="PASS" starttime="20220319 00:40:33.655" endtime="20220319 00:40:33.655"></status>
+</kw>
+<msg timestamp="20220319 00:40:33.656" level="INFO">${body} = {'productCode': 'saint', 'parameters': {'period': '2022-03-01T00:00:00.000Z/2022-03-20T00:00:00.000Z'}, 'timestamp': '2022-03-18T22:40:33+00:00'}</msg>
+<status status="PASS" starttime="20220319 00:40:33.652" endtime="20220319 00:40:33.656"></status>
+</kw>
+<kw name="Pop From Dictionary" library="Collections">
+<doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+</arguments>
+<status status="PASS" starttime="20220319 00:40:33.656" endtime="20220319 00:40:33.656"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20220319 00:40:33.657" level="INFO">${signature} = F202BH3UpjSDwPKshCORZ5yNxgSkfCPNPnO8FVuPKyk=</msg>
+<status status="PASS" starttime="20220319 00:40:33.657" endtime="20220319 00:40:33.657"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20220319 00:40:33.657" endtime="20220319 00:40:33.658"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20220319 00:40:33.658" endtime="20220319 00:40:35.729"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20220319 00:40:35.730" level="INFO">
 {
     "type": "object",
     "properties": {
@@ -1194,9 +2243,9 @@
         "error"
     ]
 }</msg>
-<status status="PASS" starttime="20220318 10:31:16.384" endtime="20220318 10:31:16.386"></status>
+<status status="PASS" starttime="20220319 00:40:35.729" endtime="20220319 00:40:35.737"></status>
 </kw>
-<status status="PASS" starttime="20220318 10:31:14.328" endtime="20220318 10:31:16.386"></status>
+<status status="PASS" starttime="20220319 00:40:33.657" endtime="20220319 00:40:35.737"></status>
 </kw>
 <kw name="Integer" library="REST">
 <tags>
@@ -1207,7 +2256,7 @@
 <arg>response status</arg>
 <arg>422</arg>
 </arguments>
-<status status="PASS" starttime="20220318 10:31:16.386" endtime="20220318 10:31:16.386"></status>
+<status status="PASS" starttime="20220319 00:40:35.738" endtime="20220319 00:40:35.739"></status>
 </kw>
 <kw name="Integer" library="REST">
 <tags>
@@ -1218,7 +2267,7 @@
 <arg>response body error status</arg>
 <arg>422</arg>
 </arguments>
-<status status="PASS" starttime="20220318 10:31:16.387" endtime="20220318 10:31:16.387"></status>
+<status status="PASS" starttime="20220319 00:40:35.740" endtime="20220319 00:40:35.741"></status>
 </kw>
 <kw name="String" library="REST">
 <tags>
@@ -1229,14 +2278,14 @@
 <arg>response body error message timestamp 0</arg>
 <arg>Missing data for required field.</arg>
 </arguments>
-<status status="PASS" starttime="20220318 10:31:16.387" endtime="20220318 10:31:16.388"></status>
+<status status="PASS" starttime="20220319 00:40:35.742" endtime="20220319 00:40:35.743"></status>
 </kw>
 <tags>
-<tag>bug-0002</tag>
+<tag>bug-0003</tag>
 </tags>
-<status status="PASS" starttime="20220318 10:31:14.325" endtime="20220318 10:31:16.388" critical="yes"></status>
+<status status="PASS" starttime="20220319 00:40:33.652" endtime="20220319 00:40:35.744" critical="yes"></status>
 </test>
-<test id="s1-t3" name="fetch, 422, Missing data for parameters required field">
+<test id="s1-t4" name="fetch, 422, Missing data for parameters required field">
 <kw name="Get Body">
 <assign>
 <var>${body}</var>
@@ -1250,8 +2299,8 @@
 <assign>
 <var>${body}</var>
 </assign>
-<msg timestamp="20220318 10:31:16.390" level="INFO">${body} = {'productCode': 'saint', 'parameters': {'period': '2022-03-01T00:00:00.000Z/2022-03-18T00:00:00.000Z'}}</msg>
-<status status="PASS" starttime="20220318 10:31:16.390" endtime="20220318 10:31:16.390"></status>
+<msg timestamp="20220319 00:40:35.749" level="INFO">${body} = {'productCode': 'saint', 'parameters': {'period': '2022-03-01T00:00:00.000Z/2022-03-20T00:00:00.000Z'}}</msg>
+<status status="PASS" starttime="20220319 00:40:35.748" endtime="20220319 00:40:35.749"></status>
 </kw>
 <kw name="Get Current Date" library="DateTime">
 <doc>Returns current local or UTC time with an optional increment.</doc>
@@ -1262,8 +2311,8 @@
 <assign>
 <var>${now}</var>
 </assign>
-<msg timestamp="20220318 10:31:16.391" level="INFO">${now} = 2022-03-18T08:31:16+00:00</msg>
-<status status="PASS" starttime="20220318 10:31:16.390" endtime="20220318 10:31:16.391"></status>
+<msg timestamp="20220319 00:40:35.749" level="INFO">${now} = 2022-03-18T22:40:35+00:00</msg>
+<status status="PASS" starttime="20220319 00:40:35.749" endtime="20220319 00:40:35.750"></status>
 </kw>
 <kw name="Set To Dictionary" library="Collections">
 <doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
@@ -1272,7 +2321,7 @@
 <arg>timestamp</arg>
 <arg>${now}</arg>
 </arguments>
-<status status="PASS" starttime="20220318 10:31:16.391" endtime="20220318 10:31:16.391"></status>
+<status status="PASS" starttime="20220319 00:40:35.750" endtime="20220319 00:40:35.750"></status>
 </kw>
 <kw name="Set To Dictionary" library="Collections">
 <doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
@@ -1280,7 +2329,7 @@
 <arg>${body}</arg>
 <arg>&amp;{kwargs}</arg>
 </arguments>
-<status status="PASS" starttime="20220318 10:31:16.391" endtime="20220318 10:31:16.391"></status>
+<status status="PASS" starttime="20220319 00:40:35.750" endtime="20220319 00:40:35.751"></status>
 </kw>
 <kw name="Evaluate" library="BuiltIn">
 <doc>Evaluates the given expression in Python and returns the result.</doc>
@@ -1291,11 +2340,11 @@
 <assign>
 <var>${json_string}</var>
 </assign>
-<msg timestamp="20220318 10:31:16.392" level="INFO">${json_string} = {"productCode": "saint", "parameters": {"period": "2022-03-01T00:00:00.000Z/2022-03-18T00:00:00.000Z"}, "timestamp": "2022-03-18T08:31:16+00:00"}</msg>
-<status status="PASS" starttime="20220318 10:31:16.391" endtime="20220318 10:31:16.392"></status>
+<msg timestamp="20220319 00:40:35.751" level="INFO">${json_string} = {"productCode": "saint", "parameters": {"period": "2022-03-01T00:00:00.000Z/2022-03-20T00:00:00.000Z"}, "timestamp": "2022-03-18T22:40:35+00:00"}</msg>
+<status status="PASS" starttime="20220319 00:40:35.751" endtime="20220319 00:40:35.751"></status>
 </kw>
-<msg timestamp="20220318 10:31:16.392" level="INFO">${body} = {'productCode': 'saint', 'parameters': {'period': '2022-03-01T00:00:00.000Z/2022-03-18T00:00:00.000Z'}, 'timestamp': '2022-03-18T08:31:16+00:00'}</msg>
-<status status="PASS" starttime="20220318 10:31:16.390" endtime="20220318 10:31:16.392"></status>
+<msg timestamp="20220319 00:40:35.752" level="INFO">${body} = {'productCode': 'saint', 'parameters': {'period': '2022-03-01T00:00:00.000Z/2022-03-20T00:00:00.000Z'}, 'timestamp': '2022-03-18T22:40:35+00:00'}</msg>
+<status status="PASS" starttime="20220319 00:40:35.747" endtime="20220319 00:40:35.752"></status>
 </kw>
 <kw name="Pop From Dictionary" library="Collections">
 <doc>Pops the given ``key`` from the ``dictionary`` and returns its value.</doc>
@@ -1303,7 +2352,7 @@
 <arg>${body}</arg>
 <arg>parameters</arg>
 </arguments>
-<status status="PASS" starttime="20220318 10:31:16.392" endtime="20220318 10:31:16.392"></status>
+<status status="PASS" starttime="20220319 00:40:35.753" endtime="20220319 00:40:35.753"></status>
 </kw>
 <kw name="Fetch Data Product">
 <arguments>
@@ -1317,8 +2366,8 @@
 <assign>
 <var>${signature}</var>
 </assign>
-<msg timestamp="20220318 10:31:16.393" level="INFO">${signature} = 8AEZrEmJzbdHAMRWiX1erQgB3PKYp5Oud3rPWPkRugk=</msg>
-<status status="PASS" starttime="20220318 10:31:16.393" endtime="20220318 10:31:16.393"></status>
+<msg timestamp="20220319 00:40:35.755" level="INFO">${signature} = S5IhYPMYRt2bk1lepqYs2pGh27KfiBw0Q70QQV4iPlA=</msg>
+<status status="PASS" starttime="20220319 00:40:35.754" endtime="20220319 00:40:35.755"></status>
 </kw>
 <kw name="Set Headers" library="REST">
 <tags>
@@ -1328,7 +2377,7 @@
 <arguments>
 <arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
 </arguments>
-<status status="PASS" starttime="20220318 10:31:16.393" endtime="20220318 10:31:16.394"></status>
+<status status="PASS" starttime="20220319 00:40:35.755" endtime="20220319 00:40:35.756"></status>
 </kw>
 <kw name="Post" library="REST">
 <tags>
@@ -1339,7 +2388,7 @@
 <arg>${CONNECTOR_PATH}</arg>
 <arg>${body}</arg>
 </arguments>
-<status status="PASS" starttime="20220318 10:31:16.394" endtime="20220318 10:31:18.427"></status>
+<status status="PASS" starttime="20220319 00:40:35.756" endtime="20220319 00:40:37.791"></status>
 </kw>
 <kw name="Output Schema" library="REST">
 <tags>
@@ -1349,7 +2398,7 @@
 <arguments>
 <arg>response body</arg>
 </arguments>
-<msg timestamp="20220318 10:31:18.427" level="INFO">
+<msg timestamp="20220319 00:40:37.792" level="INFO">
 {
     "type": "object",
     "properties": {
@@ -1388,9 +2437,9 @@
         "error"
     ]
 }</msg>
-<status status="PASS" starttime="20220318 10:31:18.427" endtime="20220318 10:31:18.429"></status>
+<status status="PASS" starttime="20220319 00:40:37.792" endtime="20220319 00:40:37.793"></status>
 </kw>
-<status status="PASS" starttime="20220318 10:31:16.393" endtime="20220318 10:31:18.429"></status>
+<status status="PASS" starttime="20220319 00:40:35.754" endtime="20220319 00:40:37.793"></status>
 </kw>
 <kw name="Integer" library="REST">
 <tags>
@@ -1401,7 +2450,7 @@
 <arg>response status</arg>
 <arg>422</arg>
 </arguments>
-<status status="PASS" starttime="20220318 10:31:18.429" endtime="20220318 10:31:18.430"></status>
+<status status="PASS" starttime="20220319 00:40:37.794" endtime="20220319 00:40:37.794"></status>
 </kw>
 <kw name="Integer" library="REST">
 <tags>
@@ -1412,7 +2461,7 @@
 <arg>response body error status</arg>
 <arg>422</arg>
 </arguments>
-<status status="PASS" starttime="20220318 10:31:18.430" endtime="20220318 10:31:18.430"></status>
+<status status="PASS" starttime="20220319 00:40:37.795" endtime="20220319 00:40:37.795"></status>
 </kw>
 <kw name="String" library="REST">
 <tags>
@@ -1423,28 +2472,239 @@
 <arg>response body error message parameters 0</arg>
 <arg>Missing data for required field.</arg>
 </arguments>
-<status status="PASS" starttime="20220318 10:31:18.431" endtime="20220318 10:31:18.431"></status>
+<status status="PASS" starttime="20220319 00:40:37.796" endtime="20220319 00:40:37.796"></status>
 </kw>
 <tags>
-<tag>bug-0003</tag>
+<tag>bug-0004</tag>
 </tags>
-<status status="PASS" starttime="20220318 10:31:16.389" endtime="20220318 10:31:18.432" critical="yes"></status>
+<status status="PASS" starttime="20220319 00:40:35.746" endtime="20220319 00:40:37.796" critical="yes"></status>
+</test>
+<test id="s1-t5" name="fetch, 200, Empty range">
+<kw name="Get Body">
+<assign>
+<var>${body}</var>
+</assign>
+<kw name="Copy Dictionary" library="Collections">
+<doc>Returns a copy of the given dictionary.</doc>
+<arguments>
+<arg>${BROKER_BODY}</arg>
+<arg>deepcopy=True</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20220319 00:40:37.798" level="INFO">${body} = {'productCode': 'saint', 'parameters': {'period': '2022-03-01T00:00:00.000Z/2022-03-20T00:00:00.000Z'}}</msg>
+<status status="PASS" starttime="20220319 00:40:37.798" endtime="20220319 00:40:37.798"></status>
+</kw>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>time_zone=UTC</arg>
+<arg>result_format=%Y-%m-%dT%H:%M:%S+00:00</arg>
+</arguments>
+<assign>
+<var>${now}</var>
+</assign>
+<msg timestamp="20220319 00:40:37.799" level="INFO">${now} = 2022-03-18T22:40:37+00:00</msg>
+<status status="PASS" starttime="20220319 00:40:37.799" endtime="20220319 00:40:37.799"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>timestamp</arg>
+<arg>${now}</arg>
+</arguments>
+<status status="PASS" starttime="20220319 00:40:37.799" endtime="20220319 00:40:37.799"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body}</arg>
+<arg>&amp;{kwargs}</arg>
+</arguments>
+<status status="PASS" starttime="20220319 00:40:37.799" endtime="20220319 00:40:37.800"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.dumps(${body})</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>${json_string}</var>
+</assign>
+<msg timestamp="20220319 00:40:37.800" level="INFO">${json_string} = {"productCode": "saint", "parameters": {"period": "2022-03-01T00:00:00.000Z/2022-03-20T00:00:00.000Z"}, "timestamp": "2022-03-18T22:40:37+00:00"}</msg>
+<status status="PASS" starttime="20220319 00:40:37.800" endtime="20220319 00:40:37.801"></status>
+</kw>
+<msg timestamp="20220319 00:40:37.801" level="INFO">${body} = {'productCode': 'saint', 'parameters': {'period': '2022-03-01T00:00:00.000Z/2022-03-20T00:00:00.000Z'}, 'timestamp': '2022-03-18T22:40:37+00:00'}</msg>
+<status status="PASS" starttime="20220319 00:40:37.798" endtime="20220319 00:40:37.801"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${body["parameters"]}</arg>
+<arg>period=${END_TIME}/${END_TIME}</arg>
+</arguments>
+<status status="PASS" starttime="20220319 00:40:37.802" endtime="20220319 00:40:37.802"></status>
+</kw>
+<kw name="Fetch Data Product">
+<arguments>
+<arg>${body}</arg>
+</arguments>
+<kw name="Calculate Pot Signature" library="PoTLib">
+<arguments>
+<arg>${body}</arg>
+<arg>${CLIENT_SECRET}</arg>
+</arguments>
+<assign>
+<var>${signature}</var>
+</assign>
+<msg timestamp="20220319 00:40:37.803" level="INFO">${signature} = dEW25SS8wuBhIffsnW0NR32beRHJt40QZ36JC5Vt8Ms=</msg>
+<status status="PASS" starttime="20220319 00:40:37.803" endtime="20220319 00:40:37.804"></status>
+</kw>
+<kw name="Set Headers" library="REST">
+<tags>
+<tag>settings</tag>
+</tags>
+<doc>*Sets new request headers or updates the existing.*</doc>
+<arguments>
+<arg>{"x-pot-signature": "${signature}", "x-app-token": "${APP_TOKEN}"}</arg>
+</arguments>
+<status status="PASS" starttime="20220319 00:40:37.804" endtime="20220319 00:40:37.804"></status>
+</kw>
+<kw name="Post" library="REST">
+<tags>
+<tag>http</tag>
+</tags>
+<doc>*Sends a POST request to the endpoint.*</doc>
+<arguments>
+<arg>${CONNECTOR_PATH}</arg>
+<arg>${body}</arg>
+</arguments>
+<status status="PASS" starttime="20220319 00:40:37.804" endtime="20220319 00:40:40.317"></status>
+</kw>
+<kw name="Output Schema" library="REST">
+<tags>
+<tag>I/O</tag>
+</tags>
+<doc>*Outputs JSON Schema to terminal or a file.*</doc>
+<arguments>
+<arg>response body</arg>
+</arguments>
+<msg timestamp="20220319 00:40:40.318" level="INFO">
+{
+    "type": "object",
+    "properties": {
+        "@context": {
+            "type": "string",
+            "default": "https://standards.oftrust.net/v2/Schema/DataProductOutput/ProductCatalog/?v=4.1"
+        },
+        "data": {
+            "type": "object",
+            "properties": {
+                "products": {
+                    "type": "array",
+                    "default": []
+                }
+            },
+            "required": [
+                "products"
+            ]
+        },
+        "signature": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "default": "RsaSignature2018"
+                },
+                "created": {
+                    "type": "string",
+                    "default": "2022-03-19T00:40:40+02:00"
+                },
+                "creator": {
+                    "type": "string",
+                    "default": "http://localhost:8080/translator/v1/public.key"
+                },
+                "signatureValue": {
+                    "type": "string",
+                    "default": "hgxZQtVbx4crHmPO0IBudXxwnhkbwwe2iv131f68TIwn6Twgcc0TJEcrA1cVrqkZynVzQEgz4PqmyLBni5folbM6R+pAd7WUVi0KSIc/ZqvNYGYKsO/Xy1Kgb79YHMEMtFQymZv+X90bZUAE63vMenCzXSqFIAhlrU7IFDD7CkUhQXo2p0B2XkcV9r+7gfvlR0bLkiVw8oO3pD6TV75kwg5FJTIEIxxZA659cKZ7cweU1wfw8X8zq0xz+zJ6wBSgIj5HZRothDEQdWplB6vCyI498ANEfyp2m++kc8KzTE/moxZoNfywMpwX4dHkCA8vENxU9Gn1rykMPL4oUvCV6gcHrRaHtys19uvk1sfulx4H9XGQHt5QTmOtXldzzy+etSiIk0nNgMg1pMNUaswgTWlaFPAC2+ooTx1ToBZW0GEUKxPAkShaqNuckEe8Ryog5dh1Objo65CNj8w038t7aTHKcU7k24DRE2JA6XvcUr7+m+B5GtAMghyHzV+IyNhvvDxgDWaDzK0ijIUCrzdx7g9Q6yVLLiiEpqXlqrvUHxB4O7sQR2hiwpTyiGg69UhJoKfkaxnJYHDLZCXRLw0L/C4j6ipvL0c1GwVsiBcnYfc8tcWaYkvBQFppUs6FYAb4iHvdSa009pBsvD9hVsVnTVnp1c+j9L1ErgOu6t4gC9k="
+                }
+            },
+            "required": [
+                "created",
+                "creator",
+                "signatureValue",
+                "type"
+            ]
+        }
+    },
+    "required": [
+        "@context",
+        "data",
+        "signature"
+    ]
+}</msg>
+<status status="PASS" starttime="20220319 00:40:40.317" endtime="20220319 00:40:40.320"></status>
+</kw>
+<status status="PASS" starttime="20220319 00:40:37.803" endtime="20220319 00:40:40.321"></status>
+</kw>
+<kw name="Integer" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON integer.*</doc>
+<arguments>
+<arg>response status</arg>
+<arg>200</arg>
+</arguments>
+<status status="PASS" starttime="20220319 00:40:40.321" endtime="20220319 00:40:40.322"></status>
+</kw>
+<kw name="String" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON string.*</doc>
+<arguments>
+<arg>response body @context</arg>
+<arg>${CONTEXT}</arg>
+</arguments>
+<status status="PASS" starttime="20220319 00:40:40.322" endtime="20220319 00:40:40.322"></status>
+</kw>
+<kw name="Array" library="REST">
+<tags>
+<tag>assertions</tag>
+</tags>
+<doc>*Asserts the field as JSON array.*</doc>
+<arguments>
+<arg>response body data products</arg>
+<arg>maxItems=0</arg>
+</arguments>
+<status status="PASS" starttime="20220319 00:40:40.323" endtime="20220319 00:40:40.324"></status>
+</kw>
+<tags>
+<tag>bug-0005</tag>
+</tags>
+<status status="PASS" starttime="20220319 00:40:37.797" endtime="20220319 00:40:40.324" critical="yes"></status>
 </test>
 <doc>Saint Gobain Integration API Tests</doc>
-<status status="PASS" starttime="20220318 10:31:11.554" endtime="20220318 10:31:18.434"></status>
+<status status="PASS" starttime="20220319 00:40:28.228" endtime="20220319 00:40:40.326"></status>
 </suite>
 <statistics>
 <total>
-<stat pass="3" fail="0">Critical Tests</stat>
-<stat pass="3" fail="0">All Tests</stat>
+<stat pass="5" fail="0">Critical Tests</stat>
+<stat pass="5" fail="0">All Tests</stat>
 </total>
 <tag>
 <stat pass="1" fail="0">bug-0001</stat>
 <stat pass="1" fail="0">bug-0002</stat>
 <stat pass="1" fail="0">bug-0003</stat>
+<stat pass="1" fail="0">bug-0004</stat>
+<stat pass="1" fail="0">bug-0005</stat>
 </tag>
 <suite>
-<stat pass="3" fail="0" id="s1" name="Connector Tests">Connector Tests</stat>
+<stat pass="5" fail="0" id="s1" name="Connector Tests">Connector Tests</stat>
 </suite>
 </statistics>
 <errors>
