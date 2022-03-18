@@ -50,6 +50,13 @@ const schema = {
                     'title': 'Product',
                     'description': 'Product returned from catalog.',
                     'properties': {
+                        '@type': {
+                            '$id': '#/properties/data/properties/product/properties/@type',
+                            'value': 'Product',
+                            'type': 'string',
+                            'title': 'Identity type',
+                            'description': 'Type of identity.',
+                        },
                         'codeProductCatalog': {
                             '$id': '#/properties/data/properties/product/properties/codeProductCatalog',
                             'source': 'TT024',
