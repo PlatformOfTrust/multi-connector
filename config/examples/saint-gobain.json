@@ -9,7 +9,7 @@
         "clientSecret": "<client-secret>",
         "type": "ProductCatalog"
     },
-    "schema": "product-catalog_saint-gobain",
+    "schema": "product-catalog-v4.1_saint-gobain",
     "dynamic": {
         "authConfig.path": "period"
     },
