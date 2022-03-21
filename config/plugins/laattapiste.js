@@ -3,9 +3,12 @@
  * Module dependencies.
  */
 const transformer = require('../../app/lib/transformer');
+const validator = require('../../app/lib/validator');
 const connector = require('../../app/lib/connector');
 const sftp = require('../../app/protocols/sftp');
+const router = require('express').Router();
 const winston = require('../../logger.js');
+const rsa = require('../../app/lib/rsa');
 const cron = require('node-cron');
 const moment = require('moment');
 const cache = require('../../app/cache');
@@ -1183,8 +1186,6 @@ const sendData = async (req, res, productCode, config, template, result, options
             /** Receiver data product */
             config.static.productCode = receiverProductCode;
 
-            console.log(JSON.stringify(result.output));
-
             winston.log('info', '2. Send received data to receiver data product ' + config.static.productCode + ', isTest=' + options.isTest);
             await template.plugins.find(p => p.name === 'broker').stream(template, result.output);
         }
@@ -1228,6 +1229,121 @@ const sendData = async (req, res, productCode, config, template, result, options
     return {
         message: 'ok',
     };
+};
+
+/**
+ * Endpoint to trigger order/delivery confirmation sending to CALS.
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @return
+ *   The translator data.
+ */
+const controller = async (req, res) => {
+    let result;
+    // let host;
+    try {
+        /** Request header validation */
+        /*
+        const bearer = req.headers.authorization;
+        if (!bearer) {
+            const err = new Error('Missing required header \'Authorization\'');
+            err.httpStatusCode = 422;
+            return errorResponse(req, res, err);
+        }
+        */
+
+        /** Request body validation */
+        const validation = validator.validate(req.body, {
+            filename: {
+                required: true,
+            },
+            container: {
+                required: true,
+            },
+        });
+
+        if (Object.hasOwnProperty.call(validation, 'error')) {
+            if (validation.error) {
+                const err = new Error(JSON.stringify(validation.error));
+                err.httpStatusCode = 422;
+                return errorResponse(req, res, err);
+            }
+        }
+
+        // 1. Parse options and authenticate request.
+        let config;
+        let template;
+        let productCode;
+        try {
+            const parts = req.originalUrl.split('/');
+            productCode = parts.splice(parts.indexOf(PLUGIN_NAME) + 1)[0];
+            config = cache.getDoc('configs', productCode) || {};
+
+            if (_.isEmpty(config) || !Object.hasOwnProperty.call(config, 'static')) {
+                const err = new Error('Data product configuration not found.');
+                err.httpStatusCode = 404;
+                return errorResponse(req, res, err);
+            }
+
+            /** Request authentication */
+            /*
+            if (!Object.hasOwnProperty.call(config.static, 'bearer')) {
+                const err = new Error('Bearer not found at data product configuration.');
+                err.httpStatusCode = 500;
+                return errorResponse(req, res, err);
+            }
+
+            if (bearer !== ('Bearer ' + config.static.bearer)) {
+                return res.status(401).send('Unauthorized');
+            }
+            */
+
+            winston.log('info', 'Received trigger request from ' + (req.get('x-real-ip') || req.get('origin') || req.socket.remoteAddress));
+
+            template = cache.getDoc('templates', config.template) || {};
+            config.connectorUrl = req.connectorUrl;
+            config.publicKeyUrl = req.publicKeyUrl;
+        } catch (err) {
+            err.httpStatusCode = 500;
+            err.message = 'Failed to handle request.';
+            return errorResponse(req, res, err);
+        }
+
+        // 2. Get new data from vendor with parameters provided in the body.
+        try {
+            result = await getData(productCode, config, req.body.filename);
+        } catch (err) {
+            winston.log('error', err.message);
+            return errorResponse(req, res, err);
+        }
+
+        // 3. Parse receiver productCode from received confirmation and send broker request to produce confirmation.
+        const options = {
+            filename: req.body.filename,
+            isTest: req.body.is_test,
+        };
+        await sendData(req, res, productCode, config, template, result, options);
+
+        // 5. Send signed data response.
+        const created = moment().format();
+        res.status(200).send({
+            ...(result.output || {}),
+            signature: {
+                type: 'RsaSignature2018',
+                created,
+                creator: config.publicKeyUrl,
+                signatureValue: rsa.generateSignature({
+                    __signed__: created,
+                    ...(result.output[result.payloadKey || 'data'] || {}),
+                }),
+            },
+        });
+    } catch (err) {
+        if (!res.finished) {
+            return errorResponse(req, res, err);
+        }
+    }
 };
 
 /**
@@ -1453,8 +1569,23 @@ const response = async (config, response) => {
     }
 };
 
+/**
+ * Returns plugin HTTP endpoints.
+ *
+ * @param {Object} passport
+ * @return {Object}
+ */
+const endpoints = function (passport) {
+    /** Trigger endpoint. */
+    router.post('/:topic*?', controller);
+    router.put('/:topic*?', controller);
+    router.delete('/:topic*?', controller);
+    return router;
+};
+
 module.exports = {
     name: PLUGIN_NAME,
+    endpoints,
     template,
     response,
     output,
