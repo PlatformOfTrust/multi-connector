@@ -373,5 +373,5 @@ module.exports = {
     sendData,
     checkDir,
     move,
-    remove
+    remove,
 };
