@@ -13,6 +13,18 @@
   "dynamic": {
     "authConfig.path": "targetObject.idLocal"
   },
+  "plugins": {
+    "broker": {
+      "env": "dev",
+      "receiver": {
+        "order": "purchase-order-from-cals"
+      }
+    },
+    "laattapiste": {
+      "schedule": "*/30 * * * *",
+      "timezone": "Europe/Helsinki"
+    }
+  },
   "request": {
     "targetObject": {
       "idLocal": "<filename>"
