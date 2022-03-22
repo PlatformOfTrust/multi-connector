@@ -25,6 +25,9 @@ const connector = require('../lib/connector');
 module.exports.fetch = async (req, res) => {
     let result;
     try {
+        // Set custom timeout.
+        req.setTimeout(1000 * 60 * 5);
+
         // Fetch data.
         result = await connector.getData(req);
 
