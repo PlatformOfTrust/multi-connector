@@ -113,35 +113,35 @@ const schema = {
                                     'description': {
                                         '$id': '#/properties/data/properties/process/items/properties/location/properties/description',
                                         'type': 'string',
-                                        'source': '',
+                                        'source': null,
                                         'title': 'Property category for descriptive information',
                                         'description': 'Property category for descriptive information.',
                                     },
                                     'streetAddressLine1': {
                                         '$id': '#/properties/data/properties/process/items/properties/location/properties/streetAddressLine1',
                                         'type': 'string',
-                                        'source': '',
+                                        'source': null,
                                         'title': 'Street address line 1',
                                         'description': 'Street address line 1.',
                                     },
                                     'postalCode': {
                                         '$id': '#/properties/data/properties/process/items/properties/location/properties/postalCode',
                                         'type': 'string',
-                                        'source': '',
+                                        'source': null,
                                         'title': 'Postal code',
                                         'description': 'Postal code.',
                                     },
                                     'city': {
                                         '$id': '#/properties/data/properties/process/items/properties/location/properties/city',
                                         'type': 'string',
-                                        'source': '',
+                                        'source': null,
                                         'title': 'City',
                                         'description': 'City.',
                                     },
                                     'countryCode': {
                                         '$id': '#/properties/data/properties/process/items/properties/location/properties/countryCode',
                                         'type': 'string',
-                                        'source': '',
+                                        'source': null,
                                         'title': 'Country code',
                                         'description': 'Country code.',
                                     },
@@ -232,12 +232,26 @@ const schema = {
                                             'title': 'Identity type',
                                             'description': 'Type of identity.',
                                         },
+                                        'processValueStart': {
+                                            '$id': '#/properties/data/properties/process/items/properties/processValue/items/properties/processValueStart',
+                                            'type': 'string',
+                                            'source': 'startValue',
+                                            'title': 'Process value start',
+                                            'description': 'Process value start.',
+                                        },
                                         'processValue': {
                                             '$id': '#/properties/data/properties/process/items/properties/processValue/items/properties/processValue',
                                             'type': 'string',
                                             'source': 'value',
                                             'title': 'Output value',
                                             'description': 'Output value of the process.',
+                                        },
+                                        'processValueEnd': {
+                                            '$id': '#/properties/data/properties/process/items/properties/processValue/items/properties/processValueEnd',
+                                            'type': 'string',
+                                            'source': 'endValue',
+                                            'title': 'Process value end',
+                                            'description': 'Process value end.',
                                         },
                                         'unitOfMeasure': {
                                             '$id': '#/properties/data/properties/process/items/properties/processValue/items/properties/unitOfMeasure',
@@ -341,11 +355,11 @@ const handleData = function (config, id, data) {
             const valuesArray = value.company.apartments.flatMap(apartment => {
                 apartment.companyId = value.company_id;
                 apartment.physicalProperty = 'Volume';
-                const waterCold = { value: (apartment.apartment.meters['meter-cold'].value * 1000), period: config.parameters.period, unitOfMeasure: 'Liter', valueType: 'Value' };
-                const waterWarm = { value: (apartment.apartment.meters['meter-warm'].value * 1000), period: config.parameters.period, unitOfMeasure: 'Liter', valueType: 'Value' };
+                const waterCold = { value: (apartment.apartment.meters['meter-cold'].value * 1000), startValue: (apartment.apartment.meters['meter-cold'].start), endValue: (apartment.apartment.meters['meter-cold'].end), period: config.parameters.period, unitOfMeasure: 'Liter', valueType: 'Value' };
+                const waterWarm = { value: (apartment.apartment.meters['meter-warm'].value * 1000), startValue: (apartment.apartment.meters['meter-warm'].start), endValue: (apartment.apartment.meters['meter-warm'].end), period: config.parameters.period, unitOfMeasure: 'Liter', valueType: 'Value' };
                 const coldValues = { ...apartment, readings: waterCold, processTarget: 'WaterCold', measureType: 'Measure', organizationType: 'Organization', locationType: 'Location' };
                 const warmValues = { ...apartment, readings: waterWarm, processTarget: 'WaterWarm', measureType: 'Measure', organizationType: 'Organization', locationType: 'Location' };
-                return [warmValues, coldValues];
+                return [coldValues, warmValues];
             });
 
             result = transformer.transform(valuesArray, schema.properties.data);
