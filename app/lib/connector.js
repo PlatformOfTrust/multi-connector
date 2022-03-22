@@ -272,7 +272,7 @@ function replacePlaceholders (config, template, params) {
                     const items = Array.isArray(rootValue) ? rootValue : [rootValue];
                     for (let i = 0; i < items.length; i++) {
                         const suffix = placeholder.split('.').slice(1).join('.');
-                        const valuePath = Array.isArray(rootValue) ? `${root}.${i}.${suffix}` : placeholder;
+                        const valuePath = Array.isArray(rootValue) && suffix !== '' ? `${root}.${i}.${suffix}` : placeholder;
                         if (Array.isArray(_.get(params, valuePath))) {
                             // Transform placeholder to array, if given parameters are in an array.
                             const array = [];
@@ -346,6 +346,19 @@ const interpretMode = function (config, parameters) {
 
     // Latest by default.
     config.mode = 'latest';
+
+    // Parse period to start and end.
+    try {
+        if (Object.hasOwnProperty.call(parameters, 'period')
+        && parameters.start === undefined) {
+            let time = parameters.period;
+            time = time.split('/');
+            parameters.start = new Date(Date.parse(time[0]));
+            parameters.end = new Date(Date.parse(time[1]));
+        }
+    } catch (err) {
+        console.log(err.message);
+    }
 
     // Detect history request from start and end time.
     if (parameters.start && parameters.end) {

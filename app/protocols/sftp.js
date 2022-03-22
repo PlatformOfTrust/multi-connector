@@ -340,6 +340,32 @@ const move = async (config= {}, pathArray, clientId, newPath = '') => {
 };
 
 /**
+ * Removes received file at SFTP server.
+ *
+ * @param {Object} config
+ * @param {Array} pathArray
+ * @param {String} clientId
+ * @return {Promise}
+ */
+const remove = async (config= {}, pathArray, clientId) => {
+    const productCode = config.productCode || uuidv4();
+    const client = await createClient(config, productCode, clientId);
+
+    const items = [];
+    const toPath = (Array.isArray(config.authConfig.toPath) ? config.authConfig.toPath[0] : config.authConfig.toPath) || '';
+
+    for (let p = 0; p < pathArray.length; p++) {
+        const name = pathArray[p][0] === '/' ? pathArray[p] : '/' + pathArray[p];
+        // Remove from old path
+        await deleteFile(client, toPath + name);
+        items.push(name + ' removed.');
+    }
+
+    await client.end();
+    return items;
+};
+
+/**
  * Expose library functions.
  */
 module.exports = {
@@ -347,4 +373,5 @@ module.exports = {
     sendData,
     checkDir,
     move,
+    remove,
 };

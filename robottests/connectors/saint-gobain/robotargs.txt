@@ -1,0 +1,3 @@
+--pythonpath lib
+--outputdir connectors/saint-gobain/result
+connectors/saint-gobain/connector_tests.robot

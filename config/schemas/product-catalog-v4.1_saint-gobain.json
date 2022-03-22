@@ -33,6 +33,13 @@
                         "type": "object",
                         "required": [],
                         "properties": {
+                            "@type": {
+                                "$id": "#/properties/data/properties/product/items/properties/@type",
+                                "value": "Product",
+                                "type": "string",
+                                "title": "Identity type",
+                                "description": "Type of identity."
+                            },
                             "codeProductCatalog": {
                                 "$id": "#/properties/data/properties/product/items/properties/codeProductCatalog",
                                 "source": "data.value.ItemRTNumber",

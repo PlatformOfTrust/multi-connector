@@ -1,5 +1,5 @@
 {
-  "plugins": ["oauth2"],
+  "plugins": ["oauth2", "millis"],
   "protocol": "rest",
   "authConfig": {
     "url": "${url}",
@@ -17,6 +17,9 @@
     "${type}": ""
   },
   "generalConfig": {
+    "query": {
+      "start": "timeimported_gt"
+    },
     "hardwareId": {
       "dataObjectProperty": "_id.$oid"
     }

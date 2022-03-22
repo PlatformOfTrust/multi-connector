@@ -1072,11 +1072,11 @@ const controller = async (req, res) => {
 
         // 3. Parse vendor productCode from received order and send broker request to produce order.
         let vendorProductCode;
+        let message = 'Failed to parse order. Could not parse vendor external id from CALS response.';
         try {
             vendorProductCode = 'vendor-purchase-order';
             vendorProductCode = result.output.data.order.vendor.idLocal;
         } catch (err) {
-            let message = 'Failed to parse order. Could not parse vendor external id from CALS response.';
             if (Object.hasOwnProperty.call(result, 'output') && Object.hasOwnProperty.call(result, 'payloadKey')) {
                 if (Object.hasOwnProperty.call(result.output, result.payloadKey)) {
                     if (result.output[result.payloadKey] instanceof Error) {
@@ -1085,6 +1085,10 @@ const controller = async (req, res) => {
                 }
             }
             winston.log('error', message);
+            return errorResponse(req, res, new Error(message));
+        }
+
+        if (vendorProductCode === '' || vendorProductCode === null) {
             return errorResponse(req, res, new Error(message));
         }
 

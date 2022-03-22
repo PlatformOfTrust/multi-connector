@@ -1,6 +1,7 @@
 {
     "plugins": [
-        "laattapiste"
+        "laattapiste",
+        "broker"
     ],
     "protocol": "sftp",
     "authConfig": {
@@ -15,7 +16,7 @@
         "path": "${targetObject.idLocal}"
     },
     "dataObjects": [
-        ""
+        "data"
     ],
     "dataPropertyMappings": {
         "OrderConfirmation": ""

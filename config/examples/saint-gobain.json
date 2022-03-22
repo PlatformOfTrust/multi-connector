@@ -9,7 +9,12 @@
         "clientSecret": "<client-secret>",
         "type": "ProductCatalog"
     },
-    "schema": "product-catalog_saint-gobain",
+    "plugins": {
+        "millis": {
+            "format": "seconds"
+        }
+    },
+    "schema": "product-catalog-v4.1_saint-gobain",
     "dynamic": {
         "authConfig.path": "period"
     },

@@ -122,6 +122,9 @@ const handleData = async (config, path, index, data) => {
         else dataObjects = dataObject;
 
         for (let j = 0; j < dataObjects.length; j++) {
+            if (dataObjects[j] === undefined) {
+                continue;
+            }
 
             // Look for hardwareId.
             let hardwareId = getValueFromResponse(config.generalConfig, path, dataObjects[j], 'hardwareId');

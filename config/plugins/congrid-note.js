@@ -2,6 +2,7 @@
 /**
  * Module dependencies.
  */
+const rp = require('request-promise');
 const transformer = require('../../app/lib/transformer');
 
 /**
@@ -456,6 +457,80 @@ const handleData = function (config, id, data) {
 };
 
 /**
+ * Sends http request.
+ *
+ * @param {String} method
+ * @param {String} url
+ * @param {Object} [headers]
+ * @param {String/Object/Array} [body]
+ * @return {Promise}
+ */
+function request (method, url, headers, body) {
+    const options = {
+        method: method,
+        uri: url,
+        json: true,
+        body: body,
+        resolveWithFullResponse: true,
+        headers: headers,
+    };
+
+    return rp(options).then(result => Promise.resolve(result))
+        .catch((error) => {
+            return Promise.reject(error);
+        });
+}
+
+/**
+ * Requests more data according to the limit provided
+ * in the broker request and received next url.
+ *
+ * @param {Object} config
+ * @param {Object} response
+ * @param {Object} limit
+ * @param {Object} dataObject
+ * @return {Object}
+ */
+const next = async (config, response, limit = null, dataObject = 'data') => {
+    try {
+        // Check if limit has been reached.
+        if (limit < response[dataObject].length && limit !== null) {
+            response[dataObject] = response[dataObject].slice(0, limit);
+            return response;
+        }
+        // Request more data if next url is defined.
+        if (Object.hasOwnProperty.call(response || {}, 'next')) {
+            if (response.next) {
+                const {body} = await request('GET', response.next, config.authConfig.headers);
+                body[dataObject] = [...response[dataObject], ...body[dataObject]];
+                response = await next(config, body, limit, dataObject);
+            }
+        }
+    } catch (err) {
+        console.log(err.message);
+    }
+    return response;
+};
+
+/**
+ * Request more data.
+ *
+ * @param {Object} config
+ * @param {Object} response
+ * @return {Object}
+ */
+const response = async (config, response) => {
+    try {
+        if (Object.hasOwnProperty.call(config.parameters || {}, 'limit')) {
+            response = await next(config, response, config.parameters.limit === 0 ? null : config.parameters.limit, 'results');
+        }
+    } catch (err) {
+        console.log(err.message);
+    }
+    return response;
+};
+
+/**
  * Transforms output to Platform of Trust context schema.
  *
  * @param {Object} config
@@ -506,5 +581,6 @@ const output = async (config, output) => {
  */
 module.exports = {
     name: 'congrid-note',
+    response,
     output,
 };

@@ -1,6 +1,7 @@
 {
     "template": "c4-cals-purchase-order",
     "static": {
+        "url": "<url>/pot-test",
         "apikey": "<apikey>",
         "bearer": "<bearer>",
         "instanceId": "<instance-id>",
