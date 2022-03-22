@@ -1,0 +1,20 @@
+{
+    "plugins": [
+        "orfer_api"
+    ],
+    "protocol": "rest",
+    "authConfig": {
+        "url": "${baseUrl}",
+        "path": "/production-lines?customerId=${customerId}",
+        "headers": {
+            "${keyName}": "${keyValue}"
+        }
+    },
+    "dataPropertyMappings": {
+        "key": ""
+    },
+    "dataObjects": [
+        ""
+    ],
+    "generalConfig": {}
+}
