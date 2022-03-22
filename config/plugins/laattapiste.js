@@ -1355,16 +1355,18 @@ const runJob = async (productCode) => {
     try {
         const config = cache.getDoc('configs', productCode);
         // Download files.
-        const docs = await sftp.getData({
+        const docs = (await sftp.getData({
             productCode,
             plugins: [],
             authConfig: config.static,
             parameters: {targetObject: {}},
-        }, [''], true);
+        }, [''], true)).filter(doc => ((doc || {}).path || '').slice(-4) !== '.log');
+
         // Send new files and move to archive.
         for (let i = 0; i < docs.length; i++) {
             const d = docs[i];
             winston.log('info', 'Send file ' + d.path);
+
             // 2. Trigger file sending to receivers.
             try {
                 const parts = d.path.split('/');
@@ -1374,12 +1376,13 @@ const runJob = async (productCode) => {
                     isTest: false,
                 };
                 const template = cache.getDoc('templates', config.template) || {};
-                await sendData(null, null, productCode, config, template, result, options);
-                /*
+                const send = await sendData(null, null, productCode, config, template, result, options);
                 if (Object.hasOwnProperty.call(send, 'error')) {
                     const lineLimit = 10;
-                    const path = '/error.log';
-                    const logFilePath = parts.slice(0, -1).join('/') + '/Log';
+                    const filename = `${options.filename.split('.').slice(0, -1).join('.')}.log`;
+                    const path = `/${filename}`;
+                    const logFilePath = parts.slice(0, -1).join('/');
+
                     // Get log.
                     const logs = await sftp.getData({
                         productCode,
@@ -1387,9 +1390,10 @@ const runJob = async (productCode) => {
                         authConfig: {...config.static, toPath: logFilePath},
                         parameters: {targetObject: {}},
                     }, [path], true);
+
                     // Insert new line.
                     let log = '';
-                    const file = logs.find(f => f.name === 'error.log');
+                    const file = logs.find(f => f.name === filename);
                     if (file) {
                         log = Buffer.from(file.data, 'base64').toString('utf-8') + '\n';
                     }
@@ -1400,7 +1404,6 @@ const runJob = async (productCode) => {
                     const to = DOWNLOAD_DIR + productCode + logFilePath + path;
                     await sftp.checkDir(to);
                     await fs.writeFile(to, content);
-                    console.log('Send file', content);
                     await sftp.sendData({
                         productCode,
                         plugins: [],
@@ -1408,7 +1411,6 @@ const runJob = async (productCode) => {
                         parameters: {targetObject: {}},
                     }, [path]);
                 }
-                */
             } catch (err) {
                 winston.log('error', err.message);
             }
