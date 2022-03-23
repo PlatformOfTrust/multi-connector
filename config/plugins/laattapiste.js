@@ -1200,6 +1200,7 @@ const sendData = async (req, res, productCode, config, template, result, options
             if (Object.hasOwnProperty.call(result.output.data, 'order')) {
                 if (Object.hasOwnProperty.call(result.output.data.order, 'orderLine')) {
                     const filename = options.filename;
+                    const logFilename = options.filename.slice(-4) + '.log';
                     const dirs = Array.isArray(config.static.toPath) ? config.static.toPath : [config.static.toPath];
                     for (let i = 0; i < dirs.length; i++) {
                         let removed = false;
@@ -1207,7 +1208,7 @@ const sendData = async (req, res, productCode, config, template, result, options
                             const items = await sftp.remove({
                                 productCode: config.productCode,
                                 authConfig: {...config.static, toPath: dirs[i]},
-                            }, [filename], config.productCode);
+                            }, [filename, logFilename], config.productCode);
                             if (items.length > 0) {
                                 removed = true;
                                 winston.log('info', items.toString());

@@ -791,7 +791,7 @@ const handleData = function (config, id, data) {
                     try {
                         value.purchaseOrderDateTime = convertFinnishDateToISOString(new Date(value.purchaseOrderDate + 'T' + value.purchaseOrderTime + ':00.000Z'));
                     } catch (err) {
-                        value.purchaseOrderDateTime = new Date().toISOString()
+                        value.purchaseOrderDateTime = new Date().toISOString();
                     }
 
                     try {
