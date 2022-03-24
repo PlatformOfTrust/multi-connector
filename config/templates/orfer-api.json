@@ -21,5 +21,8 @@
             "start": "startTime",
             "end": "endTime"
         }
+    },
+    "output": {
+        "array": "device"
     }
 }
