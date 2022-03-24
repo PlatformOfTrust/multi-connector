@@ -8,7 +8,7 @@
         "headers": {
             "Ocp-Apim-Subscription-Key": "${apikey}"
         },
-        "path": "/production-lines?customerId=${targetObject.idLocal}"
+        "path": "/factories?customerId=${targetObject.idLocal}"
     },
     "dataPropertyMappings": {
         "key": ""

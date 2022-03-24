@@ -6,5 +6,6 @@
     },
     "dynamic": {
         "authConfig.path": "targetObject.idLocal"
-    }
+    },
+    "schema": "device-v1.0_orfer-api"
 }

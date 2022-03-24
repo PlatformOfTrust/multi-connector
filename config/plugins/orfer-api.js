@@ -43,9 +43,10 @@ function request (method, url, headers, body, query = {}) {
  */
 const response = async (config, response) => {
     try {
-        const {values: lines, customerId} = response;
+        const {values: factories, customerId} = response;
         const {start: startTime, end: endTime} = (config.parameters || {});
         const domain = config.authConfig.url;
+        const linesUrl = domain + '/production-lines';
         const machinesUrl = domain + '/machines';
         const modulesUrl = domain + '/modules';
         const countersUrl = domain + '/counters';
@@ -55,13 +56,19 @@ const response = async (config, response) => {
         const productionOverviewUrl = domain + '/production-overview';
         const shiftOverviewUrl = domain + '/shift-overview';
         const headers = config.authConfig.headers;
+
+        const lines = (await Promise.all((factories || []).map(async factory => await request('GET', linesUrl, headers, {}, {
+            customerId: customerId,
+            factoryId: factory.factoryId,
+        })))).map(res => res.body.values.map(l => ({...l, factory: factories.find(f => f.factoryId === res.body.factoryId)}))).flat();
+
         let machines = (await Promise.all((lines || []).map(async (line) => {
             const query = {
                 customerId: customerId,
                 lineId: line.lineId,
             };
             const result = await request('GET', machinesUrl, headers, {}, query);
-            return result.body.values || [];
+            return (result.body.values || []).map(o => ({...o, customerId, line}));
         }))).flat();
         machines = await Promise.all(machines.map(async (machine) => {
             const query = {
