@@ -2,10 +2,11 @@
     "template": "hydrolink",
     "static": {
         "url": "http://vedenkulutus.fi",
-        "authorization": "<authorization>",
+        "username": "<username>",
+        "password": "<password>",
         "type": "water"
     },
     "dynamic": {
-        "authConfig.path": "targetObject"
+        "authConfig.path": "targetObject.idLocal"
     }
-  }
+}

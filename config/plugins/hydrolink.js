@@ -325,9 +325,18 @@ const schema = {
  */
 const parameters = async (config, parameters) => {
     try {
+        if (!Array.isArray(parameters.targetObject)) {
+            parameters.targetObject = [parameters.targetObject];
+        }
         if (Object.hasOwnProperty.call(parameters, 'period')) {
             parameters.targetObject.forEach(object => object.start = parameters.period.split('T')[0].replace(/-/g, ''));
             parameters.targetObject.forEach(object => object.end = parameters.period.split('/')[1].split('T')[0].replace(/-/g, ''));
+        }
+        if (Object.hasOwnProperty.call(parameters, 'start')) {
+            parameters.targetObject.forEach(object => object.start = parameters.start.toISOString().split('T')[0].replace(/-/g, ''));
+        }
+        if (Object.hasOwnProperty.call(parameters, 'end')) {
+            parameters.targetObject.forEach(object => object.end = parameters.end.toISOString().split('T')[0].replace(/-/g, ''));
         }
         return parameters;
     } catch (e) {
@@ -351,19 +360,17 @@ const handleData = function (config, id, data) {
             const value = data[j][config.output.value];
 
             // Transform raw input.
-
             const valuesArray = value.company.apartments.flatMap(apartment => {
                 apartment.companyId = value.company_id;
                 apartment.physicalProperty = 'Volume';
-                const waterCold = { value: (apartment.apartment.meters['meter-cold'].value * 1000), startValue: (apartment.apartment.meters['meter-cold'].start), endValue: (apartment.apartment.meters['meter-cold'].end), period: config.parameters.period, unitOfMeasure: 'Liter', valueType: 'Value' };
-                const waterWarm = { value: (apartment.apartment.meters['meter-warm'].value * 1000), startValue: (apartment.apartment.meters['meter-warm'].start), endValue: (apartment.apartment.meters['meter-warm'].end), period: config.parameters.period, unitOfMeasure: 'Liter', valueType: 'Value' };
-                const coldValues = { ...apartment, readings: waterCold, processTarget: 'WaterCold', measureType: 'Measure', organizationType: 'Organization', locationType: 'Location' };
-                const warmValues = { ...apartment, readings: waterWarm, processTarget: 'WaterWarm', measureType: 'Measure', organizationType: 'Organization', locationType: 'Location' };
+                const waterCold = {value: (apartment.apartment.meters['meter-cold'].value * 1000), startValue: (apartment.apartment.meters['meter-cold'].start), endValue: (apartment.apartment.meters['meter-cold'].end), period: config.parameters.period, unitOfMeasure: 'Liter', valueType: 'Value'};
+                const waterWarm = {value: (apartment.apartment.meters['meter-warm'].value * 1000), startValue: (apartment.apartment.meters['meter-warm'].start), endValue: (apartment.apartment.meters['meter-warm'].end), period: config.parameters.period, unitOfMeasure: 'Liter', valueType: 'Value'};
+                const coldValues = {...apartment, readings: waterCold, processTarget: 'WaterCold', measureType: 'Measure', organizationType: 'Organization', locationType: 'Location'};
+                const warmValues = {...apartment, readings: waterWarm, processTarget: 'WaterWarm', measureType: 'Measure', organizationType: 'Organization', locationType: 'Location'};
                 return [coldValues, warmValues];
             });
 
             result = transformer.transform(valuesArray, schema.properties.data);
-
         }
         return result;
     } catch (err) {

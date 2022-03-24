@@ -1,38 +1,34 @@
 {
-    "plugins": ["hydrolink"],
+    "plugins": [
+        "basic",
+        "hydrolink"
+    ],
     "protocol": "rest",
     "authConfig": {
-      "url": "${url}",
-      "headers": {
-        "Authorization": "${authorization}"
-      },
-      "path": "/api/${idLocal}/${start}/${end}/json"
+        "url": "${url}",
+        "username": "${username}",
+        "password": "${password}",
+        "path": "/api/${idLocal}/${start}/${end}/json"
     },
     "dataObjects": [
-      ""
-    ],  
+        ""
+    ],
     "dataPropertyMappings": {
-      "${type}": ""
+        "${type}": ""
     },
     "generalConfig": {
-      "query": {
-        "start": "",
-        "end": ""
-    },
-      "timestamp": {
-        "dataObjectProperty": "timestamp"
-      }
+        "timestamp": {
+            "dataObjectProperty": "timestamp"
+        }
     },
     "input": {
-      "required": [
-          "parameters.targetObject",
-          "parameters.period"
-
-      ]
-  },
-  "output": {
-    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Process/Measure/WaterMeterReading/",
-    "array": "process"
-  }
-  }
-  
+        "required": [
+            "parameters.targetObject",
+            "parameters.period"
+        ]
+    },
+    "output": {
+        "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Process/Measure/WaterMeterReading/",
+        "array": "process"
+    }
+}
