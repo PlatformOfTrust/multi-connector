@@ -18,7 +18,7 @@ const request = async (config, options) => {
             options.headers = {};
         }
         // Authorize request.
-        options.headers['Authorization'] = 'Basic ' + Buffer.from(config.authConfig.username + ':' + config.authConfig.password).toString('base64')
+        options.headers['Authorization'] = 'Basic ' + Buffer.from(config.authConfig.username + ':' + config.authConfig.password).toString('base64');
     } catch (err) {
         console.log(err.message);
     }
