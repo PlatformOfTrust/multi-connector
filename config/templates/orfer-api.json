@@ -1,0 +1,25 @@
+{
+    "plugins": [
+        "orfer-api"
+    ],
+    "protocol": "rest",
+    "authConfig": {
+        "url": "${url}",
+        "headers": {
+            "Ocp-Apim-Subscription-Key": "${apikey}"
+        },
+        "path": "/production-lines?customerId=${targetObject.idLocal}"
+    },
+    "dataPropertyMappings": {
+        "key": ""
+    },
+    "dataObjects": [
+        ""
+    ],
+    "generalConfig": {
+        "query": {
+            "start": "startTime",
+            "end": "endTime"
+        }
+    }
+}
