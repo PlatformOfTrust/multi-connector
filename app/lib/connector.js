@@ -277,7 +277,24 @@ function replacePlaceholders (config, template, params) {
                             // Transform placeholder to array, if given parameters are in an array.
                             const array = [];
                             _.get(params, valuePath).forEach(function (element) {
-                                array.push(replacer(templateValue, placeholder, element));
+                                if (_.isObject(element) && !Array.isArray(element)) {
+                                    try {
+                                        if (Object.values(element).some((v) => Array.isArray(v))) {
+                                            const arrayValues = Object.fromEntries(Object.entries(element).map(([k, v]) => [k, Array.isArray(v) ? v : [v]]));
+                                            const values = Array.from({length: Math.max(...Object.values(arrayValues).map(v => v.length))}, (v, i) => i);
+                                            values.forEach(index => {
+                                                const object = Object.fromEntries(Object.entries(arrayValues).map(([k, v]) => [k, v.length > index ? v[index] : v[0]]));
+                                                array.push(replacer(templateValue, placeholder, object));
+                                            });
+                                        } else {
+                                            array.push(replacer(templateValue, placeholder, element));
+                                        }
+                                    } catch (err) {
+                                        array.push(replacer(templateValue, placeholder, element));
+                                    }
+                                } else {
+                                    array.push(replacer(templateValue, placeholder, element));
+                                }
                             });
                             _.set(template, path, array);
                         } else {
