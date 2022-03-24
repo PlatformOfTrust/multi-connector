@@ -229,6 +229,59 @@ const template = async (config, template) => {
     }
 };
 
+Date.prototype.stdTimezoneOffset = function () {
+    const jan = new Date(this.getFullYear(), 0, 1);
+    const jul = new Date(this.getFullYear(), 6, 1);
+    return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+};
+
+Date.prototype.isDstObserved = function () {
+    return this.getTimezoneOffset() < this.stdTimezoneOffset();
+};
+
+/**
+ * Converts date object which has finnish UTC(+2 OR +3) as UTC0 to valid date object and vice versa.
+ *
+ * @param {Date} input
+ * @param {Boolean} [reverse]
+ * @param {Boolean} [convert]
+ * @return {String}
+ */
+const convertFinnishDateToISOString = (input, reverse = false, convert = false) => {
+    // Examples.
+    // Finnish UTC +2 or +3.
+    // new Date(1610031289498); -2
+    // new Date(1631092909080); -3 (Daylight Saving Time)
+    let output;
+    input = convert ? new Date(input) : input;
+    if (input.isDstObserved()) {
+        output = new Date(input.setHours(input.getHours() - (reverse ? 3 : -3)));
+    } else {
+        output = new Date(input.setHours(input.getHours() - (reverse ? 2 : -2)));
+    }
+    return output.toISOString();
+};
+
+/**
+ * Executes callback if path exists.
+ *
+ * @param {Object} object
+ * @param {String} path
+ * @param {Function} updateFunction
+ * @param {Array} additionalArgs
+ * @return {Object}
+ */
+const safeUpdate = (object, path, updateFunction, additionalArgs = []) => {
+    try {
+        if (_.get(object, path)) {
+            _.set(object, path, updateFunction(_.get(object, path), ...additionalArgs));
+        }
+        return object;
+    } catch (err) {
+        return object;
+    }
+};
+
 /**
  * Attempts to send received confirmation to CALS via PoT Broker.
  *
@@ -281,8 +334,19 @@ const stream = async (template, data) => {
                     productCodeToCALSId[order.idSystemLocal] = {};
                 }
 
+                // Treat incoming date times as local finnish time.
+                order = safeUpdate(order, 'deliveryRequired', convertFinnishDateToISOString, [false, true]);
+                order = safeUpdate(order, 'deliveryPlanned', convertFinnishDateToISOString, [false, true]);
+                order = safeUpdate(order, 'deliveryActual', convertFinnishDateToISOString, [false, true]);
+                order = safeUpdate(order, 'processDelivery.deliveryRequired', convertFinnishDateToISOString, [false, true]);
+                order = safeUpdate(order, 'processDelivery.deliveryPlanned', convertFinnishDateToISOString, [false, true]);
+                order = safeUpdate(order, 'processDelivery.deliveryActual', convertFinnishDateToISOString, [false, true]);
+
                 order.orderLine = order.orderLine.map((l) => {
                     winston.log('info', 'Changed ' + l.product.codeProduct + ' to ' + productCodeToCALSId[order.idSystemLocal][l.product.codeProduct]);
+                    l = safeUpdate(l, 'deliveryRequired', convertFinnishDateToISOString, [false, true]);
+                    l = safeUpdate(l, 'deliveryPlanned', convertFinnishDateToISOString, [false, true]);
+                    l = safeUpdate(l, 'deliveryActual', convertFinnishDateToISOString, [false, true]);
                     return {
                         ...l,
                         idSystemLocal: productCodeToCALSId[order.idSystemLocal][l.product.codeProduct],
