@@ -1,0 +1,10 @@
+{
+    "template": "orfer-api",
+    "static": {
+        "url": "<url>",
+        "apikey": "<apikey>"
+    },
+    "dynamic": {
+        "authConfig.path": "targetObject.idLocal"
+    }
+}
