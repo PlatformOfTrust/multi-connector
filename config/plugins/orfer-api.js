@@ -114,6 +114,6 @@ const response = async (config, response) => {
  * Expose plugin methods.
  */
 module.exports = {
-    name: 'orfer_api',
+    name: 'orfer-api',
     response,
 };
