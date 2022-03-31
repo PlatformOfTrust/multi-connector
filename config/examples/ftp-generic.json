@@ -1,0 +1,25 @@
+{
+    "template": "ftp-generic",
+    "static": {
+        "url": "<host>",
+        "port": "<port>",
+        "secure": false,
+        "fromPath": "[<from-path>]",
+        "toPath": "[<to-path>]",
+        "username": "<username>",
+        "password": "[<password>]"
+    },
+    "dynamic": {
+        "authConfig.path": "targetObject.name"
+    },
+    "plugins" : {
+        "download-link": {
+            "ttl": "<link-expiration-time>"
+        }
+    },
+    "request": {
+        "targetObject": {
+            "name": "<filename>"
+        }
+    }
+}

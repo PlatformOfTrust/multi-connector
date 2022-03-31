@@ -4,14 +4,13 @@
  */
 const fs = require('fs');
 const _ = require('lodash');
-const rp = require('request-promise');
+const ftp = require('basic-ftp');
 const winston = require('../../logger.js');
-const Client = require('ssh2-sftp-client');
 const response = require('../lib/response');
-const SocksClient = require('socks').SocksClient;
+const rp = require('request-promise');
 
 /**
- * SFTP library.
+ * FTP library.
  *
  * Handles connection to server and file fetching.
  */
@@ -26,7 +25,7 @@ const DOWNLOAD_DIR = './temp/';
  */
 const uuidv4 = () => {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        const r = Math.random() * 16 | 0; const v = c == 'x' ? r : (r & 0x3 | 0x8);
+        const r = Math.random() * 16 | 0; const v = c === 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
     });
 };
@@ -78,25 +77,25 @@ const downloadFiles = async (client, path, productCode) => {
             return;
         }
     }
-    if (!Array.isArray(files)) return;
+    if (!Array.isArray(files)) { return; }
     if (path.slice(-1) === '/') {
         path = path.slice(0, -1);
     }
+
     // Skip directories.
-    files = (Array.isArray(files) ? files : [files]).filter(item => item.type !== 'd');
+    files = (Array.isArray(files) ? files : [files]).filter(item => item.type !== 2);
 
     for (let i = 0; i < files.length; i++) {
         const from = path + (filename ? '' : (path !== '/' ? '/' : '') + files[i].name);
         const to = DOWNLOAD_DIR + productCode + from;
         await checkDir(to);
-        let filePath;
         try {
             // Download file.
-            filePath = await client.get(from, to);
+            await client.downloadTo(to, from);
             // Attach dir.
             files[i].path = from;
             // Read file content.
-            files[i].data = fs.readFileSync(filePath, 'base64');
+            files[i].data = fs.readFileSync(to, 'base64');
         } catch (err) {
             winston.log('error', err.message);
         }
@@ -118,7 +117,7 @@ const uploadFile = async (client, remotePath, localPath) => {
     }
     let upload;
     try {
-        upload = client.put(DOWNLOAD_DIR + localPath, remotePath);
+        upload = await client.uploadFrom(DOWNLOAD_DIR + localPath, remotePath);
     } catch (err) {
         winston.log('error', err.message);
     }
@@ -138,7 +137,7 @@ const deleteFile = async (client, path) => {
     }
     let upload;
     try {
-        upload = client.delete(path);
+        upload = await client.remove(path);
     } catch (err) {
         winston.log('error', err.message);
     }
@@ -155,11 +154,15 @@ const deleteFile = async (client, path) => {
  */
 const createClient = async (config = {}, productCode, clientId = uuidv4()) => {
     const options = {
-        port: 22,
+        port: 21,
     };
 
     if (Object.hasOwnProperty.call(config.authConfig, 'url')) {
         config.authConfig.url !== '${url}' ? options.host = config.authConfig.url : null;
+    }
+
+    if (Object.hasOwnProperty.call(config.authConfig, 'url')) {
+        config.authConfig.secure !== '${secure}' ? options.secure = config.authConfig.secure : false;
     }
 
     if (Object.hasOwnProperty.call(config.authConfig, 'port')) {
@@ -167,15 +170,11 @@ const createClient = async (config = {}, productCode, clientId = uuidv4()) => {
     }
 
     if (Object.hasOwnProperty.call(config.authConfig, 'username')) {
-        config.authConfig.username !== '${username}' ? options.username = config.authConfig.username : null;
+        config.authConfig.username !== '${username}' ? options.user = config.authConfig.username : null;
     }
 
     if (Object.hasOwnProperty.call(config.authConfig, 'password')) {
-        config.authConfig.password !== '${password}' ? options.password = config.authConfig.password : null;
-    }
-
-    if (Object.hasOwnProperty.call(config.authConfig, 'privateKey')) {
-        config.authConfig.privateKey !== '${privateKey}' ? options.privateKey = Buffer.from(config.authConfig.privateKey, 'base64') : null;
+        config.authConfig.password !== '${password}' && !!config.authConfig.password ? options.password = config.authConfig.password : null;
     }
 
     if (!Object.hasOwnProperty.call(clients, productCode)) {
@@ -183,32 +182,10 @@ const createClient = async (config = {}, productCode, clientId = uuidv4()) => {
     }
 
     if (!Object.hasOwnProperty.call(clients[productCode], clientId)) {
-        clients[productCode][clientId] = new Client(productCode);
+        clients[productCode][clientId] = new ftp.Client();
     }
 
-    if (Object.hasOwnProperty.call(config.authConfig, 'proxyHost')) {
-        if (config.authConfig.proxyHost !== '${proxyHost}') {
-            const proxy = {
-                host: config.authConfig.proxyHost, // Proxy hostname.
-                port: Number.parseInt(config.authConfig.proxyPort || '1080'), // Proxy port.
-                type: 5, // for SOCKS v5.
-            };
-
-            // Connect to SOCKS 5 proxy.
-            const instance = await SocksClient.createConnection({
-                proxy,
-                command: 'connect',
-                destination: {
-                    // Remote SFTP server.
-                    host: options.host,
-                    port: options.port,
-                },
-            });
-            options.sock = instance.socket;
-        }
-    }
-
-    await clients[productCode][clientId].connect(options);
+    await clients[productCode][clientId].access(options);
     return clients[productCode][clientId];
 };
 
@@ -220,7 +197,7 @@ const createClient = async (config = {}, productCode, clientId = uuidv4()) => {
  * @param {Boolean} skipHandling
  * @return {Promise}
  */
-const getData = async (config= {}, pathArray, skipHandling = false) => {
+const getData = async (config = {}, pathArray, skipHandling = false) => {
     const productCode = config.productCode || uuidv4();
     const clientId = uuidv4();
     let toPath = config.authConfig.toPath || '';
@@ -257,22 +234,20 @@ const getData = async (config= {}, pathArray, skipHandling = false) => {
         const paths = Array.isArray(toPath) ? toPath : [toPath];
         for (let l = 0; l < paths.length; l++) {
             let files = await downloadFiles(client, paths[l] + name, productCode);
-            if (!files) continue;
-            files = (Array.isArray(files) ? files : [files]).filter(item => item.type !== 'd');
+            if (!files) { continue; }
+            files = (Array.isArray(files) ? files : [files]).filter(item => item.type !== 2);
             for (let f = 0; f < files.length; f++) {
                 if (_.isObject(files[f])) {
                     files[f].id = files[f].name;
                 }
                 const item = skipHandling ? files[f] : await response.handleData(config, pathArray[p], p, files[f]);
-                if (item) items.push(item);
+                if (item) { items.push(item); }
             }
         }
     }
 
-    await client.end();
-    if (Object.hasOwnProperty.call(clients, productCode)) {
-        delete clients[productCode][clientId];
-    }
+    await client.close();
+    delete clients[productCode][clientId];
     if (JSON.stringify(clients[productCode] === '{}')) {
         delete clients[productCode];
     }
@@ -287,7 +262,7 @@ const getData = async (config= {}, pathArray, skipHandling = false) => {
  * @param {String} clientId
  * @return {Promise}
  */
-const sendData = async (config= {}, pathArray, clientId) => {
+const sendData = async (config = {}, pathArray, clientId) => {
     const productCode = config.productCode || uuidv4();
     const client = await createClient(config, productCode, clientId);
 
@@ -296,10 +271,10 @@ const sendData = async (config= {}, pathArray, clientId) => {
 
     for (let p = 0; p < pathArray.length; p++) {
         const item = await uploadFile(client, fromPath + pathArray[p], productCode + fromPath + pathArray[p]);
-        if (item) items.push(item);
+        if (item) { items.push(item); }
     }
 
-    await client.end();
+    await client.close();
     return items;
 };
 
@@ -312,7 +287,7 @@ const sendData = async (config= {}, pathArray, clientId) => {
  * @param {String} newPath
  * @return {Promise}
  */
-const move = async (config= {}, pathArray, clientId, newPath = '') => {
+const move = async (config = {}, pathArray, clientId, newPath = '') => {
     const productCode = config.productCode || uuidv4();
     const client = await createClient(config, productCode, clientId);
 
@@ -335,33 +310,7 @@ const move = async (config= {}, pathArray, clientId, newPath = '') => {
         }
     }
 
-    await client.end();
-    return items;
-};
-
-/**
- * Removes received file at SFTP server.
- *
- * @param {Object} config
- * @param {Array} pathArray
- * @param {String} clientId
- * @return {Promise}
- */
-const remove = async (config= {}, pathArray, clientId) => {
-    const productCode = config.productCode || uuidv4();
-    const client = await createClient(config, productCode, clientId);
-
-    const items = [];
-    const toPath = (Array.isArray(config.authConfig.toPath) ? config.authConfig.toPath[0] : config.authConfig.toPath) || '';
-
-    for (let p = 0; p < pathArray.length; p++) {
-        const name = pathArray[p][0] === '/' ? pathArray[p] : '/' + pathArray[p];
-        // Remove from old path
-        await deleteFile(client, toPath + name);
-        items.push(name + ' removed.');
-    }
-
-    await client.end();
+    await client.close();
     return items;
 };
 
@@ -373,5 +322,4 @@ module.exports = {
     sendData,
     checkDir,
     move,
-    remove,
 };

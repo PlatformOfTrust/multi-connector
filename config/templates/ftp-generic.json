@@ -1,0 +1,44 @@
+{
+    "plugins": [
+        "document",
+        "download-link"
+    ],
+    "protocol": "ftp",
+    "authConfig": {
+        "url": "${url}",
+        "port": "${port}",
+        "secure": "${secure}",
+        "fromPath": "${fromPath}",
+        "toPath": "${toPath}",
+        "username": "${username}",
+        "password": "${password}",
+        "path": "/${targetObject.name}"
+    },
+    "dataObjects": [
+        "data"
+    ],
+    "dataPropertyMappings": {
+        "${type}": ""
+    },
+    "generalConfig": {
+        "hardwareId": {
+            "dataObjectProperty": ""
+        },
+        "sourceName": {
+            "dataObjectProperty": ""
+        },
+        "timestamp": {
+            "dataObjectProperty": ""
+        }
+    },
+    "input": {
+        "required": [
+            "parameters.targetObject.name"
+        ]
+    },
+    "output": {
+        "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Document/",
+        "array": "document",
+        "data": "data"
+    }
+}
