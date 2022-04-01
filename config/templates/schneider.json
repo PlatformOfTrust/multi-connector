@@ -1,7 +1,8 @@
 {
   "plugins": [
     "oauth2",
-    "schneider"
+    "schneider",
+    "consumption"
   ],
   "protocol": "rest",
   "authConfig": {

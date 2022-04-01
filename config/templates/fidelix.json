@@ -1,7 +1,8 @@
 {
   "plugins": [
     "soap-basic",
-    "fidelix"
+    "fidelix",
+    "consumption"
   ],
   "protocol": "soap",
   "authConfig": {

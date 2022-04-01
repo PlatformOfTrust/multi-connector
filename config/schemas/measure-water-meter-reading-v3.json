@@ -240,6 +240,20 @@
                                             "title": "Output value",
                                             "description": "Output value of the process."
                                         },
+                                        "processValueStart": {
+                                            "$id": "#/properties/data/properties/process/items/properties/processValue/items/properties/processValueStart",
+                                            "source": "data.start",
+                                            "type": "string",
+                                            "title": "Process value start",
+                                            "description": "Process value start."
+                                        },
+                                        "processValueEnd": {
+                                            "$id": "#/properties/data/properties/process/items/properties/processValue/items/properties/processValueEnd",
+                                            "source": "data.end",
+                                            "type": "string",
+                                            "title": "Process value end",
+                                            "description": "Process value end."
+                                        },
                                         "unitOfMeasure": {
                                             "$id": "#/properties/data/properties/process/items/properties/processValue/items/properties/unitOfMeasure",
                                             "value": "${common.units.${data.@type}}",

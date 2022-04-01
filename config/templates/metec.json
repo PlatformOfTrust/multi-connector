@@ -2,7 +2,8 @@
     "plugins": [
         "basic",
         "filter-by-id",
-        "latest"
+        "latest",
+        "consumption"
     ],
     "protocol": "rest",
     "authConfig": {
