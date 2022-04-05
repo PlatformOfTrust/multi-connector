@@ -10,7 +10,6 @@ const winston = require('../../logger.js');
 const cache = require('../../app/cache');
 const rsa = require('../../app/lib/rsa');
 const moment = require('moment');
-const net = require('net');
 const _ = require('lodash');
 
 /**
@@ -812,6 +811,7 @@ const handleData = function (config, id, data) {
                         winston.log('info', 'Store CALS identifiers from sent order.');
                         // winston.log('info', 'orderNumberToCALSId: ' + JSON.stringify(orderNumberToCALSId));
                         // winston.log('info', 'orderIdToCALSInstanceId: ' + JSON.stringify(orderIdToCALSInstanceId));
+                        // winston.log('info', 'vendorMaterialCodeToCALSId: ' + JSON.stringify(vendorMaterialCodeToCALSId));
                     } catch (e) {
                         console.log(e.message);
                     }
@@ -988,36 +988,41 @@ const controller = async (req, res) => {
         }
 
         // 1. Parse options and authenticate request.
-        let config;
+        let config = {
+            static: {}
+        };
+
         let template;
-        let productCode;
+        let productCode = req.productCode;
         try {
-            const parts = req.originalUrl.split('/');
-            productCode = parts.splice(parts.indexOf(PLUGIN_NAME) + 1)[0];
-            config = cache.getDoc('configs', productCode) || {};
+            if (!productCode) {
+                const parts = req.originalUrl.split('/');
+                productCode = parts.splice(parts.indexOf(PLUGIN_NAME) + 1)[0];
+                config = cache.getDoc('configs', productCode) || {};
 
-            if (_.isEmpty(config) || !Object.hasOwnProperty.call(config, 'static')) {
-                const err = new Error('Data product configuration not found.');
-                err.httpStatusCode = 404;
-                return errorResponse(req, res, err);
+                if (_.isEmpty(config) || !Object.hasOwnProperty.call(config, 'static')) {
+                    const err = new Error('Data product configuration not found.');
+                    err.httpStatusCode = 404;
+                    return errorResponse(req, res, err);
+                }
+
+                if (!Object.hasOwnProperty.call(config.static, 'bearer')) {
+                    const err = new Error('Bearer not found at data product configuration.');
+                    err.httpStatusCode = 500;
+                    return errorResponse(req, res, err);
+                }
+
+                /** Request authentication */
+                if (bearer !== ('Bearer ' + config.static.bearer)) {
+                    return res.status(401).send('Unauthorized');
+                }
+
+                winston.log('info', 'Received trigger request from ' + (req.get('x-real-ip') || req.get('origin') || req.socket.remoteAddress));
+
+                template = cache.getDoc('templates', config.template) || {};
+                config.connectorUrl = req.connectorUrl;
+                config.publicKeyUrl = req.publicKeyUrl;
             }
-
-            if (!Object.hasOwnProperty.call(config.static, 'bearer')) {
-                const err = new Error('Bearer not found at data product configuration.');
-                err.httpStatusCode = 500;
-                return errorResponse(req, res, err);
-            }
-
-            /** Request authentication */
-            if (bearer !== ('Bearer ' + config.static.bearer)) {
-                return res.status(401).send('Unauthorized');
-            }
-
-            winston.log('info', 'Received trigger request from ' + (req.get('x-real-ip') || req.get('origin') || req.socket.remoteAddress));
-
-            template = cache.getDoc('templates', config.template) || {};
-            config.connectorUrl = req.connectorUrl;
-            config.publicKeyUrl = req.publicKeyUrl;
         } catch (err) {
             err.httpStatusCode = 500;
             err.message = 'Failed to handle request.';
@@ -1099,7 +1104,7 @@ const controller = async (req, res) => {
             /** Receiver data product */
             config.static.productCode = vendorProductCode;
 
-            if (req.body.isTest) {
+            if (req.body.isTest || Object.hasOwnProperty.call(req, 'productCode')) {
                 /** Test message response */
                 res.setHeader('x-event-id', req.body.eventId);
                 res.setHeader('x-is-pot', true);
@@ -1151,6 +1156,35 @@ const endpoints = function (passport) {
     return router;
 };
 
+const getMappings = async (productCode, instanceIds = [], orderNumber) => {
+    for (let i = 0; i < instanceIds.length; i++) {
+        try {
+            await controller({
+                productCode,
+                body: {
+                    isTest: false,
+                    eventId: 'e560e9f69aba49af9aae3c9dbda71033',
+                    entity: 'PurchaseOrder',
+                    method: 'POST',
+                    instanceId: instanceIds[i],
+                    entityId: orderNumber,
+                },
+                headers: {
+                    authorization: 'test',
+                },
+            }, {
+                status: () => ({
+                    send: () => {},
+                }),
+                setHeader: () => {},
+            });
+        } catch (e) {
+            return;
+        }
+    }
+
+};
+
 /**
  * Switch querying protocol to REST.
  *
@@ -1166,6 +1200,7 @@ const template = async (config, template) => {
         } else if (Object.hasOwnProperty.call(template.parameters.targetObject, 'order')) {
             /** CALS connector */
             const resource = (template.authConfig.entity + 's').toLowerCase();
+            const instanceId = Array.isArray(template.authConfig.instanceId) ? template.authConfig.instanceId[0] : template.authConfig.instanceId;
 
             winston.log('info', 'Connector consumes CALS REST API ' + resource + ' by entityId ' + template.authConfig.path);
             template.protocol = 'rest';
@@ -1178,7 +1213,7 @@ const template = async (config, template) => {
             winston.log('info', 'Include headers from trigger request' + ', '
                 + 'x-event-id: ' + template.authConfig.headers['x-event-id'] + ', '
                 + 'x-is-test: ' + template.authConfig.headers['x-is-test']);
-            template.authConfig.path = '/instances/' + template.authConfig.instanceId + '/' + resource + '/' + template.authConfig.path;
+            template.authConfig.path = '/instances/' + instanceId + '/' + resource + '/' + template.authConfig.path;
         }
 
         if (Object.hasOwnProperty.call(template.parameters.targetObject, 'sender')) {
@@ -1201,6 +1236,11 @@ const template = async (config, template) => {
 
                 // 1. Parse PurchaseOrderId - template.parameters.targetObject.idLocal
                 data.PurchaseOrderNumber = template.parameters.targetObject.idLocal;
+
+                if (!Object.hasOwnProperty.call(orderNumberToCALSId, data.PurchaseOrderNumber)) {
+                    await getMappings(template.productCode, Array.isArray(template.authConfig.instanceId) ? template.authConfig.instanceId : [template.authConfig.instanceId], data.PurchaseOrderNumber);
+                }
+
                 data.PurchaseOrderId = orderNumberToCALSId[data.PurchaseOrderNumber] || template.parameters.targetObject.idSystemLocal;
                 data.InstanceId = orderIdToCALSInstanceId[data.PurchaseOrderId];
 
@@ -1294,7 +1334,7 @@ const template = async (config, template) => {
                 winston.log('info', 'Body: ' + JSON.stringify(data));
 
                 if (!data.InstanceId) {
-                    return Promise.reject(new Error('Could not resolve CALS instance ID. Resending the order from CALS is required.'));
+                    return Promise.reject(new Error('Purchase order with orderNumber '+ data.PurchaseOrderNumber + ' not found.'));
                 }
 
                 const url = template.authConfig.url;
