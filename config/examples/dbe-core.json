@@ -1,0 +1,16 @@
+{
+    "template": "dbe-core",
+    "static": {
+        "url": "<url>",
+        "username": "<username>",
+        "password": "<password>"
+    },
+    "dynamic": {
+        "authConfig.path": "targetObject.idLocal"
+    },
+    "request": {
+        "ids": [
+            "<id>"
+        ]
+    }
+}

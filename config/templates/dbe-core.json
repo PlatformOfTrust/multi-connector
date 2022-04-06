@@ -1,0 +1,36 @@
+{
+    "plugins": [
+        "basic",
+        "xml-parser",
+        "dbe-core"
+    ],
+    "protocol": "rest",
+    "authConfig": {
+        "url": "${url}",
+        "path": "/dbe/messages?businessNetworkID=${productCode}"
+    },
+    "dataObjects": [
+        "Messages"
+    ],
+    "dataPropertyMappings": {
+        "Document": ""
+    },
+    "generalConfig": {
+        "timestamp": {
+            "dataObjectProperty": "IssueDate"
+        },
+        "hardwareId": {
+            "dataObjectProperty": "ID"
+        }
+    },
+    "input": {
+        "required": [
+            "parameters.targetObject"
+        ]
+    },
+    "output": {
+        "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Document/",
+        "array": "document",
+        "data": "data"
+    }
+}
