@@ -55,6 +55,8 @@ const response = async (config, response) => {
         const productionCounterUrl = domain + '/production-counter';
         const productionOverviewUrl = domain + '/production-overview';
         const shiftOverviewUrl = domain + '/shift-overview';
+        const errorDataUrl = domain + '/error-data';
+        const errorSummaryUrl = domain + '/error-summary';
         const headers = config.authConfig.headers;
 
         const lines = (await Promise.all((factories || []).map(async factory => await request('GET', linesUrl, headers, {}, {
@@ -98,10 +100,19 @@ const response = async (config, response) => {
             }
             machine.modules = modules || [];
             machine.counters = counters || [];
+
             const {body: {values: productionOverview} = {}} = (await request('GET', productionOverviewUrl, headers, {}, {...query, startTime, endTime}) || {});
             machine.productionOverview = productionOverview || [];
+
             const {body: {values: shiftOverview} = {}} = (await request('GET', shiftOverviewUrl, headers, {}, {...query, startTime, endTime}) || {});
             machine.shiftOverview = shiftOverview || [];
+
+            const {body: {values: errorData} = {}} = (await request('GET', errorDataUrl, headers, {}, {...query, startTime, endTime}) || {});
+            machine.errorData = errorData || [];
+
+            const {body: {values: errorSummary} = {}} = (await request('GET', errorSummaryUrl, headers, {}, {...query, startTime, endTime}) || {});
+            machine.errorSummary = errorSummary || [];
+
             return machine;
         }));
         return {...response, values: machines};
