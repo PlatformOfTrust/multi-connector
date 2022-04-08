@@ -60,7 +60,7 @@ const readPublicKeys = async () => {
                     priority: i,
                     ...publicKeyURLs[i],
                     key: body.toString(),
-                });
+                }, 0);
             }
         } catch (err) {
             winston.log('error', err.message);
