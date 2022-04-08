@@ -84,7 +84,7 @@ function handleFile (collection, file, data) {
     } catch (err) {
         /** File is not a valid JSON. */
     }
-    cache.setDoc(collection, file, object || data);
+    cache.setDoc(collection, file, object || data, 0);
 }
 
 /**
