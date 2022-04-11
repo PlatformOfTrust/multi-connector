@@ -1356,6 +1356,7 @@ const template = async (config, template) => {
                 }
 
                 const url = template.authConfig.url;
+                // config.static.url = url + '/instances/' + data.InstanceId + '/purchaseorders/confirm';
                 config.static.url = url + '/instances/' + data.InstanceId + '/confirmpurchaseorder';
                 config.static.headers = {
                     'CALS-API-KEY': config.static.apikey,
