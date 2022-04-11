@@ -204,6 +204,13 @@ const orderConfirmationSchema = {
                                                 'title': 'Local System identifier',
                                                 'description': 'Locally given system identifier.',
                                             },
+                                            'gtin': {
+                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/gtin',
+                                                'source': 'ItemEAN.0',
+                                                'type': 'string',
+                                                'title': 'Local System identifier',
+                                                'description': 'Locally given system identifier.',
+                                            },
                                             'name': {
                                                 '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/name',
                                                 'source': null,
