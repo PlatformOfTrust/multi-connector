@@ -60,22 +60,11 @@ const checkDir = async (filepath) => {
  */
 const downloadFiles = async (client, path, productCode) => {
     let files;
-    let filename = false;
+    const filename = path.includes('.');
     try {
-        // Try path as a directory.
         files = await client.list(path);
     } catch (err) {
-        try {
-            // Try path as a filename.
-            const parts = path.split('/');
-            parts.pop();
-            files = (await client.list(parts.join('/')))
-                .filter(file => path.split('/').includes(file.name));
-            filename = true;
-        } catch (err) {
-            // winston.log('error', err.message);
-            return;
-        }
+        files = [];
     }
     if (!Array.isArray(files)) { return; }
     if (path.slice(-1) === '/') {
@@ -94,6 +83,8 @@ const downloadFiles = async (client, path, productCode) => {
             await client.downloadTo(to, from);
             // Attach dir.
             files[i].path = from;
+            // Take only filename.
+            files[i].name = files[i].name.split('/').pop();
             // Read file content.
             files[i].data = fs.readFileSync(to, 'base64');
         } catch (err) {
