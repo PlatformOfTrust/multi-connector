@@ -806,7 +806,7 @@ const handleData = function (config, id, data) {
                             }
 
                             vendorMaterialCodeToCALSId[value.purchaseOrderId][value.purchaseOrderItems[i].vendorMaterialCode] = value.purchaseOrderItems[i].purchaseOrderItemId;
-                            GTINToCALSId[value.purchaseOrderId][value.purchaseOrderItems[i].gtin] = value.purchaseOrderItems[i].purchaseOrderItemId;
+                            GTINToCALSId[value.purchaseOrderId][value.purchaseOrderItems[i].materialGlobalTradeItemNumber] = value.purchaseOrderItems[i].purchaseOrderItemId;
 
                             value.purchaseOrderItems[i] = {
                                 orderLineType: 'OrderLine',
