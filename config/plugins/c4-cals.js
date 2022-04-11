@@ -20,6 +20,7 @@ const PLUGIN_NAME = 'c4-cals';
 const orderIdToCALSInstanceId = {};
 const orderNumberToCALSId = {};
 const vendorMaterialCodeToCALSId = {};
+const GTINToCALSId = {};
 
 // Source mapping.
 const orderInformationSchema = require('../schemas/order-information-v4_cals.json');
@@ -800,7 +801,13 @@ const handleData = function (config, id, data) {
                             if (!Object.hasOwnProperty.call(vendorMaterialCodeToCALSId, value.purchaseOrderId)) {
                                 vendorMaterialCodeToCALSId[value.purchaseOrderId] = {};
                             }
+                            if (!Object.hasOwnProperty.call(GTINToCALSId, value.purchaseOrderId)) {
+                                GTINToCALSId[value.purchaseOrderId] = {};
+                            }
+
                             vendorMaterialCodeToCALSId[value.purchaseOrderId][value.purchaseOrderItems[i].vendorMaterialCode] = value.purchaseOrderItems[i].purchaseOrderItemId;
+                            GTINToCALSId[value.purchaseOrderId][value.purchaseOrderItems[i].gtin] = value.purchaseOrderItems[i].purchaseOrderItemId;
+
                             value.purchaseOrderItems[i] = {
                                 orderLineType: 'OrderLine',
                                 productType: 'Product',
@@ -1286,8 +1293,19 @@ const template = async (config, template) => {
                     // Resolve CALSId.
                     try {
                         output.PurchaseOrderItemId = vendorMaterialCodeToCALSId[data.PurchaseOrderId][input.product.codeProduct];
+                        if (output.PurchaseOrderItemId === '' || output.PurchaseOrderItemId === undefined || output.PurchaseOrderItemId === null) {
+                            try {
+                                output.PurchaseOrderItemId = GTINToCALSId[data.PurchaseOrderId][input.product.gtin];
+                            } catch (e) {
+                                winston.log('error', e.message);
+                            }
+                        }
                     } catch (e) {
-                        output.PurchaseOrderItemId = input.idSystemLocal;
+                        try {
+                            output.PurchaseOrderItemId = GTINToCALSId[data.PurchaseOrderId][input.product.gtin];
+                        } catch (e) {
+                            winston.log('error', e.message);
+                        }
                     }
 
                     try {
