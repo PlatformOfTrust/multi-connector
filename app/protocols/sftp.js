@@ -321,20 +321,18 @@ const move = async (config= {}, pathArray, clientId, newPath = '') => {
 
     for (let p = 0; p < pathArray.length; p++) {
         const name = pathArray[p][0] === '/' ? pathArray[p] : '/' + pathArray[p];
-        // Upload to new path.
-        const item = await uploadFile(client, newPath + name, productCode + toPath + name);
         try {
-            await downloadFiles(client, newPath + name, productCode);
+            // Upload to new path.
+            const item = await uploadFile(client, newPath + name, productCode + toPath + name);
+            // Remove from old path
+            if (item) {
+                await deleteFile(client, toPath + name);
+                items.push(item);
+            }
         } catch (err) {
             winston.log('error', err.message);
         }
-        // Remove from old path
-        if (item) {
-            await deleteFile(client, toPath + name);
-            items.push(item);
-        }
     }
-
     await client.end();
     return items;
 };
