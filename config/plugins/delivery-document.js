@@ -1114,7 +1114,11 @@ const response = async (config, response) => {
                 } else {
                     // File is .txt, .csv, .svg, etc.
                     response = {
-                        data: await CSVToJSON({delimiter: 'auto'}).fromString(Buffer.from(response.data, 'base64').toString('utf-8')),
+                        data: await CSVToJSON({delimiter: 'auto'})
+                            .fromString(Buffer.from(response.data, 'base64')
+                                .toString('utf-8').includes('�')
+                                ? Buffer.from(response.data, 'base64').toString('latin1')
+                                : Buffer.from(response.data, 'base64').toString('utf-8')),
                     };
                 }
             } else {
