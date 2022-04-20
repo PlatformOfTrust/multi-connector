@@ -996,7 +996,7 @@ const controller = async (req, res) => {
 
         // 1. Parse options and authenticate request.
         let config = {
-            static: {}
+            static: {},
         };
 
         let template;
@@ -1189,7 +1189,30 @@ const getMappings = async (productCode, instanceIds = [], orderNumber) => {
             return;
         }
     }
+};
 
+/**
+ * Converts string to number.
+ *
+ * @param {String/Number} quantity
+ * @return {Number}
+ */
+const handleQuantity = (quantity = '') => {
+    if (typeof quantity === 'string') {
+        try {
+            const commaCount = (quantity.match(/,/g) || []).length;
+            if (commaCount === 1) {
+                quantity = quantity.replace(',', '.');
+            }
+        } catch (err) {
+            winston.log('info', err.message);
+        }
+        const intValue = parseInt(quantity);
+        const floatValue = parseFloat(quantity);
+        return isNaN(intValue) ? quantity : (intValue !== floatValue ? floatValue : intValue);
+    } else {
+        return quantity;
+    }
 };
 
 /**
@@ -1255,6 +1278,7 @@ const template = async (config, template) => {
                 winston.log('info', 'Resolved ' + data.PurchaseOrderId + ' to InstanceId ' + data.InstanceId);
 
                 const items = template.parameters.targetObject.orderLine || template.parameters.targetObject.deliveryLine || [];
+                let deliveryConfirmation = null;
 
                 // 2. Parse PurchaseOrderItems - template.parameters.targetObject.orderLine or -.deliveryLine
                 data.PurchaseOrderItems = (Array.isArray(items) ? items : [items]).map(input => {
@@ -1265,22 +1289,22 @@ const template = async (config, template) => {
 
                     // Catch transportation/delivery time from delivery information.
                     if (!datetime && Object.hasOwnProperty.call(input, 'transportation')) {
-                        if (input.transportation.endDateTime !== '') {
+                        if (input.transportation.endDateTime !== '' && input.transportation.endDateTime !== 'NULL') {
                             datetime = input.transportation.endDateTime;
                             output.ActualDelivery = [];
                         }
                     }
                     if (!datetime && Object.hasOwnProperty.call(input, 'delivery')) {
-                        if (input.delivery.startDateTime !== '') {
+                        if (input.delivery.startDateTime !== '' && input.delivery.startDateTime !== 'NULL') {
                             datetime = input.delivery.startDateTime;
                             output.ActualDelivery = [];
                         }
                     }
                     if (!datetime && Object.hasOwnProperty.call(root, 'processDelivery')) {
-                        if (root.processDelivery.deliveryPlanned !== '') {
+                        if (root.processDelivery.deliveryPlanned !== '' && root.processDelivery.deliveryPlanned !== 'NULL') {
                             datetime = root.processDelivery.deliveryPlanned;
                         }
-                        if (!datetime && root.processDelivery.deliveryRequired !== '') {
+                        if (!datetime && root.processDelivery.deliveryRequired !== '' && root.processDelivery.deliveryRequired !== 'NULL') {
                             datetime = root.processDelivery.deliveryRequired;
                         }
                     }
@@ -1295,15 +1319,25 @@ const template = async (config, template) => {
                         output.PurchaseOrderItemId = vendorMaterialCodeToCALSId[data.PurchaseOrderId][input.product.codeProduct];
                         if (output.PurchaseOrderItemId === '' || output.PurchaseOrderItemId === undefined || output.PurchaseOrderItemId === null) {
                             try {
-                                output.PurchaseOrderItemId = GTINToCALSId[data.PurchaseOrderId][input.product.gtin];
+                                if (Object.hasOwnProperty.call(GTINToCALSId, data.PurchaseOrderId)) {
+                                    output.PurchaseOrderItemId = GTINToCALSId[data.PurchaseOrderId][input.product.gtin];
+                                } else {
+                                    output.PurchaseOrderItemId = null;
+                                }
                             } catch (e) {
+                                output.PurchaseOrderItemId = null;
                                 winston.log('error', e.message);
                             }
                         }
                     } catch (e) {
                         try {
-                            output.PurchaseOrderItemId = GTINToCALSId[data.PurchaseOrderId][input.product.gtin];
+                            if (Object.hasOwnProperty.call(GTINToCALSId, data.PurchaseOrderId)) {
+                                output.PurchaseOrderItemId = GTINToCALSId[data.PurchaseOrderId][input.product.gtin];
+                            } else {
+                                output.PurchaseOrderItemId = null;
+                            }
                         } catch (e) {
+                            output.PurchaseOrderItemId = null;
                             winston.log('error', e.message);
                         }
                     }
@@ -1334,22 +1368,41 @@ const template = async (config, template) => {
 
                     // Compose actual delivery array.
                     if (Object.hasOwnProperty.call(output, 'ActualDelivery')) {
-                        output.ActualDelivery.push(
-                            {
-                                ID: (input.delivery || {}).idLocal,
-                                Quantity: input.quantity,
-                                ActualDeliveryDate: output.ConfirmedDeliveryDate,
-                                ActualDeliveryTime: output.ConfirmedDeliveryTime,
-                            },
-                        );
-                        delete output.ConfirmedDeliveryDate;
-                        delete output.ConfirmedDeliveryTime;
+                        if (!deliveryConfirmation) {
+                            deliveryConfirmation = {
+                                ShipmentNumber: (input.delivery || {}).idLocal,
+                                EstimatedTimeOfArrivalDate: output.ConfirmedDeliveryDate,
+                                EstimatedTimeOfArrivalTime: output.ConfirmedDeliveryTime,
+                                Origin: input.production.locationName,
+                                Type: input.vehicle.categorizationCode,
+                                Info: input.vehicle.categorizationName,
+                                PurchaseOrders: [
+                                    {
+                                        PurchaseOrderId: data.PurchaseOrderId,
+                                        PurchaseOrderNumber: data.PurchaseOrderNumber,
+                                        PurchaseOrderItems: [],
+                                    },
+                                ],
+                            };
+                            try {
+                                const transportationDatetime = convertFinnishDateToISOString(new Date(input.transportation.startDateTime.replace(' ', 'T')), true);
+                                deliveryConfirmation.ShippingDate = (transportationDatetime || 'T').split('T')[0];
+                                deliveryConfirmation.ShippingTime = (transportationDatetime || 'T').split('T')[1].substring(0, 5);
+                            } catch (e) {
+                                deliveryConfirmation.ShippingDate = output.ConfirmedDeliveryDate;
+                                deliveryConfirmation.ShippingTime = output.ConfirmedDeliveryTime;
+                            }
+                        }
+                        deliveryConfirmation.PurchaseOrders[0].PurchaseOrderItems.push({
+                            PurchaseOrderItemId: output.PurchaseOrderItemId,
+                            ShipmentQuantity: handleQuantity(input.quantity),
+                        });
                     }
 
                     return output;
                 });
 
-                winston.log('info', 'Body: ' + JSON.stringify(data));
+                winston.log('info', 'Body: ' + JSON.stringify(deliveryConfirmation ? deliveryConfirmation : data));
 
                 if (!data.InstanceId) {
                     return Promise.reject(new Error('Purchase order with orderNumber '+ data.PurchaseOrderNumber + ' not found.'));
@@ -1368,7 +1421,7 @@ const template = async (config, template) => {
                 winston.log('info', '3. Send data to URL ' + config.static.url);
 
                 await template.plugins.find(p => p.name === 'streamer')
-                    .stream({...template, config}, {data: {order: data}});
+                    .stream({...template, config}, {data: {order: deliveryConfirmation ? deliveryConfirmation : data}});
 
             } catch (err) {
                 winston.log('info', err.message);
