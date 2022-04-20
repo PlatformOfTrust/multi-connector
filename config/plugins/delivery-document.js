@@ -1421,7 +1421,7 @@ const sendData = async (req, res, productCode, config, template, result, options
     try {
         if (Object.hasOwnProperty.call(result.output, 'data')) {
             if (Object.hasOwnProperty.call(result.output.data, 'order')) {
-                if (Object.hasOwnProperty.call(result.output.data.order, 'orderLine')) {
+                if (Object.hasOwnProperty.call(result.output.data.order, 'orderLine') || Object.hasOwnProperty.call(result.output.data.order, 'deliveryLine')) {
                     const filename = options.filename;
                     const dirs = Array.isArray(config.static.toPath) ? config.static.toPath : [config.static.toPath];
                     for (let i = 0; i < dirs.length; i++) {
