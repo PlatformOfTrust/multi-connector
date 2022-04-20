@@ -1371,8 +1371,10 @@ const template = async (config, template) => {
                         if (!deliveryConfirmation) {
                             deliveryConfirmation = {
                                 ShipmentNumber: (input.delivery || {}).idLocal,
-                                EstimatedTimeOfArrivalDate: output.ConfirmedDeliveryDate,
-                                EstimatedTimeOfArrivalTime: output.ConfirmedDeliveryTime,
+                                ShippingDate: output.ConfirmedDeliveryDate,
+                                ShippingTime: output.ConfirmedDeliveryTime,
+                                EstimatedTimeOfArrivalDate: undefined,
+                                EstimatedTimeOfArrivalTime: undefined,
                                 Origin: input.production.locationName,
                                 Type: input.vehicle.categorizationCode,
                                 Info: input.vehicle.categorizationName,
@@ -1385,12 +1387,12 @@ const template = async (config, template) => {
                                 ],
                             };
                             try {
-                                const transportationDatetime = convertFinnishDateToISOString(new Date(input.transportation.startDateTime.replace(' ', 'T')), true);
-                                deliveryConfirmation.ShippingDate = (transportationDatetime || 'T').split('T')[0];
-                                deliveryConfirmation.ShippingTime = (transportationDatetime || 'T').split('T')[1].substring(0, 5);
+                                const transportationDatetime = convertFinnishDateToISOString(new Date(input.transportation.endDateTime.replace(' ', 'T')), true);
+                                deliveryConfirmation.EstimatedTimeOfArrivalDate = (transportationDatetime || 'T').split('T')[0];
+                                deliveryConfirmation.EstimatedTimeOfArrivalTime = (transportationDatetime || 'T').split('T')[1].substring(0, 5);
                             } catch (e) {
-                                deliveryConfirmation.ShippingDate = output.ConfirmedDeliveryDate;
-                                deliveryConfirmation.ShippingTime = output.ConfirmedDeliveryTime;
+                                deliveryConfirmation.EstimatedTimeOfArrivalDate = undefined;
+                                deliveryConfirmation.EstimatedTimeOfArrivalTime = undefined;
                             }
                         }
                         deliveryConfirmation.PurchaseOrders[0].PurchaseOrderItems.push({
@@ -1409,8 +1411,11 @@ const template = async (config, template) => {
                 }
 
                 const url = template.authConfig.url;
-                // config.static.url = url + '/instances/' + data.InstanceId + '/purchaseorders/confirm';
-                config.static.url = url + '/instances/' + data.InstanceId + '/confirmpurchaseorder';
+                if (config.static.url.includes('-test')) {
+                    config.static.url = url + '/instances/' + data.InstanceId + '/purchaseorders/' + (deliveryConfirmation ? 'ship' : 'confirm');
+                } else {
+                    config.static.url = url + '/instances/' + data.InstanceId + '/confirmpurchaseorder';
+                }
                 config.static.headers = {
                     'CALS-API-KEY': config.static.apikey,
                     'x-is-test': template.authConfig.isTest === 'true',
