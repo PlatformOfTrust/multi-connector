@@ -15,7 +15,7 @@ function findStartEnd (items) {
         result.start = value.timestamp < result.start.timestamp ? value : result.start;
         result.end = value.timestamp > result.end.timestamp ? value : result.end;
     });
-    return {start: result.start.value, end: result.end.value};
+    return {startValue: result.start.value, endValue: result.end.value, start: result.start.timestamp, end: result.end.timestamp};
 }
 /**
  * Calculates start, end and consumption values.
@@ -28,13 +28,15 @@ const output = async (config, output) => {
     try {
         if ((config.schema || '').includes('measure-water-meter-reading')) {
             output.data.sensors = output.data.sensors.map(sensor => {
-                const {start, end} = findStartEnd(sensor.measurements);
-                const value = end - start;
+                const {startValue, endValue, start, end} = findStartEnd(sensor.measurements);
+                const value = endValue - startValue;
                 sensor.measurements = [{
                     ...sensor.measurements[0],
-                    start,
-                    end,
                     value,
+                    start,
+                    startValue,
+                    end,
+                    endValue,
                 }];
                 return sensor;
             });
