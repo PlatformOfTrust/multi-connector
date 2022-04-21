@@ -66,13 +66,7 @@ function request (method, url, headers, body) {
 const template = async (config, template) => {
     try {
         if (template.mode === 'history') {
-            let take;
-            try {
-                // Time range divided by 10 minutes.
-                take = Math.min((template.parameters.end.getTime() - template.parameters.start.getTime()) / 600000, 5000);
-            } catch (err) {
-                take = 5000;
-            }
+            const take = Math.pow(2, 31) - 1; // Maximum positive value for a 32-bit signed binary integer.
             template.authConfig.path = template.authConfig.path.map(p => p.replace('/Values/', '/TrendSamples/?take=' + take + '&trendId='));
             template.generalConfig.hardwareId = {dataObjectProperty: 'TrendId'};
             template.generalConfig.timestamp = {dataObjectProperty: 'SampleDate'};
