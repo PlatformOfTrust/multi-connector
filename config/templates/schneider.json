@@ -20,7 +20,8 @@
   },
   "generalConfig": {
     "query": {
-      "start": "SampledOnOrAfter"
+      "start": "sampledOnOrAfter",
+      "end":"sampledBefore"
     },
     "sourceName": {
       "dataObjectProperty": "Name"

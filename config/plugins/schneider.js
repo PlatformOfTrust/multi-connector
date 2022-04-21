@@ -66,7 +66,16 @@ function request (method, url, headers, body) {
 const template = async (config, template) => {
     try {
         if (template.mode === 'history') {
-            template.authConfig.path = template.authConfig.path.map(p => p.replace('/Values/', '/TrendSamples/'));
+            let take;
+            try {
+                // Time range divided by 10 minutes.
+                take = Math.min((template.parameters.end.getTime() - template.parameters.start.getTime()) / 600000, 5000);
+            } catch (err) {
+                take = 5000;
+            }
+            template.authConfig.path = template.authConfig.path.map(p => p.replace('/Values/', '/TrendSamples/?take=' + take + '&trendId='));
+            template.generalConfig.hardwareId = {dataObjectProperty: 'TrendId'};
+            template.generalConfig.timestamp = {dataObjectProperty: 'SampleDate'};
         }
         // Skip subscription if query includes only one id.
         const ids = template.parameters.ids.map(item => decodeURIComponent(decodeURIComponent(item.id)));
@@ -111,11 +120,8 @@ const template = async (config, template) => {
         const deleteSubscriptionUrl = domain + '/Subscriptions/' + createdSubscription.body.Id + '/Delete';
         await request('DELETE', deleteSubscriptionUrl, options.headers);
 
-        template.generalConfig = {
-            hardwareId: {dataObjectProperty: 'ChangedItemId'},
-            timestamp: {dataObjectProperty: 'ChangedAt'},
-        };
-
+        template.generalConfig.hardwareId = {dataObjectProperty: 'ChangedItemId'};
+        template.generalConfig.timestamp = {dataObjectProperty: 'ChangedAt'};
         template.authConfig.path = body;
         template.protocol = 'custom';
     } catch (err) {
