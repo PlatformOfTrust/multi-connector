@@ -177,6 +177,7 @@ const createClient = async (config = {}, productCode, clientId = uuidv4()) => {
     }
 
     // Convert secure from string to boolean.
+    // secure (boolean | "implicit") Explicit FTPS over TLS, default: false. Use "implicit" if you need support for legacy implicit FTPS.
     options.secure = options.secure === 'true' ? true : options.secure;
     options.secure = options.secure === 'false' ? false : options.secure;
 
