@@ -176,6 +176,10 @@ const createClient = async (config = {}, productCode, clientId = uuidv4()) => {
         clients[productCode][clientId] = new ftp.Client();
     }
 
+    // Convert secure from string to boolean.
+    options.secure = options.secure === 'true' ? true : options.secure;
+    options.secure = options.secure === 'false' ? false : options.secure;
+
     await clients[productCode][clientId].access(options);
     return clients[productCode][clientId];
 };
