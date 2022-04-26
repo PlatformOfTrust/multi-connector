@@ -181,6 +181,11 @@ const createClient = async (config = {}, productCode, clientId = uuidv4()) => {
     options.secure = options.secure === 'true' ? true : options.secure;
     options.secure = options.secure === 'false' ? false : options.secure;
 
+    options.secureOptions = {
+        // Necessary only if the server's cert isn't for "localhost".
+        checkServerIdentity: () => { return null; },
+    };
+
     await clients[productCode][clientId].access(options);
     return clients[productCode][clientId];
 };
