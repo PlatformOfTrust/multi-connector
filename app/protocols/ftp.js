@@ -3,6 +3,7 @@
  * Module dependencies.
  */
 const fs = require('fs');
+const net = require('net');
 const _ = require('lodash');
 const ftp = require('basic-ftp');
 const winston = require('../../logger.js');
@@ -182,8 +183,7 @@ const createClient = async (config = {}, productCode, clientId = uuidv4()) => {
     options.secure = options.secure === 'false' ? false : options.secure;
 
     options.secureOptions = {
-        // Necessary only if the server's cert isn't for "localhost".
-        checkServerIdentity: () => { return null; },
+        rejectUnauthorized: !net.isIP(options.host),
     };
 
     await clients[productCode][clientId].access(options);
