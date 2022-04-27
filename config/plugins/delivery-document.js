@@ -1371,6 +1371,14 @@ const sendData = async (req, res, productCode, config, template, result, options
                     l = safeUpdate(l, 'deliveryRequired', convertFinnishDateToISOString, [false, true]);
                     l = safeUpdate(l, 'deliveryPlanned', convertFinnishDateToISOString, [false, true]);
                     l = safeUpdate(l, 'deliveryActual', convertFinnishDateToISOString, [false, true]);
+
+                    l = safeUpdate(l, 'delivery.startDateTime', convertFinnishDateToISOString, [false, true]);
+                    l = safeUpdate(l, 'delivery.endDateTime', convertFinnishDateToISOString, [false, true]);
+                    l = safeUpdate(l, 'loading.startDateTime', convertFinnishDateToISOString, [false, true]);
+                    l = safeUpdate(l, 'transportation.startDateTime', convertFinnishDateToISOString, [false, true]);
+                    l = safeUpdate(l, 'transportation.endDateTime', convertFinnishDateToISOString, [false, true]);
+                    l = safeUpdate(l, 'unloading.startDateTime', convertFinnishDateToISOString, [false, true]);
+                    l = safeUpdate(l, 'washing.startDateTime', convertFinnishDateToISOString, [false, true]);
                     return {
                         ...l,
                         idLocal: productCodeToCALSId[l.product.codeProduct],
