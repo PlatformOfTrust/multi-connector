@@ -419,6 +419,29 @@
                                     }
                                 }
                             },
+                            "delivery": {
+                                "$id": "#/properties/data/properties/order/items/properties/delivery",
+                                "type": "object",
+                                "title": "Delivery",
+                                "description": "Delivery.",
+                                "required": [],
+                                "properties": {
+                                    "@type": {
+                                        "$id": "#/properties/data/properties/order/items/properties/delivery/properties/@type",
+                                        "value": "Process",
+                                        "type": "string",
+                                        "title": "Identity type",
+                                        "description": "Type of identity."
+                                    },
+                                    "descriptionGeneral": {
+                                        "$id": "#/properties/data/properties/order/items/properties/delivery/properties/descriptionGeneral",
+                                        "source": "deliveryInfo",
+                                        "type": "string",
+                                        "title": "Description",
+                                        "description": "Description."
+                                    }
+                                }
+                            },
                             "addressShipping": {
                                 "$id": "#/properties/data/properties/order/items/properties/addressShipping",
                                 "source": null,
