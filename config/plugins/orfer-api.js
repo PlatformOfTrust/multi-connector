@@ -3,6 +3,7 @@
  * Module dependencies.
  */
 const rp = require('request-promise');
+const _ = require('lodash');
 
 /**
  * Orfer API.
@@ -101,8 +102,18 @@ const response = async (config, response) => {
             machine.modules = modules || [];
             machine.counters = counters || [];
 
+            const values = {};
             const {body: {values: productionOverview} = {}} = (await request('GET', productionOverviewUrl, headers, {}, {...query, startTime, endTime}) || {});
-            machine.productionOverview = productionOverview || [];
+            (productionOverview || []).sort((a, b) => a['recipeName'] - b['recipeName']).forEach(o => Object.entries(o).forEach(([key, value]) => {
+                values[key] = key === 'recipeName' ? (values[key] || '') + (values[key] ? ', ' : '') + value  : (values[key] || 0) + value;
+            }));
+
+            // Merge objects into one.
+            machine.productionOverview = (productionOverview || []).length > 0 && Object.keys(values).length > 0 ? {
+                startTime,
+                endTime,
+                ...values,
+            } : undefined;
 
             const {body: {values: shiftOverview} = {}} = (await request('GET', shiftOverviewUrl, headers, {}, {...query, startTime, endTime}) || {});
             machine.shiftOverview = shiftOverview || [];
