@@ -73,6 +73,7 @@ const response = async (config, response) => {
             const result = await request('GET', machinesUrl, headers, {}, query);
             return (result.body.values || []).map(o => ({...o, customerId, line}));
         }))).flat();
+        const recipes = {};
         machines = await Promise.all(machines.map(async (machine) => {
             const query = {
                 customerId: customerId,
@@ -85,6 +86,19 @@ const response = async (config, response) => {
                     const moduleQuery = {...query, moduleId: mod.moduleId, startTime, endTime};
                     const productionSpeed = await request('GET', productionSpeedUrl, headers, {}, moduleQuery);
                     const rundata = await request('GET', rundataUrl, headers, {}, moduleQuery);
+                    try {
+                        const includedRundataKeys = ['uptime', 'effective', 'downtime', 'notInUse'];
+                        ((rundata.body || {}).values || []).forEach((recipe => {
+                            Object.entries(recipe).forEach(([key, value]) => {
+                                if (includedRundataKeys.includes(key)) {
+                                    recipes[recipe.recipeName] = {...(recipes[recipe.recipeName] || {}), recipeName: recipe.recipeName};
+                                    recipes[recipe.recipeName] = {...(recipes[recipe.recipeName] || {}), [key]: (recipes[recipe.recipeName] ? recipes[recipe.recipeName][key] || 0 : 0) + value};
+                                }
+                            });
+                        }));
+                    } catch (err) {
+                        console.log(err.message);
+                    }
                     return {
                         ...mod,
                         productionSpeed: (productionSpeed.body || {}).values || [],
@@ -93,6 +107,20 @@ const response = async (config, response) => {
                 }));
                 counters = await Promise.all(counters.map(async (counter) => {
                     const productionSpeed = await request('GET', productionCounterUrl, headers, {}, {...query, counterId: counter.counterId, startTime, endTime});
+                    try {
+                        const includedProductionCounterKeys = ['produced', 'defect'];
+                        ((productionSpeed.body || {}).values || []).forEach((recipe => {
+                            Object.entries(recipe).forEach(([key, value]) => {
+                                if (includedProductionCounterKeys.includes(key)) {
+                                    recipes[recipe.recipeName] = {...(recipes[recipe.recipeName] || {}), recipeName: recipe.recipeName};
+                                    recipes[recipe.recipeName] = {...(recipes[recipe.recipeName] || {}), [key]: (recipes[recipe.recipeName] ? recipes[recipe.recipeName][key] || 0 : 0) + value};
+                                }
+                            });
+                        }));
+
+                    } catch (err) {
+                        console.log(err.message);
+                    }
                     return {
                         ...counter,
                         productionCounter: (productionSpeed.body || {}).values || [],
@@ -105,8 +133,17 @@ const response = async (config, response) => {
             const values = {};
             const {body: {values: productionOverview} = {}} = (await request('GET', productionOverviewUrl, headers, {}, {...query, startTime, endTime}) || {});
             (productionOverview || []).sort((a, b) => a['recipeName'] - b['recipeName']).forEach(o => Object.entries(o).forEach(([key, value]) => {
-                values[key] = key === 'recipeName' ? (values[key] || '') + (values[key] ? ', ' : '') + value  : (values[key] || 0) + value;
+                values[key] = key === 'recipeName' ? ((values[key] || '') + (values[key] ? ', ' : '') + value) : (values[key] || 0) + value;
             }));
+
+            try {
+                // Detect if effective is calculated wrongly.
+                if (values.effective === 0 && Object.values(recipes).map(r => r.effective).reduce((a, b) => a + b, 0) !== 0) {
+                    values.effective = Object.values(recipes).map(r => r.effective || 0).reduce((a, b) => a + b, 0);
+                }
+            } catch (err) {
+                console.log(err.message);
+            }
 
             // Merge objects into one.
             machine.productionOverview = (productionOverview || []).length > 0 && Object.keys(values).length > 0 ? {
