@@ -57,6 +57,28 @@ function request (method, url, headers, body) {
 }
 
 /**
+ * Manipulates output.
+ *
+ * @param {Object} config
+ * @param {Object} output
+ * @return {Object}
+ */
+const output = async (config, output) => {
+    try {
+        if ((config.schema || '').includes('measure-water-meter-reading')) {
+            // Handle hot and cold water categorization.
+            output.data.process = output.data.process.map(a => ({...a, measurements: a.measurements.map(b => ({
+                ...b,
+                '@type':  a.id.includes('lämmin') ? 'MeasureWaterHotConsumptionLitre' : b['@type'],
+            }))}));
+        }
+        return output;
+    } catch (err) {
+        return output;
+    }
+};
+
+/**
  * Switch querying protocol to REST.
  *
  * @param {Object} config
@@ -65,6 +87,10 @@ function request (method, url, headers, body) {
  */
 const template = async (config, template) => {
     try {
+        if ((config.schema || '').includes('measure-water-meter-reading')) {
+            // Change output array key to process.
+            template.output = {array: 'process'};
+        }
         if (template.mode === 'history') {
             const take = Math.pow(2, 31) - 1; // Maximum positive value for a 32-bit signed binary integer.
             template.authConfig.path = template.authConfig.path.map(p => p.replace('/Values/', '/TrendSamples/?take=' + take + '&trendId='));
@@ -132,4 +158,5 @@ module.exports = {
     name: 'schneider',
     parameters,
     template,
+    output,
 };

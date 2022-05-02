@@ -27,7 +27,7 @@ function findStartEnd (items) {
 const output = async (config, output) => {
     try {
         if ((config.schema || '').includes('measure-water-meter-reading')) {
-            output.data.sensors = output.data.sensors.map(sensor => {
+            output.data.process = output.data.process.map(sensor => {
                 const {startValue, endValue, start, end} = findStartEnd(sensor.measurements);
                 const value = endValue - startValue;
                 sensor.measurements = [{
