@@ -138,7 +138,7 @@ const response = async (config, response) => {
 
             try {
                 // Detect if effective is calculated wrongly.
-                if (values.effective === 0 && Object.values(recipes).map(r => r.effective).reduce((a, b) => a + b, 0) !== 0) {
+                if (values.effective === 0 && Object.values(recipes).map(r => r.effective || 0).reduce((a, b) => a + b, 0) !== 0) {
                     values.effective = Object.values(recipes).map(r => r.effective || 0).reduce((a, b) => a + b, 0);
                 }
             } catch (err) {
