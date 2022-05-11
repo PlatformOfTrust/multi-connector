@@ -6,6 +6,8 @@
     "resource": "qualityDocuments",
     "token": "<congrid-api-token>",
     "type": "Document",
+    "workSectionCode": "9",
+    "workActivityName": "CE-dokumentit",
     "outputArray": "document",
     "idProperty": "projectId",
     "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Document/"

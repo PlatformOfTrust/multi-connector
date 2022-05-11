@@ -461,11 +461,10 @@ const template = async (config, template) => {
         const originalFilename = template.parameters.targetObject.name;
         const contentType = template.parameters.targetObject['categorizationInternetMediaType'];
 
-        // TODO: Testing.
         const qualityDocumentName = originalFilename;
         let projectCode = '123124';
-        const workSectionCode = '2.1';
-        const workActivityName = 'CE-dokumentit';
+        const workSectionCode = template.authConfig.workSectionCode !== '${workSectionCode}' ? template.authConfig.workSectionCode : '2.1';
+        const workActivityName = template.authConfig.workActivityName !== '${workActivityName}' ? template.authConfig.workActivityName : 'CE-dokumentit';
 
         // Pick project number from document.
         try {
