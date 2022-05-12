@@ -1,0 +1,21 @@
+{
+    "template": "azure-blob-storage-generic",
+    "static": {
+        "account": "<account>",
+        "accountKey": "<accountKey>",
+        "container": "<container>"
+    },
+    "dynamic": {
+        "authConfig.path": "targetObject.name"
+    },
+    "plugins" : {
+        "download-link": {
+            "ttl": "<link-expiration-time>"
+        }
+    },
+    "request": {
+        "targetObject": {
+            "name": "<filename>"
+        }
+    }
+}

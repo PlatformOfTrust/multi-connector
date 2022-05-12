@@ -3,8 +3,11 @@
 /**
  * Module dependencies.
  */
+const _ = require('lodash');
+const rp = require('request-promise');
 const Readable = require('stream').Readable;
 const response = require('../lib/response');
+const file = require('../../config/plugins/document').response;
 const {BlobServiceClient, StorageSharedKeyCredential} = require('@azure/storage-blob');
 
 /**
@@ -82,7 +85,7 @@ const getData = async (config = {authConfig: {}}, pathArray) => {
 
     if (containerClient) {
         // Download blobs.
-        if (JSON.stringify(pathArray) === '[""]') {
+        if (JSON.stringify(pathArray) === '[""]' || JSON.stringify(pathArray) === '["/"]') {
             for await (const blob of containerClient.listBlobsFlat()) {
                 const blockBlobClient = containerClient.getBlockBlobClient(blob.name);
                 try {
@@ -96,6 +99,27 @@ const getData = async (config = {authConfig: {}}, pathArray) => {
             }
         } else {
             for (let p = 0; p < pathArray.length; p++) {
+                // Detect produced content.
+                try {
+                    if (config.parameters.targetObject.content || config.parameters.targetObject.url) {
+                        const doc = config.parameters.targetObject;
+
+                        // Fetch content.
+                        const url = doc.url;
+                        const response = url ? await rp({method: 'GET', url, resolveWithFullResponse: true, encoding: null}) : {body: doc.content};
+                        const content = response.body;
+                        const filename = pathArray[p].split('/')[0] === '' && pathArray[p][0] === '/' ? pathArray[p].substring(1) : pathArray[p];
+                        const {data} = await file({}, {id: filename, data: Buffer.from(content).toString('base64')});
+
+                        data.metadata = {};
+                        data.tags = {};
+
+                        // Upload file to blob storage.
+                        await sendData(config, [data]);
+                    }
+                } catch (err) {
+                    console.log(err.message);
+                }
                 const blockBlobClient = containerClient.getBlockBlobClient(pathArray[p]);
                 try {
                     const downloadBlockBlobResponse = await blockBlobClient.download(0);
@@ -125,12 +149,12 @@ const sendData = async (config = {}, pathArray) => {
     if (containerClient) {
         for (let p = 0; p < pathArray.length; p++) {
             const stream = new Readable();
-            stream.push(JSON.stringify(pathArray[p].data));
+            stream.push(pathArray[p].encoding === 'base64' ? Buffer.from(pathArray[p].content, 'base64') : pathArray[p].content);
             stream.push(null);
-            const blockBlobClient = containerClient.getBlockBlobClient(pathArray[p].id + '.json');
+            const blockBlobClient = containerClient.getBlockBlobClient(pathArray[p].filename);
             const data = await blockBlobClient.uploadStream(stream,
                 uploadOptions.bufferSize, uploadOptions.maxBuffers,
-                {blobHTTPHeaders: {blobContentType: 'application/json'}});
+                {blobHTTPHeaders: {blobContentType: pathArray[p].mimetype}, metadata: pathArray[p].metadata, tags: pathArray[p].tags});
             if (data) { items.push(pathArray[p]); }
         }
     }
