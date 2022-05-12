@@ -1651,6 +1651,20 @@ const runJob = async (productCode) => {
             try {
                 const parts = d.path.split('/');
                 const result = await getData(productCode, config, parts[parts.length - 1]);
+                // Merge delivery information lines with same idLocal together.
+                const documents = {};
+                result.output.data.order.forEach(item => {
+                    if (Object.hasOwnProperty.call(item, 'deliveryLine') && Object.hasOwnProperty.call(item, 'idLocal')) {
+                        if (Object.hasOwnProperty.call(documents, item.idLocal)) {
+                            documents[item.idLocal].deliveryLine = Array.isArray(documents[item.idLocal].deliveryLine) ? documents[item.idLocal].deliveryLine : [documents[item.idLocal].deliveryLine];
+                            item.deliveryLine = Array.isArray(item.deliveryLine) ? item.deliveryLine : [item.deliveryLine];
+                            documents[item.idLocal].deliveryLine.push(...item.deliveryLine);
+                        } else {
+                            documents[item.idLocal] = item;
+                        }
+                    }
+                });
+                result.output.data.order = Object.values(documents).length > 0 ? Object.values(documents) : result.output.data.order;
                 const options = {
                     filename: parts[parts.length - 1],
                     isTest: false,
