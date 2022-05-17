@@ -1411,11 +1411,7 @@ const template = async (config, template) => {
                 }
 
                 const url = template.authConfig.url;
-                if (config.static.url.includes('-test')) {
-                    config.static.url = url + '/instances/' + data.InstanceId + '/purchaseorders/' + (deliveryConfirmation ? 'ship' : 'confirm');
-                } else {
-                    config.static.url = url + '/instances/' + data.InstanceId + '/confirmpurchaseorder';
-                }
+                config.static.url = url + '/instances/' + data.InstanceId + '/purchaseorders/' + (deliveryConfirmation ? 'ship' : 'confirm');
                 config.static.headers = {
                     'CALS-API-KEY': config.static.apikey,
                     'x-is-test': template.authConfig.isTest === 'true',
