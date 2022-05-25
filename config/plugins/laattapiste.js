@@ -824,6 +824,15 @@ const json2xml = (input = {}) => {
         {name: 'workPackageOperatorContactTelephone', value: _.get(input, 'addressShipping.contact.contactInformation.phoneNumber')},
     ];
 
+    // Compose reference.
+    if (input.reference === '') {
+        input.reference = [
+            _.get(input, 'addressShipping.process.idLocal'),
+            _.get(input, 'addressShipping.location.zone'),
+            _.get(input, 'addressShipping.location.space'),
+        ].join(' / ');
+    }
+
     let output;
     let xml;
     try {
