@@ -1,0 +1,9 @@
+{
+    "template": "watermetter",
+    "static": {
+        "url": "http://localhost:7071",
+        "operation": "read",
+        "functionCode": "",
+        "bodyPath": "parameters"
+    }
+}

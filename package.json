@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/PlatformOfTrust/multi-connector#readme",
   "dependencies": {
+    "@azure/cosmos": "^3.15.1",
     "@azure/storage-blob": "^12.5.0",
     "aedes": "^0.43.0",
     "basic-ftp": "^4.6.6",
@@ -43,6 +44,7 @@
     "lodash": "^4.17.15",
     "mime": "^2.5.2",
     "moment": "^2.24.0",
+    "mongodb": "^4.2.0",
     "mqtt": "^4.0.1",
     "net": "^1.0.2",
     "node-cache": "^5.1.0",

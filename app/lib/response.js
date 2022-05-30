@@ -177,6 +177,11 @@ const handleData = async (config, path, index, data) => {
             let idObjects = [];
             let dataType;
 
+            if (config.generalConfig.skipSpecificResponseParsing) {
+                measurements.push(measurement.data);
+                continue;
+            }
+
             try {
                 // Use parameter id as fallback.
                 idObjects =
@@ -246,6 +251,8 @@ const handleData = async (config, path, index, data) => {
     }
 
     let mergedData = measurements;
+    if (config.generalConfig.skipSpecificResponseParsing)
+        return Promise.resolve(mergedData);
 
     // Merge measurements with same hardwareId to same data array (history).
     try {
