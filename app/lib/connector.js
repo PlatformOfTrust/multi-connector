@@ -484,9 +484,22 @@ const composeOutput = async (template, input) => {
         if (!Object.hasOwnProperty.call(protocols, template.protocol) && !_.intersection(protocols, template.protocol)) {
             return rest.promiseRejectWithError(500, 'Connection protocol ' + template.protocol + ' is not supported.');
         } else {
+            // See type of operation defined for protocol
+            let operation = 'read';
+            if (Object.hasOwnProperty.call(template, 'input')) {
+                if (Object.hasOwnProperty.call(template.input, 'type'))
+                    operation = template.input.type;
+            }
+            // Call protocol operation
             const selected = Array.isArray(template.protocol) ? template.protocol : [template.protocol];
             for (let i = 0; i < selected.length; i++) {
-                const result = input || await protocols[selected[i]].getData({...template, protocol: selected[i]}, pathArray);
+                let result = input;
+                if(!input) {
+                    if (operation == 'read')
+                        result = await protocols[selected[i]].getData({...template, protocol: selected[i]}, pathArray);
+                    if (operation == 'write')
+                        result = await protocols[selected[i]].pushData({...template, protocol: selected[i]}, pathArray);
+                }
                 if (result) items.push(...Array.isArray(result) ? result : [result]);
             }
         }
