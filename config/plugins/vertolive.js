@@ -361,7 +361,7 @@ const handleData = function (config, id, data) {
             const WaterHot = {value: hotDailySum, period: config.parameters.period, unitOfMeasure: 'Liter', valueType: 'Value', startValue: value.readings[0].warm.reading - value.readings[0].warm.delta, endValue: value.readings[value.readings.length - 1].warm.reading};
 
             const coldValues = {...value, readings: [WaterCold], processTarget: 'WaterCold', measureType: 'Measure', locationType: 'Location', physicalProperty: 'Volume'};
-            const hotValues = {...value, readings: [WaterHot], processTarget: 'WaterHotm', measureType: 'Measure', locationType: 'Location', physicalProperty: 'Volume'};
+            const hotValues = {...value, readings: [WaterHot], processTarget: 'WaterHot', measureType: 'Measure', locationType: 'Location', physicalProperty: 'Volume'};
 
             const valuesArray = [coldValues, hotValues];
 
