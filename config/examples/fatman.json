@@ -1,0 +1,17 @@
+{
+    "template": "fatman",
+    "static": {
+        "url": "https://frame.azure-api.net",
+        "apikey": "<ocp-apim-subscription-key>",
+        "type": "Case"
+    },
+    "dynamic": {
+        "authConfig.path": "targetObject.idLocal"
+    },
+    "schema": "maintenance-information_fatman-v3.2",
+    "request": {
+        "targetObject": {
+            "idLocal": "<object-id>"
+        }
+    }
+}
