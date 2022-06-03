@@ -1,7 +1,7 @@
 {
-    "template": "watermetter",
+    "template": "pot-watermeter",
     "static": {
-        "url": "http://localhost:7071",
+        "url": "https://func-dev-we.azurewebsites.net",
         "operation": "store",
         "functionCode": "",
         "bodyPath": "parameters.targetObject"
