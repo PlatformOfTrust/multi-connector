@@ -79,9 +79,27 @@ const response = async (config, res) => {
 };
 
 /**
+ * Inserts output from config.
+ *
+ * @param {Object} config
+ * @param {Object} output
+ * @return {Object}
+ */
+const output = async (config, output) => {
+    try {
+        output.data = (config.authConfig.output || '${output}') !== '${output}' ? config.authConfig.output : output.data;
+    } catch (err) {
+        console.log(err.message);
+        return output;
+    }
+    return output;
+};
+
+/**
  * Expose plugin methods.
  */
 module.exports = {
     name: 'test',
     response,
+    output,
 };
