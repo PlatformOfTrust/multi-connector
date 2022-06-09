@@ -1346,10 +1346,20 @@ const sendData = async (req, res, productCode, config, template, result, options
             result.output.data[key].map((order) => {
                 // Add project details.
                 if (order['@type'] === 'Document' && !Object.hasOwnProperty.call(order, 'project')) {
-                    order.project = {
-                        '@type': 'Project',
-                        idLocal: '123124',
-                    };
+                    try {
+                        const parts = options.filename.split('_');
+                        const workPackage = parts[parts.length - 1];
+                        winston.log('info', 'Read work package ' + workPackage + ' from filename.');
+                        order.project = {
+                            '@type': 'Project',
+                            idLocal: '123124',
+                        };
+                    } catch (err) {
+                        order.project = {
+                            '@type': 'Project',
+                            idLocal: '123124',
+                        };
+                    }
                 }
                 if (!Object.hasOwnProperty.call(order, 'deliveryLine')) {
                     return order;
