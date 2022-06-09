@@ -1348,7 +1348,7 @@ const sendData = async (req, res, productCode, config, template, result, options
                 if (order['@type'] === 'Document' && !Object.hasOwnProperty.call(order, 'project')) {
                     try {
                         const parts = options.filename.split('_');
-                        const workPackage = parts[parts.length - 1];
+                        const workPackage = parts[parts.length - 1].split('.')[0];
                         winston.log('info', 'Read work package ' + workPackage + ' from filename.');
                         order.project = {
                             '@type': 'Project',
