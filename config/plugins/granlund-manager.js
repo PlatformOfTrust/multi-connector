@@ -192,6 +192,23 @@ const template = async (config, template) => {
                 }
                 template.protocol = 'custom';
             }
+        } else if (Object.keys(template.dataPropertyMappings).includes('Process')) {
+            // Maintenance Information
+            /*
+            const oauth2 = template.plugins.find(p => p.name === 'oauth2');
+            if (!oauth2) {
+                return Promise.reject();
+            }
+            const options = await oauth2.request(template, {});
+            */
+            // const url = template.authConfig.path.split('/').slice(0, 5).join('/') + '/favorite-portfolios?onlyFacilitiesAndBuildings=false';
+            // const {body} = await request('GET', url, {...options.headers, 'Content-Type': 'application/json'});
+
+            template.parameters.targetObject.idLocal = Array.isArray(template.parameters.targetObject.idLocal) ? template.parameters.targetObject.idLocal[0] : template.parameters.targetObject.idLocal;
+            template.authConfig.path = template.authConfig.path.split('/').slice(0, 5).join('/') + `/objects/${template.parameters.targetObject.idLocal}/maintenance-plans`;
+            // const {body} = await request('GET', url, {...options.headers, 'Content-Type': 'application/json'});
+            template.output.contextValue = 'https://standards-ontotest.oftrust.net/v2/Context/DataProductOutput/MaintenanceInformation/?v=3.2';
+            template.output.array = 'maintenanceInformation';
         }
     } catch (err) {
         winston.log('error', err.message);
