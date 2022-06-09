@@ -1859,7 +1859,13 @@ const template = async (config, template) => {
                 // fromPath can only contain one directory.
                 const to = DOWNLOAD_DIR + template.productCode + (template.authConfig.fromPath || '/from') + path;
                 await sftp.checkDir(to);
-                await fs.writeFile(to, JSON.stringify(template.parameters.targetObject));
+
+                // Convert incoming date time to local finnish time.
+                let order = template.parameters.targetObject;
+                order = safeUpdate(order, 'ordered', convertFinnishDateToISOString, [true, true]);
+                order = safeUpdate(order, 'deliveryRequired', convertFinnishDateToISOString, [true, true]);
+
+                await fs.writeFile(to, JSON.stringify(order));
 
                 winston.log('info', '3. Send data to URL ' + to);
                 await sftp.sendData(template, [path]);
