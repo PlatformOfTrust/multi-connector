@@ -1663,7 +1663,7 @@ const runJob = async (productCode) => {
                 const result = await getData(productCode, config, parts[parts.length - 1]);
                 // Merge delivery information lines with same idLocal together.
                 const documents = {};
-                result.output.data.order.forEach(item => {
+                (Array.isArray(result.output.data.order) ? result.output.data.order : [result.output.data.order]).forEach(item => {
                     if (Object.hasOwnProperty.call(item, 'deliveryLine') && Object.hasOwnProperty.call(item, 'idLocal')) {
                         if (Object.hasOwnProperty.call(documents, item.idLocal)) {
                             documents[item.idLocal].deliveryLine = Array.isArray(documents[item.idLocal].deliveryLine) ? documents[item.idLocal].deliveryLine : [documents[item.idLocal].deliveryLine];
