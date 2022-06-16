@@ -1346,10 +1346,20 @@ const sendData = async (req, res, productCode, config, template, result, options
             result.output.data[key].map((order) => {
                 // Add project details.
                 if (order['@type'] === 'Document' && !Object.hasOwnProperty.call(order, 'project')) {
-                    order.project = {
-                        '@type': 'Project',
-                        idLocal: '123124',
-                    };
+                    try {
+                        const parts = options.filename.split('_');
+                        const workPackage = parts[parts.length - 1].split('.')[0];
+                        winston.log('info', 'Read work package ' + workPackage + ' from filename.');
+                        order.project = {
+                            '@type': 'Project',
+                            idLocal: '123124',
+                        };
+                    } catch (err) {
+                        order.project = {
+                            '@type': 'Project',
+                            idLocal: '123124',
+                        };
+                    }
                 }
                 if (!Object.hasOwnProperty.call(order, 'deliveryLine')) {
                     return order;
@@ -1653,7 +1663,7 @@ const runJob = async (productCode) => {
                 const result = await getData(productCode, config, parts[parts.length - 1]);
                 // Merge delivery information lines with same idLocal together.
                 const documents = {};
-                result.output.data.order.forEach(item => {
+                (Array.isArray(result.output.data.order) ? result.output.data.order : [result.output.data.order]).forEach(item => {
                     if (Object.hasOwnProperty.call(item, 'deliveryLine') && Object.hasOwnProperty.call(item, 'idLocal')) {
                         if (Object.hasOwnProperty.call(documents, item.idLocal)) {
                             documents[item.idLocal].deliveryLine = Array.isArray(documents[item.idLocal].deliveryLine) ? documents[item.idLocal].deliveryLine : [documents[item.idLocal].deliveryLine];

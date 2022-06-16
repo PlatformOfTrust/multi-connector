@@ -1259,6 +1259,11 @@ const template = async (config, template) => {
 
             template.authConfig.path = id;
 
+            // Return error on unknown order id.
+            if (id === 'Unknown') {
+                return Promise.reject(new Error('Unknown order id.'));
+            }
+
             // Stream data to external system.
             try {
                 // Transform
