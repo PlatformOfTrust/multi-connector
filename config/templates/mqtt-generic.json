@@ -1,0 +1,27 @@
+{
+  "plugins": [],
+  "protocol": "mqtt",
+  "authConfig": {
+    "url": "${url}",
+    "path": "${id}",
+    "topic": "${topic}"
+  },
+  "dataObjects": [
+    ""
+  ],
+  "dataPropertyMappings": {
+    "${type}": "message"
+  },
+  "generalConfig": {
+    "sourceName": {
+      "dataObjectProperty": "type"
+    },
+    "hardwareId": {
+      "dataObjectProperty": "topic"
+    }
+  },
+  "output": {
+    "array": "sensors",
+    "data": "measurements"
+  }
+}

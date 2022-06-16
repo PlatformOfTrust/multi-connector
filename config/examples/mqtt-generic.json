@@ -1,0 +1,18 @@
+{
+  "template": "mqtt-generic",
+  "static": {
+    "url": "<url>",
+    "topic": "#",
+    "username": "<username>",
+    "password": "<password>",
+    "type": ["MeasureAirTemperatureCelsiusDegree", "MeasureAirCO2LevelPPM"]
+  },
+  "dynamic": {
+    "authConfig.path": "ids"
+  },
+  "request": {
+    "ids": [
+      "<topic>"
+    ]
+  }
+}
