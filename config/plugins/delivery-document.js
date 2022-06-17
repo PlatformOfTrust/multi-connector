@@ -1667,13 +1667,16 @@ const runJob = async (productCode) => {
                 // Merge delivery information lines with same idLocal together.
                 const documents = {};
                 (Array.isArray(result.output.data.order) ? result.output.data.order : [result.output.data.order]).forEach(item => {
-                    if (Object.hasOwnProperty.call(item, 'deliveryLine') && Object.hasOwnProperty.call(item, 'idLocal')) {
-                        if (Object.hasOwnProperty.call(documents, item.idLocal)) {
-                            documents[item.idLocal].deliveryLine = Array.isArray(documents[item.idLocal].deliveryLine) ? documents[item.idLocal].deliveryLine : [documents[item.idLocal].deliveryLine];
-                            item.deliveryLine = Array.isArray(item.deliveryLine) ? item.deliveryLine : [item.deliveryLine];
-                            documents[item.idLocal].deliveryLine.push(...item.deliveryLine);
-                        } else {
-                            documents[item.idLocal] = item;
+                    if (Object.hasOwnProperty.call(item, 'deliveryLine') && Object.hasOwnProperty.call(item, 'delivery')) {
+                        if (Object.hasOwnProperty.call(item.delivery, 'idLocal')) {
+                            const deliveryId = item.delivery.idLocal;
+                            if (Object.hasOwnProperty.call(documents, deliveryId)) {
+                                documents[deliveryId].deliveryLine = Array.isArray(documents[deliveryId].deliveryLine) ? documents[deliveryId].deliveryLine : [documents[deliveryId].deliveryLine];
+                                item.deliveryLine = Array.isArray(item.deliveryLine) ? item.deliveryLine : [item.deliveryLine];
+                                documents[deliveryId].deliveryLine.push(...item.deliveryLine);
+                            } else {
+                                documents[deliveryId] = item;
+                            }
                         }
                     }
                 });
