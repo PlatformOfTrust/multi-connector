@@ -12,7 +12,7 @@ const transformer = require('../../app/lib/transformer');
 // Source mapping.
 const schema = {
     '$schema': 'http://json-schema.org/draft-06/schema#',
-    '$id': 'https://standards-ontotest.oftrust.net/v2/Schema/DataProductOutput/Note?v=2.1',
+    '$id': 'https://standards.oftrust.net/v2/Schema/DataProductOutput/Note?v=2.1',
     'source': null,
     'type': 'object',
     'required': [],
@@ -21,7 +21,7 @@ const schema = {
             '$id': '#/properties/@context',
             'source': null,
             'type': 'string',
-            'const': 'https://standards-ontotest.oftrust.net/v2/Context/DataProductOutput/Note/?v=2.1',
+            'const': 'https://standards.oftrust.net/v2/Context/DataProductOutput/Note/?v=2.1',
             'title': 'JSON-LD context url',
             'description': 'JSON-LD context url with terms required to understand data product content.',
         },
