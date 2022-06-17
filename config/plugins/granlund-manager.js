@@ -25,10 +25,11 @@ const maintenanceInformationSchema = require('../schemas/maintenance-information
 const handleData = function (config, id, data) {
     let object = {};
     try {
-        const key = Object.keys(serviceRequestSchema.properties.data.properties)[0];
+        let key;
         for (let j = 0; j < data.length; j++) {
             let result = {};
             if (data[j]['@type'] === 'Case') {
+                key = Object.keys(serviceRequestSchema.properties.data.properties)[0];
                 const value = data[j][config.output.value];
 
                 // Transform raw input.
@@ -55,8 +56,11 @@ const handleData = function (config, id, data) {
 
                 result = transformer.transform(value, serviceRequestSchema.properties.data);
             } else {
+                key = Object.keys(maintenanceInformationSchema.properties.data.properties)[0];
                 const value = data[j][config.output.value];
                 result = transformer.transform(value, maintenanceInformationSchema.properties.data);
+                // console.log(Object.keys(result)[0]);
+                // result[Object.keys(result)[0]].raw = value;
             }
 
             // Merge all to same result.
