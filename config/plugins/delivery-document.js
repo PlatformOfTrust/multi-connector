@@ -1268,7 +1268,10 @@ const convertFinnishDateToISOString = (input, reverse = false, convert = false) 
     // new Date(1610031289498); -2
     // new Date(1631092909080); -3 (Daylight Saving Time)
     let output;
-    input = convert ? new Date(input) : input;
+    if (typeof input === 'string' && convert) {
+        input = input.replace(' ', 'T');
+    }
+    input = convert ? new Date() : input;
     if (input.isDstObserved()) {
         output = new Date(input.setHours(input.getHours() - (reverse ? 3 : -3)));
     } else {
