@@ -22,7 +22,7 @@ const maintenanceInformationSchema = require('../schemas/maintenance-information
  * @param {Object} data
  * @return {Object}
  */
-const handleData = function (config, id, data) {
+const handleData = async (config, id, data) => {
     let object = {};
     try {
         let key;
@@ -57,10 +57,23 @@ const handleData = function (config, id, data) {
                 result = transformer.transform(value, serviceRequestSchema.properties.data);
             } else {
                 key = Object.keys(maintenanceInformationSchema.properties.data.properties)[0];
-                const value = data[j][config.output.value];
+                let value = data[j][config.output.value];
+
+                if (j > 5) {
+                    // Resolve jobs.
+                    try {
+                        const oauth2 = config.plugins.find(p => p.name === 'oauth2');
+                        const options = await oauth2.request(config, {});
+                        const url = `${config.authConfig.path.split('/').slice(0, 5).join('/')}/maintenance-tasks/${value.Task.Id}`;
+                        const {body} = await request('GET', url, {...options.headers, 'Content-Type': 'application/json'});
+                        value = body;
+                    } catch (err) {
+                        winston.log('error', err.message);
+                    }
+                }
                 result = transformer.transform(value, maintenanceInformationSchema.properties.data);
-                // console.log(Object.keys(result)[0]);
-                // result[Object.keys(result)[0]].raw = value;
+                result[Object.keys(result)[0]][0].raw = value;
+                result[Object.keys(result)[0]][0].processTarget = [{idLocal: id}];
             }
 
             // Merge all to same result.
@@ -106,7 +119,7 @@ const output = async (config, output) => {
         const array = output.data[config.output.array];
         for (let i = 0; i < array.length; i++) {
             result[config.output.object][config.output.array].push(
-                handleData(
+                await handleData(
                     config,
                     array[i][config.output.id],
                     array[i][config.output.data],
@@ -215,7 +228,7 @@ const template = async (config, template) => {
             // const {body} = await request('GET', url, {...options.headers, 'Content-Type': 'application/json'});
 
             template.parameters.targetObject.idLocal = Array.isArray(template.parameters.targetObject.idLocal) ? template.parameters.targetObject.idLocal[0] : template.parameters.targetObject.idLocal;
-            template.authConfig.path = template.authConfig.path.split('/').slice(0, 5).join('/') + `/objects/${template.parameters.targetObject.idLocal}/maintenance-plans`;
+            template.authConfig.path = (Array.isArray(template.authConfig.path) ? template.authConfig.path[0] : template.authConfig.path).split('/').slice(0, 5).join('/') + `/objects/${template.parameters.targetObject.idLocal}/maintenance-plans`;
             // const {body} = await request('GET', url, {...options.headers, 'Content-Type': 'application/json'});
             template.output.contextValue = 'https://standards.oftrust.net/v2/Context/DataProductOutput/MaintenanceInformation/?v=3.2';
             template.output.array = 'maintenanceInformation';

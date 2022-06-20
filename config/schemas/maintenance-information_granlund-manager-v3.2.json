@@ -33,28 +33,28 @@
                         "properties": {
                             "@type": {
                                 "$id": "#/properties/data/properties/maintenanceInformation/items/properties/@type",
-                                "source": null,
+                                "value": "Process",
                                 "type": "string",
                                 "title": "Identity type",
                                 "description": "Type of identity."
                             },
                             "idLocal": {
                                 "$id": "#/properties/data/properties/maintenanceInformation/items/properties/idLocal",
-                                "source": null,
+                                "source": "Package.Id",
                                 "type": "string",
                                 "title": "Local identifier",
                                 "description": "Locally given identifier."
                             },
                             "name": {
                                 "$id": "#/properties/data/properties/maintenanceInformation/items/properties/name",
-                                "source": null,
+                                "source": "Package.Title",
                                 "type": "string",
                                 "title": "Name",
                                 "description": "Name."
                             },
                             "descriptionGeneral": {
                                 "$id": "#/properties/data/properties/maintenanceInformation/items/properties/descriptionDescription",
-                                "source": null,
+                                "source": "Mission.Name",
                                 "type": "string",
                                 "title": "Description general",
                                 "description": "Description general."
@@ -279,7 +279,7 @@
                             },
                             "executor": {
                                 "$id": "#/properties/data/properties/maintenanceInformation/items/properties/executor",
-                                "source": null,
+                                "source": "",
                                 "type": "array",
                                 "title": "Process executor",
                                 "description": "Executor of the process (source of the data).",
@@ -291,14 +291,14 @@
                                     "properties": {
                                         "@type": {
                                             "$id": "#/properties/data/properties/maintenanceInformation/items/properties/executor/items/properties/@type",
-                                            "source": null,
+                                            "value": "Organization",
                                             "type": "string",
                                             "title": "Identity type",
                                             "description": "Type of identity."
                                         },
                                         "idLocal": {
                                             "$id": "#/properties/data/properties/maintenanceInformation/items/properties/executor/items/properties/idLocal",
-                                            "source": null,
+                                            "source": "ServiceArea.Id",
                                             "type": "string",
                                             "title": "Local identifier",
                                             "description": "Locally given identifier."
@@ -312,7 +312,7 @@
                                         },
                                         "name": {
                                             "$id": "#/properties/data/properties/maintenanceInformation/items/properties/executor/items/properties/name",
-                                            "source": null,
+                                            "source": "ServiceArea.Name",
                                             "type": "string",
                                             "title": "Name",
                                             "description": "Name."
@@ -334,7 +334,7 @@
                                     "properties": {
                                         "@type": {
                                             "$id": "#/properties/data/properties/maintenanceInformation/items/properties/operator/items/properties/@type",
-                                            "source": null,
+                                            "value": "Organization",
                                             "type": "string",
                                             "title": "Identity type",
                                             "description": "Type of identity."
@@ -365,7 +365,7 @@
                             },
                             "processInstance": {
                                 "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance",
-                                "source": null,
+                                "source": "Jobs",
                                 "type": "array",
                                 "title": "Process instance",
                                 "description": "Process instance.",
@@ -377,14 +377,14 @@
                                     "properties": {
                                         "@type": {
                                             "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/@type",
-                                            "source": null,
+                                            "value": "Process",
                                             "type": "string",
                                             "title": "Identity type",
                                             "description": "Type of identity."
                                         },
                                         "idLocal": {
                                             "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/idLocal",
-                                            "source": null,
+                                            "source": "Id",
                                             "type": "string",
                                             "title": "Local identifier",
                                             "description": "Locally given identifier."
@@ -468,7 +468,7 @@
                                         },
                                         "status": {
                                             "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/status",
-                                            "source": null,
+                                            "source": "",
                                             "type": "array",
                                             "title": "Life-cycle status",
                                             "description": "Life-cycle status.",
@@ -480,7 +480,7 @@
                                                 "properties": {
                                                     "@type": {
                                                         "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/status/items/properties/@type",
-                                                        "source": null,
+                                                        "value": "Status",
                                                         "type": "string",
                                                         "title": "Identity type",
                                                         "description": "Type of identity."
@@ -494,7 +494,7 @@
                                                     },
                                                     "statusCode": {
                                                         "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/status/items/properties/statusCode",
-                                                        "source": null,
+                                                        "source": "StateId",
                                                         "type": "string",
                                                         "title": "Status code",
                                                         "description": "Status code."
@@ -767,7 +767,7 @@
                                         },
                                         "mustEnd": {
                                             "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/mustEnd",
-                                            "source": null,
+                                            "source": "Task.MustDoneDate",
                                             "type": "string",
                                             "title": "Latest end time",
                                             "description": "When something must ne ended.  Typically used when something is scheduled to happen within certain period."
@@ -1055,7 +1055,7 @@
                                                 "properties": {
                                                     "@type": {
                                                         "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/@type",
-                                                        "source": null,
+                                                        "value": null,
                                                         "type": "string",
                                                         "title": "Identity type",
                                                         "description": "Type of identity."
