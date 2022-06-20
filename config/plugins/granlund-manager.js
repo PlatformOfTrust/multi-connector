@@ -6,7 +6,8 @@ const _ = require('lodash');
 const rp = require('request-promise');
 const winston = require('../../logger.js');
 const transformer = require('../../app/lib/transformer');
-const schema = require('../schemas/service-request_granlund-manager-v2.1.json');
+const serviceRequestSchema = require('../schemas/service-request_granlund-manager-v2.1.json');
+const maintenanceInformationSchema = require('../schemas/maintenance-information_granlund-manager-v3.2.json');
 
 /**
  * Grandlund Manager transformer.
@@ -21,37 +22,59 @@ const schema = require('../schemas/service-request_granlund-manager-v2.1.json');
  * @param {Object} data
  * @return {Object}
  */
-const handleData = function (config, id, data) {
+const handleData = async (config, id, data) => {
     let object = {};
     try {
-        const key = Object.keys(schema.properties.data.properties)[0];
+        let key;
         for (let j = 0; j < data.length; j++) {
             let result = {};
-            const value = data[j][config.output.value];
+            if (data[j]['@type'] === 'Case') {
+                key = Object.keys(serviceRequestSchema.properties.data.properties)[0];
+                const value = data[j][config.output.value];
 
-            // Transform raw input.
-            value.type = 'Case';
-            value.statusType = 'Status';
-            value.statusCodeType = 'StatusCode';
-            value.creatorType = 'Organization';
-            value.requestorType = 'Person';
-            value.parentObjectType = 'Object';
-            value.locationType = 'Location';
-            value.locationOrganizationType = 'Organization';
+                // Transform raw input.
+                value.type = 'Case';
+                value.statusType = 'Status';
+                value.statusCodeType = 'StatusCode';
+                value.creatorType = 'Organization';
+                value.requestorType = 'Person';
+                value.parentObjectType = 'Object';
+                value.locationType = 'Location';
+                value.locationOrganizationType = 'Organization';
 
-            switch (value.Phase) {
-                case 'Undefined':
-                    value.Phase = 'New';
-                    break;
-                case 'Defined':
-                    value.Phase = 'Completed';
-                    break;
-                case 'UnderProgress':
-                    value.Phase = 'Ongoing';
-                    break;
+                switch (value.Phase) {
+                    case 'Undefined':
+                        value.Phase = 'New';
+                        break;
+                    case 'Defined':
+                        value.Phase = 'Completed';
+                        break;
+                    case 'UnderProgress':
+                        value.Phase = 'Ongoing';
+                        break;
+                }
+
+                result = transformer.transform(value, serviceRequestSchema.properties.data);
+            } else {
+                key = Object.keys(maintenanceInformationSchema.properties.data.properties)[0];
+                let value = data[j][config.output.value];
+
+                if (j > 5) {
+                    // Resolve jobs.
+                    try {
+                        const oauth2 = config.plugins.find(p => p.name === 'oauth2');
+                        const options = await oauth2.request(config, {});
+                        const url = `${config.authConfig.path.split('/').slice(0, 5).join('/')}/maintenance-tasks/${value.Task.Id}`;
+                        const {body} = await request('GET', url, {...options.headers, 'Content-Type': 'application/json'});
+                        value = body;
+                    } catch (err) {
+                        winston.log('error', err.message);
+                    }
+                }
+                result = transformer.transform(value, maintenanceInformationSchema.properties.data);
+                result[Object.keys(result)[0]][0].raw = value;
+                result[Object.keys(result)[0]][0].processTarget = [{idLocal: id}];
             }
-
-            result = transformer.transform(value, schema.properties.data);
 
             // Merge all to same result.
             if (Object.hasOwnProperty.call(object, key)) {
@@ -96,7 +119,7 @@ const output = async (config, output) => {
         const array = output.data[config.output.array];
         for (let i = 0; i < array.length; i++) {
             result[config.output.object][config.output.array].push(
-                handleData(
+                await handleData(
                     config,
                     array[i][config.output.id],
                     array[i][config.output.data],
@@ -192,6 +215,23 @@ const template = async (config, template) => {
                 }
                 template.protocol = 'custom';
             }
+        } else if (Object.keys(template.dataPropertyMappings).includes('Process')) {
+            // Maintenance Information
+            /*
+            const oauth2 = template.plugins.find(p => p.name === 'oauth2');
+            if (!oauth2) {
+                return Promise.reject();
+            }
+            const options = await oauth2.request(template, {});
+            */
+            // const url = template.authConfig.path.split('/').slice(0, 5).join('/') + '/favorite-portfolios?onlyFacilitiesAndBuildings=false';
+            // const {body} = await request('GET', url, {...options.headers, 'Content-Type': 'application/json'});
+
+            template.parameters.targetObject.idLocal = Array.isArray(template.parameters.targetObject.idLocal) ? template.parameters.targetObject.idLocal[0] : template.parameters.targetObject.idLocal;
+            template.authConfig.path = (Array.isArray(template.authConfig.path) ? template.authConfig.path[0] : template.authConfig.path).split('/').slice(0, 5).join('/') + `/objects/${template.parameters.targetObject.idLocal}/maintenance-plans`;
+            // const {body} = await request('GET', url, {...options.headers, 'Content-Type': 'application/json'});
+            template.output.contextValue = 'https://standards.oftrust.net/v2/Context/DataProductOutput/MaintenanceInformation/?v=3.2';
+            template.output.array = 'maintenanceInformation';
         }
     } catch (err) {
         winston.log('error', err.message);
