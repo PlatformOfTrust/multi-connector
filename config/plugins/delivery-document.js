@@ -1271,7 +1271,7 @@ const convertFinnishDateToISOString = (input, reverse = false, convert = false) 
     if (typeof input === 'string' && convert) {
         input = input.replace(' ', 'T');
     }
-    input = convert ? new Date() : input;
+    input = convert ? new Date(input) : input;
     if (input.isDstObserved()) {
         output = new Date(input.setHours(input.getHours() - (reverse ? 3 : -3)));
     } else {
