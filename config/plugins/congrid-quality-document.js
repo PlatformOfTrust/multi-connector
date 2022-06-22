@@ -517,6 +517,11 @@ const template = async (config, template) => {
             'workSectionId': workSection.id,
         };
 
+        // Remove blob storage id prefix.
+        if (originalFilename.includes('_+-+-+_')) {
+            body.name = originalFilename.split('_+-+-+_')[1];
+        }
+
         const downloadUrl = template.parameters.targetObject['url'];
         if (!downloadUrl) {
             return Promise.reject(new Error('Missing field url.'));
