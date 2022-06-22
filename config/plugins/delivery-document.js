@@ -1364,12 +1364,6 @@ const sendData = async (req, res, productCode, config, template, result, options
                         };
                     }
                 }
-                if (!Object.hasOwnProperty.call(order, 'deliveryLine')) {
-                    return order;
-                }
-                if (!Array.isArray(order.deliveryLine)) {
-                    order.deliveryLine = [order.deliveryLine];
-                }
 
                 // Treat incoming date times as local finnish time.
                 order = safeUpdate(order, 'deliveryRequired', convertFinnishDateToISOString, [false, true]);
@@ -1378,6 +1372,25 @@ const sendData = async (req, res, productCode, config, template, result, options
                 order = safeUpdate(order, 'processDelivery.deliveryRequired', convertFinnishDateToISOString, [false, true]);
                 order = safeUpdate(order, 'processDelivery.deliveryPlanned', convertFinnishDateToISOString, [false, true]);
                 order = safeUpdate(order, 'processDelivery.deliveryActual', convertFinnishDateToISOString, [false, true]);
+
+                if (Object.hasOwnProperty.call(order, 'orderLine')) {
+                    if (!Array.isArray(order.orderLine)) {
+                        order.orderLine = [order.orderLine];
+                    }
+                    order.orderLine = order.orderLine.map((l) => {
+                        l = safeUpdate(l, 'deliveryRequired', convertFinnishDateToISOString, [false, true]);
+                        l = safeUpdate(l, 'deliveryPlanned', convertFinnishDateToISOString, [false, true]);
+                        l = safeUpdate(l, 'deliveryActual', convertFinnishDateToISOString, [false, true]);
+                        return l;
+                    });
+                }
+
+                if (!Object.hasOwnProperty.call(order, 'deliveryLine')) {
+                    return order;
+                }
+                if (!Array.isArray(order.deliveryLine)) {
+                    order.deliveryLine = [order.deliveryLine];
+                }
 
                 order.deliveryLine = order.deliveryLine.map((l) => {
                     winston.log('info', 'Changed ' + l.product.codeProduct + ' to ' + productCodeToCALSId[l.product.codeProduct]);
