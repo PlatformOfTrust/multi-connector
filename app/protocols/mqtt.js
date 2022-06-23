@@ -44,7 +44,7 @@ const getData = async (config, pathArray) => {
         const result = cache.getDoc('messages', config.productCode) || {};
         for (let p = 0; p < pathArray.length; p++) {
             /** Multi level wildcard implementation */
-            const root = pathArray[p].split('#')[0];
+            const root = pathArray[p].toString().split('#')[0];
             const matchingKeys = Object.keys(result).filter(key => key.substring(0, root.length) === root);
 
             if (matchingKeys.length > 0) {
