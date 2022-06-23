@@ -45,10 +45,11 @@ function request (method, url, headers, body) {
  */
 const stream = async (template, data) => {
     const result = [];
+    let url = null
     try {
         // Extract stream endpoint url and output definitions from config.
         const config = template.config;
-        let url = config.plugins;
+        url = config.plugins;
         url = url ? config.plugins.streamer : null;
         url = url ? config.plugins.streamer.url : null;
         url = url || config.static.url;
@@ -69,7 +70,7 @@ const stream = async (template, data) => {
             }
         }
     } catch (err) {
-        winston.log('error', err.message);
+        winston.log('error', `Streaming error: ${err.message}, Origin: ${url}, Product: ${(template || {}).productCode}`);
         throw err;
     }
     return result;
