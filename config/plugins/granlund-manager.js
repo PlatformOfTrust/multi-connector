@@ -59,12 +59,12 @@ const handleData = async (config, id, data) => {
                 key = Object.keys(maintenanceInformationSchema.properties.data.properties)[0];
                 let value = data[j][config.output.value];
 
-                if (j > 5) {
+                if (j < 20) {
                     // Resolve jobs.
                     try {
                         const oauth2 = config.plugins.find(p => p.name === 'oauth2');
                         const options = await oauth2.request(config, {});
-                        const url = `${config.authConfig.path.split('/').slice(0, 5).join('/')}/maintenance-tasks/${value.Task.Id}`;
+                        const url = `${(Array.isArray(config.authConfig.path) ? config.authConfig.path[0] : config.authConfig.path).split('/').slice(0, 5).join('/')}/maintenance-tasks/${value.Task.Id}`;
                         const {body} = await request('GET', url, {...options.headers, 'Content-Type': 'application/json'});
                         value = body;
                     } catch (err) {
@@ -106,6 +106,7 @@ const handleData = async (config, id, data) => {
  * @return {Object}
  */
 const output = async (config, output) => {
+    console.log(output);
     // Initialize harmonized output.
     const result = {
         [config.output.context]: config.output.contextValue,
@@ -165,6 +166,14 @@ function request (method, url, headers, body) {
         });
 }
 
+const exportEquipmentObjects = (data, dataKey, criteria) => {
+    const output = data[dataKey].map(b => exportEquipmentObjects(b, dataKey, criteria)).flat();
+    if (Object.entries(criteria).map(([key, value]) => data[key] === value).every(a => !!a)) {
+        output.push({...data, [dataKey]: undefined});
+    }
+    return output;
+};
+
 /**
  * Switch querying protocol to REST.
  *
@@ -216,20 +225,26 @@ const template = async (config, template) => {
                 template.protocol = 'custom';
             }
         } else if (Object.keys(template.dataPropertyMappings).includes('Process')) {
-            // Maintenance Information
             /*
+            // Maintenance Information
             const oauth2 = template.plugins.find(p => p.name === 'oauth2');
             if (!oauth2) {
                 return Promise.reject();
             }
             const options = await oauth2.request(template, {});
+            const url = (Array.isArray(template.authConfig.path)
+                ? template.authConfig.path[0]
+                : template.authConfig.path
+            ).split('/').slice(0, 5).join('/') + '/favorite-portfolios?onlyFacilitiesAndBuildings=false';
+            const {body} = await request('GET', url, {...options.headers, 'Content-Type': 'application/json'});
+            const equipment = exportEquipmentObjects(body[0].Data[0].Data[0], 'ChildObjects', {TypeUsage: 'Equipment'});
+            console.log(JSON.stringify(equipment.map(x => x.Id)));
             */
-            // const url = template.authConfig.path.split('/').slice(0, 5).join('/') + '/favorite-portfolios?onlyFacilitiesAndBuildings=false';
-            // const {body} = await request('GET', url, {...options.headers, 'Content-Type': 'application/json'});
 
-            template.parameters.targetObject.idLocal = Array.isArray(template.parameters.targetObject.idLocal) ? template.parameters.targetObject.idLocal[0] : template.parameters.targetObject.idLocal;
-            template.authConfig.path = (Array.isArray(template.authConfig.path) ? template.authConfig.path[0] : template.authConfig.path).split('/').slice(0, 5).join('/') + `/objects/${template.parameters.targetObject.idLocal}/maintenance-plans`;
-            // const {body} = await request('GET', url, {...options.headers, 'Content-Type': 'application/json'});
+            const apiPath = '/maintenance-plans';
+            // apiPath = '/maintenance-notes'
+            template.parameters.targetObject.idLocal = Array.isArray(template.parameters.targetObject.idLocal) ? template.parameters.targetObject.idLocal : [template.parameters.targetObject.idLocal];
+            template.authConfig.path = template.parameters.targetObject.idLocal.map(p => (Array.isArray(template.authConfig.path) ? template.authConfig.path[0] : template.authConfig.path).split('/').slice(0, 5).join('/') + `/objects/${p}${apiPath}`);
             template.output.contextValue = 'https://standards.oftrust.net/v2/Context/DataProductOutput/MaintenanceInformation/?v=3.2';
             template.output.array = 'maintenanceInformation';
         }
