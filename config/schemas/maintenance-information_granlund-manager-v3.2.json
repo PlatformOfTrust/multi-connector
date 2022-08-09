@@ -68,28 +68,28 @@
                             },
                             "plannedStart": {
                                 "$id": "#/properties/data/properties/maintenanceInformation/items/properties/plannedStart",
-                                "source": null,
+                                "source": "Task.StartDate",
                                 "type": "string",
                                 "title": "Planned start time",
                                 "description": "Planned start time."
                             },
                             "plannedEnd": {
                                 "$id": "#/properties/data/properties/maintenanceInformation/items/properties/plannedEnd",
-                                "source": null,
+                                "source": "Task.DoneDate",
                                 "type": "string",
                                 "title": "Planned end time",
                                 "description": "When something can be started.  Typically used when something is scheduled to happen within certain period."
                             },
                             "canStart": {
                                 "$id": "#/properties/data/properties/maintenanceInformation/items/properties/canStart",
-                                "source": null,
+                                "source": "Task.TaskDate",
                                 "type": "string",
                                 "title": "Earliest start time",
                                 "description": "When something can be started.  Typically used when something is scheduled to happen within certain period."
                             },
                             "mustEnd": {
                                 "$id": "#/properties/data/properties/maintenanceInformation/items/properties/mustEnd",
-                                "source": null,
+                                "source": "Task.MustDoneDate",
                                 "type": "string",
                                 "title": "Latest end time",
                                 "description": "When something must ne ended.  Typically used when something is scheduled to happen within certain period."

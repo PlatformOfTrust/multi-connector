@@ -4,6 +4,7 @@
  */
 const _ = require('lodash');
 const rp = require('request-promise');
+const cache = require('../../app/cache');
 const winston = require('../../logger.js');
 const transformer = require('../../app/lib/transformer');
 const serviceRequestSchema = require('../schemas/service-request_granlund-manager-v2.1.json');
@@ -13,6 +14,39 @@ const maintenanceInformationSchema = require('../schemas/maintenance-information
  * Grandlund Manager transformer.
  */
 
+const UPDATE_TIME = 10 * 60 * 1000;
+const STORAGE_TIME = 7 * 24 * 60 * 60 * 1000;
+
+/**
+ * Resolve task.
+ *
+ * @param {Object} config
+ * @param {Object} value
+ * @param {Object} [skip]
+ * @return {Object}
+ */
+const getTask = async (config, value, skip = false) => {
+    try {
+        const cached = cache.getDoc(config.productCode, value.Task.Id);
+        if (!cached || skip) {
+            const oauth2 = config.plugins.find(p => p.name === 'oauth2');
+            const options = await oauth2.request(config, {});
+            const url = `${(Array.isArray(config.authConfig.path) ? config.authConfig.path[0] : config.authConfig.path).split('/').slice(0, 5).join('/')}/maintenance-tasks/${value.Task.Id}`;
+            const {body} = await request('GET', url, {...options.headers, 'Content-Type': 'application/json'});
+            cache.setDoc(config.productCode, value.Task.Id, body, STORAGE_TIME / 1000);
+            return body;
+        } else {
+            const ttl = cache.getTtl(config.productCode, value.Task.Id) || 0;
+            const expiration = ttl - STORAGE_TIME + UPDATE_TIME;
+            if (new Date().getTime() > expiration && !skip) {
+                getTask(config, value, true);
+            }
+            return cached;
+        }
+    } catch (e) {
+        return null;
+    }
+};
 
 /**
  * Handles data objects.
@@ -23,6 +57,7 @@ const maintenanceInformationSchema = require('../schemas/maintenance-information
  * @return {Object}
  */
 const handleData = async (config, id, data) => {
+    const startTime = new Date().getTime();
     let object = {};
     try {
         let key;
@@ -59,20 +94,20 @@ const handleData = async (config, id, data) => {
                 key = Object.keys(maintenanceInformationSchema.properties.data.properties)[0];
                 let value = data[j][config.output.value];
 
-                if (j < 20) {
+                if (new Date().getTime() < (startTime + 5000)) {
                     // Resolve jobs.
                     try {
-                        const oauth2 = config.plugins.find(p => p.name === 'oauth2');
-                        const options = await oauth2.request(config, {});
-                        const url = `${(Array.isArray(config.authConfig.path) ? config.authConfig.path[0] : config.authConfig.path).split('/').slice(0, 5).join('/')}/maintenance-tasks/${value.Task.Id}`;
-                        const {body} = await request('GET', url, {...options.headers, 'Content-Type': 'application/json'});
-                        value = body;
+                        const doc = await getTask(config, value);
+                        value = doc ? doc : value;
                     } catch (err) {
                         winston.log('error', err.message);
                     }
+                } else {
+                    getTask(config, value);
                 }
+
                 result = transformer.transform(value, maintenanceInformationSchema.properties.data);
-                result[Object.keys(result)[0]][0].raw = value;
+                // result[Object.keys(result)[0]][0].raw = value;
                 result[Object.keys(result)[0]][0].processTarget = [{idLocal: id}];
             }
 
@@ -106,7 +141,6 @@ const handleData = async (config, id, data) => {
  * @return {Object}
  */
 const output = async (config, output) => {
-    console.log(output);
     // Initialize harmonized output.
     const result = {
         [config.output.context]: config.output.contextValue,
