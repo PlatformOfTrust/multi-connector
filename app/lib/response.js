@@ -189,7 +189,7 @@ const handleData = async (config, path, index, data) => {
                     _.get(config, 'parameters.targetObject') || [];
                 if (!hardwareId) {
                     const ids = (Array.isArray(idObjects) ? idObjects : [idObjects])
-                        .map(object => object.id || object.idLocal || object);
+                        .map(object => object.id || object.idLocal || object).flat();
                     hardwareId = ids[index] || index;
                 }
             } catch (e) {
