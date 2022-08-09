@@ -15,20 +15,51 @@ const maintenanceInformationSchema = require('../schemas/maintenance-information
  */
 
 const UPDATE_TIME = 10 * 60 * 1000;
-const STORAGE_TIME = 7 * 24 * 60 * 60 * 1000;
+const STORAGE_TIME = 20 * 24 * 60 * 60 * 1000;
 
 /**
- * Resolve task.
+ * Resolve tasks by object id.
+ *
+ * @param {Object} config
+ * @param {String} url
+ * @param {Boolean} [skip]
+ * @return {Object}
+ */
+const getTasks = async (config, url, skip = false) => {
+    try {
+        const cached = cache.getDoc(config.productCode, url);
+        if (!cached || skip) {
+            const oauth2 = config.plugins.find(p => p.name === 'oauth2');
+            const options = await oauth2.request(config, {});
+            const {body} = await request('GET', url, {...options.headers, 'Content-Type': 'application/json'});
+            cache.setDoc(config.productCode, url, body, STORAGE_TIME / 1000);
+            return body;
+        } else {
+            const ttl = cache.getTtl(config.productCode, url) || 0;
+            const expiration = ttl - STORAGE_TIME + UPDATE_TIME;
+            if (new Date().getTime() > expiration && !skip) {
+                getTasks(config, url, true);
+            }
+            return cached;
+        }
+    } catch (e) {
+        return null;
+    }
+};
+
+/**
+ * Resolve single task.
  *
  * @param {Object} config
  * @param {Object} value
- * @param {Object} [skip]
+ * @param {Boolean} [skip]
+ * @param {Number} [priority]
  * @return {Object}
  */
-const getTask = async (config, value, skip = false) => {
+const getTask = async (config, value, skip = false, priority = 0) => {
     try {
         const cached = cache.getDoc(config.productCode, value.Task.Id);
-        if (!cached || skip) {
+        if ((!cached || skip) && priority === 0) {
             const oauth2 = config.plugins.find(p => p.name === 'oauth2');
             const options = await oauth2.request(config, {});
             const url = `${(Array.isArray(config.authConfig.path) ? config.authConfig.path[0] : config.authConfig.path).split('/').slice(0, 5).join('/')}/maintenance-tasks/${value.Task.Id}`;
@@ -54,9 +85,10 @@ const getTask = async (config, value, skip = false) => {
  * @param {Object} config
  * @param {Object/String} id
  * @param {Object} data
+ * @param {Number} index
  * @return {Object}
  */
-const handleData = async (config, id, data) => {
+const handleData = async (config, id, data, index) => {
     const startTime = new Date().getTime();
     let object = {};
     try {
@@ -94,10 +126,10 @@ const handleData = async (config, id, data) => {
                 key = Object.keys(maintenanceInformationSchema.properties.data.properties)[0];
                 let value = data[j][config.output.value];
 
-                if (new Date().getTime() < (startTime + 5000)) {
+                if (new Date().getTime() < (startTime + 1000)) {
                     // Resolve jobs.
                     try {
-                        const doc = await getTask(config, value);
+                        const doc = await getTask(config, value, false, index);
                         value = doc ? doc : value;
                     } catch (err) {
                         winston.log('error', err.message);
@@ -108,7 +140,7 @@ const handleData = async (config, id, data) => {
 
                 result = transformer.transform(value, maintenanceInformationSchema.properties.data);
                 // result[Object.keys(result)[0]][0].raw = value;
-                result[Object.keys(result)[0]][0].processTarget = [{idLocal: id}];
+                // result[Object.keys(result)[0]][0].processTarget = [{idLocal: id}];
             }
 
             // Merge all to same result.
@@ -130,6 +162,27 @@ const handleData = async (config, id, data) => {
         return object;
     } catch (err) {
         return object;
+    }
+};
+
+/**
+ * Filters response object by id.
+ *
+ * @param {Object} config
+ * @param {Object} response
+ * @return {Object}
+ */
+const response = async (config, response) => {
+    try {
+        const ids = (_.get(config, 'parameters.ids') || []).map(object => object.id || object.idLocal).flat();
+        // Skip filtering in case ids array is empty.
+        if (ids.length === 0) { return response; }
+        if (typeof response === 'string') {
+            response = await getTasks(config, response);
+        }
+        return response;
+    } catch (e) {
+        return response;
     }
 };
 
@@ -158,6 +211,7 @@ const output = async (config, output) => {
                     config,
                     array[i][config.output.id],
                     array[i][config.output.data],
+                    i,
                 ));
         }
         if (result[config.output.object][config.output.array].length === 1) {
@@ -279,8 +333,24 @@ const template = async (config, template) => {
             // apiPath = '/maintenance-notes'
             template.parameters.targetObject.idLocal = Array.isArray(template.parameters.targetObject.idLocal) ? template.parameters.targetObject.idLocal : [template.parameters.targetObject.idLocal];
             template.authConfig.path = template.parameters.targetObject.idLocal.map(p => (Array.isArray(template.authConfig.path) ? template.authConfig.path[0] : template.authConfig.path).split('/').slice(0, 5).join('/') + `/objects/${p}${apiPath}`);
+            const cached = template.authConfig.path.filter(p => !!cache.getDoc(template.productCode, p));
+            const preload = template.authConfig.path.filter(p => !cached.includes(p));
+
+            if (template.authConfig.path.length > 1) {
+                template.authConfig.path = [...cached, ...preload.slice(-2)];
+            }
+
+            const loader = async (urls) => {
+                for (let i = 0; i < urls.length; i++) {
+                    await getTasks(template, urls[i]);
+                }
+            };
+
+            loader(preload);
+
             template.output.contextValue = 'https://standards.oftrust.net/v2/Context/DataProductOutput/MaintenanceInformation/?v=3.2';
             template.output.array = 'maintenanceInformation';
+            template.protocol = 'custom';
         }
     } catch (err) {
         winston.log('error', err.message);
@@ -295,5 +365,6 @@ const template = async (config, template) => {
 module.exports = {
     name: 'granlund-manager',
     template,
+    response,
     output,
 };
