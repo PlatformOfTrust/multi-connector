@@ -200,9 +200,9 @@ const requestData = async (config, path, index) => {
     }
 
     // Check if body is actually a path to parameters and include it in body
-    if(_.isString(options.body)) {
-        if(_.get(config, options.body)) {
-            options.body = _.get(config, options.body)
+    if (_.isString(options.body)) {
+        if (_.get(config, options.body)) {
+            options.body = _.get(config, options.body);
         }
     }
 
