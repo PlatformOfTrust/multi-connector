@@ -461,7 +461,7 @@ const composeOutput = async (template, input) => {
     pathArray = _.uniq(pathArray);
 
     // Initialize items array.
-    let items = [];
+    const items = [];
 
     // Initialize output definitions.
     template.output = template.output || {};
@@ -494,10 +494,10 @@ const composeOutput = async (template, input) => {
             const selected = Array.isArray(template.protocol) ? template.protocol : [template.protocol];
             for (let i = 0; i < selected.length; i++) {
                 let result = input;
-                if(!input) {
-                    if (operation == 'read')
+                if (!input) {
+                    if (operation === 'read')
                         result = await protocols[selected[i]].getData({...template, protocol: selected[i]}, pathArray);
-                    if (operation == 'write')
+                    if (operation === 'write')
                         result = await protocols[selected[i]].pushData({...template, protocol: selected[i]}, pathArray);
                 }
                 if (result) items.push(...Array.isArray(result) ? result : [result]);
