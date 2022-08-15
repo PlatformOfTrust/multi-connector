@@ -271,7 +271,7 @@ const controller = async (req, res) => {
  */
 const endpoints = function (passport) {
     /** Hook endpoint. */
-    router.post('/:topic*?', (req, res, next) => req.headers['content-type'].endsWith('xml') ? next('route') : next(), controller);
+    router.post('/:topic*?', (req, res, next) => (req.headers['content-type'] || '').endsWith('xml') ? next('route') : next(), controller);
     router.post('/:topic*?', xmlparser({
         explicitArray: false,
         normalize: false,
