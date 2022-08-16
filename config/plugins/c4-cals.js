@@ -737,14 +737,19 @@ Date.prototype.isDstObserved = function () {
  *
  * @param {Date} input
  * @param {Boolean} [reverse]
+ * @param {Boolean} [convert]
  * @return {String}
  */
-const convertFinnishDateToISOString = (input, reverse = false) => {
+const convertFinnishDateToISOString = (input, reverse = false, convert = false) => {
     // Examples.
     // Finnish UTC +2 or +3.
     // new Date(1610031289498); -2
     // new Date(1631092909080); -3 (Daylight Saving Time)
     let output;
+    if (typeof input === 'string' && convert) {
+        input = input.replace(' ', 'T');
+    }
+    input = convert ? new Date(input) : input;
     if (input.isDstObserved()) {
         output = new Date(input.setHours(input.getHours() - (reverse ? 3 : -3)));
     } else {
