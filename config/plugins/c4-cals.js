@@ -1453,10 +1453,6 @@ const template = async (config, template) => {
     }
 };
 
-const date = '2022-07-05 14:05:10';
-console.log(date.replace(' ', 'T'));
-console.log(convertFinnishDateToISOString(new Date(date), true));
-
 module.exports = {
     name: PLUGIN_NAME,
     endpoints,
