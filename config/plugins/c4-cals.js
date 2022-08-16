@@ -1305,6 +1305,12 @@ const template = async (config, template) => {
                             output.ActualDelivery = [];
                         }
                     }
+                    if (!datetime && Object.hasOwnProperty.call(input, 'loading')) {
+                        if (input.loading.startDateTime !== '' && input.loading.startDateTime !== 'NULL') {
+                            datetime = input.loading.startDateTime;
+                            output.ActualDelivery = [];
+                        }
+                    }
                     if (!datetime && Object.hasOwnProperty.call(root, 'processDelivery')) {
                         if (root.processDelivery.deliveryPlanned !== '' && root.processDelivery.deliveryPlanned !== 'NULL') {
                             datetime = root.processDelivery.deliveryPlanned;
@@ -1348,7 +1354,7 @@ const template = async (config, template) => {
                     }
 
                     try {
-                        datetime = convertFinnishDateToISOString(new Date(datetime), true);
+                        datetime = convertFinnishDateToISOString(new Date(datetime.replace(' ', 'T')), true);
                         output.ConfirmedDeliveryDate = (datetime || 'T').split('T')[0];
                         output.ConfirmedDeliveryTime = (datetime || 'T').split('T')[1].substring(0, 5);
 
@@ -1446,6 +1452,10 @@ const template = async (config, template) => {
         return Promise.reject(err);
     }
 };
+
+const date = '2022-07-05 14:05:10';
+console.log(date.replace(' ', 'T'));
+console.log(convertFinnishDateToISOString(new Date(date), true));
 
 module.exports = {
     name: PLUGIN_NAME,
