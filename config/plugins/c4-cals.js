@@ -1366,7 +1366,7 @@ const template = async (config, template) => {
                             delete output.ConfirmedDeliveryTime;
                         }
                     } catch (e) {
-                        winston.log('error', e.message);
+                        winston.log('error', `${e.message} ${datetime}`);
                     }
 
                     if (!output.PurchaseOrderItemId) {
