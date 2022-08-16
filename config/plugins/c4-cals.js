@@ -1296,6 +1296,7 @@ const template = async (config, template) => {
                     const root = template.parameters.targetObject;
                     // Root level delivery datetime by default.
                     let datetime = root.deliveryPlanned || root.deliveryRequired;
+                    let datetime2 = root.deliveryPlanned || root.deliveryRequired;
 
                     // Catch transportation/delivery time from delivery information.
                     if (!datetime && Object.hasOwnProperty.call(input, 'transportation')) {
@@ -1313,6 +1314,12 @@ const template = async (config, template) => {
                     if (!datetime && Object.hasOwnProperty.call(input, 'loading')) {
                         if (input.loading.startDateTime !== '' && input.loading.startDateTime !== 'NULL') {
                             datetime = input.loading.startDateTime;
+                            output.ActualDelivery = [];
+                        }
+                    }
+                    if (!datetime2 && Object.hasOwnProperty.call(input, 'loading')) {
+                        if (input.loading.startDateTime !== '' && input.loading.startDateTime !== 'NULL') {
+                            datetime2 = input.loading.startDateTime;
                             output.ActualDelivery = [];
                         }
                     }
@@ -1372,6 +1379,21 @@ const template = async (config, template) => {
                         }
                     } catch (e) {
                         winston.log('error', `${e.message} ${datetime}`);
+                        try {
+                            datetime2 = convertFinnishDateToISOString(new Date(datetime2.replace(' ', 'T')), true);
+                            output.ConfirmedDeliveryDate = (datetime2 || 'T').split('T')[0];
+                            output.ConfirmedDeliveryTime = (datetime2 || 'T').split('T')[1].substring(0, 5);
+
+                            // Delete unavailable delivery times.
+                            if (output.ConfirmedDeliveryDate === '') {
+                                delete output.ConfirmedDeliveryDate;
+                            }
+                            if (output.ConfirmedDeliveryTime === '') {
+                                delete output.ConfirmedDeliveryTime;
+                            }
+                        } catch (e) {
+                            winston.log('error', `${e.message} ${datetime2}`);
+                        }
                     }
 
                     if (!output.PurchaseOrderItemId) {
