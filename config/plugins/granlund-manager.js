@@ -4,6 +4,7 @@
  */
 const _ = require('lodash');
 const rp = require('request-promise');
+const RRule = require('rrule').RRule;
 const cache = require('../../app/cache');
 const winston = require('../../logger.js');
 const transformer = require('../../app/lib/transformer');
@@ -136,6 +137,67 @@ const handleData = async (config, id, data, index) => {
                     }
                 } else {
                     getTask(config, value);
+                }
+                value.updated = new Date().toISOString();
+                value.Jobs = (value.Jobs || []).map(j => {
+                    switch (j.StateId) {
+                        case 60:
+                            j.State = 'New'; // Job doesnt have StartDate
+                            break;
+                        case 90:
+                            j.State = 'Completed'; // Job has DoneDate
+                            break;
+                        case 30:
+                            j.State = 'Ongoing'; // Job has StartDate
+                            break;
+                    }
+                    j.TaskDate = value.Task.TaskDate;
+                    j.TaskStarDate = value.Task.StartDate;
+                    j.TaskDoneDate = value.Task.DoneDate;
+                    j.TaskMustDoneDate = value.Task.MustDoneDate;
+                    return {...j, Mission: value.Mission};
+                });
+                switch (value.Task.StateId) {
+                    case 60:
+                        value.Task.State = 'New'; // Job doesnt have StartDate
+                        break;
+                    case 90:
+                        value.Task.State = 'Completed'; // Job has DoneDate
+                        break;
+                    case 30:
+                        value.Task.State = 'Ongoing'; // Job has StartDate
+                        break;
+                }
+                value.CodedObject = (value.Jobs || []).map(j => j.CodedObject);
+
+                try {
+                    let freq = 'DAILY';
+                    let options = {};
+                    let years = [];
+                    switch (value.Mission.MaintenanceCycle) {
+                        case 6:
+                            freq = 'YEARLY';
+                            years = value.Mission.SelectedYears.split(',').map(y => Number.parseInt(y));
+                            options = {
+                                interval: years.reduce((prev, curr) => Math.min(Math.abs(prev - curr), prev)),
+                            };
+                            break;
+                        case 2:
+                            freq = 'WEEKLY';
+                            break;
+                        case 5:
+                            freq = 'YEARLY';
+                            break;
+                    }
+
+                    // Parse schedule
+                    value.schedule = new RRule({
+                        freq: RRule[freq],
+                        dtstart: new Date(value.Task.TaskDate),
+                        ...options,
+                    }).toString();
+                } catch (e) {
+                    console.log(e.message);
                 }
 
                 result = transformer.transform(value, maintenanceInformationSchema.properties.data);
@@ -325,7 +387,8 @@ const template = async (config, template) => {
                 : template.authConfig.path
             ).split('/').slice(0, 5).join('/') + '/favorite-portfolios?onlyFacilitiesAndBuildings=false';
             const {body} = await request('GET', url, {...options.headers, 'Content-Type': 'application/json'});
-            const equipment = exportEquipmentObjects(body[0].Data[0].Data[0], 'ChildObjects', {TypeUsage: 'Equipment'});
+            const equipment = exportEquipmentObjects(body[0].Data[0].Data[0], 'ChildObjects', {ObjectSort: 0});
+            console.log(_.uniq(equipment.map(v => v.TypeUsage)));
             console.log(JSON.stringify(equipment.map(x => x.Id)));
             */
 
