@@ -171,9 +171,10 @@ const handleData = async (config, id, data, index) => {
                 value.CodedObject = (value.Jobs || []).map(j => j.CodedObject);
 
                 try {
-                    let freq = 'DAILY';
+                    let freq = 'YEARLY';
                     let options = {};
                     let years = [];
+                    let months = [];
                     switch (value.Mission.MaintenanceCycle) {
                         case 6:
                             freq = 'YEARLY';
@@ -182,13 +183,30 @@ const handleData = async (config, id, data, index) => {
                                 interval: years.reduce((prev, curr) => Math.min(Math.abs(prev - curr), prev)),
                             };
                             break;
-                        case 2:
-                            freq = 'WEEKLY';
-                            break;
                         case 5:
                             freq = 'YEARLY';
                             break;
+                        case 3:
+                            freq = 'YEARLY';
+                            months = value.Mission.MaintenanceMonths.split(',').map(y => Number.parseInt(y));
+                            options = {
+                                count: months,
+                            };
+                            break;
+                        case 2:
+                            freq = 'MONTHLY';
+                            break;
                     }
+                    if (value.Mission.Name.includes('kuukausittain')
+                        || value.Mission.Name.includes('Kuukausittain')
+                        || value.Mission.Name.includes('Kuukausityöt')
+                        || value.Mission.Name.includes('Kuukausitesti')) {
+                        freq = 'MONTHLY';
+                    }
+                    if (value.Mission.Name.includes('viikoittain') || value.Mission.Name.includes('Viikoittain')) {
+                        freq = 'WEEKLY';
+                    }
+                    // console.log(value.Mission.MaintenanceCycle + ' --> ' + value.Mission.Name + ' --> ' + freq);
 
                     // Parse schedule
                     value.schedule = new RRule({
