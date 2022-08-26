@@ -38,6 +38,13 @@
                                 "title": "Identity type",
                                 "description": "Type of identity."
                             },
+                            "updated": {
+                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/updated",
+                                "source": "updated",
+                                "type": "string",
+                                "title": "Updated",
+                                "description": "Updated time."
+                            },
                             "idLocal": {
                                 "$id": "#/properties/data/properties/maintenanceInformation/items/properties/idLocal",
                                 "source": "Package.Id",
@@ -65,6 +72,20 @@
                                 "type": "string",
                                 "title": "Additional information",
                                 "description": "Additional information."
+                            },
+                            "scheduledStart": {
+                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/scheduledStart",
+                                "source": "Task.StartDate",
+                                "type": "string",
+                                "title": "Scheduled start time",
+                                "description": "Scheduled start time."
+                            },
+                            "scheduledEnd": {
+                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/scheduledEnd",
+                                "source": "Task.DoneDate",
+                                "type": "string",
+                                "title": "Scheduled end time",
+                                "description": "Scheduled start time."
                             },
                             "plannedStart": {
                                 "$id": "#/properties/data/properties/maintenanceInformation/items/properties/plannedStart",
@@ -132,21 +153,21 @@
                                 "properties": {
                                     "@type": {
                                         "$id": "#/properties/data/properties/maintenanceInformation/items/properties/schedule/properties/@type",
-                                        "source": null,
+                                        "value": "Schedule",
                                         "type": "string",
                                         "title": "Identity type",
                                         "description": "Type of identity."
                                     },
                                     "idLocal": {
                                         "$id": "#/properties/data/properties/maintenanceInformation/items/properties/schedule/properties/idLocal",
-                                        "source": null,
+                                        "source": "Mission.Id",
                                         "type": "string",
                                         "title": "Local identifier",
                                         "description": "Locally given identifier."
                                     },
                                     "schedule": {
                                         "$id": "#/properties/data/properties/maintenanceInformation/items/properties/schedule/properties/schedule",
-                                        "source": null,
+                                        "source": "schedule",
                                         "type": "string",
                                         "title": "Schedule",
                                         "description": "Schedule in RRULE format. Please visit https://icalendar.org/iCalendar-RFC-5545/3-8-5-3-recurrence-rule.html for more details."
@@ -191,7 +212,7 @@
                             },
                             "status": {
                                 "$id": "#/properties/data/properties/maintenanceInformation/items/properties/status",
-                                "source": null,
+                                "source": "",
                                 "type": "array",
                                 "title": "Life-cycle status",
                                 "description": "Life-cycle status.",
@@ -203,21 +224,21 @@
                                     "properties": {
                                         "@type": {
                                             "$id": "#/properties/data/properties/maintenanceInformation/items/properties/status/items/properties/@type",
-                                            "source": null,
+                                            "value": "Status",
                                             "type": "string",
                                             "title": "Identity type",
                                             "description": "Type of identity."
                                         },
                                         "status": {
                                             "$id": "#/properties/data/properties/maintenanceInformation/items/properties/status/items/properties/status",
-                                            "source": null,
+                                            "source": "Task.State",
                                             "type": "string",
                                             "title": "Life-cycle status",
                                             "description": "Life-cycle status.  Status name."
                                         },
                                         "statusCode": {
                                             "$id": "#/properties/data/properties/maintenanceInformation/items/properties/status/items/properties/statusCode",
-                                            "source": null,
+                                            "source": "Task.StateId",
                                             "type": "string",
                                             "title": "Status code",
                                             "description": "Status code."
@@ -391,7 +412,7 @@
                                         },
                                         "name": {
                                             "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/name",
-                                            "source": null,
+                                            "source": "Mission.Name",
                                             "type": "string",
                                             "title": "Name",
                                             "description": "Name."
@@ -405,63 +426,63 @@
                                         },
                                         "additionalInformation": {
                                             "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/additionalInformation",
-                                            "source": null,
+                                            "value": "",
                                             "type": "string",
                                             "title": "Additional information",
                                             "description": "Additional information."
                                         },
                                         "plannedStart": {
                                             "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/plannedStart",
-                                            "source": null,
+                                            "source": "TaskStarDate",
                                             "type": "string",
                                             "title": "Planned start time",
                                             "description": "Planned start time."
                                         },
                                         "plannedEnd": {
                                             "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/plannedEnd",
-                                            "source": null,
+                                            "source": "TaskDoneDate",
                                             "type": "string",
                                             "title": "Planned end time",
                                             "description": "When something can be started.  Typically used when something is scheduled to happen within certain period."
                                         },
                                         "canStart": {
                                             "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/canStart",
-                                            "source": null,
+                                            "source": "TaskDate",
                                             "type": "string",
                                             "title": "Earliest start time",
                                             "description": "When something can be started.  Typically used when something is scheduled to happen within certain period."
                                         },
                                         "mustEnd": {
                                             "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/mustEnd",
-                                            "source": null,
+                                            "source": "TaskMustDoneDate",
                                             "type": "string",
                                             "title": "Latest end time",
                                             "description": "When something must ne ended.  Typically used when something is scheduled to happen within certain period."
                                         },
                                         "actualStart": {
                                             "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/actualStart",
-                                            "source": null,
+                                            "source": "StartDate",
                                             "type": "string",
                                             "title": "Actual start time",
                                             "description": "Actual start time."
                                         },
                                         "actualEnd": {
                                             "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/actualEnd",
-                                            "source": null,
+                                            "source": "DoneDate",
                                             "type": "string",
                                             "title": "Actual end time",
                                             "description": "Actual end time."
                                         },
                                         "cancelled": {
                                             "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/cancelled",
-                                            "source": null,
+                                            "source": "RejectDate",
                                             "type": "string",
                                             "title": "Cancelled",
                                             "description": "Cancelled."
                                         },
                                         "duration": {
                                             "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/duration",
-                                            "source": null,
+                                            "source": "WorkTimeActual",
                                             "type": "string",
                                             "title": "Duration",
                                             "description": "Duration (time)."
@@ -487,7 +508,7 @@
                                                     },
                                                     "status": {
                                                         "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/status/items/properties/status",
-                                                        "source": null,
+                                                        "source": "State",
                                                         "type": "string",
                                                         "title": "Life-cycle status",
                                                         "description": "Life-cycle status.  Status name."
@@ -574,7 +595,7 @@
                                                     },
                                                     "idLocal": {
                                                         "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/executor/items/properties/idLocal",
-                                                        "source": null,
+                                                        "source": "RequestHandler",
                                                         "type": "string",
                                                         "title": "Local identifier",
                                                         "description": "Locally given identifier."
@@ -601,7 +622,7 @@
                             },
                             "processTarget": {
                                 "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processTarget",
-                                "source": null,
+                                "source": "CodedObject",
                                 "type": "array",
                                 "title": "Process target",
                                 "description": "Object into which process (verb) is targeted.",
@@ -619,7 +640,7 @@
                                         },
                                         "idLocal": {
                                             "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processTarget/items/properties/idLocal",
-                                            "source": null,
+                                            "source": "Id",
                                             "type": "string",
                                             "title": "Local identifier",
                                             "description": "Locally given identifier."
@@ -633,28 +654,28 @@
                                         },
                                         "name": {
                                             "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processTarget/items/properties/name",
-                                            "source": null,
+                                            "source": "Name",
                                             "type": "string",
                                             "title": "Name",
                                             "description": "Name."
                                         },
                                         "codeLong": {
                                             "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processTarget/items/properties/codeLong",
-                                            "source": null,
+                                            "source": "LongCode",
                                             "type": "string",
                                             "title": "Long Code",
                                             "description": "Long version of code type identifier."
                                         },
                                         "nameLong": {
                                             "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processTarget/items/properties/nameLong",
-                                            "source": null,
+                                            "source": "FullName",
                                             "type": "string",
                                             "title": "Long name",
                                             "description": "Long name."
                                         },
                                         "nameCombined": {
                                             "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processTarget/items/properties/nameCombined",
-                                            "source": null,
+                                            "source": "CombinedName",
                                             "type": "string",
                                             "title": "Combined name",
                                             "description": "Combined name which is formed using other names and/or codes."
@@ -682,14 +703,14 @@
                                         },
                                         "position1": {
                                             "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processTarget/items/properties/position1",
-                                            "source": null,
+                                            "source": "Position1",
                                             "type": "string",
                                             "title": "Position 1",
                                             "description": "Information which describes position."
                                         },
                                         "position2": {
                                             "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processTarget/items/properties/position2",
-                                            "source": null,
+                                            "source": "Position2",
                                             "type": "string",
                                             "title": "Position 2",
                                             "description": "Information which describes position."
