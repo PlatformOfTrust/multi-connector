@@ -51,14 +51,19 @@ function findStartEnd (items) {
             const valueIntervals = [];
             item.data.reduce((previous, current) => {
                 if (previous) {
-                    valueIntervals.push(Number.parseFloat(current.value) - Number.parseFloat(previous.value));
-                    timeIntervals.push(new Date(current.timestamp).getTime() - new Date(previous.timestamp).getTime());
+                    const difference = Number.parseFloat(current.value) - Number.parseFloat(previous.value);
+                    if (difference > 0) {
+                        valueIntervals.push(difference);
+                        timeIntervals.push(new Date(current.timestamp).getTime() - new Date(previous.timestamp).getTime());
+                    } else {
+                        return previous;
+                    }
                 }
                 return current;
             });
             const averageTime = timeIntervals.reduce((a, b) => a + b, 0) / timeIntervals.length;
             const averageValue = valueIntervals.reduce((a, b) => a + b, 0) / valueIntervals.length;
-            if (result[type].value > 2 * averageValue / averageTime * interval) {
+            if (result[type].value > 10 * averageValue / averageTime * interval && value > 0) {
                 result[type].value = value;
             }
         } catch (err) {
