@@ -42,6 +42,28 @@ function findStartEnd (items) {
         }
         result[type].value = peaks.reduce((a, c) => a + c);
         result[type].value -= result[type].startValue;
+
+        try {
+            // Validate consumption value by comparing it to a value based on average consumption between time intervals.
+            const interval = new Date(item.data[item.data.length - 1].timestamp).getTime() -  new Date(item.data[0].timestamp).getTime();
+            const value = Number.parseFloat(item.data[item.data.length - 1].value) - Number.parseFloat(item.data[0].value);
+            const timeIntervals = [];
+            const valueIntervals = [];
+            item.data.reduce((previous, current) => {
+                if (previous) {
+                    valueIntervals.push(Number.parseFloat(current.value) - Number.parseFloat(previous.value));
+                    timeIntervals.push(new Date(current.timestamp).getTime() - new Date(previous.timestamp).getTime());
+                }
+                return current;
+            });
+            const averageTime = timeIntervals.reduce((a, b) => a + b, 0) / timeIntervals.length;
+            const averageValue = valueIntervals.reduce((a, b) => a + b, 0) / valueIntervals.length;
+            if (result[type].value > 2 * averageValue / averageTime * interval) {
+                result[type].value = value;
+            }
+        } catch (err) {
+            console.log('Failed to validate consumption.');
+        }
     });
     return Object.values(result);
 }
