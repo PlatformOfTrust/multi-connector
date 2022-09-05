@@ -190,7 +190,7 @@ const handleData = async (config, id, data, index) => {
                             freq = 'YEARLY';
                             months = value.Mission.MaintenanceMonths.split(',').map(y => Number.parseInt(y));
                             options = {
-                                count: months,
+                                count: months.length,
                             };
                             break;
                         case 2:
