@@ -294,6 +294,30 @@ const output = async (config, output) => {
                     i,
                 ));
         }
+        // Calculate task counts.
+        try {
+            result[config.output.object][config.output.array] = result[config.output.object][config.output.array].map((t) => {
+                if (Object.hasOwnProperty.call(t, 'maintenanceInformation')) {
+                    const count = {};
+                    t.maintenanceInformation.forEach(m => {
+                        if (m.processTarget[0]) {
+                            count[m.processTarget[0].idLocal] = !Object.hasOwnProperty.call(count, m.processTarget[0].idLocal) ? 1 : count[m.processTarget[0].idLocal] + 1;
+                        }
+                    });
+                    t.maintenanceInformation = t.maintenanceInformation.map(m => {
+                        if (m.processTarget[0]) {
+                            if (Object.hasOwnProperty.call(count, m.processTarget[0].idLocal)) {
+                                m.count = count[m.processTarget[0].idLocal];
+                            }
+                        }
+                        return m;
+                    });
+                }
+                return t;
+            });
+        } catch (err) {
+            console.log(err.message);
+        }
         if (result[config.output.object][config.output.array].length === 1) {
             result[config.output.object] =
                 result[config.output.object][config.output.array][0];
