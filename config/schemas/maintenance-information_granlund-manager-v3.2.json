@@ -47,7 +47,7 @@
                             },
                             "idLocal": {
                                 "$id": "#/properties/data/properties/maintenanceInformation/items/properties/idLocal",
-                                "source": "Package.Id",
+                                "source": "Task.Id",
                                 "type": "string",
                                 "title": "Local identifier",
                                 "description": "Locally given identifier."

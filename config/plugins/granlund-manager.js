@@ -220,6 +220,12 @@ const handleData = async (config, id, data, index) => {
 
                 result = transformer.transform(value, maintenanceInformationSchema.properties.data);
                 // result[Object.keys(result)[0]][0].raw = value;
+                try {
+                    const targets = result[Object.keys(result)[0]][0].processTarget.map(p => p.idLocal);
+                    result[Object.keys(result)[0]] = targets.map(idLocal => ({...result[Object.keys(result)[0]][0], processTarget: result[Object.keys(result)[0]][0].processTarget.filter(p => p.idLocal === idLocal)}));
+                } catch (err) {
+                    console.log(err.message);
+                }
                 // result[Object.keys(result)[0]][0].processTarget = [{idLocal: id}];
             }
 
@@ -299,15 +305,21 @@ const output = async (config, output) => {
             result[config.output.object][config.output.array] = result[config.output.object][config.output.array].map((t) => {
                 if (Object.hasOwnProperty.call(t, 'maintenanceInformation')) {
                     const count = {};
+                    const completed = {};
                     t.maintenanceInformation.forEach(m => {
                         if (m.processTarget[0]) {
+                            const done = m.status[0].status === 'Completed';
                             count[m.processTarget[0].idLocal] = !Object.hasOwnProperty.call(count, m.processTarget[0].idLocal) ? 1 : count[m.processTarget[0].idLocal] + 1;
+                            completed[m.processTarget[0].idLocal] = !Object.hasOwnProperty.call(completed, m.processTarget[0].idLocal) ? (done ? 1 : 0) : completed[m.processTarget[0].idLocal] + (done ? 1 : 0);
                         }
                     });
                     t.maintenanceInformation = t.maintenanceInformation.map(m => {
                         if (m.processTarget[0]) {
                             if (Object.hasOwnProperty.call(count, m.processTarget[0].idLocal)) {
                                 m.count = count[m.processTarget[0].idLocal];
+                                m.completed = completed[m.processTarget[0].idLocal];
+                                m.value =  m.completed === 0 || m.count === 0 ? 0 : Math.round(m.completed / m.count * 100);
+                                // delete count[m.processTarget[0].idLocal];
                             }
                         }
                         return m;
@@ -430,8 +442,11 @@ const template = async (config, template) => {
             ).split('/').slice(0, 5).join('/') + '/favorite-portfolios?onlyFacilitiesAndBuildings=false';
             const {body} = await request('GET', url, {...options.headers, 'Content-Type': 'application/json'});
             const equipment = exportEquipmentObjects(body[0].Data[0].Data[0], 'ChildObjects', {ObjectSort: 0});
-            console.log(_.uniq(equipment.map(v => v.TypeUsage)));
-            console.log(JSON.stringify(equipment.map(x => x.Id)));
+            // const equipment = exportEquipmentObjects(body[0].Data[0].Data[0], 'ChildObjects', {TypeUsage: 'Equipment'});
+            // console.log(_.uniq(equipment.map(v => v.TypeUsage)));
+            // console.log(equipment.map(x => x.Id).length);
+            equipment.map(x => console.log(x.Id + ';' + x.DisplayName));
+            // console.log(JSON.stringify(equipment.map(x => x.Id + ';' + x.Name + '\n')));
             */
 
             const apiPath = '/maintenance-plans';
