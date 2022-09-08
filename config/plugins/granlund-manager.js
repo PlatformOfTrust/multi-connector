@@ -222,8 +222,9 @@ const handleData = async (config, id, data, index) => {
                 // result[Object.keys(result)[0]][0].raw = value;
                 try {
                     const targets = result[Object.keys(result)[0]][0].processTarget.map(p => p.idLocal);
-                    result[Object.keys(result)[0]] = targets.map(idLocal => ({...result[Object.keys(result)[0]][0], processTarget: result[Object.keys(result)[0]][0].processTarget.filter(p => p.idLocal === idLocal)}));
+                    result[Object.keys(result)[0]] = targets.map(idLocal => ({...result[Object.keys(result)[0]][0], processTarget: [result[Object.keys(result)[0]][0].processTarget.find(p => p.idLocal === idLocal)]}));
                 } catch (err) {
+                    console.log('Split fail');
                     console.log(err.message);
                 }
                 // result[Object.keys(result)[0]][0].processTarget = [{idLocal: id}];
@@ -302,10 +303,10 @@ const output = async (config, output) => {
         }
         // Calculate task counts.
         try {
+            const count = {};
+            const completed = {};
             result[config.output.object][config.output.array] = result[config.output.object][config.output.array].map((t) => {
                 if (Object.hasOwnProperty.call(t, 'maintenanceInformation')) {
-                    const count = {};
-                    const completed = {};
                     t.maintenanceInformation.forEach(m => {
                         if (m.processTarget[0]) {
                             const done = m.status[0].status === 'Completed';
@@ -328,8 +329,29 @@ const output = async (config, output) => {
                 return t;
             });
         } catch (err) {
+            console.log('Count fail');
             console.log(err.message);
         }
+        // Filter out duplicates.
+        try {
+            const known = [];
+            result[config.output.object][config.output.array] = result[config.output.object][config.output.array].map((t) => {
+                if (Object.hasOwnProperty.call(t, 'maintenanceInformation')) {
+                    t.maintenanceInformation = t.maintenanceInformation.filter((t) => {
+                        const isDuplicate = known.includes(`${t.idLocal}-${(t.processTarget[0] || {}).idLocal}`);
+                        if (!isDuplicate) {
+                            known.push(`${t.idLocal}-${(t.processTarget[0] || {}).idLocal}`);
+                        }
+                        return !isDuplicate;
+                    });
+                }
+                return t;
+            });
+        } catch (err) {
+            console.log('Duplicate filter fail');
+            console.log(err.message);
+        }
+
         if (result[config.output.object][config.output.array].length === 1) {
             result[config.output.object] =
                 result[config.output.object][config.output.array][0];
