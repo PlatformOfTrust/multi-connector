@@ -29,6 +29,7 @@ const DOWNLOAD_DIR = './temp/';
 const PRIMARY_PRODUCT_CODE = 'C1EC2973-8A0B-4858-BF1E-3A0D0CEFE33A';
 const orderNumberToCALSId = {};
 const productCodeToCALSId = {};
+const projects = {};
 
 // Source mapping.
 const deliveryInformationSchema = {
@@ -1350,13 +1351,21 @@ const sendData = async (req, res, productCode, config, template, result, options
                 // Add project details.
                 if (order['@type'] === 'Document' && !Object.hasOwnProperty.call(order, 'project')) {
                     try {
-                        const parts = options.filename.split('_');
-                        const workPackage = parts[parts.length - 1].split('.')[0];
-                        winston.log('info', 'Read work package ' + workPackage + ' from filename.');
-                        order.project = {
-                            '@type': 'Project',
-                            idLocal: '123124',
-                        };
+                        if (Object.hasOwnProperty.call(projects, productCode)) {
+                            order.project = {
+                                '@type': 'Project',
+                                idLocal: projects[productCode],
+                            };
+                            winston.log('info', 'Read project ' + projects[productCode] + ' from config.');
+                        } else {
+                            const parts = options.filename.split('_');
+                            const workPackage = parts[parts.length - 1].split('.')[0];
+                            winston.log('info', 'Read work package ' + workPackage + ' from filename.');
+                            order.project = {
+                                '@type': 'Project',
+                                idLocal: '123124',
+                            };
+                        }
                     } catch (err) {
                         order.project = {
                             '@type': 'Project',
@@ -1825,6 +1834,9 @@ setTimeout(() => {
                 } else {
                     winston.log('error', 'Invalid cron expression.');
                 }
+            }
+            if (Object.hasOwnProperty.call(config.plugins[PLUGIN_NAME], 'project')) {
+                projects[productCode] = config.plugins[PLUGIN_NAME].project;
             }
         });
 }, 5000);
