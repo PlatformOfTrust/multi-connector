@@ -3,9 +3,12 @@
  * Module dependencies.
  */
 const transformer = require('../../app/lib/transformer');
+const connector = require('../../app/lib/connector');
 const sftp = require('../../app/protocols/sftp');
 const winston = require('../../logger.js');
 const cache = require('../../app/cache');
+const cron = require('node-cron');
+const moment = require('moment');
 const xml2js = require('xml2js');
 const _ = require('lodash');
 const fs = require('fs').promises;
@@ -14,6 +17,11 @@ const PLUGIN_NAME = 'stark';
 const DOWNLOAD_DIR = './temp/';
 const orderNumberToCALSId = {};
 const productCodeToCALSId = {};
+
+// Cron tasks.
+const tasks = {};
+const DEFAULT_SCHEDULE = '*/30 * * * *';
+const DEFAULT_TIMEZONE = 'Europe/Helsinki';
 
 // Source mapping.
 const orderConfirmationSchema = {
@@ -696,6 +704,367 @@ const output = async (config, output) => {
         return output;
     }
 };
+
+/**
+ * Local handler to send error response.
+ *
+ * @param {Object} [req]
+ * @param {Object} [res]
+ * @param {Error} err
+ */
+const errorResponse = async (req, res, err) => {
+    let message;
+    try {
+        message = JSON.parse(err.message);
+    } catch (e) {
+        message = err.message;
+    }
+    // Compose error response object.
+    const result = {
+        error: {
+            status: err.httpStatusCode || 500,
+            message: message || 'Internal Server Error.',
+            translator_response: err.translator_response || undefined,
+        },
+    };
+
+    // Send response.
+    if (req && res) {
+        return res.status(err.httpStatusCode || 500).send(result);
+    } else {
+        return result;
+    }
+};
+
+/**
+ * Sends triggered broker request.
+ *
+ * @param {Object} [req]
+ * @param {Object} [res]
+ * @param {String} productCode
+ * @param {Object} config
+ * @param {Object} template
+ * @param {Object} result
+ * @param {Object} options
+ */
+const sendData = async (req, res, productCode, config, template, result, options) => {
+    let receiverProductCode;
+    try {
+        // Fallback.
+        receiverProductCode = 'purchase-order-from-cals';
+        // Get receiver from config.
+        receiverProductCode = config.plugins.broker.receiver;
+    } catch (err) {
+        winston.log('info', 'Set receiver data product as ' + receiverProductCode + '.');
+    }
+
+    // 4. Send data to vendor data product with broker plugin.
+    try {
+        /** Sender data product */
+        config.productCode = productCode;
+        template = await connector.resolvePlugins(template);
+        template.config = config;
+
+        const keys = Object.keys(result.output.data);
+
+        if (keys.length === 0) {
+            const noData = new Error();
+            noData.httpStatusCode = 404;
+            noData.message = 'Not found.';
+            return errorResponse(req, res, noData);
+        }
+
+        const key = keys[0];
+        template.output.array = key;
+
+        try {
+            if (!Array.isArray(result.output.data[keys[0]])) {
+                result.output.data[key] = [result.output.data[key]];
+            }
+            // Resolve ids.
+            result.output.data[key].map((order) => {
+                if (!Object.hasOwnProperty.call(order, 'deliveryLine')) {
+                    return order;
+                }
+                if (!Array.isArray(order.deliveryLine)) {
+                    order.deliveryLine = [order.deliveryLine];
+                }
+                order.deliveryLine = order.deliveryLine.map((l) => {
+                    winston.log('info', 'Changed ' + l.product.codeProduct + ' to ' + productCodeToCALSId[l.product.codeProduct]);
+                    return {
+                        ...l,
+                        idLocal: productCodeToCALSId[l.product.codeProduct],
+                    };
+                });
+                return order;
+            });
+            if (result.output.data[key].length === 1) {
+                result.output.data[key] = result.output.data[key][0];
+                if (Array.isArray(result.output.data[key])) {
+                    if (result.output.data[key].length === 1) {
+                        result.output.data[key] = result.output.data[key][0];
+                    }
+                }
+            }
+        } catch (e) {
+            console.log(e.message);
+        }
+
+        if (template.plugins.find(p => p.name === 'broker') && template.config.plugins.broker) {
+            // Set isTest.
+            template.config.plugins.broker.parameters = {
+                isTest: options.isTest,
+            };
+
+            /** Sender data product */
+            template.config.productCode = productCode;
+
+            // Check for mapped receiver.
+            if (_.isObject(receiverProductCode)) {
+                if (Object.hasOwnProperty.call(receiverProductCode, key)) {
+                    receiverProductCode = receiverProductCode[key];
+                }
+            }
+
+            /** Receiver data product */
+            config.static.productCode = receiverProductCode;
+
+            winston.log('info', '2. Send received data to receiver data product ' + config.static.productCode + ', isTest=' + options.isTest);
+            await template.plugins.find(p => p.name === 'broker').stream(template, result.output);
+        }
+    } catch (err) {
+        winston.log('error', err.message);
+        return errorResponse(req, res, err);
+    }
+
+    // Detect if order confirmation was sent.
+    try {
+        if (Object.hasOwnProperty.call(result.output, 'data')) {
+            if (Object.hasOwnProperty.call(result.output.data, 'order')) {
+                if (Object.hasOwnProperty.call(result.output.data.order, 'orderLine')) {
+                    const filename = options.filename;
+                    const logFilename = options.filename.slice(0, -4) + '.log';
+                    const dirs = Array.isArray(config.static.toPath) ? config.static.toPath : [config.static.toPath];
+                    for (let i = 0; i < dirs.length; i++) {
+                        let removed = false;
+                        try {
+                            const items = await sftp.remove({
+                                productCode: config.productCode,
+                                authConfig: {...config.static, toPath: dirs[i]},
+                            }, [filename, logFilename], config.productCode);
+                            if (items.length > 0) {
+                                removed = true;
+                                winston.log('info', items.toString());
+                            }
+                        } catch (err) {
+                            winston.log('error', err.message);
+                            removed = false;
+                        }
+                        if (removed) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+    return {
+        message: 'ok',
+    };
+};
+
+/**
+ * Composes local connector request.
+ *
+ * @param {String} productCode
+ * @param {Object} config
+ * @param {String} idLocal
+ * @return
+ *   The connector response.
+ */
+const getData = async (productCode, config, idLocal) => {
+    // Compose triggered local connector request.
+    const triggeredReq = {
+        body: {
+            productCode,
+            timestamp: moment().format(),
+            parameters: {
+                targetObject: {
+                    idLocal,
+                },
+            },
+        },
+        connectorUrl: config.connectorUrl,
+        publicKeyUrl: config.publicKeyUrl,
+    };
+    winston.log('info', '1. Query self with path ${targetObject.idLocal} as ' + idLocal);
+    return await connector.getData(triggeredReq);
+};
+
+/**
+ * Executes scheduled task.
+ *
+ * @param {String} productCode
+ */
+const runJob = async (productCode) => {
+    try {
+        const config = cache.getDoc('configs', productCode);
+        // Download files.
+        const docs = (await sftp.getData({
+            productCode,
+            plugins: [],
+            authConfig: config.static,
+            parameters: {targetObject: {}},
+        }, [''], true)).filter(doc => ((doc || {}).path || '').slice(-4) !== '.log');
+
+        // Send new files and move to archive.
+        for (let i = 0; i < docs.length; i++) {
+            const d = docs[i];
+            winston.log('info', 'Send file ' + d.path);
+
+            // 2. Trigger file sending to receivers.
+            try {
+                const parts = d.path.split('/');
+                const result = await getData(productCode, config, parts[parts.length - 1]);
+                const options = {
+                    filename: parts[parts.length - 1],
+                    isTest: false,
+                };
+                const template = cache.getDoc('templates', config.template) || {};
+                const send = await sendData(null, null, productCode, config, template, result, options);
+                if (Object.hasOwnProperty.call(send, 'error')) {
+                    const lineLimit = 10;
+                    const filename = `${options.filename.split('.').slice(0, -1).join('.')}.log`;
+                    const path = `/${filename}`;
+                    const logFilePath = parts.slice(0, -1).join('/');
+
+                    // Get log.
+                    const logs = await sftp.getData({
+                        productCode,
+                        plugins: [],
+                        authConfig: {...config.static, toPath: logFilePath},
+                        parameters: {targetObject: {}},
+                    }, [path], true);
+
+                    // Insert new line.
+                    let log = '';
+                    const file = logs.find(f => f.name === filename);
+                    if (file) {
+                        log = Buffer.from(file.data, 'base64').toString('utf-8') + '\n';
+                    }
+                    log += new Date().toISOString() + ': ' + parts[parts.length - 1] + ', ' + JSON.stringify(send.error);
+                    const content = log.split('\n').slice(-lineLimit).join('\n');
+
+                    // Upload log.
+                    const to = DOWNLOAD_DIR + productCode + logFilePath + path;
+                    await sftp.checkDir(to);
+                    await fs.writeFile(to, content);
+                    await sftp.sendData({
+                        productCode,
+                        plugins: [],
+                        authConfig: {...config.static, fromPath: logFilePath},
+                        parameters: {targetObject: {}},
+                    }, [path]);
+                }
+            } catch (err) {
+                winston.log('error', err.message);
+            }
+        }
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+};
+
+/**
+ * Restarts a cron task by product code.
+ *
+ * @param {String} productCode
+ * @param {String} [schedule]
+ * @param {String} [timezone]
+ */
+const restartTask = (productCode, schedule = DEFAULT_SCHEDULE, timezone = DEFAULT_TIMEZONE) => {
+    try {
+        stopTask(productCode);
+        destroyTask(productCode);
+        return startTask(productCode, schedule, timezone);
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+};
+
+/**
+ * Starts a cron task by product code.
+ *
+ * @param {String} productCode
+ * @param {String} [schedule]
+ * @param {String} [timezone]
+ */
+const startTask = async (productCode, schedule = DEFAULT_SCHEDULE, timezone = 'Europe/Helsinki') => {
+    try {
+        winston.log('info', `Start a job with product code ${productCode} and schedule ${schedule} at ${timezone} timezone`);
+        tasks[productCode] = cron.schedule(schedule, () => {
+            runJob(productCode);
+        }, {
+            scheduled: true,
+            timezone,
+        });
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+};
+
+/**
+ * Stops a cron task by product code.
+ *
+ * @param {String} productCode
+ */
+const stopTask = (productCode) => {
+    try {
+        if (Object.hasOwnProperty.call(tasks, productCode)) {
+            if (Object.hasOwnProperty.call(tasks[productCode], 'stop')) {
+                tasks[productCode].stop();
+            }
+        }
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+};
+
+/**
+ * Destroys a cron task by product code.
+ *
+ * @param {String} productCode
+ */
+const destroyTask = (productCode) => {
+    try {
+        if (Object.hasOwnProperty.call(tasks, productCode)) {
+            if (Object.hasOwnProperty.call(tasks[productCode], 'destroy')) {
+                tasks[productCode].destroy();
+            }
+        }
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+};
+
+// Get related configs and set schedules.
+setTimeout(() => {
+    Object.entries(cache.getKeysAndDocs('configs') || [])
+        .filter(([_key, value]) => Object.entries(value.plugins || {})
+            .filter(([key, _value]) => key === PLUGIN_NAME).length > 0)
+        .forEach(([productCode, config]) => {
+            if (Object.hasOwnProperty.call(config.plugins[PLUGIN_NAME], 'schedule')) {
+                const schedule = config.plugins[PLUGIN_NAME].schedule;
+                if (cron.validate(schedule)) {
+                    restartTask(productCode, schedule, config.plugins[PLUGIN_NAME].timezone);
+                } else {
+                    winston.log('error', 'Invalid cron expression.');
+                }
+            }
+        });
+}, 5000);
 
 module.exports = {
     name: PLUGIN_NAME,
