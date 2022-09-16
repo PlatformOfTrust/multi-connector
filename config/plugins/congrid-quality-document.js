@@ -478,15 +478,6 @@ const template = async (config, template) => {
         const projects = await request('GET', projectsUrl, headers);
         const project = projects.body.results.find(p => p.projectCode === projectCode);
 
-        if (!project) {
-            try {
-                winston.log('error', 'Found projects only with project codes ' + projects.body.results.map(p => p.projectCode));
-            } catch (err) {
-                winston.log('error', 'Could not parse projects from body:');
-                winston.log('info', JSON.stringify(projects.body));
-            }
-        }
-
         if (!contentType) {
             // Fetch documents.
             if (project) {
@@ -500,6 +491,15 @@ const template = async (config, template) => {
             template.dataObjects = ['results'];
             return template;
             // return Promise.reject(new Error('Missing field categorizationInternetMediaType.'));
+        }
+
+        if (!project) {
+            try {
+                winston.log('error', 'Found projects only with project codes ' + projects.body.results.map(p => p.projectCode));
+            } catch (err) {
+                winston.log('error', 'Could not parse projects from body:');
+                winston.log('info', JSON.stringify(projects.body));
+            }
         }
 
         if (!project) {
