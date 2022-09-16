@@ -480,9 +480,9 @@ const template = async (config, template) => {
 
         if (!project) {
             try {
-                winston.log('error', 'Found projects with only project codes ' + projects.body.results.map(p => p.projectCode));
+                winston.log('error', 'Found projects only with project codes ' + projects.body.results.map(p => p.projectCode));
             } catch (err) {
-                winston.log('error', 'Could ont parse projects from body:');
+                winston.log('error', 'Could not parse projects from body:');
                 winston.log('info', JSON.stringify(projects.body));
             }
         }
@@ -502,7 +502,7 @@ const template = async (config, template) => {
             // return Promise.reject(new Error('Missing field categorizationInternetMediaType.'));
         }
 
-        if (!project.id) {
+        if (!project) {
             return Promise.reject(new Error('Project not found with projectCode ' + projectCode));
         }
 
@@ -511,13 +511,27 @@ const template = async (config, template) => {
         const matrices = await request('GET', matricesUrl, headers);
         const matrix = matrices.body.results.find(p => p.projectId === project.id);
 
+        if (!matrix) {
+            return Promise.reject(new Error('Quality matrix not found with projectId ' + project.id));
+        }
+
         const workSectionsUrl = domain + '/v2/projects/' + project.id + '/workSections?matrixId=' + matrix.id + '&code=' + workSectionCode;
         const workSections = await request('GET', workSectionsUrl, headers);
         const workSection = workSections.body.results.find(p => p.code === workSectionCode);
 
+        if (!workSection) {
+            winston.log('error', 'Found work sections with only codes ' + workSections.body.results.map(p => p.code));
+            return Promise.reject(new Error('Work section not found with code ' + workSectionCode));
+        }
+
         const workActivitiesUrl = domain + '/v2/projects/' + project.id + '/workActivities?matrixId=' + matrix.id + '&name=' + workActivityName;
         const workActivities = await request('GET', workActivitiesUrl, headers);
         const workActivity = workActivities.body.results.find(p => p.name === workActivityName);
+
+        if (!workActivity) {
+            winston.log('error', 'Found activities only with names ' + workActivities.body.results.map(p => p.name));
+            return Promise.reject(new Error('Work activity not found with name ' + workActivityName));
+        }
 
         const body = {
             contentType,
@@ -533,6 +547,9 @@ const template = async (config, template) => {
         // Remove blob storage id prefix.
         if (originalFilename.includes('_-----_')) {
             body.name = originalFilename.split('_-----_')[1];
+        }
+        if (originalFilename.includes('_ - - _')) {
+            body.name = originalFilename.split('_ - - _')[1];
         }
 
         const downloadUrl = template.parameters.targetObject['url'];
