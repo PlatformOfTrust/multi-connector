@@ -523,7 +523,7 @@ const template = async (config, template) => {
         const workSection = workSections.body.results.find(p => p.code === workSectionCode);
 
         if (!workSection) {
-            winston.log('error', 'Found work sections with only codes ' + workSections.body.results.map(p => p.code));
+            winston.log('error', 'Found work sections only with codes ' + workSections.body.results.map(p => p.code));
             return Promise.reject(new Error('Work section not found with code ' + workSectionCode));
         }
 
