@@ -509,7 +509,7 @@ const template = async (config, template) => {
         /** Create document and fetch it */
         const matricesUrl = domain + '/v2/projects/' + project.id + '/matrices';
         const matrices = await request('GET', matricesUrl, headers);
-        const matrix = matrices.body.results.find(p => p.projectId === project.id);
+        const matrix = matrices.body.results.find(p => p.projectId === project.id && p.name !== null);
 
         if (!matrix) {
             return Promise.reject(new Error('Quality matrix not found with projectId ' + project.id));
