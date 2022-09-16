@@ -515,6 +515,9 @@ const template = async (config, template) => {
             return Promise.reject(new Error('Quality matrix not found with projectId ' + project.id));
         }
 
+        winston.log('info', 'Found matrices with name ' +  matrices.body.results.map(m => m.name));
+        winston.log('info', 'Selected matrix with name ' + matrix.name);
+
         const workSectionsUrl = domain + '/v2/projects/' + project.id + '/workSections?matrixId=' + matrix.id + '&code=' + workSectionCode;
         const workSections = await request('GET', workSectionsUrl, headers);
         const workSection = workSections.body.results.find(p => p.code === workSectionCode);
