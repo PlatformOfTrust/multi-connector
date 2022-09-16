@@ -478,6 +478,15 @@ const template = async (config, template) => {
         const projects = await request('GET', projectsUrl, headers);
         const project = projects.body.results.find(p => p.projectCode === projectCode);
 
+        if (!project) {
+            try {
+                winston.log('error', 'Found projects with only project codes ' + projects.body.results.map(p => p.projectCode));
+            } catch (err) {
+                winston.log('error', 'Could ont parse projects from body:');
+                winston.log('info', JSON.stringify(projects.body));
+            }
+        }
+
         if (!contentType) {
             // Fetch documents.
             if (project) {
@@ -491,6 +500,10 @@ const template = async (config, template) => {
             template.dataObjects = ['results'];
             return template;
             // return Promise.reject(new Error('Missing field categorizationInternetMediaType.'));
+        }
+
+        if (!project.id) {
+            return Promise.reject(new Error('Project not found with projectCode ' + projectCode));
         }
 
         /** Create document and fetch it */
@@ -518,8 +531,8 @@ const template = async (config, template) => {
         };
 
         // Remove blob storage id prefix.
-        if (originalFilename.includes('_+-+-+_')) {
-            body.name = originalFilename.split('_+-+-+_')[1];
+        if (originalFilename.includes('_-----_')) {
+            body.name = originalFilename.split('_-----_')[1];
         }
 
         const downloadUrl = template.parameters.targetObject['url'];
