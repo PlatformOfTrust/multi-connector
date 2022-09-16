@@ -549,10 +549,18 @@ const template = async (config, template) => {
 
         // Remove blob storage id prefix.
         if (originalFilename.includes('_-----_')) {
-            body.name = originalFilename.split('_-----_')[1];
+            body.originalFilename = originalFilename.split('_-----_')[1];
+            body.name = body.originalFilename;
         }
         if (originalFilename.includes('_ - - _')) {
-            body.name = originalFilename.split('_ - - _')[1];
+            body.originalFilename = originalFilename.split('_ - - _')[1];
+            body.name = body.originalFilename;
+        }
+
+        if (body.originalFilename.length > 128) {
+            const length = body.originalFilename.length;
+            body.originalFilename = body.originalFilename.substring(length - 128, length);
+            body.name = body.originalFilename;
         }
 
         const downloadUrl = template.parameters.targetObject['url'];
@@ -570,6 +578,10 @@ const template = async (config, template) => {
         const qualityDocumentsUrl = domain + '/v2/qualityDocuments';
         const create = await request('POST', qualityDocumentsUrl, headers, body);
         const qualityDocument = create.body;
+
+        if (!qualityDocument) {
+            return Promise.reject(new Error('Failed to create quality document.'));
+        }
 
         // Upload quality document.
         const uploadUrl = qualityDocument.signedUploadUrl;
