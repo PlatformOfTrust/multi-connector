@@ -75,6 +75,7 @@ const handler = function (err) {
 let server;
 const port = process.env.PORT || 8080;
 const host = process.env.HOST || '0.0.0.0';
+const timeout = process.env.TIMEOUT || 90000;
 
 // Start HTTP server.
 if (process.env.GREENLOCK_MAINTANER) {
@@ -111,3 +112,5 @@ if (process.env.GREENLOCK_MAINTANER) {
         .listen(port, host, () => winston.log('info', `Connector API started on port: ${port}`))
         .on('error', handler);
 }
+
+server.setTimeout(timeout);
