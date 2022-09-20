@@ -478,8 +478,8 @@ const json2xml = (input = {}) => {
     input.customer.contactInformation.country = input.customer.contactInformation.country || '';
 
     input.refSpecial = [
-        {type: 'WORKPACK', value: input.addressShipping.process.idLocal},
-        {type: 'WORKPHASE', value: input.addressShipping.process.name},
+        {type: 'WORKPACK', value: ((input.addressShipping || {}).process || {}).idLocal},
+        {type: 'WORKPHASE', value: ((input.addressShipping || {}).process || {}).name},
     ];
 
     input.orderLine = input.orderLine.map(o => {
