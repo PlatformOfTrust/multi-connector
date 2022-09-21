@@ -133,7 +133,6 @@ const schema = {
                                         'type': 'string',
                                         'title': 'Name',
                                         'description': 'Name.',
-                                        'source': 'contractorName',
                                     },
                                 },
                             },
@@ -186,6 +185,12 @@ const schema = {
                                         'type': 'string',
                                         'title': 'Description',
                                         'description': 'Description.',
+                                    },
+                                    'actionRequired': {
+                                        'type': 'string',
+                                        'title': 'Desriptions of actions',
+                                        'description': 'Actions or activities required or planned to be taken.',
+                                        'source': 'requiredAction',
                                     },
                                     'source': {
                                         '$id': '#/properties/data/properties/case/items/properties/status/properties/source',
@@ -294,7 +299,7 @@ const schema = {
                                         'type': 'string',
                                         'title': 'Local identifier',
                                         'description': 'Locally given identifier.',
-                                        'source': 'targetId',
+                                        'source': 'projectId',
                                     },
                                     'name': {
                                         '$id': '#/properties/data/properties/case/items/properties/project/properties/name',
@@ -319,12 +324,14 @@ const schema = {
                                         'enum': [
                                             'Location',
                                         ],
+                                        'source': 'locationType',
                                     },
                                     'idLocal': {
                                         '$id': '#/properties/data/properties/case/items/properties/location/properties/idLocal',
                                         'type': 'string',
                                         'title': 'Local identifier',
                                         'description': 'Locally given identifier.',
+                                        'source': 'targetId',
                                     },
                                     'name': {
                                         '$id': '#/properties/data/properties/case/items/properties/location/properties/name',
@@ -420,11 +427,7 @@ const handleData = function (config, id, data) {
             value.projectType = 'Project';
             value.sourceType = 'Organization';
             value.contractorType = 'Organization';
-            value.processType = 'Process';
             value.locationType = 'Location';
-            value.creatorType = 'Person';
-            value.updaterType = 'Person';
-            value.processType = 'Process';
 
             result = transformer.transform(value, schema.properties.data);
 
