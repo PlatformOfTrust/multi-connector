@@ -62,7 +62,7 @@ const schema = {
                                 'type': 'string',
                                 'title': 'External system Id',
                                 'description': 'External system identifier.',
-                                'source': 'externalId',
+                                'source': 'displayId',
                             },
                             'descriptionGeneral': {
                                 '$id': '#/properties/data/properties/case/items/properties/descriptionGeneral',
@@ -76,13 +76,14 @@ const schema = {
                                 'type': 'string',
                                 'title': 'Local category',
                                 'description': 'Categorisation name given locally.',
-                                'source': 'caseTypeId',
+                                'source': 'noteTypeId',
                             },
                             'categorizationLocal2': {
                                 '$id': '#/properties/data/properties/case/items/properties/categorizationLocal2',
                                 'type': 'string',
                                 'title': 'Second local category',
                                 'description': 'Additional categorization given locally (source system).',
+                                'source': 'noteClassId',
                             },
                             'header': {
                                 '$id': '#/properties/data/properties/case/items/properties/header',
@@ -90,6 +91,19 @@ const schema = {
                                 'title': 'Header',
                                 'description': 'Header for thing, subject or event.',
                                 'source': 'topicName',
+
+                            },
+                            'created': {
+                                'type': 'string',
+                                'title': 'Created',
+                                'description': 'Creation time.',
+                                'source': 'createdAt',
+                            },
+                            'updated': {
+                                'type': 'string',
+                                'title': 'Update time',
+                                'description': 'Last update time.',
+                                'source': 'modifiedAt',
                             },
                             'contractor': {
                                 '$id': '#/properties/data/properties/case/items/properties/contractor',
@@ -113,6 +127,7 @@ const schema = {
                                         'type': 'string',
                                         'title': 'Local identifier',
                                         'description': 'Locally given identifier.',
+                                        'source': 'companyId',
                                     },
                                     'name': {
                                         'type': 'string',
@@ -144,27 +159,27 @@ const schema = {
                                         'type': 'string',
                                         'title': 'Name',
                                         'description': 'Name.',
+                                        'source': 'statusId',
                                     },
                                     'idLocal': {
                                         '$id': '#/properties/data/properties/case/items/properties/status/properties/idLocal',
                                         'type': 'string',
                                         'title': 'Local identifier',
                                         'description': 'Locally given identifier.',
-                                        'source': 'statusId',
                                     },
                                     'exactTime': {
                                         '$id': '#/properties/data/properties/case/items/properties/status/properties/exactTime',
                                         'type': 'string',
                                         'title': '',
                                         'description': '',
-                                        'source': 'date',
+                                        'source': 'observedAt',
                                     },
                                     'comment': {
                                         '$id': '#/properties/data/properties/case/items/properties/status/properties/comment',
                                         'type': 'string',
                                         'title': '',
                                         'description': '',
-                                        'source': 'classifiersComment',
+                                        'source': 'comments',
                                     },
                                     'descriptionGeneral': {
                                         '$id': '#/properties/data/properties/case/items/properties/status/properties/descriptionGeneral',
@@ -201,6 +216,7 @@ const schema = {
                                                 'type': 'string',
                                                 'title': 'Local identifier',
                                                 'description': 'Locally given identifier.',
+                                                'source': 'createdBy',
                                             },
                                         },
                                     },
@@ -271,12 +287,14 @@ const schema = {
                                         'enum': [
                                             'Project',
                                         ],
+                                        'source': 'projectType',
                                     },
                                     'idLocal': {
                                         '$id': '#/properties/data/properties/case/items/properties/project/properties/idLocal',
                                         'type': 'string',
                                         'title': 'Local identifier',
                                         'description': 'Locally given identifier.',
+                                        'source': 'targetId',
                                     },
                                     'name': {
                                         '$id': '#/properties/data/properties/case/items/properties/project/properties/name',
@@ -400,6 +418,7 @@ const handleData = function (config, id, data) {
             value.type = 'Case';
             value.statusType = 'Status';
             value.projectType = 'Project';
+            value.sourceType = 'Organization';
             value.contractorType = 'Organization';
             value.processType = 'Process';
             value.locationType = 'Location';
