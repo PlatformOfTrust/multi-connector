@@ -124,7 +124,6 @@ const schema = {
                                         'type': 'string',
                                         'title': 'Local identifier',
                                         'description': 'Locally given identifier.',
-                                        'source': 'null',
                                     },
                                     'name': {
                                         'type': 'string',
@@ -432,7 +431,6 @@ const handleData = function (config, id, data) {
             value.sourceType = 'Organization';
             value.contractorType = 'Organization';
             value.locationType = 'Location';
-            value.null = null;
 
             result = transformer.transform(value, schema.properties.data);
 
