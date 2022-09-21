@@ -1,7 +1,8 @@
 {
   "plugins": [
     "oauth2",
-    "siemens-navigator"
+    "siemens-navigator",
+    "consumption"
   ],
   "protocol": "rest",
   "authConfig": {
