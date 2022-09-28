@@ -1,0 +1,19 @@
+{
+  "template": "fidelix-url",
+  "static": {
+    "url": "<url>",
+    "username": "<username>",
+    "password": "<password>",
+    "type": "MeasureAirTemperatureCelsiusDegree"
+  },
+  "dynamic": {
+    "authConfig.path": "ids",
+    "dataPropertyMappings": "type"
+  },
+  "request": {
+    "ids": [
+      "<point-id>"
+    ],
+    "type": "<type>"
+  }
+}
