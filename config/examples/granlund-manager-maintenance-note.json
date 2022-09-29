@@ -1,0 +1,23 @@
+{
+  "template": "granlund-manager",
+  "static": {
+    "url": "<url>",
+    "username": "<username>",
+    "password": "<password>",
+    "clientId": "<client-id>",
+    "clientSecret": "<client-secret>",
+    "type": "Note",
+    "headers": {
+      "Accept-Language": "fi",
+      "X-CustomerId": "<customer-id>"
+    }
+  },
+  "dynamic": {
+    "authConfig.path": "targetObject.idLocal"
+  },
+  "request": {
+    "targetObject": {
+      "idLocal": "<object-id>"
+    }
+  }
+}

@@ -8,6 +8,7 @@ const RRule = require('rrule').RRule;
 const cache = require('../../app/cache');
 const winston = require('../../logger.js');
 const transformer = require('../../app/lib/transformer');
+const noteSchema = require('../schemas/note_granlund-manager-v4.0.json');
 const serviceRequestSchema = require('../schemas/service-request_granlund-manager-v2.1.json');
 const maintenanceInformationSchema = require('../schemas/maintenance-information_granlund-manager-v3.2.json');
 
@@ -49,6 +50,36 @@ const getTasks = async (config, url, skip = false) => {
 };
 
 /**
+ * Resolve notes by object id.
+ *
+ * @param {Object} config
+ * @param {String} url
+ * @param {Boolean} [skip]
+ * @return {Object}
+ */
+const getNotes = async (config, url, skip = false) => {
+    try {
+        const cached = cache.getDoc(config.productCode, url);
+        if (!cached || skip) {
+            const oauth2 = config.plugins.find(p => p.name === 'oauth2');
+            const options = await oauth2.request(config, {});
+            const {body} = await request('GET', url, {...options.headers, 'Content-Type': 'application/json'});
+            cache.setDoc(config.productCode, url, body, STORAGE_TIME / 1000);
+            return body;
+        } else {
+            const ttl = cache.getTtl(config.productCode, url) || 0;
+            const expiration = ttl - STORAGE_TIME + UPDATE_TIME;
+            if (new Date().getTime() > expiration && !skip) {
+                getNotes(config, url, true);
+            }
+            return cached;
+        }
+    } catch (e) {
+        return null;
+    }
+};
+
+/**
  * Resolve single task.
  *
  * @param {Object} config
@@ -81,6 +112,38 @@ const getTask = async (config, value, skip = false, priority = 0) => {
 };
 
 /**
+ * Resolve single note.
+ *
+ * @param {Object} config
+ * @param {Object} value
+ * @param {Boolean} [skip]
+ * @param {Number} [priority]
+ * @return {Object}
+ */
+const getNote = async (config, value, skip = false, priority = 0) => {
+    try {
+        const cached = cache.getDoc(config.productCode, value.MaintenanceNoteId);
+        if ((!cached || skip) && priority === 0) {
+            const oauth2 = config.plugins.find(p => p.name === 'oauth2');
+            const options = await oauth2.request(config, {});
+            const url = `${(Array.isArray(config.authConfig.path) ? config.authConfig.path[0] : config.authConfig.path).split('/').slice(0, 5).join('/')}/maintenance-notes/${value.MaintenanceNoteId}`;
+            const {body} = await request('GET', url, {...options.headers, 'Content-Type': 'application/json'});
+            cache.setDoc(config.productCode, value.MaintenanceNoteId, body, STORAGE_TIME / 1000);
+            return body;
+        } else {
+            const ttl = cache.getTtl(config.productCode, value.MaintenanceNoteId) || 0;
+            const expiration = ttl - STORAGE_TIME + UPDATE_TIME;
+            if (new Date().getTime() > expiration && !skip) {
+                getTask(config, value, true);
+            }
+            return cached;
+        }
+    } catch (e) {
+        return null;
+    }
+};
+
+/**
  * Handles data objects.
  *
  * @param {Object} config
@@ -96,7 +159,24 @@ const handleData = async (config, id, data, index) => {
         let key;
         for (let j = 0; j < data.length; j++) {
             let result = {};
-            if (data[j]['@type'] === 'Case') {
+            if (data[j]['@type'] === 'Note') {
+                key = Object.keys(noteSchema.properties.data.properties)[0];
+                let value = data[j][config.output.value];
+
+                if (new Date().getTime() < (startTime + 1000)) {
+                    // Resolve note.
+                    try {
+                        const doc = await getNote(config, value, false, index);
+                        value = doc ? {...doc, ...value} : value;
+                    } catch (err) {
+                        winston.log('error', err.message);
+                    }
+                } else {
+                    getNote(config, value);
+                }
+
+                result = transformer.transform(value, noteSchema.properties.data);
+            } else if (data[j]['@type'] === 'Case') {
                 key = Object.keys(serviceRequestSchema.properties.data.properties)[0];
                 const value = data[j][config.output.value];
 
@@ -450,7 +530,7 @@ const template = async (config, template) => {
                 }
                 template.protocol = 'custom';
             }
-        } else if (Object.keys(template.dataPropertyMappings).includes('Process')) {
+        } else if (Object.keys(template.dataPropertyMappings).includes('Process') || Object.keys(template.dataPropertyMappings).includes('Note')) {
             /*
             // Maintenance Information
             const oauth2 = template.plugins.find(p => p.name === 'oauth2');
@@ -471,7 +551,18 @@ const template = async (config, template) => {
             // console.log(JSON.stringify(equipment.map(x => x.Id + ';' + x.Name + '\n')));
             */
 
-            const apiPath = '/maintenance-plans';
+            const notes = Object.keys(template.dataPropertyMappings).includes('Note');
+            let apiPath = '/maintenance-plans';
+            template.output.contextValue = 'https://standards.oftrust.net/v2/Context/DataProductOutput/MaintenanceInformation/?v=3.2';
+            template.output.array = 'maintenanceInformation';
+            template.protocol = 'custom';
+            if (notes) {
+                apiPath = '/maintenance-notes';
+                template.output.contextValue = 'https://standards.oftrust.net/v2/Context/DataProductOutput/Note/?v=4.0';
+                template.output.array = 'note';
+                template.protocol = 'custom';
+            }
+
             // apiPath = '/maintenance-notes'
             template.parameters.targetObject.idLocal = Array.isArray(template.parameters.targetObject.idLocal) ? template.parameters.targetObject.idLocal : [template.parameters.targetObject.idLocal];
             template.authConfig.path = template.parameters.targetObject.idLocal.map(p => (Array.isArray(template.authConfig.path) ? template.authConfig.path[0] : template.authConfig.path).split('/').slice(0, 5).join('/') + `/objects/${p}${apiPath}`);
@@ -484,15 +575,16 @@ const template = async (config, template) => {
 
             const loader = async (urls) => {
                 for (let i = 0; i < urls.length; i++) {
-                    await getTasks(template, urls[i]);
+                    if (notes) {
+                        await getNotes(template, urls[i]);
+                    } else {
+                        await getTasks(template, urls[i]);
+                    }
+
                 }
             };
 
             loader(preload);
-
-            template.output.contextValue = 'https://standards.oftrust.net/v2/Context/DataProductOutput/MaintenanceInformation/?v=3.2';
-            template.output.array = 'maintenanceInformation';
-            template.protocol = 'custom';
         }
     } catch (err) {
         winston.log('error', err.message);
