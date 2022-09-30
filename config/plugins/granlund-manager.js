@@ -565,7 +565,7 @@ const template = async (config, template) => {
 
             // apiPath = '/maintenance-notes'
             template.parameters.targetObject.idLocal = Array.isArray(template.parameters.targetObject.idLocal) ? template.parameters.targetObject.idLocal : [template.parameters.targetObject.idLocal];
-            template.authConfig.path = template.parameters.targetObject.idLocal.map(p => (Array.isArray(template.authConfig.path) ? template.authConfig.path[0] : template.authConfig.path).split('/').slice(0, 5).join('/') + `/objects/${p}${apiPath}`);
+            template.authConfig.path = template.parameters.targetObject.idLocal.map(p => (Array.isArray(template.authConfig.path) ? template.authConfig.path[0] : template.authConfig.path).split('/').slice(0, 5).join('/') + `/objects/${_.isObject(p) ? (p.id || p.idLocal) : p}${apiPath}`);
             const cached = template.authConfig.path.filter(p => !!cache.getDoc(template.productCode, p));
             const preload = template.authConfig.path.filter(p => !cached.includes(p));
 
