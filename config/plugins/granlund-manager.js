@@ -412,7 +412,8 @@ const output = async (config, output) => {
             console.log('Count fail');
             console.log(err.message);
         }
-        // Filter out duplicates.
+
+        // Filter out duplicate tasks.
         try {
             const known = [];
             result[config.output.object][config.output.array] = result[config.output.object][config.output.array].map((t) => {
@@ -421,6 +422,26 @@ const output = async (config, output) => {
                         const isDuplicate = known.includes(`${t.idLocal}-${(t.processTarget[0] || {}).idLocal}`);
                         if (!isDuplicate) {
                             known.push(`${t.idLocal}-${(t.processTarget[0] || {}).idLocal}`);
+                        }
+                        return !isDuplicate;
+                    });
+                }
+                return t;
+            });
+        } catch (err) {
+            console.log('Duplicate filter fail');
+            console.log(err.message);
+        }
+
+        // Filter out duplicate notes.
+        try {
+            const known = [];
+            result[config.output.object][config.output.array] = result[config.output.object][config.output.array].map((t) => {
+                if (Object.hasOwnProperty.call(t, 'note')) {
+                    t.note = t.note.filter((t) => {
+                        const isDuplicate = known.includes(t.idLocal);
+                        if (!isDuplicate) {
+                            known.push(t.idLocal);
                         }
                         return !isDuplicate;
                     });
