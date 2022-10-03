@@ -64,11 +64,16 @@ function getWSDL (config) {
     } else {
         /** Basic authentication. */
         return new Promise((resolve, reject) => {
-            request({url: protocol + username + ':' + password + '@' + url.replace(protocol, '')},
-                function (err, response, body) {
-                    if (err) reject(err);
-                    else resolve(body);
+            request({
+                url: protocol + url.replace(protocol, ''),
+                headers: {
+                    Authorization: 'Basic ' + Buffer.from(username + ':' + password).toString('base64'),
                 },
+            },
+            function (err, response, body) {
+                if (err) reject(err);
+                else resolve(body);
+            },
             );
         });
     }
