@@ -386,15 +386,16 @@ const output = async (config, output) => {
             const count = {};
             const completed = {};
             result[config.output.object][config.output.array] = result[config.output.object][config.output.array].map((t) => {
-                if (Object.hasOwnProperty.call(t, 'maintenanceInformation')) {
-                    t.maintenanceInformation.forEach(m => {
+                if (Object.hasOwnProperty.call(t, 'maintenanceInformation') || Object.hasOwnProperty.call(t, 'note')) {
+                    const keyName = Object.hasOwnProperty.call(t, 'maintenanceInformation') ? 'maintenanceInformation' : 'note';
+                    t[keyName].forEach(m => {
                         if (m.processTarget[0]) {
                             const done = m.status[0].status === 'Completed';
                             count[m.processTarget[0].idLocal] = !Object.hasOwnProperty.call(count, m.processTarget[0].idLocal) ? 1 : count[m.processTarget[0].idLocal] + 1;
                             completed[m.processTarget[0].idLocal] = !Object.hasOwnProperty.call(completed, m.processTarget[0].idLocal) ? (done ? 1 : 0) : completed[m.processTarget[0].idLocal] + (done ? 1 : 0);
                         }
                     });
-                    t.maintenanceInformation = t.maintenanceInformation.map(m => {
+                    t[keyName] = t[keyName].map(m => {
                         if (m.processTarget[0]) {
                             if (Object.hasOwnProperty.call(count, m.processTarget[0].idLocal)) {
                                 m.count = count[m.processTarget[0].idLocal];
