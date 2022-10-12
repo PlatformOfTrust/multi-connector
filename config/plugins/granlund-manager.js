@@ -202,6 +202,22 @@ const handleData = async (config, id, data, index) => {
                         break;
                 }
 
+                try {
+                    // Create idLocal from description.
+                    const description = value.Request;
+                    const regExp = /\[(.*?)]/g;
+                    const matches = _.uniq(((description || '').match(regExp) || []).filter(tag => tag.length > 2).map(s => s.slice(1, -1)));
+                    if (matches[0]) {
+                        value.CodedObject.Id2 = matches[0].split(' ')[0];
+                        const name = matches[0].split(' ');
+                        name.shift();
+                        value.CodedObject.Name2 = name.join(' ');
+                        value.CodedObject.DisplayName2 = `${value.CodedObject.Id2} ${value.CodedObject.Name2}`;
+                    }
+                } catch (err) {
+                    console.log(err.message);
+                }
+
                 result = transformer.transform(value, serviceRequestSchema.properties.data);
             } else {
                 key = Object.keys(maintenanceInformationSchema.properties.data.properties)[0];
@@ -381,7 +397,9 @@ const output = async (config, output) => {
                     i,
                 ));
         }
-        // Calculate task counts.
+
+        /*
+        // Calculate service request counts.
         try {
             const count = {};
             const completed = {};
@@ -400,6 +418,44 @@ const output = async (config, output) => {
                             if (Object.hasOwnProperty.call(count, m.processTarget[0].idLocal)) {
                                 m.count = count[m.processTarget[0].idLocal];
                                 m.completed = completed[m.processTarget[0].idLocal];
+                                m.value =  m.completed === 0 || m.count === 0 ? 0 : Math.round(m.completed / m.count * 100);
+                                // delete count[m.processTarget[0].idLocal];
+                            }
+                        }
+                        return m;
+                    });
+                }
+                return t;
+            });
+        } catch (err) {
+            console.log('Count fail');
+            console.log(err.message);
+        }
+        */
+
+        // Calculate task counts.
+        try {
+            const count = {};
+            const completed = {};
+            result[config.output.object][config.output.array] = result[config.output.object][config.output.array].map((t) => {
+                if (Object.hasOwnProperty.call(t, 'maintenanceInformation') || Object.hasOwnProperty.call(t, 'note') || Object.hasOwnProperty.call(t, 'serviceRequest')) {
+                    const keyName = Object.hasOwnProperty.call(t, 'maintenanceInformation') ? 'maintenanceInformation' : Object.hasOwnProperty.call(t, 'note') ? 'note' : 'serviceRequest';
+                    t[keyName].forEach(m => {
+                        const target = (m.processTarget || [])[0] || m.targetObject;
+                        if (target) {
+                            const done = (m.status[0].status || m.status[0].name) === 'Completed';
+                            const targetId = target.idLocal2 || target.idLocal;
+                            count[targetId] = !Object.hasOwnProperty.call(count, targetId) ? 1 : count[targetId] + 1;
+                            completed[targetId] = !Object.hasOwnProperty.call(completed, targetId) ? (done ? 1 : 0) : completed[targetId] + (done ? 1 : 0);
+                        }
+                    });
+                    t[keyName] = t[keyName].map(m => {
+                        const target = (m.processTarget || [])[0] || m.targetObject;
+                        if (target) {
+                            const targetId = target.idLocal2 || target.idLocal;
+                            if (Object.hasOwnProperty.call(count, targetId)) {
+                                m.count = count[targetId];
+                                m.completed = completed[targetId];
                                 m.value =  m.completed === 0 || m.count === 0 ? 0 : Math.round(m.completed / m.count * 100);
                                 // delete count[m.processTarget[0].idLocal];
                             }
