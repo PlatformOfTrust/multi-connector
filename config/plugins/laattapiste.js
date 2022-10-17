@@ -816,8 +816,8 @@ const json2xml = (input = {}) => {
         {name: 'workPackage', value: _.get(input, 'addressShipping.process.idLocal')},
         {name: 'workPackageLocation', value: _.get(input, 'addressShipping.nameArea')},
         {name: 'workPackageLocationName', value: _.get(input, 'addressShipping.location.name')},
-        {name: 'workPackageAreaName', value: _.get(input, 'addressShipping.location.zone')},
-        {name: 'workPackageInventoryLocationName', value: _.get(input, 'addressShipping.location.space')},
+        {name: 'workPackageAreaName', value: _.get(input, 'addressShipping.zone.name')},
+        {name: 'workPackageInventoryLocationName', value: _.get(input, 'addressShipping.space.name')},
         {name: 'workPackagePhase', value: _.get(input, 'addressShipping.process.name')},
         {name: 'workPackageOperator', value: _.get(input, 'addressShipping.contact.name')},
         {name: 'workPackageOperatorContactName', value: _.get(input, 'addressShipping.contact.contactInformation.name')},
@@ -828,8 +828,8 @@ const json2xml = (input = {}) => {
     if (input.reference === '') {
         input.reference = [
             _.get(input, 'addressShipping.process.idLocal'),
-            _.get(input, 'addressShipping.location.zone.name'),
-            _.get(input, 'addressShipping.location.space.name'),
+            _.get(input, 'addressShipping.zone.name'),
+            _.get(input, 'addressShipping.space.name'),
         ].join(' / ');
     }
 
