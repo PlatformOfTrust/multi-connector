@@ -113,4 +113,7 @@ if (process.env.GREENLOCK_MAINTANER) {
         .on('error', handler);
 }
 
-server.setTimeout(timeout);
+if (server) {
+    server.setTimeout(timeout);
+}
+

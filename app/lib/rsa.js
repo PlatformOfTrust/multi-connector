@@ -64,6 +64,12 @@ const readPublicKeys = async () => {
             }
         } catch (err) {
             winston.log('error', err.message);
+            if (Object.hasOwnProperty.call(publicKeyURLs[i], 'key')) {
+                cache.setDoc('publicKeys', i, {
+                    priority: i,
+                    ...publicKeyURLs[i],
+                }, 0);
+            }
         }
     }
 };
@@ -206,10 +212,12 @@ const generateSignature = function (body, key) {
  *   Signature to validate.
  * @param {String/Object} [key]
  *   Public key used for validation.
+ * @param {Boolean} [sort]
+ *   Sort body.
  * @return {Boolean}
  *   True if signature is valid, false otherwise.
  */
-const verifySignature = function (body, signature, key) {
+const verifySignature = function (body, signature, key, sort = true) {
     // Use local public key, if not given.
     if (!key) key = publicKey;
 
@@ -217,7 +225,7 @@ const verifySignature = function (body, signature, key) {
     const verifier = crypto.createVerify('sha256');
 
     // Update verifier.
-    verifier.update(stringifyBody(body));
+    verifier.update(sort ? stringifyBody(body) : JSON.stringify(body).replace(' ', ''));
 
     // Verify base64 encoded SHA256 signature.
     return verifier.verify(key, signature, 'base64');
