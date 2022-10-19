@@ -60,18 +60,20 @@ const stream = async (template, data) => {
 
     try {
         let env = 'sandbox';
+        let version = 'v1';
         const config = template.config;
 
-        // Try to parse env from the config.
+        // Try to parse env and version from the config.
         try {
             env = config.plugins.broker.env;
+            version = config.plugins.broker.version;
         } catch (err) {
             winston.log('error', err.message);
         }
 
         // Find env specific broker URL.
-        const url = (brokerURLs.find(i => i.env === (env || 'sandbox'))
-            || {url: 'http://localhost:8080/translator/v1/fetch'}).url;
+        const url = (brokerURLs.find(i => i.env === (env || 'sandbox') && i.version === (version || 'v1')) ||
+            {url: 'http://localhost:8080/translator/v1/fetch'}).url;
 
         /** Output definitions from config. */
         const objectKey = template.output.object || 'data';
@@ -141,7 +143,7 @@ const stream = async (template, data) => {
 
                 for (let r = 0; r < requests.length; r++) {
                     // Send broker request.
-                    winston.log('info', 'Broker plugin: Send broker request to ' + url);
+                    winston.log('info', 'Broker plugin: Send broker request to ' + url.replace(':productCode', productCode));
 
                     // Initialize signature value.
                     let signatureValue;
@@ -165,7 +167,7 @@ const stream = async (template, data) => {
                         'Content-Type': 'application/json',
                     };
 
-                    await request('POST', url, headers, requests[r]);
+                    await request('POST', url.replace(':productCode', productCode), headers, requests[r]);
                 }
             }
         }
