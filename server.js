@@ -6,7 +6,6 @@ const fs = require('fs');
 const helmet = require('helmet');
 const express = require('express');
 const passport = require('passport');
-const winston = require('./logger.js');
 const bodyParser = require('body-parser');
 const compression = require('compression');
 
@@ -15,6 +14,9 @@ const app = express();
 
 // Load environment variables.
 require('dotenv').config();
+
+// Setup logger.
+const winston = require('./logger.js');
 
 /**
  * Express middleware.

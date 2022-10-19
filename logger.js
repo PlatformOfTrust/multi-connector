@@ -4,6 +4,7 @@
  */
 const fs = require('fs');
 const env = process.env.NODE_ENV || 'development';
+const colorize = !(process.env.COLORIZE_LOGS === 'false');
 const {createLogger, format, transports} = require('winston');
 const {timestamp, printf} = format;
 require('winston-daily-rotate-file');
@@ -30,11 +31,7 @@ const logger = createLogger({
     transports: [
         new (transports.Console)({
             level: 'silly',
-            format: format.combine(
-                timestamp(),
-                format.colorize(),
-                myFormat,
-            ),
+            format: format.combine(timestamp(), ...(colorize ? [format.colorize()] : []), myFormat),
             handleExceptions: true,
             exitOnError: false,
         }),
