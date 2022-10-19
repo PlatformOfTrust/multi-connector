@@ -57,7 +57,7 @@ module.exports = function (passport) {
             if (verified) continue;
             if (rsa.verifySignature(req.body, signature, publicKeys[i].key) || rsa.verifySignature(req.body, signature, publicKeys[i].key, false)) {
                 verified = true;
-                version = publicKeys[i].version
+                version = publicKeys[i].version;
                 environment = publicKeys[i].env;
             }
         }
@@ -76,6 +76,7 @@ module.exports = function (passport) {
 
         // Attach identity details and additional info.
         return done(null, app, {
+            credentialsToken: req.headers['credentials-token'],
             environment,
             version,
             scope: '*',

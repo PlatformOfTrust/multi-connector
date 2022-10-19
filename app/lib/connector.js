@@ -6,6 +6,7 @@ const winston = require('../../logger.js');
 const rest = require('../protocols/rest');
 const validator = require('./validator');
 const output = require('../lib/output');
+const rp = require('request-promise');
 const {replacer} = require('./utils');
 const events = require('events');
 const cache = require('../cache');
@@ -18,6 +19,11 @@ const fs = require('fs');
  *
  * Handles data fetching by product code specific configurations.
  */
+
+/** Platform of Trust related definitions. */
+const {
+    brokerURLs,
+} = require('../../config/definitions/pot');
 
 /** Import platform of trust request definitions. */
 const {
@@ -231,6 +237,31 @@ function emit (collections) {
         return emit(['templates', 'configs', 'resources']);
     })
     .catch((err) => winston.log('error', err.message));
+
+/**
+ * Sends http request.
+ *
+ * @param {String} method
+ * @param {String} url
+ * @param {Object} [headers]
+ * @param {String/Object/Array} [body]
+ * @return {Promise}
+ */
+function request (method, url, headers, body) {
+    const options = {
+        method: method,
+        uri: url,
+        json: true,
+        body: body,
+        resolveWithFullResponse: true,
+        headers: headers,
+    };
+
+    return rp(options).then(result => Promise.resolve(result))
+        .catch((error) => {
+            return Promise.reject(error);
+        });
+}
 
 /**
  * Configures template with data product config (static)
@@ -538,6 +569,34 @@ const composeOutput = async (template, input) => {
 };
 
 /**
+ * Handles retrieval of data product credentials.
+ *
+ * @param {Object} config
+ * @param {String} productCode
+ * @param {Object} authInfo
+ * @return {Object}
+ *   Config object.
+ */
+const getCredentials = async (config, productCode, authInfo) => {
+    try {
+        const url = ((brokerURLs.find(i => i.env === authInfo.environment && i.version === authInfo.version) || {})
+            .credentialsUrl || '')
+            .replace(':productCode', productCode);
+        const headers = {'Credentials-Token': authInfo.credentialsToken, Authorization: authInfo.credentialsToken};
+        const result = await request('GET', url, headers);
+        /*
+        console.log('authInfo:', authInfo);
+        console.log('url:', url);
+        console.log('headers', headers);
+        */
+        console.log(result);
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+    return config;
+};
+
+/**
  * Loads config by requested product code and retrieves template defined in the config.
  * Places static and dynamic parameters to the template as described.
  *
@@ -547,6 +606,8 @@ const composeOutput = async (template, input) => {
  */
 const getData = async (req) => {
     const reqBody = req.body;
+
+    console.log(req.headers);
 
     /** Default request validation */
     let validation = validator.validate(reqBody, supportedParameters);
@@ -568,6 +629,9 @@ const getData = async (req) => {
     // Get data product config template.
     let template = cache.getDoc('templates', config.template);
     if (!template) return rest.promiseRejectWithError(404, 'Data product config template not found.');
+
+    // Attach data product credentials.
+    config = getCredentials(config, productCode, req.authInfo);
 
     /* Custom requirements */
     let requiredParameters;
