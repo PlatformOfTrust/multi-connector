@@ -578,7 +578,7 @@ const composeOutput = async (template, input) => {
  * @return {Object}
  *   Config object.
  */
-const getCredentials = async (config, productCode, authInfo) => {
+const getCredentials = async (config, productCode, authInfo = {}) => {
     try {
         const url = ((brokerURLs.find(i => i.env === authInfo.environment && i.version === authInfo.version) || {})
             .credentialsUrl || '')
