@@ -138,6 +138,7 @@ const decrypt = (value = {}) => {
  * Expose library functions.
  */
 module.exports = {
+    replaceAll,
     replacer,
     encrypt,
     decrypt,
