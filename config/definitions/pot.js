@@ -18,26 +18,6 @@ const baseURLs = {
 /** URLs of Platform of Trust public keys. */
 const publicKeyURLs = [
     {
-        version: 'v1',
-        env: 'production',
-        url: 'https://static.oftrust.net/keys/translator.pub',
-    },
-    {
-        version: 'v1',
-        env: 'sandbox',
-        url: 'https://static-sandbox.oftrust.net/keys/translator.pub',
-    },
-    {
-        version: 'v1',
-        env: 'staging',
-        url: 'https://static-staging.oftrust.net/keys/translator.pub',
-    },
-    {
-        version: 'v1',
-        env: 'test',
-        url: 'https://static-test.oftrust.net/keys/translator.pub',
-    },
-    {
         version: 'v2',
         env: 'production',
         url: `${baseURLs['production']}/products/v2/auth/public-key`,
@@ -60,6 +40,26 @@ const publicKeyURLs = [
         env: 'dev',
         url: `${baseURLs['dev']}/products/v2/auth/public-key`,
         key: '-----BEGIN PUBLIC KEY-----\nMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAhdDCC//QEgc4P4K9Bu+X\nNY3p0iZ8MYG1V4DNayrryaIZd4AXyB00TzdiBRHu0OzGcnNKo9llPwo8/k5hBADe\nRaohJWT90NfW2ectMSzyilmBo9ypqyRjP5pOBxkxjuiQDLJqjXQLIDC9v2DBcD0J\nMcalOkgJXa1tQidV+8m7zTWWfGKJGN9O7EvqoaMPBrDwzB1z0L7AuqtOpPMPtPcD\nlpElJqc/aimXY4VsjyCeC/mfgMEot1RNOClgaxu94NpjkywO3mEw3bnL6vjGocOg\nBay0R6cP3ggUPf+TBEmAdYWoK7BQWw+bhIVZUcq6lHdCy6BWOyXrwmdMQ1K1qq2r\n+PDjEmsyJbWEzXy67LnsEd7AY3qOoG/LOHmQutM2hrPltdEAylRptkNxmCNJxulH\n6p4GNvDf1OxWO4/gyt1I8sLP9TZavIcuNCuWXAMWaONbJGfs319oa0V2PubNd5bk\n6BLvvbL3Sd2hzNCtwwadEAfGfMxd6VrnhygKSdwnygFQJqk3Nxf56L9F932lmcb6\n+9XkXfQX/sBzpzhGns4mCrSBucr9nXx52HXwiaxpvRPMRbyuLqh6vLjfgOMHE2Kw\n3K3vvGgI4b0FPhj5cjmQsA7SyslZj2XAvpQYQtbEAgmbaFi0GQuvxaO6deepM7hx\ni1q+VqwkbiEMT3oLkLsUodMCAwEAAQ==\n-----END PUBLIC KEY-----',
+    },
+    {
+        version: 'v1',
+        env: 'production',
+        url: 'https://static.oftrust.net/keys/translator.pub',
+    },
+    {
+        version: 'v1',
+        env: 'sandbox',
+        url: 'https://static-sandbox.oftrust.net/keys/translator.pub',
+    },
+    {
+        version: 'v1',
+        env: 'staging',
+        url: 'https://static-staging.oftrust.net/keys/translator.pub',
+    },
+    {
+        version: 'v1',
+        env: 'test',
+        url: 'https://static-test.oftrust.net/keys/translator.pub',
     },
 ];
 
