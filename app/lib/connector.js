@@ -631,7 +631,7 @@ const getCredentials = async (config, productCode, authInfo = {}) => {
             }
             if (credentials.type === 'api-key') {
                 if (Object.hasOwnProperty.call(credentials, 'value')) {
-                    config.static.apikey = credentials.value;
+                    config.static[Object.hasOwnProperty.call(credentials, 'key') ? credentials['key'] : 'apikey'] = credentials.value;
                 }
             }
         }
@@ -674,7 +674,7 @@ const getData = async (req) => {
     if (!template) return rest.promiseRejectWithError(404, 'Data product config template not found.');
 
     // Attach data product credentials.
-    config = getCredentials(config, productCode, req.authInfo) || config;
+    config = await getCredentials(config, productCode, req.authInfo) || config;
 
     /* Custom requirements */
     let requiredParameters;
