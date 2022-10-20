@@ -50,7 +50,7 @@ function SignatureStrategy (options, verify) {
     }
     if (!verify) throw new Error('Signature strategy requires a verify callback');
 
-    this._signatureField = options.signatureField || '[x-pot-signature][pot-signature]';
+    this._signatureField = options.signatureField || '[pot-signature][x-pot-signature]';
 
     Strategy.call(this);
     this.name = 'signature';
