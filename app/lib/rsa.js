@@ -4,6 +4,7 @@
  */
 const crypto = require('crypto');
 const cache = require('../cache');
+const { replaceAll } = require('../lib/utils');
 const rp = require('request-promise');
 const winston = require('../../logger.js');
 
@@ -59,7 +60,7 @@ const readPublicKeys = async () => {
                 cache.setDoc('publicKeys', i, {
                     priority: i,
                     ...publicKeyURLs[i],
-                    key: body.toString(),
+                    key: replaceAll(body.toString(), '\\n', '\n'),
                 }, 0);
             }
         } catch (err) {
