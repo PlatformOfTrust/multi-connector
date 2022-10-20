@@ -1205,6 +1205,7 @@ const errorResponse = async (req, res, err) => {
         error: {
             status: err.httpStatusCode || 500,
             message: message || 'Internal Server Error.',
+            productCode: err.productCode || null,
             translator_response: err.translator_response || undefined,
         },
     };
@@ -1549,6 +1550,7 @@ const controller = async (req, res) => {
             if (_.isEmpty(config) || !Object.hasOwnProperty.call(config, 'static')) {
                 const err = new Error('Data product configuration not found.');
                 err.httpStatusCode = 404;
+                err.productCode = productCode;
                 return errorResponse(req, res, err);
             }
 
@@ -1573,6 +1575,7 @@ const controller = async (req, res) => {
         } catch (err) {
             err.httpStatusCode = 500;
             err.message = 'Failed to handle request.';
+            err.productCode = productCode;
             return errorResponse(req, res, err);
         }
 

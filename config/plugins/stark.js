@@ -1271,6 +1271,7 @@ const errorResponse = async (req, res, err) => {
         error: {
             status: err.httpStatusCode || 500,
             message: message || 'Internal Server Error.',
+            productCode: err.productCode || null,
             translator_response: err.translator_response || undefined,
         },
     };
@@ -1318,6 +1319,7 @@ const sendData = async (req, res, productCode, config, template, result, options
             const noData = new Error();
             noData.httpStatusCode = 404;
             noData.message = 'Not found.';
+            noData.productCode = productCode;
             return errorResponse(req, res, noData);
         }
 
@@ -1384,8 +1386,6 @@ const sendData = async (req, res, productCode, config, template, result, options
         return errorResponse(req, res, err);
     }
 
-    console.log('done')
-
     // Detect if order confirmation was sent.
     try {
         if (Object.hasOwnProperty.call(result.output, 'data')) {
@@ -1450,7 +1450,7 @@ const getData = async (productCode, config, idLocal) => {
         connectorUrl: config.connectorUrl,
         publicKeyUrl: config.publicKeyUrl,
     };
-    console.log(JSON.stringify(triggeredReq));
+
     winston.log('info', '1. Query self with path ${targetObject.idLocal} as ' + idLocal);
     return await connector.getData(triggeredReq);
 };

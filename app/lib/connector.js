@@ -7,10 +7,11 @@ const rest = require('../protocols/rest');
 const validator = require('./validator');
 const output = require('../lib/output');
 const rp = require('request-promise');
-const {replacer} = require('./utils');
+const {replacer, decrypt} = require('./utils');
 const events = require('events');
 const cache = require('../cache');
 const moment = require('moment');
+const crypto = require('crypto');
 const _ = require('lodash');
 const fs = require('fs');
 
@@ -582,14 +583,28 @@ const getCredentials = async (config, productCode, authInfo) => {
         const url = ((brokerURLs.find(i => i.env === authInfo.environment && i.version === authInfo.version) || {})
             .credentialsUrl || '')
             .replace(':productCode', productCode);
-        const headers = {'Credentials-Token': authInfo.credentialsToken, Authorization: authInfo.credentialsToken};
+        if (!url) {
+            return;
+        }
+
+        const key = crypto.randomBytes(32).toString('base64');
+        const headers = {
+            Authorization: authInfo.credentialsToken,
+            'Encryption-Secret': key,
+        };
+
+        // Fetch encrypted credentials.
         const result = await request('GET', url, headers);
-        /*
-        console.log('authInfo:', authInfo);
-        console.log('url:', url);
-        console.log('headers', headers);
-        */
-        console.log(result);
+
+        // Decrypt message.
+        const credentials = decrypt({
+            key,
+            encrypted: result.body,
+            iv: Buffer.allocUnsafe(16).fill(0).toString('base64'),
+            encoding: 'base64',
+        }) || {};
+
+        // console.log(credentials);
     } catch (err) {
         winston.log('error', err.message);
     }
@@ -606,8 +621,6 @@ const getCredentials = async (config, productCode, authInfo) => {
  */
 const getData = async (req) => {
     const reqBody = req.body;
-
-    console.log(req.headers);
 
     /** Default request validation */
     let validation = validator.validate(reqBody, supportedParameters);
@@ -631,7 +644,7 @@ const getData = async (req) => {
     if (!template) return rest.promiseRejectWithError(404, 'Data product config template not found.');
 
     // Attach data product credentials.
-    config = getCredentials(config, productCode, req.authInfo);
+    config = getCredentials(config, productCode, req.authInfo) || config;
 
     /* Custom requirements */
     let requiredParameters;

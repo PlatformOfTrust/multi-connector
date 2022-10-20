@@ -2,16 +2,22 @@
 /**
  * Module dependencies.
  */
-const net = require('net');
+const _ = require('lodash');
 const moment = require('moment');
 const rsa = require('../lib/rsa');
 const connector = require('../lib/connector');
+const winston = require('../../logger.js');
 
 /**
  * Translator controller.
  *
  * Handles fetching and returning of the data.
  */
+
+/** Import platform of trust request definitions. */
+const {
+    PRODUCT_CODE,
+} = require('../../config/definitions/request');
 
 /**
  * Returns the data to the PoT Broker API
@@ -55,9 +61,21 @@ module.exports.fetch = async (req, res) => {
             error: {
                 status: err.httpStatusCode || 500,
                 message: err.message || 'Internal Server Error.',
+                productCode: _.get(req.body, PRODUCT_CODE) || null,
                 translator_response: err.translator_response || undefined,
             },
         };
+
+        // Compose error message.
+        const message = [
+            err.httpStatusCode || err.statusCode || 500,
+            req.originalUrl,
+            `productCode=${result.error.productCode}`,
+            JSON.stringify(result),
+        ].join(' | ');
+
+        // Log error.
+        winston.log('error', message);
 
         // Send response.
         return res.status(err.httpStatusCode || 500).send(result);

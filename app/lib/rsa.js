@@ -232,6 +232,38 @@ const verifySignature = function (body, signature, key, sort = true) {
 };
 
 /**
+ * Encrypts string with given public key.
+ *
+ * @param {String} string
+ *   The string to encrypt.
+ * @param {String} [key]
+ *   Public key.
+ * @return {String}
+ *   The encrypted string.
+ */
+const encrypt = function (string, key) {
+    // Use local public key, if not given.
+    if (!key) key = publicKey;
+    return crypto.publicEncrypt(key, Buffer.from(string, 'utf8')).toString('base64');
+};
+
+/**
+ * Decrypts string with given private key.
+ *
+ * @param {String} string
+ *   The string to decrypt.
+ * @param {String} [key]
+ *   Private key.
+ * @return {String}
+ *   The decrypted string.
+ */
+const decrypt = function (string, key) {
+    // Use local private key, if not given.
+    if (!key) key = privateKey;
+    return crypto.privateDecrypt(key, Buffer.from(string, 'base64')).toString('utf8');
+};
+
+/**
  * Expose library functions.
  */
 module.exports = {
@@ -241,4 +273,6 @@ module.exports = {
     verifySignature,
     sendPublicKey,
     getPublicKey,
+    encrypt,
+    decrypt,
 };

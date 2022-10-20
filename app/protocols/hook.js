@@ -177,11 +177,11 @@ const handler = async (productCode, config, topic, message) => {
  */
 const controller = async (req, res) => {
     let result;
-    let host;
+    let productCode;
     try {
         let topic = req.params.topic;
         const parts = req.originalUrl.split('/');
-        const productCode = parts.splice(parts.indexOf('hooks') + 1)[0].split('?')[0];
+        productCode = parts.splice(parts.indexOf('hooks') + 1)[0].split('?')[0];
         const config = cache.getDoc('configs', productCode) || {};
 
         if (!Object.hasOwnProperty.call(config, 'static')) {
@@ -253,6 +253,7 @@ const controller = async (req, res) => {
                 error: {
                     status: err.httpStatusCode || 500,
                     message: err.message || 'Internal Server Error.',
+                    productCode: productCode || null,
                     translator_response: err.translator_response || undefined,
                 },
             };

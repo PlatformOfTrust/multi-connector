@@ -1,4 +1,6 @@
 'use strict';
+const crypto = require('crypto');
+
 /**
  * Module dependencies.
  */
@@ -9,6 +11,8 @@ const _ = require('lodash');
  *
  * Common functions.
  */
+
+const algorithm = 'aes-256-cbc';
 
 /**
  * Escapes special (meta) characters.
@@ -90,8 +94,51 @@ const replacer = function (template, placeholder, value) {
 };
 
 /**
+ * Encrypts given string value.
+ *
+ * @param {String} value
+ * @param {String} key
+ * @return {Object}
+ */
+const encrypt = (value = '', key) => {
+    try {
+        const iv = crypto.randomBytes(16);
+        const cipher = crypto.createCipheriv(algorithm, Buffer.from(key, 'base64'), iv);
+        let encrypted = cipher.update(value);
+        encrypted = Buffer.concat([encrypted, cipher.final()]);
+        return {
+            iv: iv.toString('hex'),
+            encrypted: encrypted.toString('hex'),
+        };
+    } catch (err) {
+        return undefined;
+    }
+};
+
+/**
+ * Decrypts given string value.
+ *
+ * @param {Object} value
+ * @return {String}
+ */
+const decrypt = (value = {}) => {
+    try {
+        const iv = Buffer.from(value.iv, value.encoding || 'hex');
+        const encrypted = Buffer.from(value.encrypted, value.encoding || 'hex');
+        const decipher = crypto.createDecipheriv(algorithm, Buffer.from(value.key, 'base64'), iv);
+        let decrypted = decipher.update(encrypted);
+        decrypted = Buffer.concat([decrypted, decipher.final()]);
+        return decrypted.toString();
+    } catch (err) {
+        return undefined;
+    }
+};
+
+/**
  * Expose library functions.
  */
 module.exports = {
     replacer,
+    encrypt,
+    decrypt,
 };

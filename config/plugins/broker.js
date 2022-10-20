@@ -50,7 +50,9 @@ function request (method, url, headers, body) {
  * @return {Object}
  */
 const stream = async (template, data) => {
+    let productCode;
     let parameters;
+
     try {
         // Include parameters defined in config.
         parameters = template.config.plugins.broker.parameters;
@@ -81,7 +83,7 @@ const stream = async (template, data) => {
         data = Array.isArray(data) ? data : [data];
 
         for (let i = 0; i < data.length; i++) {
-            const productCode = config.static.productCode;
+            productCode = config.static.productCode;
             if (!productCode) continue;
 
             if (url) {
@@ -175,6 +177,7 @@ const stream = async (template, data) => {
         const error = new Error('Broker returns an invalid response.');
         error.httpStatusCode = 500;
         error.translator_response = err.error;
+        error.productCode = productCode || null;
         winston.log('error', err.message);
         throw error;
     }
