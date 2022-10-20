@@ -597,14 +597,44 @@ const getCredentials = async (config, productCode, authInfo) => {
         const result = await request('GET', url, headers);
 
         // Decrypt message.
-        const credentials = decrypt({
+        const message = decrypt({
             key,
             encrypted: result.body,
             iv: Buffer.allocUnsafe(16).fill(0).toString('base64'),
             encoding: 'base64',
-        }) || {};
+        }) || '{}';
 
-        // console.log(credentials);
+        const credentials = JSON.parse(message.replace(/[\u0000-\u001F\u007F-\u009F]/g, ''));
+
+        if (Object.hasOwnProperty.call(credentials, 'type')) {
+            if (credentials.type === 'basic-auth' || credentials.type === 'oauth2') {
+                if (Object.hasOwnProperty.call(credentials, 'username')) {
+                    config.static.username = credentials.username;
+                }
+                if (Object.hasOwnProperty.call(credentials, 'password')) {
+                    config.static.password = credentials.password;
+                }
+            }
+            if (credentials.type === 'oauth2') {
+                if (Object.hasOwnProperty.call(credentials, 'clientId')) {
+                    config.static.clientId = credentials.clientId;
+                }
+                if (Object.hasOwnProperty.call(credentials, 'clientSecret')) {
+                    config.static.clientSecret = credentials.clientSecret;
+                }
+                if (Object.hasOwnProperty.call(credentials, 'grantType')) {
+                    config.static.grantType = credentials.grantType;
+                }
+                if (Object.hasOwnProperty.call(credentials, 'scope')) {
+                    config.static.scope = credentials.scope;
+                }
+            }
+            if (credentials.type === 'api-key') {
+                if (Object.hasOwnProperty.call(credentials, 'value')) {
+                    config.static.apikey = credentials.value;
+                }
+            }
+        }
     } catch (err) {
         winston.log('error', err.message);
     }
