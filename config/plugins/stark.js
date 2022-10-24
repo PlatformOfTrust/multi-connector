@@ -1272,6 +1272,7 @@ const errorResponse = async (req, res, err) => {
             status: err.httpStatusCode || 500,
             message: message || 'Internal Server Error.',
             productCode: err.productCode || null,
+            appId: err.appId || null,
             translator_response: err.translator_response || undefined,
         },
     };

@@ -62,6 +62,7 @@ module.exports.fetch = async (req, res) => {
                 status: err.httpStatusCode || 500,
                 message: err.message || 'Internal Server Error.',
                 productCode: _.get(req.body, PRODUCT_CODE) || null,
+                appId: (req.user || {})['@id'] || null,
                 translator_response: err.translator_response || undefined,
             },
         };
@@ -70,7 +71,7 @@ module.exports.fetch = async (req, res) => {
         const message = [
             err.httpStatusCode || err.statusCode || 500,
             req.originalUrl,
-            `productCode=${result.error.productCode}`,
+            `productCode=${result.error.productCode}, appId=${result.error.appId}`,
             JSON.stringify(result),
         ].join(' | ');
 

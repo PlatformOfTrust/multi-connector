@@ -178,6 +178,7 @@ const stream = async (template, data) => {
         error.httpStatusCode = 500;
         error.translator_response = err.error;
         error.productCode = productCode || null;
+        error.appId = null;
         winston.log('error', err.message);
         throw error;
     }

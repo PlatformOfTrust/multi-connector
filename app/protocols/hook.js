@@ -254,6 +254,7 @@ const controller = async (req, res) => {
                     status: err.httpStatusCode || 500,
                     message: err.message || 'Internal Server Error.',
                     productCode: productCode || null,
+                    appId: null,
                     translator_response: err.translator_response || undefined,
                 },
             };
