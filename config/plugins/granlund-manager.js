@@ -176,7 +176,7 @@ const handleData = async (config, id, data, index) => {
                 }
 
                 result = transformer.transform(value, noteSchema.properties.data);
-            } else if (data[j]['@type'] === 'Case') {
+            } else if (data[j]['@type'] === 'Case' || data[j]['@type'] === '${type}') {
                 key = Object.keys(serviceRequestSchema.properties.data.properties)[0];
                 const value = data[j][config.output.value];
 
