@@ -89,25 +89,25 @@ const brokerURLs = [
         version: 'v2',
         env: 'production',
         url: `${baseURLs['production']}/products/v2/:productCode/data`,
-        credentialsUrl: `${baseURLs['production']}/products/v2/:productCode/auth-credentials/consume`,
+        credentialsUrl: `${baseURLs['production']}/products/v2/auth-credentials/consume`,
     },
     {
         version: 'v2',
         env: 'sandbox',
         url: `${baseURLs['sandbox']}/products/v2/:productCode/data`,
-        credentialsUrl: `${baseURLs['sandbox']}/products/v2/:productCode/auth-credentials/consume`,
+        credentialsUrl: `${baseURLs['sandbox']}/products/v2/auth-credentials/consume`,
     },
     {
         version: 'v2',
         env: 'test',
         url: `${baseURLs['test']}/products/v2/:productCode/data`,
-        credentialsUrl: `${baseURLs['test']}/products/v2/:productCode/auth-credentials/consume`,
+        credentialsUrl: `${baseURLs['test']}/products/v2/auth-credentials/consume`,
     },
     {
         version: 'v2',
         env: 'dev',
         url: `${baseURLs['dev']}/products/v2/:productCode/data`,
-        credentialsUrl: `${baseURLs['dev']}/products/v2/:productCode/auth-credentials/consume`,
+        credentialsUrl: `${baseURLs['dev']}/products/v2/auth-credentials/consume`,
     },
 ];
 

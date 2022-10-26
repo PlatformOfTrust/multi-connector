@@ -581,8 +581,7 @@ const composeOutput = async (template, input) => {
 const getCredentials = async (config, productCode, authInfo = {}) => {
     try {
         const url = ((brokerURLs.find(i => i.env === authInfo.environment && i.version === authInfo.version) || {})
-            .credentialsUrl || '')
-            .replace(':productCode', productCode);
+            .credentialsUrl || '');
         if (!url) {
             return;
         }
