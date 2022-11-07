@@ -23,7 +23,13 @@ const {supportedHeaders} = require('../../config/definitions/request');
  *   User or app id.
  */
 const extractId = function (token) {
-    return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('binary')).sub;
+    let id;
+    try {
+        id = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('binary')).sub;
+    } catch (err) {
+        id = null;
+    }
+    return id;
 };
 
 /**
