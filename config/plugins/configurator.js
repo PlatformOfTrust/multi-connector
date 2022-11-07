@@ -4,6 +4,7 @@
  */
 const transformer = require('../../app/lib/transformer');
 const connector = require('../../app/lib/connector');
+const {replaceAll} = require('../../app/lib/utils');
 const winston = require('../../logger.js');
 const cache = require('../../app/cache');
 const rsa = require('../../app/lib/rsa');
@@ -267,7 +268,7 @@ const fetchPublicKeys = async (URLs, count = 0) => {
                 priority,
                 url: URLs[j],
                 env: process.env.NODE_ENV || 'development',
-                key: body.toString(),
+                key: replaceAll(body.toString(), '\\n', '\n'),
             });
         }
     }
@@ -467,6 +468,9 @@ const template = async (config, template) => {
             const {result, err} = await updateConfigs(template.parameters.targetObject);
             if (err.length > 0) return Promise.reject(new Error(err.toString()));
             template.authConfig.path = result;
+        }
+        if (!template.authConfig.authPath) {
+            template.plugins = template.plugins.filter(p => p.name !== 'oauth2');
         }
         return template;
     } catch (err) {
