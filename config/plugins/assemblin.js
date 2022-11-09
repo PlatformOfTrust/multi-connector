@@ -28,13 +28,30 @@ const request = async (config, options) => {
             resolveWithFullResponse: true,
         };
         const result = await rp(data);
-        const token = result.headers['set-cookie'][0].split(';')[0];
+
         // Authorize request.
-        options.headers = {'Cookie': token};
+        options.headers.Cookie = result.headers['set-cookie'][0].split(';')[0];
     } catch (err) {
         console.log(err.message);
     }
     return options;
+};
+
+/**
+ * Adds ids to request body.
+ *
+ * @param {Object} config
+ * @param {Object} template
+ * @return {Object}
+ */
+const template = async (config, template) => {
+    try {
+        template.authConfig.body = template.parameters.ids
+            .map(i => Object.fromEntries([['Property', template.authConfig.site],['Id', i.id || i]]));
+    } catch (err) {
+        console.log(err.message);
+    }
+    return template;
 };
 
 /**
@@ -43,4 +60,5 @@ const request = async (config, options) => {
 module.exports = {
     name: 'assemblin',
     request,
+    template,
 };

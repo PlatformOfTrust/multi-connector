@@ -1,0 +1,22 @@
+{
+  "template": "assemblin",
+  "static": {
+    "username": "<username>",
+    "password": "<password>",
+    "url": "https://valvomo.deos.fi:8000/<client>",
+    "type": "MeasureAirTemperatureCelsiusDegree",
+    "site": "<site>",
+    "headers": {
+      "content-type": "application/json; charset=UTF-8"
+    }
+  },
+  "dynamic": {
+    "authConfig.path": "ids",
+    "dataPropertyMappings": "type"
+  },
+  "request": {
+    "ids": [
+      "<id>"
+    ]
+  }
+}

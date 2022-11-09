@@ -1,6 +1,6 @@
 {
   "plugins": [
-      "assemblin"
+    "assemblin"
   ],
   "protocol": "rest",
   "authConfig": {
@@ -9,17 +9,20 @@
     "username": "${username}",
     "password": "${password}",
     "headers": "${headers}",
+    "body": {},
+    "site": "${site}",
+    "method": "POST",
     "path": "${url}/v1/points/byid"
   },
   "dataObjects": [
     ""
   ],
   "dataPropertyMappings": {
-    "${type}": "result"
+    "${type}": "value"
   },
   "generalConfig": {
     "hardwareId": {
-      "dataObjectProperty": "hardwareId"
+      "dataObjectProperty": "id"
     },
     "timestamp": {
       "dataObjectProperty": "timestamp"
