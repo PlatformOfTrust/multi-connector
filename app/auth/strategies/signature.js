@@ -72,7 +72,7 @@ SignatureStrategy.prototype.authenticate = function (req, options) {
     // Looking for this._signatureField inside both request queries and request bodies.
     const signature = lookup(req.headers, this._signatureField);
     if (!signature) {
-        return this.fail(new Error('Missing signature'));
+        return this.fail(new Error('Missing required header [x-pot-signature | pot-signature]'));
     }
 
     const self = this;
