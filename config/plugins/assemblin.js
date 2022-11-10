@@ -47,7 +47,7 @@ const request = async (config, options) => {
 const template = async (config, template) => {
     try {
         template.authConfig.body = template.parameters.ids
-            .map(i => Object.fromEntries([['Property', template.authConfig.site],['Id', i.id || i]]));
+            .map(i => Object.fromEntries([['Property', i.Property || i.property || template.authConfig.site],['Id', (i.id || i.Id) || i]]));
     } catch (err) {
         console.log(err.message);
     }
