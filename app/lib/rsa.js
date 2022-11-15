@@ -226,7 +226,7 @@ const verifySignature = function (body, signature, key, sort = true) {
     const verifier = crypto.createVerify('sha256');
 
     // Update verifier.
-    verifier.update(sort ? stringifyBody(body) : JSON.stringify(body).replace(' ', ''));
+    verifier.update(sort ? stringifyBody(body) : replaceAll(JSON.stringify(body), ' ', ''));
 
     // Verify base64 encoded SHA256 signature.
     return verifier.verify(key, signature, 'base64');
