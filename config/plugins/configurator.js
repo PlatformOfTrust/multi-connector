@@ -390,14 +390,21 @@ const response = async (config, res) => {
     return response;
 };
 
-const updateConfigs = async (dataProducts) => {
+/**
+ * Updates or removes configs from cache.
+ *
+ * @param {Array} dataProducts
+ * @param {Array} blacklist
+ * @return {Object}
+ */
+const updateConfigs = async (dataProducts, blacklist = []) => {
     const items = Array.isArray(dataProducts) ? dataProducts : [dataProducts];
     const errors = [];
     const result = [];
     for (let i = 0; i < items.length; i++) {
         const config = items[i].config;
         const productCode = items[i].productCode || items[i].id;
-        if (config !== null) {
+        if (config !== null && !blacklist.includes(productCode)) {
             try {
                 /** 1. Create or update. */
                 if (!_.isObject(config)) continue;
@@ -406,8 +413,8 @@ const updateConfigs = async (dataProducts) => {
                 const template = config.template;
                 const systemTemplates = cache.getKeys('templates');
 
-                // Validate template.
-                if (!systemTemplates.includes(template)) {
+                // Validate template and prevent using configurator template.
+                if (!systemTemplates.includes(template) || template === 'configurator') {
                     template !== undefined
                         ? errors.push(productCode + ' - Missing required template: ' + template)
                         : errors.push(productCode + ' - Missing required field: template');
@@ -465,7 +472,7 @@ const template = async (config, template) => {
         } else {
             /** 2. Update. */
             template.parameters.type = 'update';
-            const {result, err} = await updateConfigs(template.parameters.targetObject);
+            const {result, err} = await updateConfigs(template.parameters.targetObject, [config.productCode]);
             if (err.length > 0) return Promise.reject(new Error(err.toString()));
             template.authConfig.path = result;
         }
