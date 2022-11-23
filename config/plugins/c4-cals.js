@@ -820,10 +820,11 @@ const handleData = function (config, id, data) {
                                 purchaseOrderItemNumber: (i + 1) + '0',
                             };
                         }
-                        winston.log('info', 'Store CALS identifiers from sent order.');
+                        // winston.log('info', 'Store CALS identifiers from sent order.');
                         // winston.log('info', 'orderNumberToCALSId: ' + JSON.stringify(orderNumberToCALSId));
                         // winston.log('info', 'orderIdToCALSInstanceId: ' + JSON.stringify(orderIdToCALSInstanceId));
                         // winston.log('info', 'vendorMaterialCodeToCALSId: ' + JSON.stringify(vendorMaterialCodeToCALSId));
+                        winston.log('info', 'Processed order ' + value.purchaseOrderId + ' with idLocal ' + value.purchaseOrderNumber);
                     } catch (e) {
                         console.log(e.message);
                     }
@@ -945,6 +946,17 @@ const errorResponse = async (req, res, err) => {
             translator_response: err.translator_response || undefined,
         },
     };
+
+    // Compose error message.
+    const logMessage = [
+        err.httpStatusCode || err.statusCode || 500,
+        req.originalUrl,
+        `productCode=${result.error.productCode}, appId=${result.error.appId}`,
+        JSON.stringify(result),
+    ].join(' | ');
+
+    // Log error.
+    winston.log('error', logMessage);
 
     // Send response.
     return res.status(err.httpStatusCode || 500).send(result);
