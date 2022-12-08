@@ -78,6 +78,7 @@ let server;
 const port = process.env.PORT || 8080;
 const host = process.env.HOST || '0.0.0.0';
 const timeout = process.env.TIMEOUT || 90000;
+const storagePath = process.env.STORAGE_PATH || './';
 
 // Start HTTP server.
 if (process.env.GREENLOCK_MAINTANER) {
@@ -85,7 +86,7 @@ if (process.env.GREENLOCK_MAINTANER) {
      * Greenlock Express v4 configuration.
      */
     let config = {sites: []};
-    const configDir = './greenlock.d';
+    const configDir = `${storagePath}greenlock.d`;
     const configFile = configDir + '/config.json';
     if (!fs.existsSync(configDir)) fs.mkdirSync(configDir);
     if (!fs.existsSync(configFile)) fs.writeFileSync(configFile, JSON.stringify(config), 'utf8');
