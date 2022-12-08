@@ -13,8 +13,8 @@ const fs = require('fs');
 /**
  * Congrid quality document creator plugin.
  */
-
-const DOWNLOAD_DIR = './temp';
+const storagePath = process.env.STORAGE_PATH || './'
+const DOWNLOAD_DIR = `${storagePath}temp`;
 
 // Source mapping.
 const documentSchema = {
