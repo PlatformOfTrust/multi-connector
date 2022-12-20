@@ -177,8 +177,9 @@ const createSOAPClient = async (config, url, pathArray) => {
  */
 const getData = async (config, pathArray) => {
     let items = [];
-    const WSDLDir = 'wsdl';
-    const WSDLFile = './' + WSDLDir + '/' + encodeURI(config.productCode) + '.xml';
+    const storagePath = process.env.STORAGE_PATH || './'
+    const WSDLDir = `${storagePath}wsdl`;
+    const WSDLFile = WSDLDir + '/' + encodeURI(config.productCode) + '.xml';
 
     try {
         // Create WSDL folder, if it does not exist.
