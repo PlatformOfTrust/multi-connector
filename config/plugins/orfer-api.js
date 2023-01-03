@@ -16,9 +16,11 @@ const _ = require('lodash');
  * @param {String} url
  * @param {Object} [headers]
  * @param {String/Object/Array} [body]
+ * @param {Object} [query]
+ * @param {String/Object/Array} [returnOnError]
  * @return {Promise}
  */
-function request (method, url, headers, body, query = {}) {
+function request (method, url, headers, body, query = {}, returnOnError) {
     const options = {
         method: method,
         uri: url,
@@ -31,7 +33,7 @@ function request (method, url, headers, body, query = {}) {
 
     return rp(options).then(result => Promise.resolve(result))
         .catch((error) => {
-            return Promise.resolve(error);
+            return returnOnError ? Promise.resolve(returnOnError) : Promise.resolve(error);
         });
 }
 
@@ -79,8 +81,9 @@ const response = async (config, response) => {
                 customerId: customerId,
                 machineId: machine.machineId,
             };
-            let {body: {values: modules} = {}} = (await request('GET', modulesUrl, headers, {}, query) || {});
-            let {body: {values: counters} = {}} = (await request('GET', countersUrl, headers, {}, query) || {});
+            let {body: {values: modules} = {}} = (await request('GET', modulesUrl, headers, {}, query, {body: {values: []}}) || {});
+            let {body: {values: counters} = {}} = (await request('GET', countersUrl, headers, {}, query, {body: {values: []}}) || {});
+
             if (startTime && endTime) {
                 modules = await Promise.all(modules.map(async (mod) => {
                     const moduleQuery = {...query, moduleId: mod.moduleId, startTime, endTime};
@@ -131,7 +134,7 @@ const response = async (config, response) => {
             machine.counters = counters || [];
 
             const values = {};
-            const {body: {values: productionOverview} = {}} = (await request('GET', productionOverviewUrl, headers, {}, {...query, startTime, endTime}) || {});
+            const {body: {values: productionOverview} = {}} = await request('GET', productionOverviewUrl, headers, {}, {...query, startTime, endTime}, {body: {values: []}}) || {};
             (productionOverview || []).sort((a, b) => a['recipeName'] - b['recipeName']).forEach(o => Object.entries(o).forEach(([key, value]) => {
                 values[key] = key === 'recipeName' ? ((values[key] || '') + (values[key] ? ', ' : '') + value) : (values[key] || 0) + value;
             }));
@@ -152,13 +155,13 @@ const response = async (config, response) => {
                 ...values,
             } : undefined;
 
-            const {body: {values: shiftOverview} = {}} = (await request('GET', shiftOverviewUrl, headers, {}, {...query, startTime, endTime}) || {});
+            const {body: {values: shiftOverview} = {}} = (await request('GET', shiftOverviewUrl, headers, {}, {...query, startTime, endTime}, {body: {values: []}}) || {});
             machine.shiftOverview = shiftOverview || [];
 
-            const {body: {values: errorData} = {}} = (await request('GET', errorDataUrl, headers, {}, {...query, startTime, endTime}) || {});
+            const {body: {values: errorData} = {}} = (await request('GET', errorDataUrl, headers, {}, {...query, startTime, endTime}, {body: {values: []}}) || {});
             machine.errorData = errorData || [];
 
-            const {body: {values: errorSummary} = {}} = (await request('GET', errorSummaryUrl, headers, {}, {...query, startTime, endTime}) || {});
+            const {body: {values: errorSummary} = {}} = (await request('GET', errorSummaryUrl, headers, {}, {...query, startTime, endTime}, {body: {values: []}}) || {});
             machine.errorSummary = errorSummary || [];
 
             return machine;
