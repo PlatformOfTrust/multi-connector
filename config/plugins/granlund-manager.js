@@ -205,14 +205,21 @@ const handleData = async (config, id, data, index) => {
                 try {
                     // Create idLocal from description.
                     const description = value.Request;
-                    const regExp = /\[(.*?)]/g;
-                    const matches = _.uniq(((description || '').match(regExp) || []).filter(tag => tag.length > 2).map(s => s.slice(1, -1)));
+                    let regExp = /\[(.*?)]/g;
+                    let removeOuterBrackets = true;
+                    if (Object.hasOwnProperty.call(config.parameters, 'pattern')) {
+                        regExp = config.parameters.pattern;
+                        removeOuterBrackets = false;
+                    }
+                    const matches = _.uniq(((description || '').match(regExp) || []).filter(tag => tag.length > 2).map(s => removeOuterBrackets ? s.slice(1, -1) : s));
                     if (matches[0]) {
-                        value.CodedObject.Id2 = matches[0].split(' ')[0];
-                        const name = matches[0].split(' ');
-                        name.shift();
+                        value.CodedObject.Id2 = matches[0].split(' ')[0] || matches[0];
+                        const name = matches[0].split(' ').filter(i => i !== '');
+                        if (name.length > 1) {
+                            name.shift();
+                        }
                         value.CodedObject.Name2 = name.join(' ');
-                        value.CodedObject.DisplayName2 = `${value.CodedObject.Id2} ${value.CodedObject.Name2}`;
+                        value.CodedObject.DisplayName2 = `${value.CodedObject.Id2}${value.CodedObject.Name2 !== value.CodedObject.Id2 ? ' ' + value.CodedObject.Name2 : ''}`;
                     }
                 } catch (err) {
                     console.log(err.message);
