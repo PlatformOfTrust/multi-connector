@@ -21,12 +21,46 @@ const genRand = function (min, max, decimalPlaces) {
  * Generates test data by id and time range.
  *
  * @param {String} id
+ * @param {String} key
+ * @param {String} type
+ * @param {Number} value
+ * @param {Number} min
+ * @param {Number} max
+ * @param {Number} decimals
  * @param {Array} range
+ * @param {Number} interval
  * @return {Array}
  */
-const generateData = function (id, range) {
+const generateData = function (id, key = 'value', type = 'temp', value = null,
+    min, max, decimals, range, interval = 600000) {
+    if (min === undefined && max === undefined) {
+        switch (type) {
+            case 'humidity':
+                ({min, max, decimals} = {min: 30, max: 50, decimals: 2});
+                break;
+            case 'co2':
+                ({min, max, decimals} = {min: 450, max: 800, decimals: 0});
+                break;
+            case 'noise':
+                ({min, max, decimals} = {min: 36, max: 41, decimals: 0});
+                break;
+            case 'rating':
+                ({min, max, decimals} = {min: 1, max: 5, decimals: 0});
+                break;
+            case 'motion':
+                ({min, max, decimals} = {min: 1, max: 10, decimals: 0});
+                break;
+            case 'reserved':
+                ({min, max, decimals} = {min: 0, max: 1, decimals: 0});
+                break;
+            default:
+                // temp
+                ({min, max, decimals} = {min: 19, max: 26, decimals: 2});
+        }
+    }
     const entry = {
-        value: genRand(19, 26, 2),
+        type,
+        [key]: value || genRand(min, max, decimals),
         name: 'Sensor ' + id,
         id,
     };
@@ -35,14 +69,15 @@ const generateData = function (id, range) {
         let length = 1;
         if (range[0].toString() !== 'Invalid Date'
             && range[1].toString() !== 'Invalid Date') {
-            length = Math.max(Math.floor((range[1].getTime() - range[0].getTime()) / 600000), 1);
+            length = Math.max(Math.floor((range[1].getTime() - range[0].getTime()) / interval), 1);
         } else {
             range[0] = new Date.now();
         }
         for (let i = 0; i < length; i++) {
             data[i] = {
-                timestamp: range[0].getTime() + i * 600000,
-                value: genRand(19, 26, 2),
+                type,
+                timestamp: range[0].getTime() + i * interval,
+                [key]: value || genRand(min, max, decimals),
                 name: 'Sensor ' + id,
                 id,
             };
@@ -61,7 +96,7 @@ const generateData = function (id, range) {
  * @return {Object}
  */
 const response = async (config, res) => {
-    let response;
+    const response = [];
 
     /** Data fetching. */
     try {
@@ -70,8 +105,21 @@ const response = async (config, res) => {
             range = [config.parameters.start, config.parameters.end];
         }
 
+        const inputTypes = (config.parameters.options || {}).types || [];
+        const types = inputTypes.length > 0 ? inputTypes : [{type: config.parameters.type}];
+
         // Generate data.
-        response = generateData(res, range);
+        for (let i = 0; i < types.length; i++) {
+            const options = typeof types[i] === 'string' ? {type: `${types[i]}`} : types[i];
+            let key = 'value';
+
+            if (Array.isArray((config.parameters.options || {}).types) && inputTypes.length > 0) {
+                config.dataPropertyMappings[options.type] = options.type || 'value';
+                key = options.type || 'value';
+            }
+            response.push(...generateData(res, key, options.type, options.value, options.min, options.max, options.decimals, range, options.interval));
+        }
+
     } catch (err) {
         console.log(err.message);
     }
