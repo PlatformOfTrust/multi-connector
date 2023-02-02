@@ -17,6 +17,17 @@ const genRand = function (min, max, decimalPlaces) {
     return Math.floor(rand * power) / power;
 };
 
+/** Mockup values for min, max and decimals **/
+const mockup = {
+    temp: [19, 26, 2],
+    humidity: [30, 50, 2],
+    co2: [450, 800, 0],
+    noise: [36, 41, 0],
+    rating: [1, 5, 0],
+    motion: [1, 10, 0],
+    reserved: [0, 1, 0],
+};
+
 /**
  * Generates test data by id and time range.
  *
@@ -33,30 +44,12 @@ const genRand = function (min, max, decimalPlaces) {
  */
 const generateData = function (id, key = 'value', type = 'temp', value = null,
     min, max, decimals, range, interval = 600000) {
-    if (min === undefined && max === undefined) {
-        switch (type) {
-            case 'humidity':
-                ({min, max, decimals} = {min: 30, max: 50, decimals: 2});
-                break;
-            case 'co2':
-                ({min, max, decimals} = {min: 450, max: 800, decimals: 0});
-                break;
-            case 'noise':
-                ({min, max, decimals} = {min: 36, max: 41, decimals: 0});
-                break;
-            case 'rating':
-                ({min, max, decimals} = {min: 1, max: 5, decimals: 0});
-                break;
-            case 'motion':
-                ({min, max, decimals} = {min: 1, max: 10, decimals: 0});
-                break;
-            case 'reserved':
-                ({min, max, decimals} = {min: 0, max: 1, decimals: 0});
-                break;
-            default:
-                // temp
-                ({min, max, decimals} = {min: 19, max: 26, decimals: 2});
-        }
+    if (min === undefined || max === undefined || decimals === undefined) {
+        ({min, max, decimals} = {
+            min: min === undefined ? (mockup[type] ? mockup[type][0] : mockup['temp'][0]) : min,
+            max: max === undefined ? (mockup[type] ? mockup[type][0] : mockup['temp'][1]) : max,
+            decimals: decimals === undefined ? (mockup[type] ? mockup[type][2] : mockup['temp'][2]) : decimals,
+        });
     }
     const entry = {
         type,
