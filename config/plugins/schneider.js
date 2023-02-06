@@ -69,7 +69,7 @@ const output = async (config, output) => {
             // Handle hot and cold water categorization.
             output.data.process = output.data.process.map(a => ({...a, measurements: a.measurements.map(b => ({
                 ...b,
-                '@type':  a.id.includes('lämmin') ? 'MeasureWaterHotConsumptionLitre' : b['@type'],
+                '@type':  a.id.toLowerCase().includes('lämmin') ? 'MeasureWaterHotConsumptionLitre' : b['@type'],
             }))}));
         }
         return output;
