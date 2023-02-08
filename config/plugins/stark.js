@@ -23,6 +23,7 @@ const productCodeToCALSId = {};
 const tasks = {};
 const DEFAULT_SCHEDULE = '*/30 * * * *';
 const DEFAULT_TIMEZONE = 'Europe/Helsinki';
+const LOGFILE = false;
 
 // Source mapping.
 const orderConfirmationSchema = {
@@ -1488,6 +1489,8 @@ const runJob = async (productCode) => {
                 const template = cache.getDoc('templates', config.template) || {};
                 const send = await sendData(null, null, productCode, config, template, result, options);
                 if (Object.hasOwnProperty.call(send, 'error')) {
+                    winston.log('error', send.error);
+                    if (!LOGFILE) return;
                     const lineLimit = 10;
                     const filename = `${options.filename.split('.').slice(0, -1).join('.')}.log`;
                     const path = `/${filename}`;
