@@ -135,7 +135,7 @@ const sortObject = function (object) {
  */
 const stringifyWithSpaces = (object) => {
     // Stringify with line-breaks and indents.
-    let result = JSON.stringify(object, null, 1);
+    let result = JSON.stringify(object, null, 1) || '';
     // Remove all but the first space for each line.
     result = result.replace(/^ +/gm, '');
     // Remove line-breaks.

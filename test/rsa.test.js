@@ -149,6 +149,11 @@ const stringifyBodyTestHelper = (fn, oldImplementation = false) => {
             shouldFailOnOldImplementation: true,
         },
         {
+            name: 'should succeed with undefined and fail with the old implementation',
+            in: undefined,
+            expect: '',
+        },
+        {
             name: 'should succeed with big data and fail with the old 2 implementation',
             in: {
                 b: 'test',
