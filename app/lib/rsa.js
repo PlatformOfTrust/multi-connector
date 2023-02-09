@@ -127,51 +127,38 @@ const sortObject = function (object) {
 };
 
 /**
+ * Stringifies object leaving spaces between keys and values.
+ *
+ * @param {Object} object
+ * @return {String}
+ *   Stringified object.
+ */
+const stringifyWithSpaces = (object) => {
+    // Stringify with line-breaks and indents.
+    let result = JSON.stringify(object, null, 1);
+    // Remove all but the first space for each line.
+    result = result.replace(/^ +/gm, '');
+    // Remove line-breaks.
+    result = result.replace(/\n/g, '');
+    // Remove spaces between object-braces and first/last props.
+    result = result.replace(/{ /g, '{').replace(/ }/g, '}');
+    // Remove spaces between array-brackets and first/last items.
+    result = result.replace(/\[ /g, '[').replace(/ \]/g, ']');
+    return result;
+};
+
+/**
  * Stringifies body object.
  *
  * @param {Object} body
+ * @param {Boolean} [sort]
  * @return {String}
  *   Stringified body.
  */
-const stringifyBody = function (body) {
+const stringifyBody = function (body, sort = true) {
     // Stringify sorted object.
-    const json = JSON.stringify(sortObject(body));
-    let res = '';
-    let isEscaped = false;
-    let isValue = false;
-
-    for (let i = 0; i < (json || '').length; i++) {
-        let b = json[i];
-
-        // Escape non ASCII characters
-        const charCode = b.charCodeAt(0);
-        if (charCode > 127) {
-            b = '\\u' + ('0000' + charCode.toString(16)).substr(-4);
-        }
-        res += b;
-
-        // specify the start of the JSON value
-        if (!isEscaped && charCode === 34) {
-            isValue = !isValue;
-        }
-        // specify if the value separator is outside of a value declaration
-        if (charCode === 58 && !isValue) {
-            res += ' ';
-        }
-
-        // mark the next character as escaped if there's a leading backward
-        // slash and it's not escaped
-        if (charCode === 92 && !isEscaped) {
-            isEscaped = true;
-            continue;
-        }
-        // if the character was escaped turn of escaping for the next one
-        if (isEscaped) {
-            isEscaped = false;
-        }
-    }
-
-    return res;
+    return stringifyWithSpaces(sort ? sortObject(body) : body).replace(/[\u007F-\uFFFF]/g, chr => '\\u' + ('0000' + chr.charCodeAt(0)
+        .toString(16)).substr(-4));
 };
 
 /**
