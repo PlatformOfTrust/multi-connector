@@ -41,6 +41,7 @@
     "http": "0.0.1-security",
     "httpntlm": "^1.7.6",
     "hubspot": "^2.3.12",
+    "jsonwebtoken": "^9.0.0",
     "lodash": "^4.17.15",
     "mime": "^2.5.2",
     "moment": "^2.24.0",

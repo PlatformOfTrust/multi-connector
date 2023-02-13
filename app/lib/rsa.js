@@ -3,8 +3,9 @@
  * Module dependencies.
  */
 const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
 const cache = require('../cache');
-const { replaceAll } = require('../lib/utils');
+const {replaceAll} = require('../lib/utils');
 const rp = require('request-promise');
 const winston = require('../../logger.js');
 
@@ -158,28 +159,46 @@ const stringifyBody = function (body, sort = true) {
 };
 
 /**
- * Generates signature object for given payload.
+ * Generates signature for given payload.
  *
- * @param {Object} body
+ * @param {Object/String} body
  *   The payload to sign.
  * @param {String} [key]
  *   Private key used for signing.
+ * @param {Boolean} [sort]
+ *   Sort body.
+ *  @param {String} [type]
+ *   Signature, HMAC or JWT.
+ *  @param {String} [algorithm]
+ *   Algorithm used for signing.
+ *  @param {String} [encoding]
+ *   Algorithm used for signing.
  * @return {String}
  *   The signature value.
  */
-const generateSignature = function (body, key) {
+const generateSignature = function (body, key, sort = true, type = 'rsa', algorithm = 'sha256', encoding = 'base64') {
     // Use local private key, if not given.
-    if (!key) key = privateKey;
+    if (!key) { key = privateKey; }
 
     // Initialize signature value.
     let signatureValue;
 
-    // Create SHA256 signature in base64 encoded format.
     try {
-        signatureValue = crypto
-            .createSign('sha256')
-            .update(stringifyBody(body))
-            .sign(key.toString(), 'base64');
+        const data = typeof body === 'string' && type !== 'jwt' ? body : (sort ? stringifyBody(body) : replaceAll(JSON.stringify(body), ' ', ''));
+        switch (type) {
+            /** Create a signature. */
+            case 'rsa':
+                signatureValue = crypto.createSign(algorithm).update(data).sign(key.toString(), encoding);
+                break;
+            /** Create a hash. */
+            case 'hmac':
+                signatureValue = crypto.createHmac(algorithm, key).update(data).digest(encoding);
+                break;
+            /** Create a token. */
+            case 'jwt':
+                signatureValue = jwt.sign(data, key, key === privateKey ? {algorithm: 'RS256'} : {});
+                break;
+        }
     } catch (err) {
         winston.log('error', err.message);
     }
@@ -198,21 +217,47 @@ const generateSignature = function (body, key) {
  *   Public key used for validation.
  * @param {Boolean} [sort]
  *   Sort body.
+ *  @param {String} [type]
+ *   Signature, HMAC or JWT.
+ *  @param {String} [algorithm]
+ *   Algorithm used for signing.
+ *  @param {String} [encoding]
+ *   Algorithm used for signing.
  * @return {Boolean}
  *   True if signature is valid, false otherwise.
  */
-const verifySignature = function (body, signature, key, sort = true) {
+const verifySignature = function (body, signature, key, sort = true, type = 'rsa', algorithm = 'sha256', encoding = 'base64') {
     // Use local public key, if not given.
     if (!key) key = publicKey;
 
-    // Initialize verifier.
-    const verifier = crypto.createVerify('sha256');
+    // Initialize verification result.
+    let verificationResult = false;
 
-    // Update verifier.
-    verifier.update(sort ? stringifyBody(body) : replaceAll(JSON.stringify(body), ' ', ''));
+    const data = typeof body === 'string' && type !== 'jwt' ? body : (sort ? stringifyBody(body) : replaceAll(JSON.stringify(body), ' ', ''));
+    let verifier;
+    switch (type) {
+        /** Verify signature. */
+        case 'rsa':
+            // Initialize verifier.
+            verifier = crypto.createVerify(algorithm);
 
-    // Verify base64 encoded SHA256 signature.
-    return verifier.verify(key, signature, 'base64');
+            // Update verifier.
+            verifier.update(data);
+
+            // Verify base64 encoded SHA256 signature.
+            verificationResult = verifier.verify(key, signature, encoding);
+            break;
+        /** Verify hash. */
+        case 'hmac':
+            verificationResult = crypto.createHmac(algorithm, key).update(data).digest(encoding) === signature;
+            break;
+        /** Verify token. */
+        case 'jwt':
+            verificationResult = jwt.verify(signature, key, key === publicKey ? {algorithm: 'RS256'} : {}) === JSON.stringify(body);
+            break;
+    }
+
+    return verificationResult;
 };
 
 /**
