@@ -5,7 +5,7 @@
   ],
   "protocol": "rest",
   "authConfig": {
-    "url": "https://www.sahkonumerot.fi/application/api/web",
+    "url": "${url}",
     "authPath": "/login/logins",
     "authContentType": "application/json",
     "username": "${username}",
