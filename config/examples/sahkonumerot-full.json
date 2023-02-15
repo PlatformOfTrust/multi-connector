@@ -1,0 +1,17 @@
+{
+  "template": "sahkonumerot",
+  "static": {
+    "url": "https://<domain>/application/api/web",
+    "username": "<username>",
+    "password": "<password>",
+    "type": "ProductCatalog",
+    "property": "electricalNumber",
+    "path": "/package/full-data"
+  },
+  "dynamic": {
+    "authConfig.path": "codeProductCatalog"
+  },
+  "request": {
+    "codeProductCatalog": "<product-code>"
+  }
+}

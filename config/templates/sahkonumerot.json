@@ -10,7 +10,7 @@
     "authContentType": "application/json",
     "username": "${username}",
     "password": "${password}",
-    "path": "/package/basic-data?${property}=${codeProductCatalog}"
+    "path": "${path}?${property}=${codeProductCatalog}"
   },
   "dataObjects": [
     ""
