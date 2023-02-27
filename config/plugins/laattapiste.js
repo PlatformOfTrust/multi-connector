@@ -204,6 +204,13 @@ const orderConfirmationSchema = {
                                                 'title': 'Local System identifier',
                                                 'description': 'Locally given system identifier.',
                                             },
+                                            'gtin': {
+                                                '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/gtin',
+                                                'source': 'ItemEAN.0',
+                                                'type': 'string',
+                                                'title': 'Local System identifier',
+                                                'description': 'Locally given system identifier.',
+                                            },
                                             'name': {
                                                 '$id': '#/properties/data/properties/order/properties/orderLine/items/properties/product/properties/name',
                                                 'source': null,
@@ -809,13 +816,22 @@ const json2xml = (input = {}) => {
         {name: 'workPackage', value: _.get(input, 'addressShipping.process.idLocal')},
         {name: 'workPackageLocation', value: _.get(input, 'addressShipping.nameArea')},
         {name: 'workPackageLocationName', value: _.get(input, 'addressShipping.location.name')},
-        {name: 'workPackageAreaName', value: _.get(input, 'addressShipping.location.zone')},
-        {name: 'workPackageInventoryLocationName', value: _.get(input, 'addressShipping.location.space')},
+        {name: 'workPackageAreaName', value: _.get(input, 'addressShipping.zone.name')},
+        {name: 'workPackageInventoryLocationName', value: _.get(input, 'addressShipping.space.name')},
         {name: 'workPackagePhase', value: _.get(input, 'addressShipping.process.name')},
         {name: 'workPackageOperator', value: _.get(input, 'addressShipping.contact.name')},
         {name: 'workPackageOperatorContactName', value: _.get(input, 'addressShipping.contact.contactInformation.name')},
         {name: 'workPackageOperatorContactTelephone', value: _.get(input, 'addressShipping.contact.contactInformation.phoneNumber')},
     ];
+
+    // Compose reference.
+    if (input.reference === '') {
+        input.reference = [
+            _.get(input, 'addressShipping.process.idLocal'),
+            _.get(input, 'addressShipping.zone.name'),
+            _.get(input, 'addressShipping.space.name'),
+        ].join(' / ');
+    }
 
     let output;
     let xml;
@@ -1081,6 +1097,8 @@ const errorResponse = async (req, res, err) => {
         error: {
             status: err.httpStatusCode || 500,
             message: message || 'Internal Server Error.',
+            productCode: err.productCode || null,
+            appId: err.appId || null,
             translator_response: err.translator_response || undefined,
         },
     };

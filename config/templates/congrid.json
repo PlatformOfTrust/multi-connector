@@ -1,11 +1,14 @@
 {
   "plugins": [
       "congrid-note",
-      "congrid-quality-document"
+      "congrid-quality-document",
+      "congrid-case"
   ],
   "protocol": "rest",
   "authConfig": {
     "url": "https://${api}.congrid.com",
+    "workSectionCode": "${workSectionCode}",
+    "workActivityName": "${workActivityName}",
     "headers": {
       "Congrid-API-Token": "${token}"
     },

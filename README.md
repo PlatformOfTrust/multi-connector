@@ -7,6 +7,7 @@
 Following data sources are supported out of the box. Example configs can be found at the repo.
 
 - A-3 Integration API
+- Azure Blob Storage
 - Carinafour CALS
 - Congrid Public API
 - Digital Supply Chain
@@ -18,7 +19,7 @@ Following data sources are supported out of the box. Example configs can be foun
 - Fidelix Pilvivalvomo
 - Finavia Flights API
 - Finavia Queues API
-- SFTP Server
+- FTP/SFTP Server
 - GeoServer Web Feature Service
 - Granlund Manager API
 - Haltian Thingsee API

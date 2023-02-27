@@ -1,0 +1,37 @@
+{
+  "plugins": [
+    "oauth2",
+    "siemens-navigator",
+    "consumption"
+  ],
+  "protocol": "rest",
+  "authConfig": {
+    "url": "https://eadvantage.siemens.com",
+    "authPath": "/uaa/oauth/token",
+    "clientAuth": "header",
+    "grantType": "client_credentials",
+    "clientId": "${clientId}",
+    "clientSecret": "${clientSecret}",
+    "path": "/remote/release/meter/${id}/readings"
+  },
+  "dataObjects": [
+    "items"
+  ],
+  "dataPropertyMappings": {
+    "${type}": "value"
+  },
+  "generalConfig": {
+    "query": {
+      "properties": [],
+      "limit": { "limit": 1 },
+      "end": "utcEndTimestamp",
+      "start": "utcStartTimestamp"
+    },
+    "hardwareId": {
+      "pathIndex": 4
+    },
+    "timestamp": {
+      "dataObjectProperty": "utcRectime"
+    }
+  }
+}

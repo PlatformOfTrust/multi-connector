@@ -119,6 +119,16 @@ function getTokenWithPassword (authConfig) {
         }
     }
 
+    if (Object.hasOwnProperty.call(authConfig, 'clientAuth')) {
+        // By default send client credentials in body.
+        if (authConfig.clientAuth === 'header') {
+            // Send as basic auth header if configured.
+            options.headers['Authorization'] = 'Basic ' + Buffer.from(options.form.client_id + ':' + options.form.client_secret).toString('base64');
+            delete options.form.client_id;
+            delete options.form.client_secret;
+        }
+    }
+
     return rp(options).then(function (result) {
         return Promise.resolve(result);
     }).catch(function (err) {

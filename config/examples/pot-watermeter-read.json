@@ -1,0 +1,9 @@
+{
+    "template": "pot-watermeter",
+    "static": {
+        "url": "https://func-dev-we.azurewebsites.net",
+        "operation": "read",
+        "functionCode": "",
+        "bodyPath": "parameters"
+    }
+}

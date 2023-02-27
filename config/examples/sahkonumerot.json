@@ -1,6 +1,7 @@
 {
   "template": "sahkonumerot",
   "static": {
+    "url": "https://<domain>/application/api/web",
     "username": "<username>",
     "password": "<password>",
     "type": "ProductCatalog",

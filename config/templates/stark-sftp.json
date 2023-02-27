@@ -1,6 +1,7 @@
 {
     "plugins": [
-        "stark"
+        "stark",
+        "broker"
     ],
     "protocol": "sftp",
     "authConfig": {

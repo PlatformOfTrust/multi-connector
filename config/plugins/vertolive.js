@@ -354,16 +354,16 @@ const handleData = function (config, id, data) {
             const coldDaily = value.readings.map(reading => reading.cold.delta);
             const coldDailySum = coldDaily.reduce((partial_sum, a) => partial_sum + a, 0);
 
-            const warmDaily = value.readings.map(reading => reading.warm.delta);
-            const warmDailySum = warmDaily.reduce((partial_sum, a) => partial_sum + a, 0);
+            const hotDaily = value.readings.map(reading => reading.warm.delta);
+            const hotDailySum = hotDaily.reduce((partial_sum, a) => partial_sum + a, 0);
 
-            const WaterCold = { value: coldDailySum, period: config.parameters.period, unitOfMeasure: 'Liter', valueType: 'Value', startValue: value.readings[0].cold.reading - value.readings[0].cold.delta, endValue: value.readings[value.readings.length - 1].cold.reading };
-            const WaterWarm = { value: warmDailySum, period: config.parameters.period, unitOfMeasure: 'Liter', valueType: 'Value', startValue: value.readings[0].warm.reading - value.readings[0].warm.delta, endValue: value.readings[value.readings.length - 1].warm.reading }
+            const WaterCold = {value: coldDailySum, period: config.parameters.period, unitOfMeasure: 'Liter', valueType: 'Value', startValue: value.readings[0].cold.reading - value.readings[0].cold.delta, endValue: value.readings[value.readings.length - 1].cold.reading};
+            const WaterHot = {value: hotDailySum, period: config.parameters.period, unitOfMeasure: 'Liter', valueType: 'Value', startValue: value.readings[0].warm.reading - value.readings[0].warm.delta, endValue: value.readings[value.readings.length - 1].warm.reading};
 
-            const coldValues = { ...value, readings: [WaterCold], processTarget: 'WaterCold', measureType: 'Measure', locationType: 'Location', physicalProperty: 'Volume' };
-            const warmValues = { ...value, readings: [WaterWarm], processTarget: 'WaterWarm', measureType: 'Measure', locationType: 'Location', physicalProperty: 'Volume' };
+            const coldValues = {...value, readings: [WaterCold], processTarget: 'WaterCold', measureType: 'Measure', locationType: 'Location', physicalProperty: 'Volume'};
+            const hotValues = {...value, readings: [WaterHot], processTarget: 'WaterHot', measureType: 'Measure', locationType: 'Location', physicalProperty: 'Volume'};
 
-            const valuesArray = [coldValues, warmValues];
+            const valuesArray = [coldValues, hotValues];
 
             result = transformer.transform(valuesArray, schema.properties.data);
         }

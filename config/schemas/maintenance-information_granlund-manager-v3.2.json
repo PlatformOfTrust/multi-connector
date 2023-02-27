@@ -1,0 +1,1442 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "$id": "https://standards.oftrust.net/v2/Schema/DataProductOutput/MaintenanceInformation?v=3.2",
+    "type": "object",
+    "required": [],
+    "properties": {
+        "@context": {
+            "$id": "#/properties/@context",
+            "source": null,
+            "type": "string",
+            "const": "https://standards.oftrust.net/v2/Context/DataProductOutput/MaintenanceInformation/?v=3.2",
+            "title": "JSON-LD context url",
+            "description": "JSON-LD context url with terms required to understand data product content."
+        },
+        "data": {
+            "$id": "#/properties/data",
+            "source": null,
+            "type": "object",
+            "title": "Data product output",
+            "description": "Output of data product delivered to customers.",
+            "required": [],
+            "properties": {
+                "maintenanceInformation": {
+                    "$id": "#/properties/data/properties/maintenanceInformation",
+                    "source": "",
+                    "type": "array",
+                    "title": "Maintenance Information",
+                    "description": "Maintenance Information.",
+                    "items": {
+                        "$id": "#/properties/data/properties/maintenanceInformation/items",
+                        "type": "object",
+                        "required": [],
+                        "properties": {
+                            "@type": {
+                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/@type",
+                                "value": "Process",
+                                "type": "string",
+                                "title": "Identity type",
+                                "description": "Type of identity."
+                            },
+                            "updated": {
+                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/updated",
+                                "source": "updated",
+                                "type": "string",
+                                "title": "Updated",
+                                "description": "Updated time."
+                            },
+                            "idLocal": {
+                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/idLocal",
+                                "source": "Task.Id",
+                                "type": "string",
+                                "title": "Local identifier",
+                                "description": "Locally given identifier."
+                            },
+                            "name": {
+                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/name",
+                                "source": "Package.Title",
+                                "type": "string",
+                                "title": "Name",
+                                "description": "Name."
+                            },
+                            "descriptionGeneral": {
+                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/descriptionDescription",
+                                "source": "Mission.Name",
+                                "type": "string",
+                                "title": "Description general",
+                                "description": "Description general."
+                            },
+                            "additionalInformation": {
+                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/additionalInformation",
+                                "source": null,
+                                "type": "string",
+                                "title": "Additional information",
+                                "description": "Additional information."
+                            },
+                            "scheduledStart": {
+                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/scheduledStart",
+                                "source": "Task.StartDate",
+                                "type": "string",
+                                "title": "Scheduled start time",
+                                "description": "Scheduled start time."
+                            },
+                            "scheduledEnd": {
+                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/scheduledEnd",
+                                "source": "Task.DoneDate",
+                                "type": "string",
+                                "title": "Scheduled end time",
+                                "description": "Scheduled start time."
+                            },
+                            "plannedStart": {
+                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/plannedStart",
+                                "source": "Task.StartDate",
+                                "type": "string",
+                                "title": "Planned start time",
+                                "description": "Planned start time."
+                            },
+                            "plannedEnd": {
+                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/plannedEnd",
+                                "source": "Task.DoneDate",
+                                "type": "string",
+                                "title": "Planned end time",
+                                "description": "When something can be started.  Typically used when something is scheduled to happen within certain period."
+                            },
+                            "canStart": {
+                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/canStart",
+                                "source": "Task.TaskDate",
+                                "type": "string",
+                                "title": "Earliest start time",
+                                "description": "When something can be started.  Typically used when something is scheduled to happen within certain period."
+                            },
+                            "mustEnd": {
+                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/mustEnd",
+                                "source": "Task.MustDoneDate",
+                                "type": "string",
+                                "title": "Latest end time",
+                                "description": "When something must ne ended.  Typically used when something is scheduled to happen within certain period."
+                            },
+                            "actualStart": {
+                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/actualStart",
+                                "source": null,
+                                "type": "string",
+                                "title": "Actual start time",
+                                "description": "Actual start time."
+                            },
+                            "actualEnd": {
+                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/actualEnd",
+                                "source": null,
+                                "type": "string",
+                                "title": "Actual end time",
+                                "description": "Actual end time."
+                            },
+                            "cancelled": {
+                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/cancelled",
+                                "source": null,
+                                "type": "string",
+                                "title": "Cancelled",
+                                "description": "Cancelled."
+                            },
+                            "duration": {
+                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/duration",
+                                "source": null,
+                                "type": "string",
+                                "title": "Duration",
+                                "description": "Duration (time)."
+                            },
+                            "schedule": {
+                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/schedule",
+                                "source": null,
+                                "type": "object",
+                                "title": "Schedule",
+                                "description": "Schedule.",
+                                "required": [],
+                                "properties": {
+                                    "@type": {
+                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/schedule/properties/@type",
+                                        "value": "Schedule",
+                                        "type": "string",
+                                        "title": "Identity type",
+                                        "description": "Type of identity."
+                                    },
+                                    "idLocal": {
+                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/schedule/properties/idLocal",
+                                        "source": "Mission.Id",
+                                        "type": "string",
+                                        "title": "Local identifier",
+                                        "description": "Locally given identifier."
+                                    },
+                                    "schedule": {
+                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/schedule/properties/schedule",
+                                        "source": "schedule",
+                                        "type": "string",
+                                        "title": "Schedule",
+                                        "description": "Schedule in RRULE format. Please visit https://icalendar.org/iCalendar-RFC-5545/3-8-5-3-recurrence-rule.html for more details."
+                                    }
+                                }
+                            },
+                            "location": {
+                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/location",
+                                "source": null,
+                                "type": "array",
+                                "title": "Location",
+                                "description": "Location.",
+                                "items": {
+                                    "$id": "#/properties/data/properties/maintenanceInformation/items/properties/location/items",
+                                    "source": null,
+                                    "type": "object",
+                                    "required": [],
+                                    "properties": {
+                                        "@type": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/location/items/properties/@type",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Identity type",
+                                            "description": "Type of identity."
+                                        },
+                                        "idLocal": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/location/items/properties/idLocal",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Local identifier",
+                                            "description": "Locally given identifier."
+                                        },
+                                        "name": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/location/items/properties/name",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Name",
+                                            "description": "Name."
+                                        }
+                                    }
+                                }
+                            },
+                            "status": {
+                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/status",
+                                "source": "",
+                                "type": "array",
+                                "title": "Life-cycle status",
+                                "description": "Life-cycle status.",
+                                "items": {
+                                    "$id": "#/properties/data/properties/maintenanceInformation/items/properties/status/items",
+                                    "source": null,
+                                    "type": "object",
+                                    "required": [],
+                                    "properties": {
+                                        "@type": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/status/items/properties/@type",
+                                            "value": "Status",
+                                            "type": "string",
+                                            "title": "Identity type",
+                                            "description": "Type of identity."
+                                        },
+                                        "status": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/status/items/properties/status",
+                                            "source": "Task.State",
+                                            "type": "string",
+                                            "title": "Life-cycle status",
+                                            "description": "Life-cycle status.  Status name."
+                                        },
+                                        "statusCode": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/status/items/properties/statusCode",
+                                            "source": "Task.StateId",
+                                            "type": "string",
+                                            "title": "Status code",
+                                            "description": "Status code."
+                                        },
+                                        "comment": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/status/items/properties/comment",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Comment",
+                                            "description": "Comment."
+                                        },
+                                        "updated": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/status/items/properties/updated",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Updated",
+                                            "description": "Updated."
+                                        },
+                                        "updater": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/status/items/properties/updater",
+                                            "source": null,
+                                            "type": "object",
+                                            "title": "Updater",
+                                            "description": "Updater.",
+                                            "required": [],
+                                            "properties": {
+                                                "@type": {
+                                                    "$id": "#/properties/data/properties/maintenanceInformation/items/properties/status/items/properties/updater/properties/@type",
+                                                    "source": null,
+                                                    "type": "string",
+                                                    "title": "Identity type",
+                                                    "description": "Type of identity."
+                                                },
+                                                "idLocal": {
+                                                    "$id": "#/properties/data/properties/maintenanceInformation/items/properties/status/items/properties/updater/properties/idLocal",
+                                                    "source": null,
+                                                    "type": "string",
+                                                    "title": "Local identifier",
+                                                    "description": "Locally given identifier."
+                                                },
+                                                "idOfficial": {
+                                                    "$id": "#/properties/data/properties/maintenanceInformation/items/properties/status/items/properties/updater/properties/idOfficial",
+                                                    "source": null,
+                                                    "type": "string",
+                                                    "title": "Official identifier",
+                                                    "description": "Government (official authority) assigned identifier."
+                                                },
+                                                "name": {
+                                                    "$id": "#/properties/data/properties/maintenanceInformation/items/properties/status/items/properties/updater/properties/name",
+                                                    "source": null,
+                                                    "type": "string",
+                                                    "title": "Name",
+                                                    "description": "Name."
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "executor": {
+                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/executor",
+                                "source": "",
+                                "type": "array",
+                                "title": "Process executor",
+                                "description": "Executor of the process (source of the data).",
+                                "items": {
+                                    "$id": "#/properties/data/properties/maintenanceInformation/items/properties/executor/items",
+                                    "source": null,
+                                    "type": "object",
+                                    "required": [],
+                                    "properties": {
+                                        "@type": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/executor/items/properties/@type",
+                                            "value": "Organization",
+                                            "type": "string",
+                                            "title": "Identity type",
+                                            "description": "Type of identity."
+                                        },
+                                        "idLocal": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/executor/items/properties/idLocal",
+                                            "source": "ServiceArea.Id",
+                                            "type": "string",
+                                            "title": "Local identifier",
+                                            "description": "Locally given identifier."
+                                        },
+                                        "idOfficial": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/executor/items/properties/idOfficial",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Official identifier",
+                                            "description": "Government (official authority) assigned identifier."
+                                        },
+                                        "name": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/executor/items/properties/name",
+                                            "source": "ServiceArea.Name",
+                                            "type": "string",
+                                            "title": "Name",
+                                            "description": "Name."
+                                        }
+                                    }
+                                }
+                            },
+                            "operator": {
+                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/operator",
+                                "source": null,
+                                "type": "array",
+                                "title": "Operator",
+                                "description": "Operator.",
+                                "items": {
+                                    "$id": "#/properties/data/properties/maintenanceInformation/items/properties/operator/items",
+                                    "source": null,
+                                    "type": "object",
+                                    "required": [],
+                                    "properties": {
+                                        "@type": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/operator/items/properties/@type",
+                                            "value": "Organization",
+                                            "type": "string",
+                                            "title": "Identity type",
+                                            "description": "Type of identity."
+                                        },
+                                        "idLocal": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/operator/items/properties/idLocal",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Local identifier",
+                                            "description": "Locally given identifier."
+                                        },
+                                        "idOfficial": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/operator/items/properties/idOfficial",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Official identifier",
+                                            "description": "Government (official authority) assigned identifier."
+                                        },
+                                        "name": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/operator/items/properties/name",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Name",
+                                            "description": "Name."
+                                        }
+                                    }
+                                }
+                            },
+                            "processInstance": {
+                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance",
+                                "source": "Jobs",
+                                "type": "array",
+                                "title": "Process instance",
+                                "description": "Process instance.",
+                                "items": {
+                                    "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items",
+                                    "source": null,
+                                    "type": "object",
+                                    "required": [],
+                                    "properties": {
+                                        "@type": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/@type",
+                                            "value": "Process",
+                                            "type": "string",
+                                            "title": "Identity type",
+                                            "description": "Type of identity."
+                                        },
+                                        "idLocal": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/idLocal",
+                                            "source": "Id",
+                                            "type": "string",
+                                            "title": "Local identifier",
+                                            "description": "Locally given identifier."
+                                        },
+                                        "name": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/name",
+                                            "source": "Mission.Name",
+                                            "type": "string",
+                                            "title": "Name",
+                                            "description": "Name."
+                                        },
+                                        "descriptionGeneral": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/descriptionDescription",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Description general",
+                                            "description": "Description general."
+                                        },
+                                        "additionalInformation": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/additionalInformation",
+                                            "value": "",
+                                            "type": "string",
+                                            "title": "Additional information",
+                                            "description": "Additional information."
+                                        },
+                                        "plannedStart": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/plannedStart",
+                                            "source": "TaskStarDate",
+                                            "type": "string",
+                                            "title": "Planned start time",
+                                            "description": "Planned start time."
+                                        },
+                                        "plannedEnd": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/plannedEnd",
+                                            "source": "TaskDoneDate",
+                                            "type": "string",
+                                            "title": "Planned end time",
+                                            "description": "When something can be started.  Typically used when something is scheduled to happen within certain period."
+                                        },
+                                        "canStart": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/canStart",
+                                            "source": "TaskDate",
+                                            "type": "string",
+                                            "title": "Earliest start time",
+                                            "description": "When something can be started.  Typically used when something is scheduled to happen within certain period."
+                                        },
+                                        "mustEnd": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/mustEnd",
+                                            "source": "TaskMustDoneDate",
+                                            "type": "string",
+                                            "title": "Latest end time",
+                                            "description": "When something must ne ended.  Typically used when something is scheduled to happen within certain period."
+                                        },
+                                        "actualStart": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/actualStart",
+                                            "source": "StartDate",
+                                            "type": "string",
+                                            "title": "Actual start time",
+                                            "description": "Actual start time."
+                                        },
+                                        "actualEnd": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/actualEnd",
+                                            "source": "DoneDate",
+                                            "type": "string",
+                                            "title": "Actual end time",
+                                            "description": "Actual end time."
+                                        },
+                                        "cancelled": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/cancelled",
+                                            "source": "RejectDate",
+                                            "type": "string",
+                                            "title": "Cancelled",
+                                            "description": "Cancelled."
+                                        },
+                                        "duration": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/duration",
+                                            "source": "WorkTimeActual",
+                                            "type": "string",
+                                            "title": "Duration",
+                                            "description": "Duration (time)."
+                                        },
+                                        "status": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/status",
+                                            "source": "",
+                                            "type": "array",
+                                            "title": "Life-cycle status",
+                                            "description": "Life-cycle status.",
+                                            "items": {
+                                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/status/items",
+                                                "source": null,
+                                                "type": "object",
+                                                "required": [],
+                                                "properties": {
+                                                    "@type": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/status/items/properties/@type",
+                                                        "value": "Status",
+                                                        "type": "string",
+                                                        "title": "Identity type",
+                                                        "description": "Type of identity."
+                                                    },
+                                                    "status": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/status/items/properties/status",
+                                                        "source": "State",
+                                                        "type": "string",
+                                                        "title": "Life-cycle status",
+                                                        "description": "Life-cycle status.  Status name."
+                                                    },
+                                                    "statusCode": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/status/items/properties/statusCode",
+                                                        "source": "StateId",
+                                                        "type": "string",
+                                                        "title": "Status code",
+                                                        "description": "Status code."
+                                                    },
+                                                    "comment": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/status/items/properties/comment",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Comment",
+                                                        "description": "Comment."
+                                                    },
+                                                    "updated": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/status/items/properties/updated",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Updated",
+                                                        "description": "Updated."
+                                                    },
+                                                    "updater": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/status/items/properties/updater",
+                                                        "source": null,
+                                                        "type": "object",
+                                                        "title": "Updater",
+                                                        "description": "Updater.",
+                                                        "required": [],
+                                                        "properties": {
+                                                            "@type": {
+                                                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/status/items/properties/updater/properties/@type",
+                                                                "source": null,
+                                                                "type": "string",
+                                                                "title": "Identity type",
+                                                                "description": "Type of identity."
+                                                            },
+                                                            "idLocal": {
+                                                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/status/items/properties/updater/properties/idLocal",
+                                                                "source": null,
+                                                                "type": "string",
+                                                                "title": "Local identifier",
+                                                                "description": "Locally given identifier."
+                                                            },
+                                                            "idOfficial": {
+                                                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/status/items/properties/updater/properties/idOfficial",
+                                                                "source": null,
+                                                                "type": "string",
+                                                                "title": "Official identifier",
+                                                                "description": "Government (official authority) assigned identifier."
+                                                            },
+                                                            "name": {
+                                                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/status/items/properties/updater/properties/name",
+                                                                "source": null,
+                                                                "type": "string",
+                                                                "title": "Name",
+                                                                "description": "Name."
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "executor": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/executor",
+                                            "source": null,
+                                            "type": "array",
+                                            "title": "Process executor",
+                                            "description": "Executor of the process (source of the data).",
+                                            "items": {
+                                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/executor/items",
+                                                "type": "object",
+                                                "required": [],
+                                                "properties": {
+                                                    "@type": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/executor/items/properties/@type",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Identity type",
+                                                        "description": "Type of identity."
+                                                    },
+                                                    "idLocal": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/executor/items/properties/idLocal",
+                                                        "source": "RequestHandler",
+                                                        "type": "string",
+                                                        "title": "Local identifier",
+                                                        "description": "Locally given identifier."
+                                                    },
+                                                    "idOfficial": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/executor/items/properties/idOfficial",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Official identifier",
+                                                        "description": "Government (official authority) assigned identifier."
+                                                    },
+                                                    "name": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processInstance/items/properties/executor/items/properties/name",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Name",
+                                                        "description": "Name."
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "processTarget": {
+                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processTarget",
+                                "source": "CodedObject",
+                                "type": "array",
+                                "title": "Process target",
+                                "description": "Object into which process (verb) is targeted.",
+                                "items": {
+                                    "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processTarget/items",
+                                    "type": "object",
+                                    "required": [],
+                                    "properties": {
+                                        "@type": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processTarget/items/properties/@type",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Identity type",
+                                            "description": "Type of identity."
+                                        },
+                                        "idLocal": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processTarget/items/properties/idLocal",
+                                            "source": "Id",
+                                            "type": "string",
+                                            "title": "Local identifier",
+                                            "description": "Locally given identifier."
+                                        },
+                                        "idExternal": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processTarget/items/properties/idExternal",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "External system Id",
+                                            "description": "External system identifier."
+                                        },
+                                        "name": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processTarget/items/properties/name",
+                                            "source": "Name",
+                                            "type": "string",
+                                            "title": "Name",
+                                            "description": "Name."
+                                        },
+                                        "codeLong": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processTarget/items/properties/codeLong",
+                                            "source": "LongCode",
+                                            "type": "string",
+                                            "title": "Long Code",
+                                            "description": "Long version of code type identifier."
+                                        },
+                                        "nameLong": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processTarget/items/properties/nameLong",
+                                            "source": "FullName",
+                                            "type": "string",
+                                            "title": "Long name",
+                                            "description": "Long name."
+                                        },
+                                        "nameCombined": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processTarget/items/properties/nameCombined",
+                                            "source": "CombinedName",
+                                            "type": "string",
+                                            "title": "Combined name",
+                                            "description": "Combined name which is formed using other names and/or codes."
+                                        },
+                                        "nameLabel": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processTarget/items/properties/nameLabel",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Label name",
+                                            "description": "Label name."
+                                        },
+                                        "categorizationName": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processTarget/items/properties/categorizationName",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Category name",
+                                            "description": "Name of the categorization class/type."
+                                        },
+                                        "categorizationCode": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processTarget/items/properties/categorizationCode",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Category code",
+                                            "description": "Code of the categorization class/type."
+                                        },
+                                        "position1": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processTarget/items/properties/position1",
+                                            "source": "Position1",
+                                            "type": "string",
+                                            "title": "Position 1",
+                                            "description": "Information which describes position."
+                                        },
+                                        "position2": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/processTarget/items/properties/position2",
+                                            "source": "Position2",
+                                            "type": "string",
+                                            "title": "Position 2",
+                                            "description": "Information which describes position."
+                                        }
+                                    }
+                                }
+                            },
+                            "childProcess": {
+                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess",
+                                "source": null,
+                                "type": "array",
+                                "title": "Child process",
+                                "description": "Child process is sub or child process for parent (upper level) process.",
+                                "items": {
+                                    "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items",
+                                    "source": null,
+                                    "type": "object",
+                                    "required": [],
+                                    "properties": {
+                                        "@type": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/@type",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Identity type",
+                                            "description": "Type of identity."
+                                        },
+                                        "idLocal": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/idLocal",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Local identifier",
+                                            "description": "Locally given identifier."
+                                        },
+                                        "name": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/name",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Name",
+                                            "description": "Name."
+                                        },
+                                        "descriptionGeneral": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/descriptionDescription",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Description general",
+                                            "description": "Description general."
+                                        },
+                                        "additionalInformation": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/additionalInformation",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Additional information",
+                                            "description": "Additional information."
+                                        },
+                                        "plannedStart": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/plannedStart",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Planned start time",
+                                            "description": "Planned start time."
+                                        },
+                                        "plannedEnd": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/plannedEnd",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Planned end time",
+                                            "description": "When something can be started.  Typically used when something is scheduled to happen within certain period."
+                                        },
+                                        "canStart": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/canStart",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Earliest start time",
+                                            "description": "When something can be started.  Typically used when something is scheduled to happen within certain period."
+                                        },
+                                        "mustEnd": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/mustEnd",
+                                            "source": "Task.MustDoneDate",
+                                            "type": "string",
+                                            "title": "Latest end time",
+                                            "description": "When something must ne ended.  Typically used when something is scheduled to happen within certain period."
+                                        },
+                                        "actualStart": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/actualStart",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Actual start time",
+                                            "description": "Actual start time."
+                                        },
+                                        "actualEnd": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/actualEnd",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Actual end time",
+                                            "description": "Actual end time."
+                                        },
+                                        "cancelled": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/cancelled",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Cancelled",
+                                            "description": "Cancelled."
+                                        },
+                                        "duration": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/duration",
+                                            "source": null,
+                                            "type": "string",
+                                            "title": "Duration",
+                                            "description": "Duration (time)."
+                                        },
+                                        "schedule": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/schedule",
+                                            "source": null,
+                                            "type": "object",
+                                            "title": "Schedule",
+                                            "description": "Schedule.",
+                                            "required": [],
+                                            "properties": {
+                                                "@type": {
+                                                    "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/schedule/properties/@type",
+                                                    "source": null,
+                                                    "type": "string",
+                                                    "title": "Identity type",
+                                                    "description": "Type of identity."
+                                                },
+                                                "idLocal": {
+                                                    "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/schedule/properties/idLocal",
+                                                    "source": null,
+                                                    "type": "string",
+                                                    "title": "Local identifier",
+                                                    "description": "Locally given identifier."
+                                                },
+                                                "schedule": {
+                                                    "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/schedule/properties/schedule",
+                                                    "source": null,
+                                                    "type": "string",
+                                                    "title": "Schedule",
+                                                    "description": "Schedule in RRULE format. Please visit https://icalendar.org/iCalendar-RFC-5545/3-8-5-3-recurrence-rule.html for more details."
+                                                }
+                                            }
+                                        },
+                                        "location": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/location",
+                                            "source": null,
+                                            "type": "array",
+                                            "title": "Location",
+                                            "description": "Location.",
+                                            "items": {
+                                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/location/items",
+                                                "source": null,
+                                                "type": "object",
+                                                "required": [],
+                                                "properties": {
+                                                    "@type": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/location/items/properties/@type",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Identity type",
+                                                        "description": "Type of identity."
+                                                    },
+                                                    "idLocal": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/location/items/properties/idLocal",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Local identifier",
+                                                        "description": "Locally given identifier."
+                                                    },
+                                                    "name": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/location/items/properties/name",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Name",
+                                                        "description": "Name."
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "status": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/status",
+                                            "source": null,
+                                            "type": "array",
+                                            "title": "Life-cycle status",
+                                            "description": "Life-cycle status.",
+                                            "items": {
+                                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/status/items",
+                                                "source": null,
+                                                "type": "object",
+                                                "required": [],
+                                                "properties": {
+                                                    "@type": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/status/items/properties/@type",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Identity type",
+                                                        "description": "Type of identity."
+                                                    },
+                                                    "status": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/status/items/properties/status",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Life-cycle status",
+                                                        "description": "Life-cycle status.  Status name."
+                                                    },
+                                                    "statusCode": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/status/items/properties/statusCode",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Status code",
+                                                        "description": "Status code."
+                                                    },
+                                                    "comment": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/status/items/properties/comment",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Comment",
+                                                        "description": "Comment."
+                                                    },
+                                                    "updated": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/status/items/properties/updated",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Updated",
+                                                        "description": "Updated."
+                                                    },
+                                                    "updater": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/status/items/properties/updater",
+                                                        "source": null,
+                                                        "type": "object",
+                                                        "title": "Updater",
+                                                        "description": "Updater.",
+                                                        "required": [],
+                                                        "properties": {
+                                                            "@type": {
+                                                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/status/items/properties/updater/properties/@type",
+                                                                "source": null,
+                                                                "type": "string",
+                                                                "title": "Identity type",
+                                                                "description": "Type of identity."
+                                                            },
+                                                            "idLocal": {
+                                                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/status/items/properties/updater/properties/idLocal",
+                                                                "source": null,
+                                                                "type": "string",
+                                                                "title": "Local identifier",
+                                                                "description": "Locally given identifier."
+                                                            },
+                                                            "idOfficial": {
+                                                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/status/items/properties/updater/properties/idOfficial",
+                                                                "source": null,
+                                                                "type": "string",
+                                                                "title": "Official identifier",
+                                                                "description": "Government (official authority) assigned identifier."
+                                                            },
+                                                            "name": {
+                                                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/status/items/properties/updater/properties/name",
+                                                                "source": null,
+                                                                "type": "string",
+                                                                "title": "Name",
+                                                                "description": "Name."
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "executor": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/executor",
+                                            "source": null,
+                                            "type": "array",
+                                            "title": "Process executor",
+                                            "description": "Executor of the process (source of the data).",
+                                            "items": {
+                                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/executor/items",
+                                                "source": null,
+                                                "type": "object",
+                                                "required": [],
+                                                "properties": {
+                                                    "@type": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/executor/items/properties/@type",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Identity type",
+                                                        "description": "Type of identity."
+                                                    },
+                                                    "idLocal": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/executor/items/properties/idLocal",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Local identifier",
+                                                        "description": "Locally given identifier."
+                                                    },
+                                                    "idOfficial": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/executor/items/properties/idOfficial",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Official identifier",
+                                                        "description": "Government (official authority) assigned identifier."
+                                                    },
+                                                    "name": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/executor/items/properties/name",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Name",
+                                                        "description": "Name."
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "operator": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/operator",
+                                            "source": null,
+                                            "type": "array",
+                                            "title": "Operator",
+                                            "description": "Operator.",
+                                            "items": {
+                                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/operator/items",
+                                                "source": null,
+                                                "type": "object",
+                                                "required": [],
+                                                "properties": {
+                                                    "@type": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/operator/items/properties/@type",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Identity type",
+                                                        "description": "Type of identity."
+                                                    },
+                                                    "idLocal": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/operator/items/properties/idLocal",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Local identifier",
+                                                        "description": "Locally given identifier."
+                                                    },
+                                                    "idOfficial": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/operator/items/properties/idOfficial",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Official identifier",
+                                                        "description": "Government (official authority) assigned identifier."
+                                                    },
+                                                    "name": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/operator/items/properties/name",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Name",
+                                                        "description": "Name."
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "processInstance": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance",
+                                            "source": null,
+                                            "type": "array",
+                                            "title": "Process instance",
+                                            "description": "Process instance.",
+                                            "items": {
+                                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items",
+                                                "source": null,
+                                                "type": "object",
+                                                "required": [],
+                                                "properties": {
+                                                    "@type": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/@type",
+                                                        "value": null,
+                                                        "type": "string",
+                                                        "title": "Identity type",
+                                                        "description": "Type of identity."
+                                                    },
+                                                    "idLocal": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/idLocal",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Local identifier",
+                                                        "description": "Locally given identifier."
+                                                    },
+                                                    "name": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/name",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Name",
+                                                        "description": "Name."
+                                                    },
+                                                    "descriptionGeneral": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/descriptionDescription",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Description general",
+                                                        "description": "Description general."
+                                                    },
+                                                    "additionalInformation": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/additionalInformation",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Additional information",
+                                                        "description": "Additional information."
+                                                    },
+                                                    "plannedStart": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/plannedStart",
+                                                        "type": "string",
+                                                        "title": "Planned start time",
+                                                        "description": "Planned start time."
+                                                    },
+                                                    "plannedEnd": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/plannedEnd",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Planned end time",
+                                                        "description": "When something can be started.  Typically used when something is scheduled to happen within certain period."
+                                                    },
+                                                    "canStart": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/canStart",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Earliest start time",
+                                                        "description": "When something can be started.  Typically used when something is scheduled to happen within certain period."
+                                                    },
+                                                    "mustEnd": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/mustEnd",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Latest end time",
+                                                        "description": "When something must ne ended.  Typically used when something is scheduled to happen within certain period."
+                                                    },
+                                                    "actualStart": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/actualStart",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Actual start time",
+                                                        "description": "Actual start time."
+                                                    },
+                                                    "actualEnd": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/actualEnd",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Actual end time",
+                                                        "description": "Actual end time."
+                                                    },
+                                                    "cancelled": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/cancelled",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Cancelled",
+                                                        "description": "Cancelled."
+                                                    },
+                                                    "duration": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/duration",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Duration",
+                                                        "description": "Duration (time)."
+                                                    },
+                                                    "status": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/status",
+                                                        "source": null,
+                                                        "type": "array",
+                                                        "title": "Life-cycle status",
+                                                        "description": "Life-cycle status.",
+                                                        "items": {
+                                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/status/items",
+                                                            "source": null,
+                                                            "type": "object",
+                                                            "required": [],
+                                                            "properties": {
+                                                                "@type": {
+                                                                    "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/status/items/properties/@type",
+                                                                    "source": null,
+                                                                    "type": "string",
+                                                                    "title": "Identity type",
+                                                                    "description": "Type of identity."
+                                                                },
+                                                                "status": {
+                                                                    "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/status/items/properties/status",
+                                                                    "source": null,
+                                                                    "type": "string",
+                                                                    "title": "Life-cycle status",
+                                                                    "description": "Life-cycle status.  Status name."
+                                                                },
+                                                                "statusCode": {
+                                                                    "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/status/items/properties/statusCode",
+                                                                    "source": null,
+                                                                    "type": "string",
+                                                                    "title": "Status code",
+                                                                    "description": "Status code."
+                                                                },
+                                                                "comment": {
+                                                                    "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/status/items/properties/comment",
+                                                                    "source": null,
+                                                                    "type": "string",
+                                                                    "title": "Comment",
+                                                                    "description": "Comment."
+                                                                },
+                                                                "updated": {
+                                                                    "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/status/items/properties/updated",
+                                                                    "source": null,
+                                                                    "type": "string",
+                                                                    "title": "Updated",
+                                                                    "description": "Updated."
+                                                                },
+                                                                "updater": {
+                                                                    "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/status/items/properties/updater",
+                                                                    "source": null,
+                                                                    "type": "object",
+                                                                    "title": "Updater",
+                                                                    "description": "Updater.",
+                                                                    "required": [],
+                                                                    "properties": {
+                                                                        "@type": {
+                                                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/status/items/properties/updater/properties/@type",
+                                                                            "source": null,
+                                                                            "type": "string",
+                                                                            "title": "Identity type",
+                                                                            "description": "Type of identity."
+                                                                        },
+                                                                        "idLocal": {
+                                                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/status/items/properties/updater/properties/idLocal",
+                                                                            "source": null,
+                                                                            "type": "string",
+                                                                            "title": "Local identifier",
+                                                                            "description": "Locally given identifier."
+                                                                        },
+                                                                        "idOfficial": {
+                                                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/status/items/properties/updater/properties/idOfficial",
+                                                                            "source": null,
+                                                                            "type": "string",
+                                                                            "title": "Official identifier",
+                                                                            "description": "Government (official authority) assigned identifier."
+                                                                        },
+                                                                        "name": {
+                                                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/status/items/properties/updater/properties/name",
+                                                                            "source": null,
+                                                                            "type": "string",
+                                                                            "title": "Name",
+                                                                            "description": "Name."
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "executor": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/executor",
+                                                        "source": null,
+                                                        "type": "array",
+                                                        "title": "Process executor",
+                                                        "description": "Executor of the process (source of the data).",
+                                                        "items": {
+                                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/executor/items",
+                                                            "source": null,
+                                                            "type": "object",
+                                                            "required": [],
+                                                            "properties": {
+                                                                "@type": {
+                                                                    "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/executor/items/properties/@type",
+                                                                    "source": null,
+                                                                    "type": "string",
+                                                                    "title": "Identity type",
+                                                                    "description": "Type of identity."
+                                                                },
+                                                                "idLocal": {
+                                                                    "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/executor/items/properties/idLocal",
+                                                                    "source": null,
+                                                                    "type": "string",
+                                                                    "title": "Local identifier",
+                                                                    "description": "Locally given identifier."
+                                                                },
+                                                                "idOfficial": {
+                                                                    "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/executor/items/properties/idOfficial",
+                                                                    "source": null,
+                                                                    "type": "string",
+                                                                    "title": "Official identifier",
+                                                                    "description": "Government (official authority) assigned identifier."
+                                                                },
+                                                                "name": {
+                                                                    "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processInstance/items/properties/executor/items/properties/name",
+                                                                    "source": null,
+                                                                    "type": "string",
+                                                                    "title": "Name",
+                                                                    "description": "Name."
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "processTarget": {
+                                            "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processTarget",
+                                            "source": null,
+                                            "type": "array",
+                                            "title": "Process target",
+                                            "description": "Object into which process (verb) is targeted.",
+                                            "items": {
+                                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processTarget/items",
+                                                "type": "object",
+                                                "required": [],
+                                                "properties": {
+                                                    "@type": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processTarget/items/properties/@type",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Identity type",
+                                                        "description": "Type of identity."
+                                                    },
+                                                    "idLocal": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processTarget/items/properties/idLocal",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Local identifier",
+                                                        "description": "Locally given identifier."
+                                                    },
+                                                    "idExternal": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processTarget/items/properties/idExternal",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "External system Id",
+                                                        "description": "External system identifier."
+                                                    },
+                                                    "name": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processTarget/items/properties/name",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Name",
+                                                        "description": "Name."
+                                                    },
+                                                    "codeLong": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processTarget/items/properties/codeLong",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Long Code",
+                                                        "description": "Long version of code type identifier."
+                                                    },
+                                                    "nameLong": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processTarget/items/properties/nameLong",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Long name",
+                                                        "description": "Long name."
+                                                    },
+                                                    "nameCombined": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processTarget/items/properties/nameCombined",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Combined name",
+                                                        "description": "Combined name which is formed using other names and/or codes."
+                                                    },
+                                                    "nameLabel": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processTarget/items/properties/nameLabel",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Label name",
+                                                        "description": "Label name."
+                                                    },
+                                                    "categorizationName": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processTarget/items/properties/categorizationName",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Category name",
+                                                        "description": "Name of the categorization class/type."
+                                                    },
+                                                    "categorizationCode": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processTarget/items/properties/categorizationCode",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Category code",
+                                                        "description": "Code of the categorization class/type."
+                                                    },
+                                                    "position1": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processTarget/items/properties/position1",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Position 1",
+                                                        "description": "Information which describes position."
+                                                    },
+                                                    "position2": {
+                                                        "$id": "#/properties/data/properties/maintenanceInformation/items/properties/childProcess/items/properties/processTarget/items/properties/position2",
+                                                        "source": null,
+                                                        "type": "string",
+                                                        "title": "Position 2",
+                                                        "description": "Information which describes position."
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "signature": {
+            "$id": "#/properties/signature",
+            "type": "object",
+            "title": "Signature",
+            "description": "Signature.",
+            "required": [],
+            "properties": {
+                "type": {
+                    "$id": "#/properties/signature/properties/type",
+                    "type": "string",
+                    "title": "Type",
+                    "description": "Type."
+                },
+                "created": {
+                    "$id": "#/properties/signature/properties/created",
+                    "type": "string",
+                    "title": "Created",
+                    "description": "Creation time."
+                },
+                "creator": {
+                    "$id": "#/properties/signature/properties/creator",
+                    "type": "string",
+                    "title": "Creator",
+                    "description": "Creator."
+                },
+                "signatureValue": {
+                    "$id": "#/properties/signature/properties/signatureValue",
+                    "type": "string",
+                    "title": "Signature value",
+                    "description": "Signature value."
+                }
+            }
+        }
+    },
+    "version": "3.2"
+}

@@ -1,0 +1,42 @@
+{
+    "plugins": ["gurufield-case"],
+    "protocol": "rest",
+    "authConfig": {
+        "url": "https://${api}/api/beta/batch-exports",
+        "headers": {
+            "gurufield-api-token": "${token}"
+        },
+        "path": "/${resource}"
+    },
+    "dataObjects": ["results"],
+    "dataPropertyMappings": {
+        "${type}": ""
+    },
+    "generalConfig": {
+        "sourceName": {
+            "dataObjectProperty": "description"
+        },
+        "hardwareId": {
+            "dataObjectProperty": "${idProperty}"
+        },
+        "timestamp": {
+            "dataObjectProperty": "created"
+        },
+        "query": {
+            "properties": [
+                {
+                    "pageSize": "${limit}"
+                }
+            ]
+        }
+    },
+    "input": {
+        "required": ["parameters.limit"],
+        "limit": "parameters.limit"
+    },
+    "output": {
+        "contextValue": "${contextValue}",
+        "array": "${outputArray}",
+        "data": "data"
+    }
+}

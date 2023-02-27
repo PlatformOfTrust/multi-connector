@@ -242,14 +242,14 @@
                                         },
                                         "processValueStart": {
                                             "$id": "#/properties/data/properties/process/items/properties/processValue/items/properties/processValueStart",
-                                            "source": "data.start",
+                                            "source": "data.startValue",
                                             "type": "string",
                                             "title": "Process value start",
                                             "description": "Process value start."
                                         },
                                         "processValueEnd": {
                                             "$id": "#/properties/data/properties/process/items/properties/processValue/items/properties/processValueEnd",
-                                            "source": "data.end",
+                                            "source": "data.endValue",
                                             "type": "string",
                                             "title": "Process value end",
                                             "description": "Process value end."
@@ -266,7 +266,7 @@
                                         },
                                         "period": {
                                             "$id": "#/properties/data/properties/process/items/properties/processValue/items/properties/period",
-                                            "value": "${parameters.start}/${parameters.end}",
+                                            "value": "${data.start}/${data.end}",
                                             "type": "string",
                                             "title": "Period",
                                             "description": "Period."

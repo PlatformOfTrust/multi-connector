@@ -50,7 +50,9 @@ function request (method, url, headers, body) {
  * @return {Object}
  */
 const stream = async (template, data) => {
+    let productCode;
     let parameters;
+
     try {
         // Include parameters defined in config.
         parameters = template.config.plugins.broker.parameters;
@@ -60,18 +62,20 @@ const stream = async (template, data) => {
 
     try {
         let env = 'sandbox';
+        let version = 'v1';
         const config = template.config;
 
-        // Try to parse env from the config.
+        // Try to parse env and version from the config.
         try {
             env = config.plugins.broker.env;
+            version = config.plugins.broker.version;
         } catch (err) {
             winston.log('error', err.message);
         }
 
         // Find env specific broker URL.
-        const url = (brokerURLs.find(i => i.env === (env || 'sandbox'))
-            || {url: 'http://localhost:8080/translator/v1/fetch'}).url;
+        const url = (brokerURLs.find(i => i.env === (env || 'sandbox') && i.version === (version || 'v1')) ||
+            {url: 'http://localhost:8080/translator/v1/fetch'}).url;
 
         /** Output definitions from config. */
         const objectKey = template.output.object || 'data';
@@ -79,7 +83,7 @@ const stream = async (template, data) => {
         data = Array.isArray(data) ? data : [data];
 
         for (let i = 0; i < data.length; i++) {
-            const productCode = config.static.productCode;
+            productCode = config.static.productCode;
             if (!productCode) continue;
 
             if (url) {
@@ -141,7 +145,7 @@ const stream = async (template, data) => {
 
                 for (let r = 0; r < requests.length; r++) {
                     // Send broker request.
-                    winston.log('info', 'Broker plugin: Send broker request to ' + url);
+                    winston.log('info', 'Broker plugin: Send broker request to ' + url.replace(':productCode', productCode));
 
                     // Initialize signature value.
                     let signatureValue;
@@ -165,7 +169,7 @@ const stream = async (template, data) => {
                         'Content-Type': 'application/json',
                     };
 
-                    await request('POST', url, headers, requests[r]);
+                    await request('POST', url.replace(':productCode', productCode), headers, requests[r]);
                 }
             }
         }
@@ -173,6 +177,8 @@ const stream = async (template, data) => {
         const error = new Error('Broker returns an invalid response.');
         error.httpStatusCode = 500;
         error.translator_response = err.error;
+        error.productCode = productCode || null;
+        error.appId = null;
         winston.log('error', err.message);
         throw error;
     }

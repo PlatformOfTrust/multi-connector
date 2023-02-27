@@ -13,8 +13,8 @@ const fs = require('fs');
 /**
  * Congrid quality document creator plugin.
  */
-
-const DOWNLOAD_DIR = './temp';
+const storagePath = process.env.STORAGE_PATH || './'
+const DOWNLOAD_DIR = `${storagePath}temp`;
 
 // Source mapping.
 const documentSchema = {
@@ -461,11 +461,10 @@ const template = async (config, template) => {
         const originalFilename = template.parameters.targetObject.name;
         const contentType = template.parameters.targetObject['categorizationInternetMediaType'];
 
-        // TODO: Testing.
         const qualityDocumentName = originalFilename;
         let projectCode = '123124';
-        const workSectionCode = '2.1';
-        const workActivityName = 'CE-dokumentit';
+        const workSectionCode = template.authConfig.workSectionCode !== '${workSectionCode}' ? template.authConfig.workSectionCode : '2.1';
+        const workActivityName = template.authConfig.workActivityName !== '${workActivityName}' ? template.authConfig.workActivityName : 'CE-dokumentit';
 
         // Pick project number from document.
         try {
@@ -494,18 +493,48 @@ const template = async (config, template) => {
             // return Promise.reject(new Error('Missing field categorizationInternetMediaType.'));
         }
 
+        if (!project) {
+            try {
+                winston.log('error', 'Found projects only with project codes ' + projects.body.results.map(p => p.projectCode));
+            } catch (err) {
+                winston.log('error', 'Could not parse projects from body:');
+                winston.log('info', JSON.stringify(projects.body));
+            }
+        }
+
+        if (!project) {
+            return Promise.reject(new Error('Project not found with projectCode ' + projectCode));
+        }
+
         /** Create document and fetch it */
         const matricesUrl = domain + '/v2/projects/' + project.id + '/matrices';
         const matrices = await request('GET', matricesUrl, headers);
-        const matrix = matrices.body.results.find(p => p.projectId === project.id);
+        const matrix = matrices.body.results.find(p => p.projectId === project.id && p.name !== null);
+
+        if (!matrix) {
+            return Promise.reject(new Error('Quality matrix not found with projectId ' + project.id));
+        }
+
+        winston.log('info', 'Found matrices with name ' +  matrices.body.results.map(m => m.name));
+        winston.log('info', 'Selected matrix with name ' + matrix.name);
 
         const workSectionsUrl = domain + '/v2/projects/' + project.id + '/workSections?matrixId=' + matrix.id + '&code=' + workSectionCode;
         const workSections = await request('GET', workSectionsUrl, headers);
         const workSection = workSections.body.results.find(p => p.code === workSectionCode);
 
+        if (!workSection) {
+            winston.log('error', 'Found work sections only with codes ' + workSections.body.results.map(p => p.code));
+            return Promise.reject(new Error('Work section not found with code ' + workSectionCode));
+        }
+
         const workActivitiesUrl = domain + '/v2/projects/' + project.id + '/workActivities?matrixId=' + matrix.id + '&name=' + workActivityName;
         const workActivities = await request('GET', workActivitiesUrl, headers);
         const workActivity = workActivities.body.results.find(p => p.name === workActivityName);
+
+        if (!workActivity) {
+            winston.log('error', 'Found activities only with names ' + workActivities.body.results.map(p => p.name));
+            return Promise.reject(new Error('Work activity not found with name ' + workActivityName));
+        }
 
         const body = {
             contentType,
@@ -517,6 +546,22 @@ const template = async (config, template) => {
             'workActivityId': workActivity.id,
             'workSectionId': workSection.id,
         };
+
+        // Remove blob storage id prefix.
+        if (originalFilename.includes('_-----_')) {
+            body.originalFilename = originalFilename.split('_-----_')[1];
+            body.name = body.originalFilename;
+        }
+        if (originalFilename.includes('_ - - _')) {
+            body.originalFilename = originalFilename.split('_ - - _')[1];
+            body.name = body.originalFilename;
+        }
+
+        if (body.originalFilename.length > 128) {
+            const length = body.originalFilename.length;
+            body.originalFilename = body.originalFilename.substring(length - 128, length);
+            body.name = body.originalFilename;
+        }
 
         const downloadUrl = template.parameters.targetObject['url'];
         if (!downloadUrl) {
@@ -533,6 +578,10 @@ const template = async (config, template) => {
         const qualityDocumentsUrl = domain + '/v2/qualityDocuments';
         const create = await request('POST', qualityDocumentsUrl, headers, body);
         const qualityDocument = create.body;
+
+        if (!qualityDocument) {
+            return Promise.reject(new Error('Failed to create quality document.'));
+        }
 
         // Upload quality document.
         const uploadUrl = qualityDocument.signedUploadUrl;

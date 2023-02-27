@@ -64,11 +64,16 @@ function getWSDL (config) {
     } else {
         /** Basic authentication. */
         return new Promise((resolve, reject) => {
-            request({url: protocol + username + ':' + password + '@' + url.replace(protocol, '')},
-                function (err, response, body) {
-                    if (err) reject(err);
-                    else resolve(body);
+            request({
+                url: protocol + url.replace(protocol, ''),
+                headers: {
+                    Authorization: 'Basic ' + Buffer.from(username + ':' + password).toString('base64'),
                 },
+            },
+            function (err, response, body) {
+                if (err) reject(err);
+                else resolve(body);
+            },
             );
         });
     }
@@ -172,8 +177,9 @@ const createSOAPClient = async (config, url, pathArray) => {
  */
 const getData = async (config, pathArray) => {
     let items = [];
-    const WSDLDir = 'wsdl';
-    const WSDLFile = './' + WSDLDir + '/' + encodeURI(config.productCode) + '.xml';
+    const storagePath = process.env.STORAGE_PATH || './'
+    const WSDLDir = `${storagePath}wsdl`;
+    const WSDLFile = WSDLDir + '/' + encodeURI(config.productCode) + '.xml';
 
     try {
         // Create WSDL folder, if it does not exist.

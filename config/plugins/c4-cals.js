@@ -10,7 +10,6 @@ const winston = require('../../logger.js');
 const cache = require('../../app/cache');
 const rsa = require('../../app/lib/rsa');
 const moment = require('moment');
-const net = require('net');
 const _ = require('lodash');
 
 /**
@@ -21,6 +20,7 @@ const PLUGIN_NAME = 'c4-cals';
 const orderIdToCALSInstanceId = {};
 const orderNumberToCALSId = {};
 const vendorMaterialCodeToCALSId = {};
+const GTINToCALSId = {};
 
 // Source mapping.
 const orderInformationSchema = require('../schemas/order-information-v4_cals.json');
@@ -737,14 +737,19 @@ Date.prototype.isDstObserved = function () {
  *
  * @param {Date} input
  * @param {Boolean} [reverse]
+ * @param {Boolean} [convert]
  * @return {String}
  */
-const convertFinnishDateToISOString = (input, reverse = false) => {
+const convertFinnishDateToISOString = (input, reverse = false, convert = false) => {
     // Examples.
     // Finnish UTC +2 or +3.
     // new Date(1610031289498); -2
     // new Date(1631092909080); -3 (Daylight Saving Time)
     let output;
+    if (typeof input === 'string' && convert) {
+        input = input.replace(' ', 'T');
+    }
+    input = convert ? new Date(input) : input;
     if (input.isDstObserved()) {
         output = new Date(input.setHours(input.getHours() - (reverse ? 3 : -3)));
     } else {
@@ -801,7 +806,13 @@ const handleData = function (config, id, data) {
                             if (!Object.hasOwnProperty.call(vendorMaterialCodeToCALSId, value.purchaseOrderId)) {
                                 vendorMaterialCodeToCALSId[value.purchaseOrderId] = {};
                             }
+                            if (!Object.hasOwnProperty.call(GTINToCALSId, value.purchaseOrderId)) {
+                                GTINToCALSId[value.purchaseOrderId] = {};
+                            }
+
                             vendorMaterialCodeToCALSId[value.purchaseOrderId][value.purchaseOrderItems[i].vendorMaterialCode] = value.purchaseOrderItems[i].purchaseOrderItemId;
+                            GTINToCALSId[value.purchaseOrderId][value.purchaseOrderItems[i].materialGlobalTradeItemNumber] = value.purchaseOrderItems[i].purchaseOrderItemId;
+
                             value.purchaseOrderItems[i] = {
                                 orderLineType: 'OrderLine',
                                 productType: 'Product',
@@ -809,9 +820,11 @@ const handleData = function (config, id, data) {
                                 purchaseOrderItemNumber: (i + 1) + '0',
                             };
                         }
-                        winston.log('info', 'Store CALS identifiers from sent order.');
+                        // winston.log('info', 'Store CALS identifiers from sent order.');
                         // winston.log('info', 'orderNumberToCALSId: ' + JSON.stringify(orderNumberToCALSId));
                         // winston.log('info', 'orderIdToCALSInstanceId: ' + JSON.stringify(orderIdToCALSInstanceId));
+                        // winston.log('info', 'vendorMaterialCodeToCALSId: ' + JSON.stringify(vendorMaterialCodeToCALSId));
+                        winston.log('info', 'Processed order ' + value.purchaseOrderId + ' with idLocal ' + value.purchaseOrderNumber);
                     } catch (e) {
                         console.log(e.message);
                     }
@@ -928,9 +941,22 @@ const errorResponse = async (req, res, err) => {
         error: {
             status: err.httpStatusCode || 500,
             message: message || 'Internal Server Error.',
+            productCode: err.productCode || null,
+            appId: err.appId || null,
             translator_response: err.translator_response || undefined,
         },
     };
+
+    // Compose error message.
+    const logMessage = [
+        err.httpStatusCode || err.statusCode || 500,
+        req.originalUrl,
+        `productCode=${result.error.productCode}, appId=${result.error.appId}`,
+        JSON.stringify(result),
+    ].join(' | ');
+
+    // Log error.
+    winston.log('error', logMessage);
 
     // Send response.
     return res.status(err.httpStatusCode || 500).send(result);
@@ -988,36 +1014,41 @@ const controller = async (req, res) => {
         }
 
         // 1. Parse options and authenticate request.
-        let config;
+        let config = {
+            static: {},
+        };
+
         let template;
-        let productCode;
+        let productCode = req.productCode;
         try {
-            const parts = req.originalUrl.split('/');
-            productCode = parts.splice(parts.indexOf(PLUGIN_NAME) + 1)[0];
-            config = cache.getDoc('configs', productCode) || {};
+            if (!productCode) {
+                const parts = req.originalUrl.split('/');
+                productCode = parts.splice(parts.indexOf(PLUGIN_NAME) + 1)[0];
+                config = cache.getDoc('configs', productCode) || {};
 
-            if (_.isEmpty(config) || !Object.hasOwnProperty.call(config, 'static')) {
-                const err = new Error('Data product configuration not found.');
-                err.httpStatusCode = 404;
-                return errorResponse(req, res, err);
+                if (_.isEmpty(config) || !Object.hasOwnProperty.call(config, 'static')) {
+                    const err = new Error('Data product configuration not found.');
+                    err.httpStatusCode = 404;
+                    return errorResponse(req, res, err);
+                }
+
+                if (!Object.hasOwnProperty.call(config.static, 'bearer')) {
+                    const err = new Error('Bearer not found at data product configuration.');
+                    err.httpStatusCode = 500;
+                    return errorResponse(req, res, err);
+                }
+
+                /** Request authentication */
+                if (bearer !== ('Bearer ' + config.static.bearer)) {
+                    return res.status(401).send('Unauthorized');
+                }
+
+                winston.log('info', 'Received trigger request from ' + (req.get('x-real-ip') || req.get('origin') || req.socket.remoteAddress));
+
+                template = cache.getDoc('templates', config.template) || {};
+                config.connectorUrl = req.connectorUrl;
+                config.publicKeyUrl = req.publicKeyUrl;
             }
-
-            if (!Object.hasOwnProperty.call(config.static, 'bearer')) {
-                const err = new Error('Bearer not found at data product configuration.');
-                err.httpStatusCode = 500;
-                return errorResponse(req, res, err);
-            }
-
-            /** Request authentication */
-            if (bearer !== ('Bearer ' + config.static.bearer)) {
-                return res.status(401).send('Unauthorized');
-            }
-
-            winston.log('info', 'Received trigger request from ' + (req.get('x-real-ip') || req.get('origin') || req.socket.remoteAddress));
-
-            template = cache.getDoc('templates', config.template) || {};
-            config.connectorUrl = req.connectorUrl;
-            config.publicKeyUrl = req.publicKeyUrl;
         } catch (err) {
             err.httpStatusCode = 500;
             err.message = 'Failed to handle request.';
@@ -1099,7 +1130,7 @@ const controller = async (req, res) => {
             /** Receiver data product */
             config.static.productCode = vendorProductCode;
 
-            if (req.body.isTest) {
+            if (req.body.isTest || Object.hasOwnProperty.call(req, 'productCode')) {
                 /** Test message response */
                 res.setHeader('x-event-id', req.body.eventId);
                 res.setHeader('x-is-pot', true);
@@ -1151,6 +1182,58 @@ const endpoints = function (passport) {
     return router;
 };
 
+const getMappings = async (productCode, instanceIds = [], orderNumber) => {
+    for (let i = 0; i < instanceIds.length; i++) {
+        try {
+            await controller({
+                productCode,
+                body: {
+                    isTest: false,
+                    eventId: 'e560e9f69aba49af9aae3c9dbda71033',
+                    entity: 'PurchaseOrder',
+                    method: 'POST',
+                    instanceId: instanceIds[i],
+                    entityId: orderNumber,
+                },
+                headers: {
+                    authorization: 'test',
+                },
+            }, {
+                status: () => ({
+                    send: () => {},
+                }),
+                setHeader: () => {},
+            });
+        } catch (e) {
+            return;
+        }
+    }
+};
+
+/**
+ * Converts string to number.
+ *
+ * @param {String/Number} quantity
+ * @return {Number}
+ */
+const handleQuantity = (quantity = '') => {
+    if (typeof quantity === 'string') {
+        try {
+            const commaCount = (quantity.match(/,/g) || []).length;
+            if (commaCount === 1) {
+                quantity = quantity.replace(',', '.');
+            }
+        } catch (err) {
+            winston.log('info', err.message);
+        }
+        const intValue = parseInt(quantity);
+        const floatValue = parseFloat(quantity);
+        return isNaN(intValue) ? quantity : (intValue !== floatValue ? floatValue : intValue);
+    } else {
+        return quantity;
+    }
+};
+
 /**
  * Switch querying protocol to REST.
  *
@@ -1166,6 +1249,7 @@ const template = async (config, template) => {
         } else if (Object.hasOwnProperty.call(template.parameters.targetObject, 'order')) {
             /** CALS connector */
             const resource = (template.authConfig.entity + 's').toLowerCase();
+            const instanceId = Array.isArray(template.authConfig.instanceId) ? template.authConfig.instanceId[0] : template.authConfig.instanceId;
 
             winston.log('info', 'Connector consumes CALS REST API ' + resource + ' by entityId ' + template.authConfig.path);
             template.protocol = 'rest';
@@ -1178,7 +1262,7 @@ const template = async (config, template) => {
             winston.log('info', 'Include headers from trigger request' + ', '
                 + 'x-event-id: ' + template.authConfig.headers['x-event-id'] + ', '
                 + 'x-is-test: ' + template.authConfig.headers['x-is-test']);
-            template.authConfig.path = '/instances/' + template.authConfig.instanceId + '/' + resource + '/' + template.authConfig.path;
+            template.authConfig.path = '/instances/' + instanceId + '/' + resource + '/' + template.authConfig.path;
         }
 
         if (Object.hasOwnProperty.call(template.parameters.targetObject, 'sender')) {
@@ -1194,6 +1278,11 @@ const template = async (config, template) => {
 
             template.authConfig.path = id;
 
+            // Return error on unknown order id.
+            if (id === 'Unknown') {
+                return Promise.reject(new Error('Unknown order id.'));
+            }
+
             // Stream data to external system.
             try {
                 // Transform
@@ -1201,6 +1290,11 @@ const template = async (config, template) => {
 
                 // 1. Parse PurchaseOrderId - template.parameters.targetObject.idLocal
                 data.PurchaseOrderNumber = template.parameters.targetObject.idLocal;
+
+                if (!Object.hasOwnProperty.call(orderNumberToCALSId, data.PurchaseOrderNumber)) {
+                    await getMappings(template.productCode, Array.isArray(template.authConfig.instanceId) ? template.authConfig.instanceId : [template.authConfig.instanceId], data.PurchaseOrderNumber);
+                }
+
                 data.PurchaseOrderId = orderNumberToCALSId[data.PurchaseOrderNumber] || template.parameters.targetObject.idSystemLocal;
                 data.InstanceId = orderIdToCALSInstanceId[data.PurchaseOrderId];
 
@@ -1208,6 +1302,7 @@ const template = async (config, template) => {
                 winston.log('info', 'Resolved ' + data.PurchaseOrderId + ' to InstanceId ' + data.InstanceId);
 
                 const items = template.parameters.targetObject.orderLine || template.parameters.targetObject.deliveryLine || [];
+                let deliveryConfirmation = null;
 
                 // 2. Parse PurchaseOrderItems - template.parameters.targetObject.orderLine or -.deliveryLine
                 data.PurchaseOrderItems = (Array.isArray(items) ? items : [items]).map(input => {
@@ -1215,25 +1310,38 @@ const template = async (config, template) => {
                     const root = template.parameters.targetObject;
                     // Root level delivery datetime by default.
                     let datetime = root.deliveryPlanned || root.deliveryRequired;
+                    let datetime2 = root.deliveryPlanned || root.deliveryRequired;
 
                     // Catch transportation/delivery time from delivery information.
                     if (!datetime && Object.hasOwnProperty.call(input, 'transportation')) {
-                        if (input.transportation.endDateTime !== '') {
+                        if (input.transportation.endDateTime !== '' && input.transportation.endDateTime !== 'NULL') {
                             datetime = input.transportation.endDateTime;
                             output.ActualDelivery = [];
                         }
                     }
                     if (!datetime && Object.hasOwnProperty.call(input, 'delivery')) {
-                        if (input.delivery.startDateTime !== '') {
+                        if (input.delivery.startDateTime !== '' && input.delivery.startDateTime !== 'NULL') {
                             datetime = input.delivery.startDateTime;
                             output.ActualDelivery = [];
                         }
                     }
+                    if (!datetime && Object.hasOwnProperty.call(input, 'loading')) {
+                        if (input.loading.startDateTime !== '' && input.loading.startDateTime !== 'NULL') {
+                            datetime = input.loading.startDateTime;
+                            output.ActualDelivery = [];
+                        }
+                    }
+                    if (!datetime2 && Object.hasOwnProperty.call(input, 'loading')) {
+                        if (input.loading.startDateTime !== '' && input.loading.startDateTime !== 'NULL') {
+                            datetime2 = input.loading.startDateTime;
+                            output.ActualDelivery = [];
+                        }
+                    }
                     if (!datetime && Object.hasOwnProperty.call(root, 'processDelivery')) {
-                        if (root.processDelivery.deliveryPlanned !== '') {
+                        if (root.processDelivery.deliveryPlanned !== '' && root.processDelivery.deliveryPlanned !== 'NULL') {
                             datetime = root.processDelivery.deliveryPlanned;
                         }
-                        if (!datetime && root.processDelivery.deliveryRequired !== '') {
+                        if (!datetime && root.processDelivery.deliveryRequired !== '' && root.processDelivery.deliveryRequired !== 'NULL') {
                             datetime = root.processDelivery.deliveryRequired;
                         }
                     }
@@ -1246,12 +1354,33 @@ const template = async (config, template) => {
                     // Resolve CALSId.
                     try {
                         output.PurchaseOrderItemId = vendorMaterialCodeToCALSId[data.PurchaseOrderId][input.product.codeProduct];
+                        if (output.PurchaseOrderItemId === '' || output.PurchaseOrderItemId === undefined || output.PurchaseOrderItemId === null) {
+                            try {
+                                if (Object.hasOwnProperty.call(GTINToCALSId, data.PurchaseOrderId)) {
+                                    output.PurchaseOrderItemId = GTINToCALSId[data.PurchaseOrderId][input.product.gtin];
+                                } else {
+                                    output.PurchaseOrderItemId = null;
+                                }
+                            } catch (e) {
+                                output.PurchaseOrderItemId = null;
+                                winston.log('error', e.message);
+                            }
+                        }
                     } catch (e) {
-                        output.PurchaseOrderItemId = input.idSystemLocal;
+                        try {
+                            if (Object.hasOwnProperty.call(GTINToCALSId, data.PurchaseOrderId)) {
+                                output.PurchaseOrderItemId = GTINToCALSId[data.PurchaseOrderId][input.product.gtin];
+                            } else {
+                                output.PurchaseOrderItemId = null;
+                            }
+                        } catch (e) {
+                            output.PurchaseOrderItemId = null;
+                            winston.log('error', e.message);
+                        }
                     }
 
                     try {
-                        datetime = convertFinnishDateToISOString(new Date(datetime), true);
+                        datetime = convertFinnishDateToISOString(new Date(datetime.replace(' ', 'T')), true);
                         output.ConfirmedDeliveryDate = (datetime || 'T').split('T')[0];
                         output.ConfirmedDeliveryTime = (datetime || 'T').split('T')[1].substring(0, 5);
 
@@ -1263,7 +1392,22 @@ const template = async (config, template) => {
                             delete output.ConfirmedDeliveryTime;
                         }
                     } catch (e) {
-                        winston.log('error', e.message);
+                        winston.log('error', `${e.message} ${datetime}`);
+                        try {
+                            datetime2 = convertFinnishDateToISOString(new Date(datetime2.replace(' ', 'T')), true);
+                            output.ConfirmedDeliveryDate = (datetime2 || 'T').split('T')[0];
+                            output.ConfirmedDeliveryTime = (datetime2 || 'T').split('T')[1].substring(0, 5);
+
+                            // Delete unavailable delivery times.
+                            if (output.ConfirmedDeliveryDate === '') {
+                                delete output.ConfirmedDeliveryDate;
+                            }
+                            if (output.ConfirmedDeliveryTime === '') {
+                                delete output.ConfirmedDeliveryTime;
+                            }
+                        } catch (e) {
+                            winston.log('error', `${e.message} ${datetime2}`);
+                        }
                     }
 
                     if (!output.PurchaseOrderItemId) {
@@ -1276,29 +1420,50 @@ const template = async (config, template) => {
 
                     // Compose actual delivery array.
                     if (Object.hasOwnProperty.call(output, 'ActualDelivery')) {
-                        output.ActualDelivery.push(
-                            {
-                                ID: (input.delivery || {}).idLocal,
-                                Quantity: input.quantity,
-                                ActualDeliveryDate: output.ConfirmedDeliveryDate,
-                                ActualDeliveryTime: output.ConfirmedDeliveryTime,
-                            },
-                        );
-                        delete output.ConfirmedDeliveryDate;
-                        delete output.ConfirmedDeliveryTime;
+                        if (!deliveryConfirmation) {
+                            deliveryConfirmation = {
+                                ShipmentNumber: (input.delivery || {}).idLocal,
+                                ShippingDate: output.ConfirmedDeliveryDate,
+                                ShippingTime: output.ConfirmedDeliveryTime,
+                                EstimatedTimeOfArrivalDate: undefined,
+                                EstimatedTimeOfArrivalTime: undefined,
+                                Origin: input.production.locationName,
+                                Type: input.vehicle.categorizationCode,
+                                Info: input.vehicle.categorizationName,
+                                PurchaseOrders: [
+                                    {
+                                        PurchaseOrderId: data.PurchaseOrderId,
+                                        PurchaseOrderNumber: data.PurchaseOrderNumber,
+                                        PurchaseOrderItems: [],
+                                    },
+                                ],
+                            };
+                            try {
+                                const transportationDatetime = convertFinnishDateToISOString(new Date(input.transportation.endDateTime.replace(' ', 'T')), true);
+                                deliveryConfirmation.EstimatedTimeOfArrivalDate = (transportationDatetime || 'T').split('T')[0];
+                                deliveryConfirmation.EstimatedTimeOfArrivalTime = (transportationDatetime || 'T').split('T')[1].substring(0, 5);
+                            } catch (e) {
+                                deliveryConfirmation.EstimatedTimeOfArrivalDate = undefined;
+                                deliveryConfirmation.EstimatedTimeOfArrivalTime = undefined;
+                            }
+                        }
+                        deliveryConfirmation.PurchaseOrders[0].PurchaseOrderItems.push({
+                            PurchaseOrderItemId: output.PurchaseOrderItemId,
+                            ShipmentQuantity: handleQuantity(input.quantity),
+                        });
                     }
 
                     return output;
                 });
 
-                winston.log('info', 'Body: ' + JSON.stringify(data));
+                winston.log('info', 'Body: ' + JSON.stringify(deliveryConfirmation ? deliveryConfirmation : data));
 
                 if (!data.InstanceId) {
-                    return Promise.reject(new Error('Could not resolve CALS instance ID. Resending the order from CALS is required.'));
+                    return Promise.reject(new Error('Purchase order with orderNumber '+ data.PurchaseOrderNumber + ' not found.'));
                 }
 
                 const url = template.authConfig.url;
-                config.static.url = url + '/instances/' + data.InstanceId + '/confirmpurchaseorder';
+                config.static.url = url + '/instances/' + data.InstanceId + '/purchaseorders/' + (deliveryConfirmation ? 'ship' : 'confirm');
                 config.static.headers = {
                     'CALS-API-KEY': config.static.apikey,
                     'x-is-test': template.authConfig.isTest === 'true',
@@ -1309,7 +1474,7 @@ const template = async (config, template) => {
                 winston.log('info', '3. Send data to URL ' + config.static.url);
 
                 await template.plugins.find(p => p.name === 'streamer')
-                    .stream({...template, config}, {data: {order: data}});
+                    .stream({...template, config}, {data: {order: deliveryConfirmation ? deliveryConfirmation : data}});
 
             } catch (err) {
                 winston.log('info', err.message);

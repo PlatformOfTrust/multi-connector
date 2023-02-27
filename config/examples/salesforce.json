@@ -1,0 +1,22 @@
+{
+    "template": "salesforce",
+    "static": {
+        "url": "https://<env>.salesforce.com",
+        "username": "<username>",
+        "password": "<password>",
+        "securityToken": "<securityToken>",
+        "clientId": "<clientId>",
+        "clientSecret": "<clientSecret>",
+        "version": "54.0",
+        "type": "Case"
+    },
+    "dynamic": {
+        "authConfig.path": "targetObject.idLocal"
+    },
+    "schema": "service-request_salesforce-v2.1",
+    "request": {
+        "targetObject": {
+            "idLocal": "<object-id>"
+        }
+    }
+}

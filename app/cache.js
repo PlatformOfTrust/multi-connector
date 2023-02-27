@@ -110,6 +110,17 @@ const delDoc = function (collection, id) {
 };
 
 /**
+ * Retrieves TTL of an document.
+ *
+ * @param {String} collection
+ * @param {String} id
+ */
+const getTtl = function (collection, id) {
+    if (Object.hasOwnProperty.call(cache, collection)) return cache[collection].cache.getTtl(id);
+    return 0;
+};
+
+/**
  * Expose methods.
  */
 module.exports = {
@@ -119,4 +130,5 @@ module.exports = {
     getKeysAndDocs,
     setDoc,
     delDoc,
+    getTtl,
 };

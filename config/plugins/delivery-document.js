@@ -29,6 +29,7 @@ const DOWNLOAD_DIR = './temp/';
 const PRIMARY_PRODUCT_CODE = 'C1EC2973-8A0B-4858-BF1E-3A0D0CEFE33A';
 const orderNumberToCALSId = {};
 const productCodeToCALSId = {};
+const projects = {};
 
 // Source mapping.
 const deliveryInformationSchema = {
@@ -289,14 +290,14 @@ const deliveryInformationSchema = {
                                 },
                                 'quantity': {
                                     '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/quantity',
-                                    'source': 'Toimitusm��r�',
+                                    'source': 'Toimitusmäärä',
                                     'type': 'string',
                                     'title': 'Quantity',
                                     'description': 'Quantity of specific objects.',
                                 },
                                 'unit': {
                                     '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/unit',
-                                    'source': 'Yksikk�',
+                                    'source': 'Yksikkö',
                                     'type': 'string',
                                     'title': 'Unit',
                                     'description': 'Unit used (Defines unit which is used).',
@@ -317,7 +318,7 @@ const deliveryInformationSchema = {
                                         },
                                         'groupName': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/product/properties/groupName',
-                                            'source': 'Tuoteryhm�',
+                                            'source': 'Tuoteryhmä',
                                             'type': 'string',
                                             'title': 'Product group name',
                                             'description': 'Unique product group name given by manufacturer.',
@@ -509,14 +510,14 @@ const deliveryInformationSchema = {
                                         },
                                         'startDateTime': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/Delivery/properties/startDateTime',
-                                            'source': 'L�hetysaika',
+                                            'source': 'Lähetysaika',
                                             'type': 'string',
                                             'title': 'Start time',
                                             'description': 'Start time.',
                                         },
                                         'endDateTime': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/Delivery/properties/endDateTime',
-                                            'source': 'Tehtaalle_l�ht�aika',
+                                            'source': 'Tehtaalle_lähtöaika',
                                             'type': 'string',
                                             'title': 'End time',
                                             'description': 'End time.',
@@ -571,14 +572,14 @@ const deliveryInformationSchema = {
                                         },
                                         'startDateTime': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/Transportation/properties/startDateTime',
-                                            'source': 'Ty�maalle_l�ht�aika',
+                                            'source': 'Työmaalle_lähtöaika',
                                             'type': 'string',
                                             'title': 'Start time',
                                             'description': 'Start time.',
                                         },
                                         'endDateTime': {
                                             '$id': '#/properties/data/properties/order/properties/deliveryLine/properties/Transportation/properties/endDateTime',
-                                            'source': 'Ty�maalle_saapumisaika',
+                                            'source': 'Työmaalle_saapumisaika',
                                             'type': 'string',
                                             'title': 'End time',
                                             'description': 'End time.',
@@ -1114,7 +1115,11 @@ const response = async (config, response) => {
                 } else {
                     // File is .txt, .csv, .svg, etc.
                     response = {
-                        data: await CSVToJSON({delimiter: 'auto'}).fromString(Buffer.from(response.data, 'base64').toString('utf-8')),
+                        data: await CSVToJSON({delimiter: 'auto'})
+                            .fromString(Buffer.from(response.data, 'base64')
+                                .toString('utf-8').includes('�')
+                                ? Buffer.from(response.data, 'base64').toString('latin1')
+                                : Buffer.from(response.data, 'base64').toString('utf-8')),
                     };
                 }
             } else {
@@ -1200,6 +1205,8 @@ const errorResponse = async (req, res, err) => {
         error: {
             status: err.httpStatusCode || 500,
             message: message || 'Internal Server Error.',
+            productCode: err.productCode || null,
+            appId: err.appId || null,
             translator_response: err.translator_response || undefined,
         },
     };
@@ -1264,6 +1271,9 @@ const convertFinnishDateToISOString = (input, reverse = false, convert = false) 
     // new Date(1610031289498); -2
     // new Date(1631092909080); -3 (Daylight Saving Time)
     let output;
+    if (typeof input === 'string' && convert) {
+        input = input.replace(' ', 'T');
+    }
     input = convert ? new Date(input) : input;
     if (input.isDstObserved()) {
         output = new Date(input.setHours(input.getHours() - (reverse ? 3 : -3)));
@@ -1342,16 +1352,28 @@ const sendData = async (req, res, productCode, config, template, result, options
             result.output.data[key].map((order) => {
                 // Add project details.
                 if (order['@type'] === 'Document' && !Object.hasOwnProperty.call(order, 'project')) {
-                    order.project = {
-                        '@type': 'Project',
-                        idLocal: '123124',
-                    };
-                }
-                if (!Object.hasOwnProperty.call(order, 'deliveryLine')) {
-                    return order;
-                }
-                if (!Array.isArray(order.deliveryLine)) {
-                    order.deliveryLine = [order.deliveryLine];
+                    try {
+                        if (Object.hasOwnProperty.call(projects, productCode)) {
+                            order.project = {
+                                '@type': 'Project',
+                                idLocal: projects[productCode],
+                            };
+                            winston.log('info', 'Read project ' + projects[productCode] + ' from config.');
+                        } else {
+                            const parts = options.filename.split('_');
+                            const workPackage = parts[parts.length - 1].split('.')[0];
+                            winston.log('info', 'Read work package ' + workPackage + ' from filename.');
+                            order.project = {
+                                '@type': 'Project',
+                                idLocal: '123124',
+                            };
+                        }
+                    } catch (err) {
+                        order.project = {
+                            '@type': 'Project',
+                            idLocal: '123124',
+                        };
+                    }
                 }
 
                 // Treat incoming date times as local finnish time.
@@ -1362,11 +1384,38 @@ const sendData = async (req, res, productCode, config, template, result, options
                 order = safeUpdate(order, 'processDelivery.deliveryPlanned', convertFinnishDateToISOString, [false, true]);
                 order = safeUpdate(order, 'processDelivery.deliveryActual', convertFinnishDateToISOString, [false, true]);
 
+                if (Object.hasOwnProperty.call(order, 'orderLine')) {
+                    if (!Array.isArray(order.orderLine)) {
+                        order.orderLine = [order.orderLine];
+                    }
+                    order.orderLine = order.orderLine.map((l) => {
+                        l = safeUpdate(l, 'deliveryRequired', convertFinnishDateToISOString, [false, true]);
+                        l = safeUpdate(l, 'deliveryPlanned', convertFinnishDateToISOString, [false, true]);
+                        l = safeUpdate(l, 'deliveryActual', convertFinnishDateToISOString, [false, true]);
+                        return l;
+                    });
+                }
+
+                if (!Object.hasOwnProperty.call(order, 'deliveryLine')) {
+                    return order;
+                }
+                if (!Array.isArray(order.deliveryLine)) {
+                    order.deliveryLine = [order.deliveryLine];
+                }
+
                 order.deliveryLine = order.deliveryLine.map((l) => {
                     winston.log('info', 'Changed ' + l.product.codeProduct + ' to ' + productCodeToCALSId[l.product.codeProduct]);
                     l = safeUpdate(l, 'deliveryRequired', convertFinnishDateToISOString, [false, true]);
                     l = safeUpdate(l, 'deliveryPlanned', convertFinnishDateToISOString, [false, true]);
                     l = safeUpdate(l, 'deliveryActual', convertFinnishDateToISOString, [false, true]);
+
+                    l = safeUpdate(l, 'delivery.startDateTime', convertFinnishDateToISOString, [false, true]);
+                    l = safeUpdate(l, 'delivery.endDateTime', convertFinnishDateToISOString, [false, true]);
+                    l = safeUpdate(l, 'loading.startDateTime', convertFinnishDateToISOString, [false, true]);
+                    l = safeUpdate(l, 'transportation.startDateTime', convertFinnishDateToISOString, [false, true]);
+                    l = safeUpdate(l, 'transportation.endDateTime', convertFinnishDateToISOString, [false, true]);
+                    l = safeUpdate(l, 'unloading.startDateTime', convertFinnishDateToISOString, [false, true]);
+                    l = safeUpdate(l, 'washing.startDateTime', convertFinnishDateToISOString, [false, true]);
                     return {
                         ...l,
                         idLocal: productCodeToCALSId[l.product.codeProduct],
@@ -1417,7 +1466,7 @@ const sendData = async (req, res, productCode, config, template, result, options
     try {
         if (Object.hasOwnProperty.call(result.output, 'data')) {
             if (Object.hasOwnProperty.call(result.output.data, 'order')) {
-                if (Object.hasOwnProperty.call(result.output.data.order, 'orderLine')) {
+                if (Object.hasOwnProperty.call(result.output.data.order, 'orderLine') || Object.hasOwnProperty.call(result.output.data.order, 'deliveryLine')) {
                     const filename = options.filename;
                     const dirs = Array.isArray(config.static.toPath) ? config.static.toPath : [config.static.toPath];
                     for (let i = 0; i < dirs.length; i++) {
@@ -1502,6 +1551,7 @@ const controller = async (req, res) => {
             if (_.isEmpty(config) || !Object.hasOwnProperty.call(config, 'static')) {
                 const err = new Error('Data product configuration not found.');
                 err.httpStatusCode = 404;
+                err.productCode = productCode;
                 return errorResponse(req, res, err);
             }
 
@@ -1526,6 +1576,7 @@ const controller = async (req, res) => {
         } catch (err) {
             err.httpStatusCode = 500;
             err.message = 'Failed to handle request.';
+            err.productCode = productCode;
             return errorResponse(req, res, err);
         }
 
@@ -1639,6 +1690,23 @@ const runJob = async (productCode) => {
             try {
                 const parts = d.path.split('/');
                 const result = await getData(productCode, config, parts[parts.length - 1]);
+                // Merge delivery information lines with same idLocal together.
+                const documents = {};
+                (Array.isArray(result.output.data.order) ? result.output.data.order : [result.output.data.order]).forEach(item => {
+                    if (Object.hasOwnProperty.call(item, 'deliveryLine') && Object.hasOwnProperty.call(item, 'delivery')) {
+                        if (Object.hasOwnProperty.call(item.delivery, 'idLocal')) {
+                            const deliveryId = item.delivery.idLocal;
+                            if (Object.hasOwnProperty.call(documents, deliveryId)) {
+                                documents[deliveryId].deliveryLine = Array.isArray(documents[deliveryId].deliveryLine) ? documents[deliveryId].deliveryLine : [documents[deliveryId].deliveryLine];
+                                item.deliveryLine = Array.isArray(item.deliveryLine) ? item.deliveryLine : [item.deliveryLine];
+                                documents[deliveryId].deliveryLine.push(...item.deliveryLine);
+                            } else {
+                                documents[deliveryId] = item;
+                            }
+                        }
+                    }
+                });
+                result.output.data.order = Object.values(documents).length > 0 ? Object.values(documents) : result.output.data.order;
                 const options = {
                     filename: parts[parts.length - 1],
                     isTest: false,
@@ -1771,6 +1839,9 @@ setTimeout(() => {
                     winston.log('error', 'Invalid cron expression.');
                 }
             }
+            if (Object.hasOwnProperty.call(config.plugins[PLUGIN_NAME], 'project')) {
+                projects[productCode] = config.plugins[PLUGIN_NAME].project;
+            }
         });
 }, 5000);
 
@@ -1833,7 +1904,13 @@ const template = async (config, template) => {
                 // fromPath can only contain one directory.
                 const to = DOWNLOAD_DIR + template.productCode + (template.authConfig.fromPath || '/from') + path;
                 await sftp.checkDir(to);
-                await fs.writeFile(to, JSON.stringify(template.parameters.targetObject));
+
+                // Convert incoming date time to local finnish time.
+                let order = template.parameters.targetObject;
+                order = safeUpdate(order, 'ordered', convertFinnishDateToISOString, [true, true]);
+                order = safeUpdate(order, 'deliveryRequired', convertFinnishDateToISOString, [true, true]);
+
+                await fs.writeFile(to, JSON.stringify(order));
 
                 winston.log('info', '3. Send data to URL ' + to);
                 await sftp.sendData(template, [path]);

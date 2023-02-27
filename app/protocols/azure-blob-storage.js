@@ -3,7 +3,11 @@
 /**
  * Module dependencies.
  */
+const _ = require('lodash');
+const rp = require('request-promise');
+const Readable = require('stream').Readable;
 const response = require('../lib/response');
+const file = require('../../config/plugins/document').response;
 const {BlobServiceClient, StorageSharedKeyCredential} = require('@azure/storage-blob');
 
 /**
@@ -11,6 +15,8 @@ const {BlobServiceClient, StorageSharedKeyCredential} = require('@azure/storage-
  *
  * Handles connection to server and file fetching.
  */
+const ONE_MEGABYTE = 1024 * 1024;
+const uploadOptions = {bufferSize: 4 * ONE_MEGABYTE, maxBuffers: 20};
 
 // A helper method used to read a Node.js readable stream into a Buffer.
 async function streamToBuffer (readableStream) {
@@ -27,17 +33,13 @@ async function streamToBuffer (readableStream) {
 }
 
 /**
- * Handles Blob Storage data request from connector.
+ * Creates blob service container client.
  *
  * @param {Object} config
- * @param {Array} pathArray
- * @return {Promise}
+ * @return {Object}
  */
-const getData = async (config= {authConfig: {}}, pathArray) => {
-
+const createClient = async (config = {}) => {
     const options = {};
-
-    // const productCode = config.productCode || 'default';
 
     if (Object.hasOwnProperty.call(config.authConfig, 'account')) {
         options.account = config.authConfig.account;
@@ -67,32 +69,95 @@ const getData = async (config= {authConfig: {}}, pathArray) => {
             containerClient = blobServiceClient.getContainerClient(options.container);
         }
     }
+    return containerClient;
+};
 
+/**
+ * Handles Blob Storage data request from connector.
+ *
+ * @param {Object} config
+ * @param {Array} pathArray
+ * @return {Promise}
+ */
+const getData = async (config = {authConfig: {}}, pathArray) => {
     const items = [];
+    const containerClient = await createClient(config);
 
     if (containerClient) {
-        /*
-        // List blobs.
-        i = 1;
-        for await (const blob of containerClient.listBlobsFlat()) {
-            console.log(`Blob ${i++}: ${blob.name}`);
-        }
-        */
+        // Download blobs.
+        if (JSON.stringify(pathArray) === '[""]' || JSON.stringify(pathArray) === '["/"]') {
+            for await (const blob of containerClient.listBlobsFlat()) {
+                const blockBlobClient = containerClient.getBlockBlobClient(blob.name);
+                try {
+                    const downloadBlockBlobResponse = await blockBlobClient.download(0);
+                    const data = (await streamToBuffer(downloadBlockBlobResponse.readableStreamBody)).toString('base64');
+                    const item = await response.handleData(config, blob.name, 0, {data, id: blob.name});
+                    if (item) items.push(item);
+                } catch (e) {
+                    // Blob was not found.
+                }
+            }
+        } else {
+            for (let p = 0; p < pathArray.length; p++) {
+                // Detect produced content.
+                try {
+                    if (config.parameters.targetObject.content || config.parameters.targetObject.url) {
+                        const doc = config.parameters.targetObject;
 
-        // Download blob.
-        for (let p = 0; p < pathArray.length; p++) {
-            const blockBlobClient = containerClient.getBlockBlobClient(pathArray[p]);
-            try {
-                const downloadBlockBlobResponse  = await blockBlobClient.download(0);
-                const data = (await streamToBuffer(downloadBlockBlobResponse.readableStreamBody)).toString('base64');
-                const item = await response.handleData(config, pathArray[p], p, {data, id: pathArray[p]});
-                if (item) items.push(item);
-            } catch (e) {
-                // Blob was not found.
+                        // Fetch content.
+                        const url = doc.url;
+                        const response = url ? await rp({method: 'GET', url, resolveWithFullResponse: true, encoding: null}) : {body: doc.content};
+                        const content = response.body;
+                        const filename = pathArray[p].split('/')[0] === '' && pathArray[p][0] === '/' ? pathArray[p].substring(1) : pathArray[p];
+                        const {data} = await file({}, {id: filename, data: Buffer.from(content).toString('base64')});
+
+                        data.metadata = {};
+                        data.tags = {};
+
+                        // Upload file to blob storage.
+                        await sendData(config, [data]);
+                    }
+                } catch (err) {
+                    console.log(err.message);
+                }
+                const blockBlobClient = containerClient.getBlockBlobClient(pathArray[p]);
+                try {
+                    const downloadBlockBlobResponse = await blockBlobClient.download(0);
+                    const data = (await streamToBuffer(downloadBlockBlobResponse.readableStreamBody)).toString('base64');
+                    const item = await response.handleData(config, pathArray[p], p, {data, id: pathArray[p]});
+                    if (item) items.push(item);
+                } catch (e) {
+                    // Blob was not found.
+                }
             }
         }
     }
+    return items;
+};
 
+/**
+ * Handles request to produce data FROM connector (to SFTP server).
+ *
+ * @param {Object} config
+ * @param {Array} pathArray
+ * @return {Promise}
+ */
+const sendData = async (config = {}, pathArray) => {
+    const items = [];
+    const containerClient = await createClient(config);
+
+    if (containerClient) {
+        for (let p = 0; p < pathArray.length; p++) {
+            const stream = new Readable();
+            stream.push(pathArray[p].encoding === 'base64' ? Buffer.from(pathArray[p].content, 'base64') : pathArray[p].content);
+            stream.push(null);
+            const blockBlobClient = containerClient.getBlockBlobClient(pathArray[p].filename);
+            const data = await blockBlobClient.uploadStream(stream,
+                uploadOptions.bufferSize, uploadOptions.maxBuffers,
+                {blobHTTPHeaders: {blobContentType: pathArray[p].mimetype}, metadata: pathArray[p].metadata, tags: pathArray[p].tags});
+            if (data) { items.push(pathArray[p]); }
+        }
+    }
     return items;
 };
 
@@ -101,4 +166,5 @@ const getData = async (config= {authConfig: {}}, pathArray) => {
  */
 module.exports = {
     getData,
+    sendData,
 };

@@ -24,7 +24,8 @@
     ],
     "generalConfig": {
         "query": {
-            "start": "startDate"
+            "start": "startDate",
+            "end": "endDate"
         },
         "hardwareId": {
             "dataObjectProperty": "spaceName"

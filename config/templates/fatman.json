@@ -1,0 +1,42 @@
+{
+    "plugins": [
+    ],
+    "protocol": "rest",
+    "authConfig": {
+        "url": "${url}",
+        "headers": {
+            "Ocp-Apim-Subscription-Key": "${apikey}"
+        },
+        "path": "/maintenance-task/acknowledgements?buildingId=${targetObject.idLocal}"
+    },
+    "dataObjects": [
+        ""
+    ],
+    "dataPropertyMappings": {
+        "${type}": ""
+    },
+    "generalConfig": {
+        "query": {
+            "start": "from",
+            "end": "to"
+        },
+        "timestamp": {
+            "dataObjectProperty": "time"
+        },
+        "sourceName": {
+            "dataObjectProperty": "comment"
+        },
+        "hardwareId": {
+            "dataObjectProperty": "id"
+        }
+    },
+    "input": {
+        "required": [
+            "parameters.targetObject.idLocal"
+        ]
+    },
+    "output": {
+        "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/MaintenanceInformation/?v=3.2",
+        "array": "maintenanceInformation"
+    }
+}

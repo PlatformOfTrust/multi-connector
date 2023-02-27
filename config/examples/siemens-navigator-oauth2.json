@@ -1,0 +1,16 @@
+{
+  "template": "siemens-navigator-oauth2",
+  "static": {
+    "clientId": "<client-id>",
+    "clientSecret": "<client-secret>",
+    "type": "MeasureAirTemperatureCelsiusDegree"
+  },
+  "dynamic": {
+    "authConfig.path": "ids"
+  },
+  "request": {
+    "ids": [
+      "<meter-id>"
+    ]
+  }
+}

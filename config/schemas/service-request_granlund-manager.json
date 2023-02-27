@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-06/schema#",
-    "$id": "https://standards-ontotest.oftrust.net/v2/Schema/DataProductOutput/ServiceRequest?v=2.0",
+    "$id": "https://standards.oftrust.net/v2/Schema/DataProductOutput/ServiceRequest?v=2.0",
     "type": "object",
     "required": [],
     "properties": {
@@ -8,7 +8,7 @@
             "$id": "#/properties/@context",
             "source": null,
             "type": "string",
-            "const": "https://standards-ontotest.oftrust.net/v2/Context/DataProductOutput/ServiceRequest/?v=2.0",
+            "const": "https://standards.oftrust.net/v2/Context/DataProductOutput/ServiceRequest/?v=2.0",
             "title": "JSON-LD context url",
             "description": "JSON-LD context url with terms required to understand data product content."
         },

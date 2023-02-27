@@ -1,0 +1,40 @@
+{
+    "plugins": [
+        "document",
+        "download-link"
+    ],
+    "protocol": ["azure-blob-storage"],
+    "authConfig": {
+        "account": "${account}",
+        "accountKey": "${accountKey}",
+        "container": "${container}",
+        "path": "${targetObject.name}"
+    },
+    "dataObjects": [
+        ""
+    ],
+    "dataPropertyMappings": {
+        "${type}": "data"
+    },
+    "generalConfig": {
+        "hardwareId": {
+            "dataObjectProperty": ""
+        },
+        "sourceName": {
+            "dataObjectProperty": ""
+        },
+        "timestamp": {
+            "dataObjectProperty": ""
+        }
+    },
+    "input": {
+        "required": [
+            "parameters.targetObject.name"
+        ]
+    },
+    "output": {
+        "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Document/",
+        "array": "document",
+        "data": "data"
+    }
+}

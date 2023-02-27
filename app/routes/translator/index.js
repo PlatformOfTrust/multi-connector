@@ -11,7 +11,11 @@ const router = require('express').Router();
 module.exports = function (passport) {
 
     /** V1 endpoints. */
-    router.use('/v1/', require('./v1')(passport));
+    router.use('/:version/', require('./v1')(passport));
+    router.param('version', (req, res, next, version) => {
+        req.version = version;
+        next();
+    });
 
     return router;
 };

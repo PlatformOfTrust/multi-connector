@@ -28,6 +28,7 @@ const getData = async (config, pathArray) => {
         }
 
         for (let p = 0; p < pathArray.length; p++) {
+            config.index = p;
             const item = await response.handleData(config, pathArray[p], p, pathArray[p]);
             if (item) items.push(item);
         }

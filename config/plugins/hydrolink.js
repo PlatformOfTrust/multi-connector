@@ -364,10 +364,10 @@ const handleData = function (config, id, data) {
                 apartment.companyId = value.company_id;
                 apartment.physicalProperty = 'Volume';
                 const waterCold = {value: (apartment.apartment.meters['meter-cold'].value * 1000), startValue: (apartment.apartment.meters['meter-cold'].start), endValue: (apartment.apartment.meters['meter-cold'].end), period: config.parameters.period, unitOfMeasure: 'Liter', valueType: 'Value'};
-                const waterWarm = {value: (apartment.apartment.meters['meter-warm'].value * 1000), startValue: (apartment.apartment.meters['meter-warm'].start), endValue: (apartment.apartment.meters['meter-warm'].end), period: config.parameters.period, unitOfMeasure: 'Liter', valueType: 'Value'};
+                const waterHot = {value: (apartment.apartment.meters['meter-warm'].value * 1000), startValue: (apartment.apartment.meters['meter-warm'].start), endValue: (apartment.apartment.meters['meter-warm'].end), period: config.parameters.period, unitOfMeasure: 'Liter', valueType: 'Value'};
                 const coldValues = {...apartment, readings: waterCold, processTarget: 'WaterCold', measureType: 'Measure', organizationType: 'Organization', locationType: 'Location'};
-                const warmValues = {...apartment, readings: waterWarm, processTarget: 'WaterWarm', measureType: 'Measure', organizationType: 'Organization', locationType: 'Location'};
-                return [coldValues, warmValues];
+                const hotValues = {...apartment, readings: waterHot, processTarget: 'WaterHot', measureType: 'Measure', organizationType: 'Organization', locationType: 'Location'};
+                return [coldValues, hotValues];
             });
 
             result = transformer.transform(valuesArray, schema.properties.data);

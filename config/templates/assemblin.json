@@ -1,0 +1,31 @@
+{
+  "plugins": [
+    "assemblin"
+  ],
+  "protocol": "rest",
+  "authConfig": {
+    "url": "${url}",
+    "authPath": "/v1/users/login",
+    "username": "${username}",
+    "password": "${password}",
+    "headers": "${headers}",
+    "body": {},
+    "site": "${site}",
+    "method": "POST",
+    "path": "${url}/v1/points/byid"
+  },
+  "dataObjects": [
+    ""
+  ],
+  "dataPropertyMappings": {
+    "${type}": "value"
+  },
+  "generalConfig": {
+    "hardwareId": {
+      "dataObjectProperty": "id"
+    },
+    "timestamp": {
+      "dataObjectProperty": "timestamp"
+    }
+  }
+}

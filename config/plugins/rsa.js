@@ -34,7 +34,11 @@ const response = async (config, response) => {
         output = rsa.verifySignature({
             __signed__: response.signature.created,
             ...(response.data || response.message),
-        }, response.signature.signatureValue, publicKey) ? response : null;
+        }, response.signature.signatureValue, publicKey)
+        || rsa.verifySignature({
+            __signed__: response.signature.created,
+            ...(response.data || response.message),
+        }, response.signature.signatureValue, publicKey, false) ? response : null;
 
     } catch (err) {
         console.log(err.message);

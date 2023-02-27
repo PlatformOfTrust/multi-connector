@@ -6,7 +6,6 @@ const fs = require('fs');
 const helmet = require('helmet');
 const express = require('express');
 const passport = require('passport');
-const winston = require('./logger.js');
 const bodyParser = require('body-parser');
 const compression = require('compression');
 
@@ -15,6 +14,9 @@ const app = express();
 
 // Load environment variables.
 require('dotenv').config();
+
+// Setup logger.
+const winston = require('./logger.js');
 
 /**
  * Express middleware.
@@ -75,6 +77,9 @@ const handler = function (err) {
 let server;
 const port = process.env.PORT || 8080;
 const host = process.env.HOST || '0.0.0.0';
+let timeout = process.env.TIMEOUT || 90000;
+timeout = parseInt(timeout)
+const storagePath = process.env.STORAGE_PATH || './';
 
 // Start HTTP server.
 if (process.env.GREENLOCK_MAINTANER) {
@@ -82,7 +87,7 @@ if (process.env.GREENLOCK_MAINTANER) {
      * Greenlock Express v4 configuration.
      */
     let config = {sites: []};
-    const configDir = './greenlock.d';
+    const configDir = `${storagePath}greenlock.d`;
     const configFile = configDir + '/config.json';
     if (!fs.existsSync(configDir)) fs.mkdirSync(configDir);
     if (!fs.existsSync(configFile)) fs.writeFileSync(configFile, JSON.stringify(config), 'utf8');
@@ -111,3 +116,8 @@ if (process.env.GREENLOCK_MAINTANER) {
         .listen(port, host, () => winston.log('info', `Connector API started on port: ${port}`))
         .on('error', handler);
 }
+
+if (server) {
+    server.setTimeout(timeout);
+}
+

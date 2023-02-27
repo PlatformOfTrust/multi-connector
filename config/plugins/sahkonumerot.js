@@ -738,6 +738,27 @@ const output = async (config, output) => {
 };
 
 /**
+ * Insert fallback url.
+ *
+ * @param {Object} config
+ * @param {Object} template
+ * @return {Object}
+ */
+const template = async (config, template) => {
+    try {
+        if (template.authConfig.url === '${url}' || !template.authConfig.url) {
+            template.authConfig.url = 'https://www.sahkonumerot.fi/application/api/web';
+        }
+        if (((!Array.isArray(template.authConfig.path) ? [] : template.authConfig.path) || []).some(path => path.includes('${path}'))) {
+            template.authConfig.path = template.authConfig.path.map(path => path.replace('${path}', '/package/basic-data'));
+        }
+        return template;
+    } catch (err) {
+        return Promise.reject(err);
+    }
+};
+
+/**
  * Expose plugin methods.
  */
 module.exports = {
@@ -745,4 +766,5 @@ module.exports = {
     parameters,
     id,
     output,
+    template,
 };

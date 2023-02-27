@@ -50,7 +50,7 @@ function SignatureStrategy (options, verify) {
     }
     if (!verify) throw new Error('Signature strategy requires a verify callback');
 
-    this._signatureField = options.signatureField || 'x-pot-signature';
+    this._signatureField = options.signatureField || '[pot-signature][x-pot-signature]';
 
     Strategy.call(this);
     this.name = 'signature';
@@ -72,7 +72,7 @@ SignatureStrategy.prototype.authenticate = function (req, options) {
     // Looking for this._signatureField inside both request queries and request bodies.
     const signature = lookup(req.headers, this._signatureField);
     if (!signature) {
-        return this.fail(new Error('Missing signature'));
+        return this.fail(new Error('Missing required header [x-pot-signature | pot-signature]'));
     }
 
     const self = this;
@@ -101,7 +101,7 @@ SignatureStrategy.prototype.authenticate = function (req, options) {
         for (let i = 0, len = chain.length; i < len; i++) {
             const prop = obj[chain[i]];
             if (typeof (prop) === 'undefined') {
-                return null;
+                continue;
             }
             if (typeof (prop) !== 'object') {
                 return prop;

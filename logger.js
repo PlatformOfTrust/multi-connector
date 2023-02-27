@@ -4,6 +4,8 @@
  */
 const fs = require('fs');
 const env = process.env.NODE_ENV || 'development';
+const colorize = process.env.COLORIZE_LOGS === 'true';
+const storagePath = process.env.STORAGE_PATH || '';
 const {createLogger, format, transports} = require('winston');
 const {timestamp, printf} = format;
 require('winston-daily-rotate-file');
@@ -13,7 +15,7 @@ require('winston-daily-rotate-file');
  */
 
 // Set directory for log files.
-const logDir = 'log';
+const logDir = `${storagePath}log`;
 
 // Create log directory, if it does not exist.
 if (!fs.existsSync(logDir)) fs.mkdirSync(logDir);
@@ -30,11 +32,7 @@ const logger = createLogger({
     transports: [
         new (transports.Console)({
             level: 'silly',
-            format: format.combine(
-                timestamp(),
-                format.colorize(),
-                myFormat,
-            ),
+            format: format.combine(timestamp(), ...(colorize ? [format.colorize()] : []), myFormat),
             handleExceptions: true,
             exitOnError: false,
         }),

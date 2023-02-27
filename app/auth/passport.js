@@ -23,7 +23,13 @@ const {supportedHeaders} = require('../../config/definitions/request');
  *   User or app id.
  */
 const extractId = function (token) {
-    return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('binary')).sub;
+    let id;
+    try {
+        id = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('binary')).sub;
+    } catch (err) {
+        id = null;
+    }
+    return id;
 };
 
 /**
@@ -49,13 +55,15 @@ module.exports = function (passport) {
         /** Signature validation */
         let verified = false;
         let environment;
+        let version;
         const publicKeys = (cache.getDocs('publicKeys') || []).sort((a, b) => (a.priority > b.priority) ? 1 : -1);
 
         // Verify payload and signature against Platform of Trust public key.
         for (let i = 0; i < publicKeys.length; i++) {
             if (verified) continue;
-            if (rsa.verifySignature(req.body, signature, publicKeys[i].key)) {
+            if (rsa.verifySignature(req.body, signature, publicKeys[i].key) || rsa.verifySignature(req.body, signature, publicKeys[i].key, false)) {
                 verified = true;
+                version = publicKeys[i].version;
                 environment = publicKeys[i].env;
             }
         }
@@ -74,7 +82,9 @@ module.exports = function (passport) {
 
         // Attach identity details and additional info.
         return done(null, app, {
+            credentialsToken: req.headers['credentials-token'],
             environment,
+            version,
             scope: '*',
         });
     },

@@ -57,6 +57,28 @@ function request (method, url, headers, body) {
 }
 
 /**
+ * Manipulates output.
+ *
+ * @param {Object} config
+ * @param {Object} output
+ * @return {Object}
+ */
+const output = async (config, output) => {
+    try {
+        if ((config.schema || '').includes('measure-water-meter-reading')) {
+            // Handle hot and cold water categorization.
+            output.data.process = output.data.process.map(a => ({...a, measurements: a.measurements.map(b => ({
+                ...b,
+                '@type':  a.id.toLowerCase().includes('lämmin') ? 'MeasureWaterHotConsumptionLitre' : b['@type'],
+            }))}));
+        }
+        return output;
+    } catch (err) {
+        return output;
+    }
+};
+
+/**
  * Switch querying protocol to REST.
  *
  * @param {Object} config
@@ -65,8 +87,15 @@ function request (method, url, headers, body) {
  */
 const template = async (config, template) => {
     try {
+        if ((config.schema || '').includes('measure-water-meter-reading')) {
+            // Change output array key to process.
+            template.output = {array: 'process'};
+        }
         if (template.mode === 'history') {
-            template.authConfig.path = template.authConfig.path.map(p => p.replace('/Values/', '/TrendSamples/'));
+            const take = Math.pow(2, 31) - 1; // Maximum positive value for a 32-bit signed binary integer.
+            template.authConfig.path = template.authConfig.path.map(p => p.replace('/Values/', '/TrendSamples/?take=' + take + '&trendId='));
+            template.generalConfig.hardwareId = {dataObjectProperty: 'TrendId'};
+            template.generalConfig.timestamp = {dataObjectProperty: 'SampleDate'};
         }
         // Skip subscription if query includes only one id.
         const ids = template.parameters.ids.map(item => decodeURIComponent(decodeURIComponent(item.id)));
@@ -111,11 +140,8 @@ const template = async (config, template) => {
         const deleteSubscriptionUrl = domain + '/Subscriptions/' + createdSubscription.body.Id + '/Delete';
         await request('DELETE', deleteSubscriptionUrl, options.headers);
 
-        template.generalConfig = {
-            hardwareId: {dataObjectProperty: 'ChangedItemId'},
-            timestamp: {dataObjectProperty: 'ChangedAt'},
-        };
-
+        template.generalConfig.hardwareId = {dataObjectProperty: 'ChangedItemId'};
+        template.generalConfig.timestamp = {dataObjectProperty: 'ChangedAt'};
         template.authConfig.path = body;
         template.protocol = 'custom';
     } catch (err) {
@@ -132,4 +158,5 @@ module.exports = {
     name: 'schneider',
     parameters,
     template,
+    output,
 };

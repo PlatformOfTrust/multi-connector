@@ -6,10 +6,12 @@ const winston = require('../../logger.js');
 const rest = require('../protocols/rest');
 const validator = require('./validator');
 const output = require('../lib/output');
-const {replacer} = require('./utils');
+const rp = require('request-promise');
+const {replacer, decrypt} = require('./utils');
 const events = require('events');
 const cache = require('../cache');
 const moment = require('moment');
+const crypto = require('crypto');
 const _ = require('lodash');
 const fs = require('fs');
 
@@ -18,6 +20,11 @@ const fs = require('fs');
  *
  * Handles data fetching by product code specific configurations.
  */
+
+/** Platform of Trust related definitions. */
+const {
+    brokerURLs,
+} = require('../../config/definitions/pot');
 
 /** Import platform of trust request definitions. */
 const {
@@ -84,7 +91,7 @@ function handleFile (collection, file, data) {
     } catch (err) {
         /** File is not a valid JSON. */
     }
-    cache.setDoc(collection, file, object || data);
+    cache.setDoc(collection, file, object || data, 0);
 }
 
 /**
@@ -231,6 +238,31 @@ function emit (collections) {
         return emit(['templates', 'configs', 'resources']);
     })
     .catch((err) => winston.log('error', err.message));
+
+/**
+ * Sends http request.
+ *
+ * @param {String} method
+ * @param {String} url
+ * @param {Object} [headers]
+ * @param {String/Object/Array} [body]
+ * @return {Promise}
+ */
+function request (method, url, headers, body) {
+    const options = {
+        method: method,
+        uri: url,
+        json: true,
+        body: body,
+        resolveWithFullResponse: true,
+        headers: headers,
+    };
+
+    return rp(options).then(result => Promise.resolve(result))
+        .catch((error) => {
+            return Promise.reject(error);
+        });
+}
 
 /**
  * Configures template with data product config (static)
@@ -461,7 +493,7 @@ const composeOutput = async (template, input) => {
     pathArray = _.uniq(pathArray);
 
     // Initialize items array.
-    let items = [];
+    const items = [];
 
     // Initialize output definitions.
     template.output = template.output || {};
@@ -484,9 +516,22 @@ const composeOutput = async (template, input) => {
         if (!Object.hasOwnProperty.call(protocols, template.protocol) && !_.intersection(protocols, template.protocol)) {
             return rest.promiseRejectWithError(500, 'Connection protocol ' + template.protocol + ' is not supported.');
         } else {
+            // See type of operation defined for protocol
+            let operation = 'read';
+            if (Object.hasOwnProperty.call(template, 'input')) {
+                if (Object.hasOwnProperty.call(template.input, 'type'))
+                    operation = template.input.type;
+            }
+            // Call protocol operation
             const selected = Array.isArray(template.protocol) ? template.protocol : [template.protocol];
             for (let i = 0; i < selected.length; i++) {
-                const result = input || await protocols[selected[i]].getData({...template, protocol: selected[i]}, pathArray);
+                let result = input;
+                if (!input) {
+                    if (operation === 'read')
+                        result = await protocols[selected[i]].getData({...template, protocol: selected[i]}, pathArray);
+                    if (operation === 'write')
+                        result = await protocols[selected[i]].pushData({...template, protocol: selected[i]}, pathArray);
+                }
                 if (result) items.push(...Array.isArray(result) ? result : [result]);
             }
         }
@@ -525,6 +570,77 @@ const composeOutput = async (template, input) => {
 };
 
 /**
+ * Handles retrieval of data product credentials.
+ *
+ * @param {Object} config
+ * @param {String} productCode
+ * @param {Object} authInfo
+ * @return {Object}
+ *   Config object.
+ */
+const getCredentials = async (config, productCode, authInfo = {}) => {
+    try {
+        const url = ((brokerURLs.find(i => i.env === authInfo.environment && i.version === authInfo.version) || {})
+            .credentialsUrl || '');
+        if (!url) {
+            return;
+        }
+
+        const key = crypto.randomBytes(32).toString('base64');
+        const headers = {
+            Authorization: authInfo.credentialsToken,
+            'Encryption-Secret': key,
+        };
+
+        // Fetch encrypted credentials.
+        const result = await request('GET', url, headers);
+
+        // Decrypt message.
+        const message = decrypt({
+            key,
+            encrypted: result.body,
+            iv: Buffer.allocUnsafe(16).fill(0).toString('base64'),
+            encoding: 'base64',
+        }) || '{}';
+
+        const credentials = JSON.parse(message.replace(/[\u0000-\u001F\u007F-\u009F]/g, ''));
+
+        if (Object.hasOwnProperty.call(credentials, 'type')) {
+            if (credentials.type === 'basic-auth' || credentials.type === 'oauth2') {
+                if (Object.hasOwnProperty.call(credentials, 'username')) {
+                    config.static.username = credentials.username;
+                }
+                if (Object.hasOwnProperty.call(credentials, 'password')) {
+                    config.static.password = credentials.password;
+                }
+            }
+            if (credentials.type === 'oauth2') {
+                if (Object.hasOwnProperty.call(credentials, 'clientId')) {
+                    config.static.clientId = credentials.clientId;
+                }
+                if (Object.hasOwnProperty.call(credentials, 'clientSecret')) {
+                    config.static.clientSecret = credentials.clientSecret;
+                }
+                if (Object.hasOwnProperty.call(credentials, 'grantType')) {
+                    config.static.grantType = credentials.grantType;
+                }
+                if (Object.hasOwnProperty.call(credentials, 'scope')) {
+                    config.static.scope = credentials.scope;
+                }
+            }
+            if (credentials.type === 'api-key') {
+                if (Object.hasOwnProperty.call(credentials, 'value')) {
+                    config.static[Object.hasOwnProperty.call(credentials, 'key') ? credentials['key'] : 'apikey'] = credentials.value;
+                }
+            }
+        }
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+    return config;
+};
+
+/**
  * Loads config by requested product code and retrieves template defined in the config.
  * Places static and dynamic parameters to the template as described.
  *
@@ -555,6 +671,9 @@ const getData = async (req) => {
     // Get data product config template.
     let template = cache.getDoc('templates', config.template);
     if (!template) return rest.promiseRejectWithError(404, 'Data product config template not found.');
+
+    // Attach data product credentials.
+    config = await getCredentials(config, productCode, req.authInfo) || config;
 
     /* Custom requirements */
     let requiredParameters;

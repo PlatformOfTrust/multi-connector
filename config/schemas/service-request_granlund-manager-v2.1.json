@@ -233,6 +233,13 @@
                                         "title": "Local identifier",
                                         "description": "Locally given identifier."
                                     },
+                                    "idLocal2": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/targetObject/properties/idLocal2",
+                                        "source": "CodedObject.Id2",
+                                        "type": "string",
+                                        "title": "Local identifier",
+                                        "description": "Locally given identifier."
+                                    },
                                     "idExternal": {
                                         "$id": "#/properties/data/properties/serviceRequest/items/properties/targetObject/properties/idExternal",
                                         "source": "CodedObject.ExternalSystemId",
@@ -243,6 +250,13 @@
                                     "name": {
                                         "$id": "#/properties/data/properties/serviceRequest/items/properties/targetObject/properties/name",
                                         "source": "CodedObject.Name",
+                                        "type": "string",
+                                        "title": "Name",
+                                        "description": "Name."
+                                    },
+                                    "name2": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/targetObject/properties/name2",
+                                        "source": "CodedObject.Name2",
                                         "type": "string",
                                         "title": "Name",
                                         "description": "Name."
@@ -271,6 +285,13 @@
                                     "nameLabel": {
                                         "$id": "#/properties/data/properties/serviceRequest/items/properties/targetObject/properties/nameLabel",
                                         "source": "CodedObject.DisplayName",
+                                        "type": "string",
+                                        "title": "Label name",
+                                        "description": "Label name."
+                                    },
+                                    "nameLabel2": {
+                                        "$id": "#/properties/data/properties/serviceRequest/items/properties/targetObject/properties/nameLabel2",
+                                        "source": "CodedObject.DisplayName2",
                                         "type": "string",
                                         "title": "Label name",
                                         "description": "Label name."
