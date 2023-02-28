@@ -36,7 +36,7 @@
   },
   "output": {
     "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/ProductCatalog/",
-    "array": "products",
+    "array": "product",
     "data": "data"
   }
 }
