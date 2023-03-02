@@ -89,13 +89,14 @@ const getKeysAndDocs = function (collection) {
  * @param {Object/Array/String} doc
  * @param {Number} [TTL]
  */
-const setDoc = function (collection, id, doc, TTL = defaultTTL) {
+const setDoc = function (collection, id, doc, TTL) {
     doc = JSON.parse(JSON.stringify(doc));
-    if (!Object.hasOwnProperty.call(cache, collection)) cache[collection] = {cache: new NodeCache(), TTL};
-    if (cache[collection].TTL) {
-        if (Object.hasOwnProperty.call(cache, collection)) cache[collection].cache.set(id, doc, cache[collection].TTL);
+    const validateTTL = (value, fallback) => !value && value !== 0 ? fallback : value;
+    if (!Object.hasOwnProperty.call(cache, collection)) cache[collection] = {cache: new NodeCache(), TTL: validateTTL(TTL, defaultTTL)};
+    if (Object.hasOwnProperty.call(cache, collection, 'TTL')) {
+        if (Object.hasOwnProperty.call(cache, collection)) cache[collection].cache.set(id, doc, validateTTL(TTL, cache[collection].TTL));
     } else {
-        if (Object.hasOwnProperty.call(cache, collection)) cache[collection].cache.set(id, doc);
+        if (Object.hasOwnProperty.call(cache, collection)) cache[collection].cache.set(id, doc, validateTTL(TTL, 0));
     }
 };
 
