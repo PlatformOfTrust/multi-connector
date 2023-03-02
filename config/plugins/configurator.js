@@ -269,7 +269,7 @@ const fetchPublicKeys = async (URLs, count = 0) => {
                 url: URLs[j],
                 env: process.env.NODE_ENV || 'development',
                 key: replaceAll(body.toString(), '\\n', '\n'),
-            });
+            }, 0);
         }
     }
 };
