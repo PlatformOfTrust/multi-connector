@@ -263,13 +263,17 @@ const requestToken = async (authConfig, refresh, store = true) => {
         let body;
         if (result) {
             if (Object.hasOwnProperty.call(result, 'body')) {
+                let ttl;
                 try {
                     body = result.body;
                     body = JSON.parse(result.body);
+                    if (typeof body === 'object') {
+                        ttl = body.expires_in;
+                    }
                 } catch (err) {
                     console.log(err.message);
                 }
-                if (store) cache.setDoc('grants', authConfig.productCode, body);
+                if (store) cache.setDoc('grants', authConfig.productCode, body, ttl);
             } else {
                 body = result;
             }
