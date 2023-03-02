@@ -13,7 +13,7 @@ const serviceRequestSchema = require('../schemas/service-request_granlund-manage
 const maintenanceInformationSchema = require('../schemas/maintenance-information_granlund-manager-v3.2.json');
 
 /**
- * Grandlund Manager transformer.
+ * Granlund Manager transformer.
  */
 
 const UPDATE_TIME = 10 * 60 * 1000;
@@ -503,6 +503,26 @@ const output = async (config, output) => {
             result[config.output.object][config.output.array] = result[config.output.object][config.output.array].map((t) => {
                 if (Object.hasOwnProperty.call(t, 'note')) {
                     t.note = t.note.filter((t) => {
+                        const isDuplicate = known.includes(t.idLocal);
+                        if (!isDuplicate) {
+                            known.push(t.idLocal);
+                        }
+                        return !isDuplicate;
+                    });
+                }
+                return t;
+            });
+        } catch (err) {
+            console.log('Duplicate filter fail');
+            console.log(err.message);
+        }
+
+        // Filter out duplicate service request.
+        try {
+            const known = [];
+            result[config.output.object][config.output.array] = result[config.output.object][config.output.array].map((t) => {
+                if (Object.hasOwnProperty.call(t, 'serviceRequest')) {
+                    t.serviceRequest = t.serviceRequest.filter((t) => {
                         const isDuplicate = known.includes(t.idLocal);
                         if (!isDuplicate) {
                             known.push(t.idLocal);
