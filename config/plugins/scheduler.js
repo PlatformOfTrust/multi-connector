@@ -179,7 +179,7 @@ const parameters = (config, parameters) => {
                 // Remove previous schedule.
                 removeTask(id);
                 // Store parameters to cache.
-                cache.setDoc('parameters', id, {...parameters, scheduler: undefined});
+                cache.setDoc('parameters', id, {...parameters, scheduler: undefined}, 0);
                 // Set new schedule if provided interval is valid.
                 if (Number.isInteger(parameters.scheduler.interval) || typeof parameters.scheduler.schedule === 'string') {
                     startTask(id, config, parameters);
