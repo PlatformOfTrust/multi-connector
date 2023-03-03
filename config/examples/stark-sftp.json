@@ -11,6 +11,12 @@
     "dynamic": {
         "authConfig.path": "targetObject.idLocal"
     },
+    "plugins": {
+        "stark": {
+            "schedule": "*/10 * * * *",
+            "timezone": "Europe/Helsinki"
+        }
+    },
     "request": {
         "ids": [
             "<path>"

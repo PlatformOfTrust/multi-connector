@@ -14,6 +14,9 @@ const _ = require('lodash');
 const fs = require('fs').promises;
 const FileType = require('file-type');
 
+// Helper function to handle timestamps.
+const {convertFinnishDateToISOString} = require('../../app/lib/utils');
+
 const PLUGIN_NAME = 'stark';
 const DOWNLOAD_DIR = './temp/';
 const orderNumberToCALSId = {};
@@ -23,6 +26,7 @@ const productCodeToCALSId = {};
 const tasks = {};
 const DEFAULT_SCHEDULE = '*/30 * * * *';
 const DEFAULT_TIMEZONE = 'Europe/Helsinki';
+const DEFAULT_DELIVERY_TIME = '00:00';
 const LOGFILE = false;
 
 // Source mapping.
@@ -159,7 +163,7 @@ const orderConfirmationSchema = {
                                     },
                                     'deliveryPlanned': {
                                         '$id': '#/properties/data/properties/order/properties/deliveryPlanned',
-                                        'value': '${R_Date_Delivery.0}T12:00:00+00:00',
+                                        'source': 'R_Date_Time_Delivery.0',
                                         'type': 'string',
                                         'title': 'Planned delivery time',
                                         'description': 'Planned delivery time.',
@@ -1113,6 +1117,18 @@ const handleData = function (config, id, data) {
                         console.log(e.message);
                     }
 
+                    // Handle timestamps.
+                    try {
+                        value.data.Batch.Msg[0].Row = value.data.Batch.Msg[0].Row.map(row => ({
+                            ...row,
+                            R_Date_Time_Delivery: [
+                                convertFinnishDateToISOString(new Date(`${row.R_Date_Delivery[0]}T${DEFAULT_DELIVERY_TIME}:00.000Z`)),
+                            ],
+                        }));
+                    } catch (e) {
+                        console.log(e.message);
+                    }
+
                     result = transformer.transform(value, orderConfirmationSchema.properties.data);
                 }
             } else {
@@ -1299,6 +1315,7 @@ const errorResponse = async (req, res, err) => {
  */
 const sendData = async (req, res, productCode, config, template, result, options) => {
     let receiverProductCode;
+    let sent = false;
     try {
         // Fallback.
         receiverProductCode = 'purchase-order-from-cals';
@@ -1382,6 +1399,7 @@ const sendData = async (req, res, productCode, config, template, result, options
 
             winston.log('info', '2. Send received data to receiver data product ' + config.static.productCode + ', isTest=' + options.isTest);
             await template.plugins.find(p => p.name === 'broker').stream(template, result.output);
+            sent = true;
         }
     } catch (err) {
         winston.log('error', err.message);
@@ -1390,7 +1408,7 @@ const sendData = async (req, res, productCode, config, template, result, options
 
     // Detect if order confirmation was sent.
     try {
-        if (Object.hasOwnProperty.call(result.output, 'data')) {
+        if (Object.hasOwnProperty.call(result.output, 'data') && sent) {
             if (Object.hasOwnProperty.call(result.output.data, 'order')) {
                 if (Object.hasOwnProperty.call(result.output.data.order, 'orderLine')) {
                     const filename = options.filename;
