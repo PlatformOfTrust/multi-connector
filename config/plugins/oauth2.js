@@ -52,13 +52,13 @@ const updateToken = async (authConfig, refresh) => {
     // Limit the number of attempts after error to 3 times.
     if (authConfig.attempt) {
         if (authConfig.attempt > 3) {
-            return promiseRejectWithError(500, 'Authentication failed.');
+            return promiseRejectWithError(500, 'Authentication failed. Too many attempts.');
         }
     }
 
     // Request new token with selected grant type.
     const grant = refresh ? await requestToken(authConfig, true) : await requestToken(authConfig);
-    if (!grant) return promiseRejectWithError(500, 'Authentication failed.');
+    if (!grant) return promiseRejectWithError(500, 'Authentication failed. Could not acquire token.');
     return Promise.resolve();
 };
 
@@ -319,9 +319,9 @@ const onerror = async (config, err) => {
             return updateToken(config.authConfig, true);
         /** 400 - Invalid credentials / Access token is missing */
         case 400:
-            return promiseRejectWithError(err.statusCode, 'Authentication failed.');
+            return promiseRejectWithError(err.statusCode, 'Authentication failed. Invalid credentials or token.');
     }
-    return promiseRejectWithError(err.statusCode, 'Authentication failed.');
+    return promiseRejectWithError(err.statusCode, 'Authentication failed. Unexpected error.');
 };
 
 const getConfig = function (req, res, next) {
@@ -616,7 +616,7 @@ module.exports = {
                     grant.access_token = true;
                 }
             }
-            if (!grant.access_token && !grant.token) return promiseRejectWithError(500, 'Authentication failed.');
+            if (!grant.access_token && !grant.token) return promiseRejectWithError(500, 'Authentication failed. Malformed token response.');
         }
 
         // Initialize headers if required.
