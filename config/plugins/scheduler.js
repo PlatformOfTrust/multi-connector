@@ -143,7 +143,7 @@ const startTask = (id, config, parameters) => {
 const removeTask = (productCode) => {
     try {
         if (Object.hasOwnProperty.call(tasks, productCode)) {
-            if (Object.hasOwnProperty.call(tasks[productCode], 'stop')) {
+            if (typeof tasks[productCode].stop === 'function') {
                 winston.log('info', `Stop a job with id ${productCode}`);
                 tasks[productCode].stop();
             }
