@@ -73,7 +73,7 @@ const stream = async (template, data) => {
             }
         }
     } catch (err) {
-        winston.log('error', err.message);
+        winston.log('error', `500 | streamer | ${template.productCode ? `productCode=${template.productCode} | ` : ''}${err.message}`);
         throw err;
     }
     return result;

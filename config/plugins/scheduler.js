@@ -54,8 +54,8 @@ const brokerRequest = async (productCode, mode = 'latest', options) => {
             }
         }
         return result;
-    } catch (e) {
-        winston.log('error', e.message);
+    } catch (err) {
+        winston.log('error', `500 | scheduler.brokerRequest | ${productCode ? `productCode=${productCode} | ` : ''}${err.message}`);
     }
 };
 
@@ -79,7 +79,7 @@ const stream = async (config, scheduler, response) => {
             }
         }
     } catch (err) {
-        winston.log('error', err.message);
+        winston.log('error', `500 | scheduler.stream | ${config.productCode ? `productCode=${config.productCode} | ` : ''}${err.message}`);
     }
 };
 
@@ -115,7 +115,7 @@ const startTask = (id, config, parameters) => {
                     }
                 }
             } catch (err) {
-                winston.log('error', err.message);
+                winston.log('error', `500 | scheduler.startTask.1 | ${config.productCode ? `productCode=${config.productCode} | ` : ''}${err.message}`);
             }
         };
         if (cron.validate(parameters.scheduler.schedule) && !parameters.scheduler.interval) {
@@ -131,7 +131,7 @@ const startTask = (id, config, parameters) => {
             schedules[id] = setInterval(callback, Math.max(DEFAULT_INTERVAL, parameters.scheduler.interval), parameters.scheduler);
         }
     } catch (err) {
-        winston.log('error', err.message);
+        winston.log('error', `500 | scheduler.startTask.2 | ${config.productCode ? `productCode=${config.productCode} | ` : ''}${err.message}`);
     }
 };
 
@@ -155,7 +155,7 @@ const removeTask = (productCode) => {
             delete schedules[productCode];
         }
     } catch (err) {
-        winston.log('error', err.message);
+        winston.log('error', `500 | scheduler.removeTask | ${productCode ? `productCode=${productCode} | ` : ''}${err.message}`);
     }
 };
 
@@ -187,7 +187,7 @@ const parameters = (config, parameters) => {
             }
         }
     } catch (err) {
-        winston.log('error', err.message);
+        winston.log('error', `500 | scheduler.parameters | ${config.productCode ? `productCode=${config.productCode} | ` : ''}${err.message}`);
     }
     return parameters;
 };
