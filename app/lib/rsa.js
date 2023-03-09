@@ -22,8 +22,8 @@ const {
 } = require('../../config/definitions/pot');
 
 /** Optional environment variables. */
-let privateKey = process.env.PRIVATE_KEY.toString().replace(/\\\n/g, '\n');
-let publicKey = process.env.PUBLIC_KEY.toString().replace(/\\\n/g, '\n');
+let privateKey = (process.env.PRIVATE_KEY || '').toString().replace(/\\\n/g, '\n');
+let publicKey = (process.env.PUBLIC_KEY || '').toString().replace(/\\\n/g, '\n');
 
 if (!privateKey || !publicKey) {
     // If RSA keys are not provided by environment variables,
