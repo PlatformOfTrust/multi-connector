@@ -96,12 +96,15 @@ const getTask = async (config, value, skip = false, priority = 0) => {
             const options = await oauth2.request(config, {});
             const url = `${(Array.isArray(config.authConfig.path) ? config.authConfig.path[0] : config.authConfig.path).split('/').slice(0, 5).join('/')}/maintenance-tasks/${value.Task.Id}`;
             const {body} = await request('GET', url, {...options.headers, 'Content-Type': 'application/json'});
-            cache.setDoc(config.productCode, value.Task.Id, body, STORAGE_TIME / 1000);
+            // Store completed tasks permanently.
+            const ttl = value.Task.StateId === 90 ? 0 : STORAGE_TIME / 1000;
+            cache.setDoc(config.productCode, value.Task.Id, body, ttl);
             return body;
         } else {
             const ttl = cache.getTtl(config.productCode, value.Task.Id) || 0;
             const expiration = ttl - STORAGE_TIME + UPDATE_TIME;
-            if (new Date().getTime() > expiration && !skip) {
+            // Update only tasks which have not been completed.
+            if (new Date().getTime() > expiration && !skip && value.Task.StateId !== 90) {
                 getTask(config, value, true);
             }
             return cached;
