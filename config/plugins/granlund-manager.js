@@ -6,6 +6,7 @@ const _ = require('lodash');
 const rp = require('request-promise');
 const RRule = require('rrule').RRule;
 const cache = require('../../app/cache');
+const {queue} = require('../../app/lib/queue');
 const winston = require('../../logger.js');
 const transformer = require('../../app/lib/transformer');
 const noteSchema = require('../schemas/note_granlund-manager-v4.0.json');
@@ -16,6 +17,7 @@ const maintenanceInformationSchema = require('../schemas/maintenance-information
  * Granlund Manager transformer.
  */
 
+const name = 'granlund-manager';
 const UPDATE_TIME = 10 * 60 * 1000;
 const STORAGE_TIME = 20 * 24 * 60 * 60 * 1000;
 
@@ -564,7 +566,7 @@ const output = async (config, output) => {
  * @param {String/Object/Array} [body]
  * @return {Promise}
  */
-function request (method, url, headers, body) {
+const request = async (method, url, headers, body) => {
     const options = {
         method: method,
         uri: url,
@@ -574,11 +576,13 @@ function request (method, url, headers, body) {
         headers: headers,
     };
 
-    return rp(options).then(result => Promise.resolve(result))
-        .catch((error) => {
-            return Promise.reject(error);
-        });
-}
+    try {
+        const result = await queue(`${name}-${Math.round(Math.random())}`, rp, [options]);
+        return Promise.resolve(result);
+    } catch (err) {
+        return Promise.reject(err);
+    }
+};
 
 const exportEquipmentObjects = (data, dataKey, criteria) => {
     const output = data[dataKey].map(b => exportEquipmentObjects(b, dataKey, criteria)).flat();
@@ -705,7 +709,7 @@ const template = async (config, template) => {
  * Expose plugin methods.
  */
 module.exports = {
-    name: 'granlund-manager',
+    name,
     template,
     response,
     output,
