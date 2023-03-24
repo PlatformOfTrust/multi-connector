@@ -1454,7 +1454,9 @@ const template = async (config, template) => {
                     }
 
                     return output;
-                });
+
+                    // Filter out lines without PurchaseOrderItemId.
+                }).filter(line => line.PurchaseOrderItemId !== null && line.PurchaseOrderItemId !== undefined);
 
                 winston.log('info', 'Body: ' + JSON.stringify(deliveryConfirmation ? deliveryConfirmation : data));
 

@@ -134,12 +134,62 @@ const decrypt = (value = {}) => {
     }
 };
 
+Date.prototype.stdTimezoneOffset = function () {
+    const jan = new Date(this.getFullYear(), 0, 1);
+    const jul = new Date(this.getFullYear(), 6, 1);
+    return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+};
+
+Date.prototype.isDstObserved = function () {
+    return this.getTimezoneOffset() < this.stdTimezoneOffset();
+};
+
+/**
+ * Converts date object which has finnish UTC(+2 OR +3) as UTC0 to valid date object and vice versa.
+ *
+ * @param {Date} input
+ * @param {Boolean} [reverse]
+ * @param {Boolean} [convert]
+ * @return {String}
+ */
+const convertFinnishDateToISOString = (input, reverse = false, convert = false) => {
+    // Examples.
+    // Finnish UTC +2 or +3.
+    // new Date(1610031289498); -2
+    // new Date(1631092909080); -3 (Daylight Saving Time)
+    let output;
+    if (typeof input === 'string' && convert) {
+        input = input.replace(' ', 'T');
+    }
+    input = convert ? new Date(input) : input;
+    if (input.isDstObserved()) {
+        output = new Date(input.setHours(input.getHours() - (reverse ? 3 : -3)));
+    } else {
+        output = new Date(input.setHours(input.getHours() - (reverse ? 2 : -2)));
+    }
+    return output.toISOString();
+};
+
+/**
+ * Generates random UUIDv4.
+ *
+ * @return {String}
+ */
+const uuidv4 = () => {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        const r = Math.random() * 16 | 0; const v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+};
+
 /**
  * Expose library functions.
  */
 module.exports = {
+    uuidv4,
     replaceAll,
     replacer,
     encrypt,
     decrypt,
+    convertFinnishDateToISOString,
 };
