@@ -83,6 +83,9 @@ function handleFile (collection, file, data) {
             if (Object.hasOwnProperty.call(object.static, 'event')) {
                 protocols['websocket'].connect(object, file);
             }
+            if (Object.hasOwnProperty.call(object.static, 'event')) {
+                protocols['rpc-ws'].connect(object, file);
+            }
         }
         // Attach scheduler plugin.
         if (process.env.SCHEDULER === 'true' && collection === 'templates') {
@@ -805,5 +808,6 @@ module.exports = {
     getData,
     resolvePlugins,
     composeOutput,
+    replacePlaceholders,
     emitter,
 };

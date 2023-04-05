@@ -56,6 +56,7 @@
     "passport-strategy": "^1.0.0",
     "request": "^2.88.2",
     "request-promise": "^4.2.5",
+    "rpc-websockets": "^7.5.1",
     "rrule": "^2.7.1",
     "soap": "^0.31.0",
     "socket.io-client": "^2.2.0",

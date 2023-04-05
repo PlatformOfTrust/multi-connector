@@ -1,0 +1,29 @@
+{
+  "plugins": [
+      "streamer"
+  ],
+  "protocol": "rpc-ws",
+  "authConfig": {
+    "url": "${url}",
+    "path": "${id}",
+    "event": "${event}"
+  },
+  "dataObjects": [
+    ""
+  ],
+  "dataPropertyMappings": {
+    "${type}": "value"
+  },
+  "generalConfig": {
+    "sourceName": {
+      "dataObjectProperty": "attribute"
+    },
+    "hardwareId": {
+      "dataObjectProperty": "id"
+    }
+  },
+  "output": {
+    "array": "sensors",
+    "data": "measurements"
+  }
+}
