@@ -424,6 +424,7 @@ const interpretMode = function (config, parameters) {
     } else {
         // Include default range.
         parameters.start = new Date(config.timestamp.getTime() - defaultTimeRange);
+        parameters.defaultStart = true;
     }
 
     // Detect prediction request from end time and client's current local time.
