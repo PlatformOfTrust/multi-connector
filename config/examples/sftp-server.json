@@ -1,0 +1,14 @@
+{
+    "template": "sftp-server-generic",
+    "static": {
+        "toPath": "<to-path>",
+        "fromPath": "<from-path>"
+    },
+    "plugins" : {
+        "sftp-server": {
+            "username": "<username>",
+            "password": "<password>",
+            "privateKey": "<base64-encoded-private-key>"
+        }
+    }
+}
