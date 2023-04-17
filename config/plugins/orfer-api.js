@@ -345,8 +345,8 @@ const response = async (config, response) => {
                     headers,
                     customerId,
                     factory,
-                    config.parameters.defaultStart ? undefined : startTime,
-                    endTime,
+                    config.parameters.defaultStart ? undefined : startTime.toISOString(),
+                    endTime.toISOString(),
                 )))).flat(2);
         return {
             values: machines,
