@@ -175,7 +175,7 @@ const connect = async (config, options, _callback) => {
             }).on('close', () => {
                 // console.log('Client disconnected');
             });
-        }).listen(options.port || 0, '127.0.0.1', function () {
+        }).listen(options.port || 0, '0.0.0.0', function () {
             winston.log('info', 'Listening on port ' + this.address().port);
         });
     } catch (err) {
