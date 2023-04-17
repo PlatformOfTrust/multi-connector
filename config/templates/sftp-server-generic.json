@@ -1,0 +1,47 @@
+{
+    "plugins": [
+        "document",
+        "download-link",
+        "sftp-server"
+    ],
+    "protocol": "sftp",
+    "authConfig": {
+        "url": "${url}",
+        "port": "${port}",
+        "fromPath": "${fromPath}",
+        "toPath": "${toPath}",
+        "proxyHost": "${proxyHost}",
+        "proxyPort": "${proxyPort}",
+        "username": "${username}",
+        "password": "${password}",
+        "privateKey": "${privateKey}",
+        "path": "/${targetObject.name}"
+    },
+    "dataObjects": [
+        "data"
+    ],
+    "dataPropertyMappings": {
+        "${type}": ""
+    },
+    "generalConfig": {
+        "hardwareId": {
+            "dataObjectProperty": ""
+        },
+        "sourceName": {
+            "dataObjectProperty": ""
+        },
+        "timestamp": {
+            "dataObjectProperty": ""
+        }
+    },
+    "input": {
+        "required": [
+            "parameters.targetObject.name"
+        ]
+    },
+    "output": {
+        "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/Document/",
+        "array": "document",
+        "data": "data"
+    }
+}

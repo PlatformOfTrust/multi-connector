@@ -86,6 +86,13 @@ function handleFile (collection, file, data) {
             if (Object.hasOwnProperty.call(object.static, 'event')) {
                 protocols['rpc-ws'].connect(object, file);
             }
+            if (Object.hasOwnProperty.call(object.static, 'fromPath') && Object.hasOwnProperty.call(object.static, 'toPath')) {
+                if (Object.hasOwnProperty.call(object, 'plugins')) {
+                    if (Object.hasOwnProperty.call(object.plugins, 'sftp-server')) {
+                        protocols['sftp'].connect(object, file);
+                    }
+                }
+            }
         }
         // Attach scheduler plugin.
         if (process.env.SCHEDULER === 'true' && collection === 'templates') {

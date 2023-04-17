@@ -16,6 +16,8 @@ const SocksClient = require('socks').SocksClient;
  * Handles connection to server and file fetching.
  */
 
+let port = 2222;
+const servers = {};
 const clients = {};
 const DOWNLOAD_DIR = './temp/';
 
@@ -364,9 +366,37 @@ const remove = async (config= {}, pathArray, clientId) => {
 };
 
 /**
+ * Initiates actions required by MQTT protocol.
+ *
+ * @param {Object} config
+ * @param {String} productCode
+ */
+const connect = async (config, productCode) => {
+    try {
+        // Check for SFTP-server plugin.
+        if (Object.hasOwnProperty.call(config, 'plugins')) {
+            if (Object.hasOwnProperty.call(config.plugins, 'sftp-server')) {
+                // Reserve port.
+                const reservedPort = port;
+                port++;
+                // Start local server.
+                servers[productCode] = require('../.' + './config/plugins' + '/' + 'sftp-server' + '.js').connect(config, {
+                    ...config.plugins['sftp-server'],
+                    productCode,
+                    port: reservedPort,
+                });
+            }
+        }
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+};
+
+/**
  * Expose library functions.
  */
 module.exports = {
+    connect,
     getData,
     sendData,
     checkDir,
