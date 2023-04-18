@@ -153,7 +153,6 @@ const connect = async (config, options, _callback) => {
                                     sftp.status(reqid, STATUS_CODE.EOF);
                                 } else {
                                     sftp.name(reqid, name);
-                                    sftp.data(reqid, 'bar');
                                     paths = paths.filter(p => p !== path);
                                 }
                             } catch (err) {
