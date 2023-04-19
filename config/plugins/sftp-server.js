@@ -195,6 +195,8 @@ const connect = async (config, options, _callback) => {
                     }
                 }).on('close', () => {
                     // console.log('Client disconnected');
+                }).on('error', err => {
+                    winston.log('error', err.message);
                 });
             } catch (err) {
                 winston.log('error', err.message);
