@@ -1379,24 +1379,11 @@ const template = async (config, template) => {
                         }
                     }
 
-                    try {
-                        datetime = convertFinnishDateToISOString(new Date(datetime.replace(' ', 'T')), true);
-                        output.ConfirmedDeliveryDate = (datetime || 'T').split('T')[0];
-                        output.ConfirmedDeliveryTime = (datetime || 'T').split('T')[1].substring(0, 5);
-
-                        // Delete unavailable delivery times.
-                        if (output.ConfirmedDeliveryDate === '') {
-                            delete output.ConfirmedDeliveryDate;
-                        }
-                        if (output.ConfirmedDeliveryTime === '') {
-                            delete output.ConfirmedDeliveryTime;
-                        }
-                    } catch (e) {
-                        winston.log('error', `${e.message} ${datetime}`);
+                    if ((datetime !== null && datetime !== undefined) || (datetime2 !== null && datetime2 !== undefined)) {
                         try {
-                            datetime2 = convertFinnishDateToISOString(new Date(datetime2.replace(' ', 'T')), true);
-                            output.ConfirmedDeliveryDate = (datetime2 || 'T').split('T')[0];
-                            output.ConfirmedDeliveryTime = (datetime2 || 'T').split('T')[1].substring(0, 5);
+                            datetime = convertFinnishDateToISOString(new Date((datetime || datetime2).replace(' ', 'T')), true);
+                            output.ConfirmedDeliveryDate = (datetime || 'T').split('T')[0];
+                            output.ConfirmedDeliveryTime = (datetime || 'T').split('T')[1].substring(0, 5);
 
                             // Delete unavailable delivery times.
                             if (output.ConfirmedDeliveryDate === '') {
@@ -1406,7 +1393,30 @@ const template = async (config, template) => {
                                 delete output.ConfirmedDeliveryTime;
                             }
                         } catch (e) {
-                            winston.log('error', `${e.message} ${datetime2}`);
+                            winston.log('error', `${e.message} ${datetime}`);
+                            try {
+                                datetime2 = convertFinnishDateToISOString(new Date(datetime2.replace(' ', 'T')), true);
+                                output.ConfirmedDeliveryDate = (datetime2 || 'T').split('T')[0];
+                                output.ConfirmedDeliveryTime = (datetime2 || 'T').split('T')[1].substring(0, 5);
+
+                                // Delete unavailable delivery times.
+                                if (output.ConfirmedDeliveryDate === '') {
+                                    delete output.ConfirmedDeliveryDate;
+                                }
+                                if (output.ConfirmedDeliveryTime === '') {
+                                    delete output.ConfirmedDeliveryTime;
+                                }
+                            } catch (e) {
+                                winston.log('error', `${e.message} ${datetime2}`);
+                            }
+                        }
+                    } else {
+                        // Delete unavailable delivery times.
+                        if (output.ConfirmedDeliveryDate === '') {
+                            delete output.ConfirmedDeliveryDate;
+                        }
+                        if (output.ConfirmedDeliveryTime === '') {
+                            delete output.ConfirmedDeliveryTime;
                         }
                     }
 
