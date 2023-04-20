@@ -81,7 +81,7 @@ const connect = async (config, options, _callback) => {
                                     return ctx.reject();
                                 break;
                             default:
-                                return ctx.reject();
+                                return ctx.reject(['password']);
                         }
 
                         if (allowed)
