@@ -3,7 +3,7 @@
  * Module dependencies.
  */
 const {timingSafeEqual} = require('crypto');
-const {readFileSync, readdirSync, unlinkSync, promises} = require('fs');
+const {readFileSync, lstatSync, unlinkSync, promises, constants} = require('fs');
 const winston = require('../../logger.js');
 
 /**
@@ -113,12 +113,14 @@ const connect = async (config, options, _callback) => {
                                             try {
                                                 const path = handle.toString('utf8');
                                                 await checkDir(path);
-                                                const file = await readFileSync(path);
-                                                if (paths.includes(path)) {
+                                                const file = await lstatSync(path).isFile() ? await readFileSync(path) :  null;
+                                                if (paths.includes(path) && file) {
                                                     sftp.data(reqid, file);
                                                     paths = paths.filter(p => p !== path);
-                                                } else {
+                                                } else if (!paths.includes(path)) {
                                                     sftp.status(reqid, STATUS_CODE.EOF);
+                                                } else {
+                                                    sftp.status(reqid, STATUS_CODE.OK);
                                                 }
                                             } catch (err) {
                                                 winston.log('error', err.message);
@@ -157,11 +159,24 @@ const connect = async (config, options, _callback) => {
                                                 const path = handle.toString('utf8');
                                                 const from = DOWNLOAD_DIR + options.productCode + (options.fromPath || '') + path;
                                                 await checkDir(from);
-                                                const files = await readdirSync(from);
-                                                const name = files.map(filename => ({
-                                                    filename,
-                                                    attrs: {},
-                                                }));
+                                                const dirents = await promises.readdir(from, {withFileTypes: true});
+                                                const name = dirents.map(dirent => {
+                                                    return {
+                                                        filename: dirent.name,
+                                                        longname: dirent.isDirectory() ? 'drwxr-xr-x' : '-rw-r--r--',
+                                                        uid: 1000,
+                                                        gid: 1000,
+                                                        attrs: {
+                                                            mtime: new Date().getTime(),
+                                                            atime: new Date().getTime(),
+
+                                                        },
+                                                        stats: {
+                                                            isDirectory: () => dirent.isDirectory(),
+                                                            isFile: () => dirent.isFile(),
+                                                        },
+                                                    };
+                                                });
                                                 if (!paths.includes(path)) {
                                                     sftp.status(reqid, STATUS_CODE.EOF);
                                                 } else {
@@ -176,11 +191,19 @@ const connect = async (config, options, _callback) => {
                                             try {
                                                 paths.push(path);
                                                 sftp.handle(reqid, Buffer.from(path));
-                                                sftp.status(reqid, STATUS_CODE.OK);
                                             } catch (err) {
                                                 winston.log('error', err.message);
                                                 sftp.status(reqid, STATUS_CODE.FAILURE);
                                             }
+                                        }).on('REALPATH', async (reqid, path) => {
+                                            try {
+                                                sftp.name(reqid, {name: path});
+                                            } catch (err) {
+                                                winston.log('error', err.message);
+                                                sftp.status(reqid, STATUS_CODE.FAILURE);
+                                            }
+                                        }).on('SETSTAT', async (reqid, _path) => {
+                                            sftp.status(reqid, STATUS_CODE.OK);
                                         });
                                     } catch (err) {
                                         winston.log('error', err.message);
