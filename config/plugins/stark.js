@@ -1119,19 +1119,19 @@ const handleData = function (config, id, data) {
 
                     // Handle timestamps.
                     try {
-                        value.data.Batch.Msg[0].Row = value.data.Batch.Msg[0].Row.map(row => {
+                        for (let i = 0; i < value.data.Batch.Msg[0].Row.length; i++) {
+                            const row = value.data.Batch.Msg[0].Row[i];
                             try {
-                                const row = {
+                                value.data.Batch.Msg[0].Row[i] = {
                                     ...row,
                                     R_Date_Time_Delivery: [
                                         convertFinnishDateToISOString(new Date(`${row.R_Date_Delivery[0]}T${DEFAULT_DELIVERY_TIME}:00.000Z`)),
                                     ],
                                 };
-                                return row;
                             } catch (err) {
-                                return row;
+                                console.log(err.message);
                             }
-                        });
+                        }
                     } catch (e) {
                         console.log(e.message);
                     }
