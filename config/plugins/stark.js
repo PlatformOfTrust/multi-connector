@@ -1119,12 +1119,19 @@ const handleData = function (config, id, data) {
 
                     // Handle timestamps.
                     try {
-                        value.data.Batch.Msg[0].Row = value.data.Batch.Msg[0].Row.map(row => ({
-                            ...row,
-                            R_Date_Time_Delivery: [
-                                convertFinnishDateToISOString(new Date(`${row.R_Date_Delivery[0]}T${DEFAULT_DELIVERY_TIME}:00.000Z`)),
-                            ],
-                        }));
+                        value.data.Batch.Msg[0].Row = value.data.Batch.Msg[0].Row.map(row => {
+                            try {
+                                const row = {
+                                    ...row,
+                                    R_Date_Time_Delivery: [
+                                        convertFinnishDateToISOString(new Date(`${row.R_Date_Delivery[0]}T${DEFAULT_DELIVERY_TIME}:00.000Z`)),
+                                    ],
+                                };
+                                return row;
+                            } catch (err) {
+                                return row;
+                            }
+                        });
                     } catch (e) {
                         console.log(e.message);
                     }
@@ -1508,39 +1515,40 @@ const runJob = async (productCode) => {
                 const send = await sendData(null, null, productCode, config, template, result, options);
                 if (Object.hasOwnProperty.call(send, 'error')) {
                     winston.log('error', send.error);
-                    if (!LOGFILE) return;
-                    const lineLimit = 10;
-                    const filename = `${options.filename.split('.').slice(0, -1).join('.')}.log`;
-                    const path = `/${filename}`;
-                    const logFilePath = parts.slice(0, -1).join('/');
+                    if (LOGFILE) {
+                        const lineLimit = 10;
+                        const filename = `${options.filename.split('.').slice(0, -1).join('.')}.log`;
+                        const path = `/${filename}`;
+                        const logFilePath = parts.slice(0, -1).join('/');
 
-                    // Get log.
-                    const logs = await sftp.getData({
-                        productCode,
-                        plugins: [],
-                        authConfig: {...config.static, toPath: logFilePath},
-                        parameters: {targetObject: {}},
-                    }, [path], true);
+                        // Get log.
+                        const logs = await sftp.getData({
+                            productCode,
+                            plugins: [],
+                            authConfig: {...config.static, toPath: logFilePath},
+                            parameters: {targetObject: {}},
+                        }, [path], true);
 
-                    // Insert new line.
-                    let log = '';
-                    const file = logs.find(f => f.name === filename);
-                    if (file) {
-                        log = Buffer.from(file.data, 'base64').toString('utf-8') + '\n';
+                        // Insert new line.
+                        let log = '';
+                        const file = logs.find(f => f.name === filename);
+                        if (file) {
+                            log = Buffer.from(file.data, 'base64').toString('utf-8') + '\n';
+                        }
+                        log += new Date().toISOString() + ': ' + parts[parts.length - 1] + ', ' + JSON.stringify(send.error);
+                        const content = log.split('\n').slice(-lineLimit).join('\n');
+
+                        // Upload log.
+                        const to = DOWNLOAD_DIR + productCode + logFilePath + path;
+                        await sftp.checkDir(to);
+                        await fs.writeFile(to, content);
+                        await sftp.sendData({
+                            productCode,
+                            plugins: [],
+                            authConfig: {...config.static, fromPath: logFilePath},
+                            parameters: {targetObject: {}},
+                        }, [path]);
                     }
-                    log += new Date().toISOString() + ': ' + parts[parts.length - 1] + ', ' + JSON.stringify(send.error);
-                    const content = log.split('\n').slice(-lineLimit).join('\n');
-
-                    // Upload log.
-                    const to = DOWNLOAD_DIR + productCode + logFilePath + path;
-                    await sftp.checkDir(to);
-                    await fs.writeFile(to, content);
-                    await sftp.sendData({
-                        productCode,
-                        plugins: [],
-                        authConfig: {...config.static, fromPath: logFilePath},
-                        parameters: {targetObject: {}},
-                    }, [path]);
                 }
             } catch (err) {
                 winston.log('error', err.message);
