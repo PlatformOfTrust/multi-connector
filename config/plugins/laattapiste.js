@@ -18,7 +18,8 @@ const fs = require('fs').promises;
 const FileType = require('file-type');
 
 const PLUGIN_NAME = 'laattapiste';
-const DOWNLOAD_DIR = './temp/';
+const storagePath = process.env.STORAGE_PATH || './';
+const DOWNLOAD_DIR = `${storagePath}temp/`;
 const orderNumberToCALSId = {};
 const productCodeToCALSId = {};
 

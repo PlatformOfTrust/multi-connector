@@ -19,7 +19,8 @@ const SocksClient = require('socks').SocksClient;
 let port = 2222;
 const servers = {};
 const clients = {};
-const DOWNLOAD_DIR = './temp/';
+const storagePath = process.env.STORAGE_PATH || './';
+const DOWNLOAD_DIR = `${storagePath}temp/`;
 
 /**
  * Generates random UUIDv4.

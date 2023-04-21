@@ -17,7 +17,8 @@ const rp = require('request-promise');
  */
 
 const clients = {};
-const DOWNLOAD_DIR = './temp/';
+const storagePath = process.env.STORAGE_PATH || './';
+const DOWNLOAD_DIR = `${storagePath}temp/`;
 
 /**
  * Generates random UUIDv4.

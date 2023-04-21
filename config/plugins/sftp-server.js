@@ -18,7 +18,8 @@ const {
         },
     },
 } = require('ssh2');
-const DOWNLOAD_DIR = './temp/';
+const storagePath = process.env.STORAGE_PATH || './';
+const DOWNLOAD_DIR = `${storagePath}temp/`;
 
 /**
  * Creates directory structure recursively for a given file path.

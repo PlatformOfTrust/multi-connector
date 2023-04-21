@@ -18,7 +18,8 @@ const FileType = require('file-type');
 const {convertFinnishDateToISOString} = require('../../app/lib/utils');
 
 const PLUGIN_NAME = 'stark';
-const DOWNLOAD_DIR = './temp/';
+const storagePath = process.env.STORAGE_PATH || './';
+const DOWNLOAD_DIR = `${storagePath}temp/`;
 const orderNumberToCALSId = {};
 const productCodeToCALSId = {};
 

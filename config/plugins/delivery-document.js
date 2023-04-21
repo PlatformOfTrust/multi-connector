@@ -25,7 +25,8 @@ const CSVToJSON = require('csvtojson');
  */
 
 const PLUGIN_NAME = 'delivery-document';
-const DOWNLOAD_DIR = './temp/';
+const storagePath = process.env.STORAGE_PATH || './';
+const DOWNLOAD_DIR = `${storagePath}temp/`;
 const PRIMARY_PRODUCT_CODE = 'C1EC2973-8A0B-4858-BF1E-3A0D0CEFE33A';
 const orderNumberToCALSId = {};
 const productCodeToCALSId = {};
