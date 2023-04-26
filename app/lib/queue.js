@@ -16,11 +16,12 @@ const INTERVAL = 100;
  * @param {String} q
  * @param {Function} c
  * @param {Array} p
+ * @param {String} [i]
  * @return {Promise}
  */
-const queue = (q, c, p) => {
+const queue = (q, c, p, i) => {
     // Take a place in the queue.
-    const id = uuidv4();
+    const id = i || uuidv4();
     if (!Object.hasOwnProperty.call(queues, q)) {
         queues[q] = [id];
     } else {
@@ -51,6 +52,16 @@ const queue = (q, c, p) => {
     });
 };
 
+/**
+ * Check if an id is queued.
+ *
+ * @param {String} q
+ * @param {String} i
+ * @return {Boolean}
+ */
+const isQueued = (q, i) => (queues[q] || []).includes(i);
+
 module.exports = {
     queue,
+    isQueued,
 };

@@ -2,11 +2,33 @@
 /**
  * Module dependencies.
  */
+const _ = require('lodash');
 const rp = require('request-promise');
+const cache = require('../../app/cache');
+const {queue, isQueued} = require('../../app/lib/queue');
 
 /**
  * Orfer API.
  */
+
+const name = 'orfer-api';
+const UPDATE_TIME = 10 * 60 * 1000;
+const STORAGE_TIME = 5 * 24 * 60 * 60 * 1000;
+
+/**
+ * Returns a hash code from a string
+ * @param  {String} str
+ * @return {Number}
+ */
+function hashCode (str) {
+    let hash = 0;
+    for (let i = 0, len = str.length; i < len; i++) {
+        const chr = str.charCodeAt(i);
+        hash = (hash << 5) - hash + chr;
+        hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+}
 
 /**
  * Sends http request.
@@ -17,9 +39,10 @@ const rp = require('request-promise');
  * @param {String/Object/Array} [body]
  * @param {Object} [query]
  * @param {String/Object/Array} [returnOnError]
+ * @param {Boolean} [skip]
  * @return {Promise}
  */
-function request (method, url, headers, body, query = {}, returnOnError) {
+const request = async (method, url, headers, body, query = {}, returnOnError, skip = false) => {
     const options = {
         method,
         uri: url,
@@ -30,12 +53,31 @@ function request (method, url, headers, body, query = {}, returnOnError) {
         headers,
     };
 
-    return rp(options).then(result => {
+    const hash = hashCode(JSON.stringify(options)).toString();
+    const result = cache.getDoc('messages', hash);
+
+    if (_.isObject(result) ? Object.hasOwnProperty.call(result, 'body') && !skip : null) {
+        const ttl = cache.getTtl('messages', hash) || 0;
+        const expiration = ttl - STORAGE_TIME + UPDATE_TIME;
+        if (new Date().getTime() > expiration && !skip) {
+            try {
+                if (!isQueued(name, hash)) {
+                    queue(name, request, [method, url, headers, body, query, returnOnError, true], hash);
+                }
+            } catch (err) {
+                console.log(err.message);
+            }
+        }
         return Promise.resolve(result);
-    }).catch((error) => {
-        return returnOnError ? Promise.resolve(returnOnError) : Promise.resolve(error);
-    });
-}
+    } else {
+        return rp(options).then(result => {
+            cache.setDoc('messages', hash, {body: result.body}, STORAGE_TIME / 1000);
+            return Promise.resolve(result);
+        }).catch((error) => {
+            return returnOnError ? Promise.resolve(returnOnError) : Promise.resolve(error);
+        });
+    }
+};
 
 /**
  * Composes urls.
@@ -360,6 +402,6 @@ const response = async (config, response) => {
  * Expose plugin methods.
  */
 module.exports = {
-    name: 'orfer-api',
+    name,
     response,
 };
