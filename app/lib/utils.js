@@ -163,9 +163,9 @@ const convertFinnishDateToISOString = (input, reverse = false, convert = false) 
     }
     input = convert ? new Date(input) : input;
     if (input.isDstObserved()) {
-        output = new Date(input.setHours(input.getHours() - (reverse ? 3 : -3)));
+        output = new Date(input.setHours(input.getHours() - (reverse ? -3 : 3)));
     } else {
-        output = new Date(input.setHours(input.getHours() - (reverse ? 2 : -2)));
+        output = new Date(input.setHours(input.getHours() - (reverse ? -2 : 2)));
     }
     return output.toISOString();
 };
