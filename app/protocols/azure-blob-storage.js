@@ -77,9 +77,10 @@ const createClient = async (config = {}) => {
  *
  * @param {Object} config
  * @param {Array} pathArray
+ * @param {Boolean} meta
  * @return {Promise}
  */
-const getData = async (config = {authConfig: {}}, pathArray) => {
+const getData = async (config = {authConfig: {}}, pathArray, meta = false) => {
     const items = [];
     const containerClient = await createClient(config);
 
@@ -140,22 +141,45 @@ const getData = async (config = {authConfig: {}}, pathArray) => {
  *
  * @param {Object} config
  * @param {Array} pathArray
+ * @param {Boolean} meta
  * @return {Promise}
  */
-const sendData = async (config = {}, pathArray) => {
+const sendData = async (config = {}, pathArray, meta = false) => {
     const items = [];
     const containerClient = await createClient(config);
 
     if (containerClient) {
         for (let p = 0; p < pathArray.length; p++) {
-            const stream = new Readable();
-            stream.push(pathArray[p].encoding === 'base64' ? Buffer.from(pathArray[p].content, 'base64') : pathArray[p].content);
-            stream.push(null);
-            const blockBlobClient = containerClient.getBlockBlobClient(pathArray[p].filename);
-            const data = await blockBlobClient.uploadStream(stream,
-                uploadOptions.bufferSize, uploadOptions.maxBuffers,
-                {blobHTTPHeaders: {blobContentType: pathArray[p].mimetype}, metadata: pathArray[p].metadata, tags: pathArray[p].tags});
-            if (data) { items.push(pathArray[p]); }
+            if (meta) {
+                // Create blob client from container client
+                const blockBlobClient = await containerClient.getBlockBlobClient(pathArray[p].filename);
+                let existingMetadata = {};
+                try {
+                    const properties = await blockBlobClient.getProperties();
+                    existingMetadata = properties.metadata;
+                } catch (err) {
+                    existingMetadata = {};
+                }
+                const metadata = {...existingMetadata, ...(pathArray[p].metadata || {})};
+                // Upload buffer
+                const data = await blockBlobClient.uploadData(pathArray[p].content, {...uploadOptions, metadata});
+                if (data) { items.push({filename: pathArray[p].filename, content: pathArray[p].content, metadata}); }
+            } else {
+                const stream = new Readable();
+                stream.push(pathArray[p].encoding === 'base64' ? Buffer.from(pathArray[p].content, 'base64') : pathArray[p].content);
+                stream.push(null);
+                const blockBlobClient = containerClient.getBlockBlobClient(pathArray[p].filename);
+                const data = await blockBlobClient.uploadStream(stream,
+                    uploadOptions.bufferSize, uploadOptions.maxBuffers,
+                    {
+                        blobHTTPHeaders: {blobContentType: pathArray[p].mimetype},
+                        metadata: pathArray[p].metadata,
+                        tags: pathArray[p].tags,
+                    });
+                if (data) {
+                    items.push(pathArray[p]);
+                }
+            }
         }
     }
     return items;
