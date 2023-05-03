@@ -814,6 +814,11 @@ const documentSchema = {
                                 'title': 'Update time',
                                 'description': 'Last update time.',
                             },
+                            metadata: {
+                                $id: '#/properties/data/properties/document/items/properties/metadata',
+                                source: 'metadata',
+                                type: 'object',
+                            },
                             'created': {
                                 '$id': '#/properties/data/properties/document/items/properties/created',
                                 'source': null,
@@ -1131,6 +1136,7 @@ const response = async (config, response) => {
                     data: {
                         filename: response.id,
                         content: response.data,
+                        metadata: response.metadata,
                         extension: fileType.ext,
                         mimetype: fileType.mime,
                         encoding: 'base64',

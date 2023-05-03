@@ -1575,6 +1575,7 @@ const response = async (config, response) => {
                     data: {
                         filename: response.id,
                         content: response.data,
+                        metadata: response.metadata,
                         extension: fileType.ext,
                         mimetype: fileType.mime,
                         encoding: 'base64',
