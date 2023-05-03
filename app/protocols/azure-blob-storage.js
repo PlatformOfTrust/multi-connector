@@ -89,10 +89,17 @@ const getData = async (config = {authConfig: {}}, pathArray, meta = false) => {
         if (JSON.stringify(pathArray) === '[""]' || JSON.stringify(pathArray) === '["/"]') {
             for await (const blob of containerClient.listBlobsFlat()) {
                 const blockBlobClient = containerClient.getBlockBlobClient(blob.name);
+                let metadata = {};
+                try {
+                    const properties = await blockBlobClient.getProperties();
+                    metadata = properties.metadata;
+                } catch (err) {
+                    metadata = {};
+                }
                 try {
                     const downloadBlockBlobResponse = await blockBlobClient.download(0);
                     const data = (await streamToBuffer(downloadBlockBlobResponse.readableStreamBody)).toString('base64');
-                    const item = await response.handleData(config, blob.name, 0, {data, id: blob.name});
+                    const item = await response.handleData(config, blob.name, 0, {data, id: blob.name, metadata});
                     if (item) items.push(item);
                 } catch (e) {
                     // Blob was not found.
@@ -186,9 +193,45 @@ const sendData = async (config = {}, pathArray, meta = false) => {
 };
 
 /**
+ * Removes file at Blob Storage.
+ *
+ * @param {Object} config
+ * @param {Array} pathArray
+ * @return {Promise}
+ */
+const remove = async (config = {}, pathArray) => {
+    const items = [];
+    const containerClient = await createClient(config);
+
+    if (containerClient) {
+        for (let p = 0; p < pathArray.length; p++) {
+            let item;
+            const name = pathArray[p];
+            // Create blob client from container client
+            const blockBlobClient = await containerClient.getBlockBlobClient(pathArray[p]);
+            try {
+                const options = {
+                    deleteSnapshots: 'include',
+                };
+                item = await blockBlobClient.delete(options);
+            } catch (err) {
+                // Blob was not found or deleted.
+                item = null;
+            }
+            if (item) {
+                items.push({name});
+            }
+        }
+    }
+
+    return items;
+};
+
+/**
  * Expose library functions.
  */
 module.exports = {
     getData,
     sendData,
+    remove,
 };
