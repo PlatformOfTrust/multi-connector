@@ -828,6 +828,22 @@
                                                     "type": "string",
                                                     "title": "GTIN code",
                                                     "description": "GTIN standard based identifier."
+                                                },
+                                                "codeProductLviInfo": {
+                                                    "$id": "#/properties/data/properties/order/items/properties/orderLine/items/properties/product/properties/codeProductLviInfo",
+                                                    "source": "materialLVINumber",
+                                                    "type": "string",
+                                                    "ontologyProperty": "pot:identifier/codeProductLviInfo",
+                                                    "title": "LVI Info product code",
+                                                    "description": "Product code given by LVI Info"
+                                                },
+                                                "codeProductSahkonumerot": {
+                                                    "$id": "#/properties/data/properties/order/items/properties/orderLine/items/properties/product/properties/codeProductSahkonumerot",
+                                                    "source": "materialElectricalNumber",
+                                                    "type": "string",
+                                                    "ontologyProperty": "pot:identifier/codeProductSahkonumerot",
+                                                    "title": "Sahkonumero product code",
+                                                    "description": ""
                                                 }
                                             }
                                         }
