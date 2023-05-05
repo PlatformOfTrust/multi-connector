@@ -107,35 +107,62 @@ const getData = async (config = {authConfig: {}}, pathArray, meta = false) => {
             }
         } else {
             for (let p = 0; p < pathArray.length; p++) {
-                // Detect produced content.
-                try {
-                    if (config.parameters.targetObject.content || config.parameters.targetObject.url) {
-                        const doc = config.parameters.targetObject;
-
-                        // Fetch content.
-                        const url = doc.url;
-                        const response = url ? await rp({method: 'GET', url, resolveWithFullResponse: true, encoding: null}) : {body: doc.content};
-                        const content = response.body;
-                        const filename = pathArray[p].split('/')[0] === '' && pathArray[p][0] === '/' ? pathArray[p].substring(1) : pathArray[p];
-                        const {data} = await file({}, {id: filename, data: Buffer.from(content).toString('base64')});
-
-                        data.metadata = {};
-                        data.tags = {};
-
-                        // Upload file to blob storage.
-                        await sendData(config, [data]);
+                if (pathArray[p].slice(-1) === '/' || pathArray[p] === '') {
+                    for await (const blob of containerClient.listBlobsFlat()) {
+                        const blockBlobClient = containerClient.getBlockBlobClient(blob.name);
+                        let metadata = {};
+                        try {
+                            const properties = await blockBlobClient.getProperties();
+                            metadata = properties.metadata;
+                        } catch (err) {
+                            metadata = {};
+                        }
+                        try {
+                            const downloadBlockBlobResponse = await blockBlobClient.download(0);
+                            const data = (await streamToBuffer(downloadBlockBlobResponse.readableStreamBody)).toString('base64');
+                            if (data && blob.name.startsWith(pathArray[p])) { items.push(meta ? {id: blob.name, data, metadata} : data); }
+                        } catch (e) {
+                            // Blob was not found.
+                        }
                     }
-                } catch (err) {
-                    console.log(err.message);
-                }
-                const blockBlobClient = containerClient.getBlockBlobClient(pathArray[p]);
-                try {
-                    const downloadBlockBlobResponse = await blockBlobClient.download(0);
-                    const data = (await streamToBuffer(downloadBlockBlobResponse.readableStreamBody)).toString('base64');
-                    const item = await response.handleData(config, pathArray[p], p, {data, id: pathArray[p]});
-                    if (item) items.push(item);
-                } catch (e) {
-                    // Blob was not found.
+                } else {
+                    // Detect produced content.
+                    try {
+                        if (config.parameters.targetObject.content || config.parameters.targetObject.url) {
+                            const doc = config.parameters.targetObject;
+
+                            // Fetch content.
+                            const url = doc.url;
+                            const response = url ? await rp({method: 'GET', url, resolveWithFullResponse: true, encoding: null}) : {body: doc.content};
+                            const content = response.body;
+                            const filename = pathArray[p].split('/')[0] === '' && pathArray[p][0] === '/' ? pathArray[p].substring(1) : pathArray[p];
+                            const {data} = await file({}, {id: filename, data: Buffer.from(content).toString('base64')});
+
+                            data.metadata = {};
+                            data.tags = {};
+
+                            // Upload file to blob storage.
+                            await sendData(config, [data]);
+                        }
+                    } catch (err) {
+                        console.log(err.message);
+                    }
+                    const blockBlobClient = containerClient.getBlockBlobClient(pathArray[p]);
+                    try {
+                        const downloadBlockBlobResponse = await blockBlobClient.download(0);
+                        let metadata = {};
+                        try {
+                            const properties = await blockBlobClient.getProperties();
+                            metadata = properties.metadata;
+                        } catch (err) {
+                            metadata = {};
+                        }
+                        const data = (await streamToBuffer(downloadBlockBlobResponse.readableStreamBody)).toString('base64');
+                        if (data) items.push(meta ? {id: pathArray[p], data, metadata} : await response.handleData(config, pathArray[p], p, {data, id: pathArray[p]}));
+                    } catch (e) {
+                        console.log(e.message);
+                        // Blob was not found.
+                    }
                 }
             }
         }
