@@ -5,6 +5,7 @@
 const transformer = require('../../app/lib/transformer');
 const connector = require('../../app/lib/connector');
 const sftp = require('../../app/protocols/sftp');
+const {add, get, retry} = require('../../app/lib/retry');
 const winston = require('../../logger.js');
 const cache = require('../../app/cache');
 const cron = require('node-cron');
@@ -1253,6 +1254,15 @@ const output = async (config, output) => {
     // Hand over data objects to transformer.
     try {
         const array = output.data[config.output.array];
+
+        // Find files from blob storage.
+        if (array.length === 0 && config.parameters.targetObject.retry) {
+            const getFromStorage = await get(config.productCode + config.authConfig.toPath + '/' + config.parameters.targetObject.idLocal);
+            array.push({id: config.parameters.targetObject.idLocal, data: [{
+                value: await response(config, getFromStorage[0]),
+            }]});
+        }
+
         for (let i = 0; i < array.length; i++) {
             result[config.output.object][config.output.array].push(
                 handleData(
@@ -1461,10 +1471,11 @@ const sendData = async (req, res, productCode, config, template, result, options
  * @param {String} productCode
  * @param {Object} config
  * @param {String} idLocal
+ * @param {Boolean} retry
  * @return
  *   The connector response.
  */
-const getData = async (productCode, config, idLocal) => {
+const getData = async (productCode, config, idLocal, retry) => {
     // Compose triggered local connector request.
     const triggeredReq = {
         body: {
@@ -1473,6 +1484,7 @@ const getData = async (productCode, config, idLocal) => {
             parameters: {
                 targetObject: {
                     idLocal,
+                    retry: retry ? true : undefined,
                 },
             },
         },
@@ -1492,6 +1504,7 @@ const getData = async (productCode, config, idLocal) => {
 const runJob = async (productCode) => {
     try {
         const config = cache.getDoc('configs', productCode);
+        const template = cache.getDoc('templates', config.template) || {};
         // Download files.
         const docs = (await sftp.getData({
             productCode,
@@ -1502,18 +1515,18 @@ const runJob = async (productCode) => {
 
         // Send new files and move to archive.
         for (let i = 0; i < docs.length; i++) {
-            const d = docs[i];
-            winston.log('info', 'Send file ' + d.path);
+            const input = docs[i];
+            winston.log('info', 'Send file ' + input.path);
 
             // 2. Trigger file sending to receivers.
             try {
-                const parts = d.path.split('/');
-                const result = await getData(productCode, config, parts[parts.length - 1]);
+                const parts = input.path.split('/');
+                const toPath = parts.slice(0, -1).join('/');
+                const result = await getData(productCode, config, parts[parts.length - 1], false);
                 const options = {
                     filename: parts[parts.length - 1],
                     isTest: false,
                 };
-                const template = cache.getDoc('templates', config.template) || {};
                 const send = await sendData(null, null, productCode, config, template, result, options);
                 if (Object.hasOwnProperty.call(send, 'error')) {
                     winston.log('error', send.error);
@@ -1521,13 +1534,12 @@ const runJob = async (productCode) => {
                         const lineLimit = 10;
                         const filename = `${options.filename.split('.').slice(0, -1).join('.')}.log`;
                         const path = `/${filename}`;
-                        const logFilePath = parts.slice(0, -1).join('/');
 
                         // Get log.
                         const logs = await sftp.getData({
                             productCode,
                             plugins: [],
-                            authConfig: {...config.static, toPath: logFilePath},
+                            authConfig: {...config.static, toPath},
                             parameters: {targetObject: {}},
                         }, [path], true);
 
@@ -1541,21 +1553,53 @@ const runJob = async (productCode) => {
                         const content = log.split('\n').slice(-lineLimit).join('\n');
 
                         // Upload log.
-                        const to = DOWNLOAD_DIR + productCode + logFilePath + path;
+                        const to = DOWNLOAD_DIR + productCode + toPath + path;
                         await sftp.checkDir(to);
                         await fs.writeFile(to, content);
                         await sftp.sendData({
                             productCode,
                             plugins: [],
-                            authConfig: {...config.static, fromPath: logFilePath},
+                            authConfig: {...config.static, fromPath: toPath},
                             parameters: {targetObject: {}},
                         }, [path]);
                     }
+                    // Retry logic.
+                    await add(productCode, input, async () => {
+                        // Remove moved file.
+                        try {
+                            const items = await sftp.remove({
+                                productCode: config.productCode,
+                                authConfig: {...config.static, toPath},
+                            }, [input.name], config.productCode);
+                            if (items.length > 0) {
+                                winston.log('info', items.toString());
+                            }
+                        } catch (err) {
+                            winston.log('error', err.message);
+                        }
+                    });
                 }
             } catch (err) {
                 winston.log('error', err.message);
             }
         }
+
+        // Attempt to process files that failed previously.
+        await retry(productCode, async (input) => {
+            try {
+                const parts = input.id.split('/');
+                const output = await getData(productCode, config, parts[parts.length - 1], true);
+                const options = {
+                    filename: parts[parts.length - 1],
+                    isTest: false,
+                };
+                const attempt = await sendData(null, null, productCode, config, template, output, options);
+                return !Object.hasOwnProperty.call(attempt, 'error');
+            } catch (err) {
+                winston.log('error', err.message);
+                return false;
+            }
+        });
     } catch (err) {
         winston.log('error', err.message);
     }
