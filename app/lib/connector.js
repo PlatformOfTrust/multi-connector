@@ -469,8 +469,9 @@ const interpretMode = function (config, parameters) {
 const resolvePlugins = async (template) => {
     // Attach plugins.
     if (Object.hasOwnProperty.call(template, 'plugins')) {
-        const found = Object.keys(plugins).filter(p => template.plugins.includes(p));
-        const missing = template.plugins.filter(p => !found.includes(p));
+        const templatePlugins = template.plugins.map(p => _.isObject(p) ? p.name : p);
+        const found = Object.keys(plugins).filter(p => templatePlugins.includes(p));
+        const missing = templatePlugins.filter(p => !found.includes(p));
         if (missing.length > 0) {
             return rest.promiseRejectWithError(500, 'Missing required plugins: ' + missing);
         }
