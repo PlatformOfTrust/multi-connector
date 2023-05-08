@@ -9,7 +9,7 @@ const {getData, sendData, remove} = require('../../app/protocols/azure-blob-stor
  * Retry library for connectors delivering data using files.
  */
 
-const container = 'retries';
+const container = process.env.AZURE_BLOB_STORAGE_CONTAINER || 'retries';
 const validateCredentials = () => !(
     !process.env.AZURE_BLOB_STORAGE_ACCOUNT
         || !process.env.AZURE_BLOB_STORAGE_ACCOUNT_KEY
