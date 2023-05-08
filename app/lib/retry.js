@@ -5,8 +5,21 @@
 const winston = require('../../logger.js');
 const {getData, sendData, remove} = require('../../app/protocols/azure-blob-storage');
 
+/**
+ * Retry library for connectors delivering data using files.
+ */
+
 const container = 'retries';
 
+/**
+ * Uploads file to blob storage.
+ *
+ * @param {String} id
+ * @param {String} name
+ * @param {Buffer} content
+ * @param {Object} metadata
+ * @return {Promise}
+ */
 const upload = async (id, name, content, metadata = {attempts: '1'}) => {
     const filename = name.split('/')[0] === '' ? name.substring(1) : name;
     // Upload file to blob storage.
@@ -24,6 +37,13 @@ const upload = async (id, name, content, metadata = {attempts: '1'}) => {
     }
 };
 
+/**
+ * Downloads files from blob storage.
+ *
+ * @param {String} id
+ * @param {String} name
+ * @return {Promise}
+ */
 const download = async (id, name = '') => {
     const filename = name.split('/')[0] === '' ? name.substring(1) : name;
     return await getData({
@@ -38,6 +58,12 @@ const download = async (id, name = '') => {
     }, [`${id}${id ? '/' : ''}${filename}`], true);
 };
 
+/**
+ * Triggers retry for all files by id.
+ *
+ * @param {String} id
+ * @param {Function} callback
+ */
 const retry = async (id, callback) => {
     // Check for blobs and retry.
     download(id).then(async (file) => {
@@ -70,7 +96,7 @@ const retry = async (id, callback) => {
 };
 
 /**
- * Handles retry.
+ * Adds a file to blob storage for retry.
  *
  * @param {String} id
  * @param {Object} input
