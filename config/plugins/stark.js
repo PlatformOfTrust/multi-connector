@@ -3,9 +3,10 @@
  * Module dependencies.
  */
 const transformer = require('../../app/lib/transformer');
+const {add, get, retry} = require('../../app/lib/retry');
+const commonResponse = require('../../app/lib/response');
 const connector = require('../../app/lib/connector');
 const sftp = require('../../app/protocols/sftp');
-const {add, get, retry} = require('../../app/lib/retry');
 const winston = require('../../logger.js');
 const cache = require('../../app/cache');
 const cron = require('node-cron');
@@ -1257,10 +1258,13 @@ const output = async (config, output) => {
 
         // Find files from blob storage.
         if (array.length === 0 && config.parameters.targetObject.retry) {
-            const getFromStorage = await get(config.productCode + config.authConfig.toPath + '/' + config.parameters.targetObject.idLocal);
-            array.push({id: config.parameters.targetObject.idLocal, data: [{
-                value: await response(config, getFromStorage[0]),
-            }]});
+            const dirs = Array.isArray(config.authConfig.toPath) ? config.authConfig.toPath : [config.authConfig.toPath];
+            await Promise.all(dirs.map(async toPath => {
+                const getFromStorage = await get(config.productCode + toPath + '/' + config.parameters.targetObject.idLocal);
+                if (getFromStorage[0]) {
+                    array.push(...(await commonResponse.handleData(config, config.output.id, 0, getFromStorage[0])));
+                }
+            }));
         }
 
         for (let i = 0; i < array.length; i++) {

@@ -3,6 +3,8 @@
  * Module dependencies.
  */
 const transformer = require('../../app/lib/transformer');
+const {add, get, retry} = require('../../app/lib/retry');
+const commonResponse = require('../../app/lib/response');
 const connector = require('../../app/lib/connector');
 const validator = require('../../app/lib/validator');
 const sftp = require('../../app/protocols/sftp');
@@ -1146,6 +1148,7 @@ const response = async (config, response) => {
         } else {
             response = {data: response};
         }
+        console.log('response 2', JSON.stringify(response));
         return response;
     } catch (e) {
         console.log(e.message);
@@ -1172,6 +1175,18 @@ const output = async (config, output) => {
     // Hand over data objects to transformer.
     try {
         const array = output.data[config.output.array];
+
+        // Find files from blob storage.
+        if (array.length === 0 && config.parameters.targetObject.retry) {
+            const dirs = Array.isArray(config.authConfig.toPath) ? config.authConfig.toPath : [config.authConfig.toPath];
+            await Promise.all(dirs.map(async toPath => {
+                const getFromStorage = await get(config.productCode + toPath + '/' + config.parameters.targetObject.idLocal);
+                if (getFromStorage[0]) {
+                    array.push(...(await commonResponse.handleData(config, config.output.id, 0, getFromStorage[0])));
+                }
+            }));
+        }
+
         for (let i = 0; i < array.length; i++) {
             result[config.output.object][config.output.array].push(
                 handleData(
@@ -1235,10 +1250,11 @@ const errorResponse = async (req, res, err) => {
  * @param {String} productCode
  * @param {Object} config
  * @param {String} idLocal
+ * @param {Boolean} retry
  * @return
  *   The connector response.
  */
-const getData = async (productCode, config, idLocal) => {
+const getData = async (productCode, config, idLocal, retry) => {
     // Compose triggered local connector request.
     const triggeredReq = {
         body: {
@@ -1247,6 +1263,7 @@ const getData = async (productCode, config, idLocal) => {
             parameters: {
                 targetObject: {
                     idLocal,
+                    retry: retry ? true : undefined,
                 },
             },
         },
@@ -1649,20 +1666,29 @@ const DEFAULT_TIMEZONE = 'Europe/Helsinki';
 const runJob = async (productCode) => {
     try {
         const config = cache.getDoc('configs', productCode);
-        // Download files.
-        const docs = await sftp.getData({
-            productCode,
-            plugins: [],
-            authConfig: config.static,
-            parameters: {targetObject: {}},
-        }, [''], true);
+        const template = cache.getDoc('templates', config.template) || {};
+        let docs = [];
+
+        try {
+            // Download files.
+            docs = await sftp.getData({
+                productCode,
+                plugins: [],
+                authConfig: config.static,
+                parameters: {targetObject: {}},
+            }, [''], true);
+        } catch (err) {
+            winston.log('error', err.message);
+        }
+
         // Send new files and move to archive.
         for (let i = 0; i < docs.length; i++) {
-            const d = docs[i];
-            winston.log('info', 'Send file ' + d.path);
+            const input = docs[i];
+            winston.log('info', 'Send file ' + input.path);
             // 2. Trigger file sending to receivers.
             try {
-                const parts = d.path.split('/');
+                const parts = input.path.split('/');
+                const toPath = parts.slice(0, -1).join('/');
                 const result = await getData(productCode, config, parts[parts.length - 1]);
                 // Merge delivery information lines with same idLocal together.
                 const documents = {};
@@ -1685,12 +1711,27 @@ const runJob = async (productCode) => {
                     filename: parts[parts.length - 1],
                     isTest: false,
                 };
-                const template = cache.getDoc('templates', config.template) || {};
                 const send = await sendData(null, null, productCode, config, template, result, options);
                 if (Object.hasOwnProperty.call(send, 'error')) {
+                    // Retry logic.
+                    await add(productCode, input, async () => {
+                        // Move moved file.
+                        try {
+                            const items = await sftp.move({
+                                productCode: config.productCode,
+                                authConfig: {...config.static, toPath},
+                            }, [input.name], config.productCode, toPath + '/Archive');
+                            if (items.length > 0) {
+                                winston.log('info', items.toString());
+                            }
+                        } catch (err) {
+                            winston.log('error', `Callback: ${err.message}`);
+                        }
+                    });
+
                     const lineLimit = 10;
                     const path = '/error.log';
-                    const logFilePath = parts.slice(0, -1).join('/') + '/Log';
+                    const logFilePath = toPath + '/Log';
                     // Get log.
                     const logs = await sftp.getData({
                         productCode,
@@ -1722,6 +1763,46 @@ const runJob = async (productCode) => {
                 winston.log('error', err.message);
             }
         }
+
+        // Attempt to process files that failed previously.
+        await retry(productCode, async (input) => {
+            try {
+                const parts = input.id.split('/');
+                const res = await getData(productCode, config, parts[parts.length - 1], true);
+                // Merge delivery information lines with same idLocal together.
+                const documents = {};
+                (Array.isArray(res.output.data.order) ? res.output.data.order : [res.output.data.order]).forEach(item => {
+                    if (Object.hasOwnProperty.call(item, 'deliveryLine') && Object.hasOwnProperty.call(item, 'delivery')) {
+                        if (Object.hasOwnProperty.call(item.delivery, 'idLocal')) {
+                            const deliveryId = item.delivery.idLocal;
+                            if (Object.hasOwnProperty.call(documents, deliveryId)) {
+                                documents[deliveryId].deliveryLine = Array.isArray(documents[deliveryId].deliveryLine) ? documents[deliveryId].deliveryLine : [documents[deliveryId].deliveryLine];
+                                item.deliveryLine = Array.isArray(item.deliveryLine) ? item.deliveryLine : [item.deliveryLine];
+                                documents[deliveryId].deliveryLine.push(...item.deliveryLine);
+                            } else {
+                                documents[deliveryId] = item;
+                            }
+                        }
+                    }
+                });
+                res.output.data.order = Object.values(documents).length > 0 ? Object.values(documents) : res.output.data.order;
+                const options = {
+                    filename: parts[parts.length - 1],
+                    isTest: false,
+                };
+                if (res.output.data.order.length > 0 || Object.values(documents).length > 0) {
+                    const attempt = await sendData(null, null, productCode, config, template, res, options);
+                    return !Object.hasOwnProperty.call(attempt, 'error');
+                } else {
+                    winston.log('error', 'Retry callback: Empty confirmation.');
+                    return false;
+                }
+            } catch (err) {
+                winston.log('error', err.message);
+                return false;
+            }
+        });
+
     } catch (err) {
         winston.log('error', err.message);
     }

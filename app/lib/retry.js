@@ -108,7 +108,7 @@ const retry = async (id, callback) => {
             }
         }
     }).catch(err => {
-        winston.log('error', err.message);
+        winston.log('error', `Retry: ${err.message}`);
     });
 };
 
@@ -123,11 +123,14 @@ const add = async (id, input, callback) => {
     if (!validateCredentials()) {
         return Promise.reject(new Error('Missing retry credentials.'));
     }
+    if (typeof input !== 'object') {
+        return Promise.reject(new Error(`Invalid input. Expected object, got ${typeof input}.`));
+    }
     upload(id, input.path, Buffer.from(input.data, 'base64')).then(() => {
         // Confirm successful move to blob storage by executing the callback.
         callback();
     }).catch(err => {
-        winston.log('error', err.message);
+        winston.log('error', `Add: ${err.message}`);
     });
 };
 
