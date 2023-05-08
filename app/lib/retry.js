@@ -10,6 +10,10 @@ const {getData, sendData, remove} = require('../../app/protocols/azure-blob-stor
  */
 
 const container = 'retries';
+const validateCredentials = () => !(
+    !process.env.AZURE_BLOB_STORAGE_ACCOUNT
+        || !process.env.AZURE_BLOB_STORAGE_ACCOUNT_KEY
+);
 
 /**
  * Uploads file to blob storage.
@@ -21,6 +25,9 @@ const container = 'retries';
  * @return {Promise}
  */
 const upload = async (id, name, content, metadata = {attempts: '1'}) => {
+    if (!validateCredentials()) {
+        return Promise.reject(new Error('Missing retry credentials.'));
+    }
     const filename = name.split('/')[0] === '' ? name.substring(1) : name;
     // Upload file to blob storage.
     const result = await sendData({
@@ -45,6 +52,9 @@ const upload = async (id, name, content, metadata = {attempts: '1'}) => {
  * @return {Promise}
  */
 const download = async (id, name = '') => {
+    if (!validateCredentials()) {
+        return Promise.reject(new Error('Missing retry credentials.'));
+    }
     const filename = name.split('/')[0] === '' ? name.substring(1) : name;
     return await getData({
         authConfig: {
@@ -65,6 +75,9 @@ const download = async (id, name = '') => {
  * @param {Function} callback
  */
 const retry = async (id, callback) => {
+    if (!validateCredentials()) {
+        return Promise.reject(new Error('Missing retry credentials.'));
+    }
     // Check for blobs and retry.
     download(id).then(async (file) => {
         // Try again.
@@ -103,6 +116,9 @@ const retry = async (id, callback) => {
  * @param {Function} callback
  */
 const add = async (id, input, callback) => {
+    if (!validateCredentials()) {
+        return Promise.reject(new Error('Missing retry credentials.'));
+    }
     upload(id, input.path, Buffer.from(input.data, 'base64')).then(() => {
         // Confirm successful move to blob storage by executing the callback.
         callback();

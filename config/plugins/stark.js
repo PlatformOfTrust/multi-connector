@@ -1505,13 +1505,19 @@ const runJob = async (productCode) => {
     try {
         const config = cache.getDoc('configs', productCode);
         const template = cache.getDoc('templates', config.template) || {};
-        // Download files.
-        const docs = (await sftp.getData({
-            productCode,
-            plugins: [],
-            authConfig: config.static,
-            parameters: {targetObject: {}},
-        }, [''], true)).filter(doc => ((doc || {}).path || '').slice(-4) !== '.log');
+        let docs = [];
+
+        try {
+            // Download files.
+            docs = (await sftp.getData({
+                productCode,
+                plugins: [],
+                authConfig: config.static,
+                parameters: {targetObject: {}},
+            }, [''], true)).filter(doc => ((doc || {}).path || '').slice(-4) !== '.log');
+        } catch (err) {
+            winston.log('error', err.message);
+        }
 
         // Send new files and move to archive.
         for (let i = 0; i < docs.length; i++) {
