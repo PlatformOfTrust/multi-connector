@@ -28,18 +28,20 @@ const upload = async (id, name, content, metadata = {attempts: '1'}) => {
     if (!validateCredentials()) {
         return Promise.reject(new Error('Missing retry credentials.'));
     }
-    const filename = name.split('/')[0] === '' ? name.substring(1) : name;
+    const filename = `${id}${id ? '/' : ''}${name.split('/')[0] === '' ? name.substring(1) : name}`;
     // Upload file to blob storage.
+    winston.log('info', `Update ${filename}`);
     const result = await sendData({
         authConfig: {
             account: process.env.AZURE_BLOB_STORAGE_ACCOUNT,
             accountKey: process.env.AZURE_BLOB_STORAGE_ACCOUNT_KEY,
             container,
         },
-    }, [{filename: `${id}${id ? '/' : ''}${filename}`, content, metadata}], true);
+    }, [{filename, content, metadata}], true);
     if (result.length > 0) {
         return Promise.resolve(result);
     } else {
+        winston.log('info', `Failed to update ${filename}`);
         return Promise.reject();
     }
 };
@@ -55,7 +57,7 @@ const download = async (id, name = '') => {
     if (!validateCredentials()) {
         return Promise.reject(new Error('Missing retry credentials.'));
     }
-    const filename = name.split('/')[0] === '' ? name.substring(1) : name;
+    const filename = `${id}${id ? '/' : ''}${name.split('/')[0] === '' ? name.substring(1) : name}`;
     return await getData({
         authConfig: {
             account: process.env.AZURE_BLOB_STORAGE_ACCOUNT,
@@ -65,7 +67,7 @@ const download = async (id, name = '') => {
         parameters: {
             targetObject: {},
         },
-    }, [`${id}${id ? '/' : ''}${filename}`], true);
+    }, [filename], true);
 };
 
 /**
@@ -87,9 +89,11 @@ const retry = async (id, callback) => {
             if (attemptCount >= 5) {
                 continue;
             }
+            winston.log('info', `Attempt to handle ${(file[i] || {}).id} #${attemptCount}`);
             const success = await callback(file[i]);
             if (success) {
                 // Remove file as callback was successful.
+                winston.log('info', `Remove ${(file[i] || {}).id}`);
                 await remove({
                     authConfig: {
                         account: process.env.AZURE_BLOB_STORAGE_ACCOUNT,
