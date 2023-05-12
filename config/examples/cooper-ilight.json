@@ -11,8 +11,9 @@
     "authConfig.path": "ids"
   },
   "plugins": {
-    "streamer": {
-      "url": "<storage-url>"
+    "dsaas": {
+      "url": "<url>",
+      "functionCode": "<code>"
     }
   },
   "request": {
