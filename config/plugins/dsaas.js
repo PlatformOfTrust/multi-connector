@@ -48,6 +48,7 @@ const template = async (config, template) => {
             // Validate DSaaS credentials.
             if (!_.get(config, 'plugins.dsaas.url') || !_.get(config, 'plugins.dsaas.functionCode')) {
                 winston.log('info', 'Missing required plugin credentials for DSaaS history query.');
+                return template;
             }
 
             // Make sure targetObject is an array.
