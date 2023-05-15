@@ -1765,7 +1765,7 @@ const runJob = async (productCode) => {
         }
 
         // Attempt to process files that failed previously.
-        await retry(productCode, async (input) => {
+        await retry(productCode, async (input, callback) => {
             try {
                 const parts = input.id.split('/');
                 const res = await getData(productCode, config, parts[parts.length - 1], true);
@@ -1792,14 +1792,14 @@ const runJob = async (productCode) => {
                 };
                 if (res.output.data.order.length > 0 || Object.values(documents).length > 0) {
                     const attempt = await sendData(null, null, productCode, config, template, res, options);
-                    return !Object.hasOwnProperty.call(attempt, 'error');
+                    callback(Object.hasOwnProperty.call(attempt, 'error') ? attempt.error : null, attempt);
                 } else {
                     winston.log('error', 'Retry callback: Empty confirmation.');
-                    return false;
+                    callback('Retry callback: Empty confirmation.', null);
                 }
             } catch (err) {
                 winston.log('error', err.message);
-                return false;
+                callback(err.message, null);
             }
         });
 

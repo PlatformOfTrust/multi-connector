@@ -4,6 +4,7 @@
  */
 const winston = require('../../logger.js');
 const {getData, sendData, remove} = require('../../app/protocols/azure-blob-storage');
+const slack = require('../../app/protocols/slack');
 
 /**
  * Retry library for connectors delivering data using files.
@@ -14,6 +15,27 @@ const validateCredentials = () => !(
     !process.env.AZURE_BLOB_STORAGE_ACCOUNT
         || !process.env.AZURE_BLOB_STORAGE_ACCOUNT_KEY
 );
+const MAX_ATTEMPTS = 5;
+
+/**
+ * Logs message and sends a slack message.
+ *
+ * @param {String} level
+ * @param {String} data
+ * @param {String} [id]
+ * @param {String} [error]
+ */
+const log = (level, data, id, error) => {
+    winston.log(level, `${id ? `${id}: ` : ''}${data}`);
+    if (process.env.SLACK_HOOK_URL) {
+        slack.sendData({
+            authConfig: {
+                url: process.env.SLACK_HOOK_URL,
+            },
+            plugins: [],
+        }, [{id, data, error}]);
+    }
+};
 
 /**
  * Uploads file to blob storage.
@@ -24,7 +46,7 @@ const validateCredentials = () => !(
  * @param {Object} metadata
  * @return {Promise}
  */
-const upload = async (id, name, content, metadata = {attempts: '1'}) => {
+const upload = async (id, name, content, metadata = {attempts: '0'}) => {
     if (!validateCredentials()) {
         return Promise.reject(new Error('Missing retry credentials.'));
     }
@@ -84,28 +106,30 @@ const retry = async (id, callback) => {
     download(id).then(async (file) => {
         // Try again.
         for (let i = 0; i < file.length; i++) {
-            const attemptValue = ((file[i] || {}).metadata || {}).attempts || '1';
-            let attemptCount = !Number.isNaN(Number.parseInt(attemptValue)) ? Number.parseInt(attemptValue) : 1;
-            if (attemptCount >= 5) {
+            const attemptValue = ((file[i] || {}).metadata || {}).attempts || '0';
+            const attemptCount = !Number.isNaN(Number.parseInt(attemptValue)) ? Number.parseInt(attemptValue) : 0;
+            if (attemptCount >= MAX_ATTEMPTS) {
                 continue;
             }
-            winston.log('info', `Attempt to handle ${(file[i] || {}).id} #${attemptCount}`);
-            const success = await callback(file[i]);
-            if (success) {
-                // Remove file as callback was successful.
-                winston.log('info', `Remove ${(file[i] || {}).id}`);
-                await remove({
-                    authConfig: {
-                        account: process.env.AZURE_BLOB_STORAGE_ACCOUNT,
-                        accountKey: process.env.AZURE_BLOB_STORAGE_ACCOUNT_KEY,
-                        container,
-                    },
-                }, [file[i].id]);
-            } else {
-                // Increase attempt count as callback failed.
-                attemptCount += 1;
-                await upload('', file[i].id, Buffer.from(file[i].data, 'base64'), {attempts: attemptCount.toString()});
-            }
+            const id = (file[i] || {}).id;
+            const currentAttempt = attemptCount + 1;
+            await callback(file[i], async (err, _result) => {
+                if (!err) {
+                    // Remove file as callback was successful.
+                    log('info', `Retry attempt #${currentAttempt} was successful`, id);
+                    await remove({
+                        authConfig: {
+                            account: process.env.AZURE_BLOB_STORAGE_ACCOUNT,
+                            accountKey: process.env.AZURE_BLOB_STORAGE_ACCOUNT_KEY,
+                            container,
+                        },
+                    }, [file[i].id]);
+                } else {
+                    log('error', `Retry attempt #${currentAttempt} failed${currentAttempt >= MAX_ATTEMPTS ? ' (max. retry attempts reached)' : ''}`, id, err);
+                    // Increase attempt count.
+                    await upload('', file[i].id, Buffer.from(file[i].data, 'base64'), {attempts: currentAttempt.toString()});
+                }
+            });
         }
     }).catch(err => {
         winston.log('error', `Retry: ${err.message}`);
