@@ -5,6 +5,7 @@
 const fs = require('fs');
 const _ = require('lodash');
 const rp = require('request-promise');
+const {wait} = require('../lib/utils');
 const winston = require('../../logger.js');
 const Client = require('ssh2-sftp-client');
 const response = require('../lib/response');
@@ -16,7 +17,8 @@ const SocksClient = require('socks').SocksClient;
  * Handles connection to server and file fetching.
  */
 
-let port = 2222;
+let port = 2224;
+const ports = {};
 const servers = {};
 const clients = {};
 const storagePath = process.env.STORAGE_PATH || './';
@@ -378,10 +380,33 @@ const connect = async (config, productCode) => {
         if (Object.hasOwnProperty.call(config, 'plugins')) {
             if (Object.hasOwnProperty.call(config.plugins, 'sftp-server')) {
                 // Reserve port.
-                const reservedPort = port;
-                port++;
+                let reservedPort = port;
+                // Reuse same port and close previous server.
+                if (Object.hasOwnProperty.call(ports, productCode)) {
+                    reservedPort = ports[productCode];
+                    try {
+                        if (Object.hasOwnProperty.call(servers, productCode)) {
+                            try {
+                                winston.log('info', `${productCode}: Close SFTP server on port ${ports[productCode]}.`);
+                                servers[productCode].close(() => {
+                                    winston.log('info', `${productCode}: SFTP server closed on port ${ports[productCode]}.`);
+                                });
+                            } catch (err) {
+                                winston.log('error', err.message);
+                            }
+                            await wait(2000);
+                            delete servers[productCode];
+                        }
+                    } catch (err) {
+                        winston.log('error', err.message);
+                    }
+                } else {
+                    port++;
+                }
                 // Start local server.
-                servers[productCode] = require('../.' + './config/plugins' + '/' + 'sftp-server' + '.js').connect(config, {
+                ports[productCode] = reservedPort;
+                winston.log('info', `${productCode}: Start SFTP server on port ${reservedPort}.`);
+                servers[productCode] = await require('../.' + './config/plugins' + '/' + 'sftp-server' + '.js').connect(config, {
                     ...config.plugins['sftp-server'],
                     productCode,
                     port: reservedPort,

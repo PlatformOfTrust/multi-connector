@@ -183,6 +183,14 @@ const uuidv4 = () => {
 };
 
 /**
+ * Waits for given time.
+ *
+ * @param {Number} ms
+ * @return {Promise}
+ */
+const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+/**
  * Expose library functions.
  */
 module.exports = {
@@ -192,4 +200,5 @@ module.exports = {
     encrypt,
     decrypt,
     convertFinnishDateToISOString,
+    wait,
 };

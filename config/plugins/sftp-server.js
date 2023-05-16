@@ -70,6 +70,7 @@ const connect = async (config, options, _callback) => {
             hostKeys: [Buffer.from(options.privateKey, 'base64')],
         }, (client) => {
             try {
+                winston.log('info', `${config.productCode}: Started SFTP server.`);
                 client.on('authentication', (ctx) => {
                     try {
                         let allowed = true;
@@ -226,7 +227,9 @@ const connect = async (config, options, _callback) => {
                 winston.log('error', err.message);
             }
         }).listen(options.port || 0, '0.0.0.0', function () {
-            winston.log('info', 'Listening on port ' + this.address().port);
+            winston.log('info', `${options.productCode}: SFTP server listening on port ${this.address().port}`);
+        }).on('error', err => {
+            winston.log('error', err.message);
         });
     } catch (err) {
         winston.log('error', err.message);
