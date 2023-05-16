@@ -5,12 +5,14 @@
 const connector = require('../lib/connector');
 const response = require('../lib/response');
 const winston = require('../../logger.js');
+const {wait} = require('../lib/utils');
 const cache = require('../cache');
 const mqtt = require('mqtt');
 const _ = require('lodash');
 const fs = require('fs');
 
 let port = 8881;
+const ports = {};
 const brokers = {};
 const clients = {};
 
@@ -210,10 +212,34 @@ const connect = async (config, productCode) => {
         if (Object.hasOwnProperty.call(config, 'plugins')) {
             if (Object.hasOwnProperty.call(config.plugins, 'mqtt-server')) {
                 // Reserve port.
-                const reservedPort = port;
-                port++;
+                let reservedPort = port;
+                // Reuse same port and close previous server.
+                if (Object.hasOwnProperty.call(ports, productCode)) {
+                    reservedPort = ports[productCode];
+                    try {
+                        if (Object.hasOwnProperty.call(brokers, productCode)) {
+                            try {
+                                winston.log('info', `${productCode}: Close MQTT broker on port ${ports[productCode]}.`);
+                                brokers[productCode].close(() => {
+                                    winston.log('info', `${productCode}: MQTT broker closed on port ${ports[productCode]}.`);
+                                });
+                            } catch (err) {
+                                winston.log('error', err.message);
+                            }
+                            await wait(2000);
+                            delete brokers[productCode];
+                        }
+                    } catch (err) {
+                        winston.log('error', err.message);
+                    }
+                } else {
+                    port++;
+                }
+                // Start local server.
+                ports[productCode] = reservedPort;
                 // Start local broker and pass client connection as a callback.
-                brokers[productCode] = require('../.' + './config/plugins' + '/' + 'mqtt-broker' + '.js').connect(config, {
+                winston.log('info', `${productCode}: Start MQTT broker on port ${reservedPort}.`);
+                brokers[productCode] = await require('../.' + './config/plugins' + '/' + 'mqtt-broker' + '.js').connect(config, {
                     ...config.plugins['mqtt-server'],
                     productCode,
                     port: reservedPort,
