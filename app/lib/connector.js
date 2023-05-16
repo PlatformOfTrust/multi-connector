@@ -819,4 +819,5 @@ module.exports = {
     composeOutput,
     replacePlaceholders,
     emitter,
+    handleFile,
 };
