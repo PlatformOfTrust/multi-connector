@@ -147,7 +147,7 @@ const callback = async (config, productCode) => {
         clients[productCode].on('connect', () => {
             /** Topic can be a string or an array of strings. */
             clients[productCode].subscribe(topic);
-            winston.log('info', productCode + ' subscribed to topic ' + topic + '.');
+            winston.log('info', productCode + ': Subscribed to topic ' + topic + '.');
         });
 
         // Store received messages to cache on receive.

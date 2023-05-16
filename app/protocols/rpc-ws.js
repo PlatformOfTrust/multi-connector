@@ -6,6 +6,7 @@ const connector = require('../lib/connector');
 const response = require('../lib/response');
 const winston = require('../../logger.js');
 const io = require('rpc-websockets').Client;
+const {wait} = require('../lib/utils');
 const cache = require('../cache');
 const _ = require('lodash');
 
@@ -171,6 +172,8 @@ const callback = async (config, productCode) => {
                 if (typeof (sockets[productCode] || {}).close === 'function' && sockets[productCode].socket !== undefined) {
                     sockets[productCode].close();
                 }
+                await wait(2000);
+                delete sockets[productCode];
             } catch (err) {
                 delete sockets[productCode];
                 winston.log('error', err.message);
@@ -218,7 +221,7 @@ const callback = async (config, productCode) => {
                     */
 
                 (Array.isArray(topic) ? topic : [topic]).forEach(t => {
-                    winston.log('info', productCode + ' subscribed to event ' + t + '.');
+                    winston.log('info', productCode + ': Subscribed to event ' + t + '.');
                     sockets[productCode].on(t, async (message) => {
                         await handleData(config, productCode, t, message);
                     });

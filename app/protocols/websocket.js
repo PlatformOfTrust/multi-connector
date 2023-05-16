@@ -6,6 +6,7 @@ const connector = require('../lib/connector');
 const response = require('../lib/response');
 const winston = require('../../logger.js');
 const io = require('socket.io-client');
+const {wait} = require('../lib/utils');
 const cache = require('../cache');
 const _ = require('lodash');
 
@@ -144,19 +145,52 @@ const callback = async (config, productCode) => {
 
         const topic = options.event || 'message';
 
-        if (!Object.hasOwnProperty.call(sockets, productCode)) {
-            sockets[productCode] = io(url, {
-                query,
-            });
+        // Close previous connection.
+        if (Object.hasOwnProperty.call(sockets, productCode)) {
+            winston.log('info', `${productCode}: Closing existing connection.`);
+            try {
+                if (typeof (sockets[productCode] || {}).close === 'function' && sockets[productCode].socket !== undefined) {
+                    sockets[productCode].close();
+                }
+                await wait(2000);
+                delete sockets[productCode];
+            } catch (err) {
+                delete sockets[productCode];
+                winston.log('error', err.message);
+            }
+        }
 
-            sockets[productCode].on('connect', function () {
-                winston.log('info', productCode + ' subscribed to event ' + topic + '.');
+        winston.log('info', `${productCode}: Initialize websocket connection.`);
+        sockets[productCode] = io(url, {
+            query,
+        });
 
-                // Store received messages to cache on receive.
-                sockets[productCode].on(topic, async (message) => {
-                    let template = cache.getDoc('templates', config.template);
-                    try {
-                        const result = cache.getDoc('messages', productCode) || {};
+        sockets[productCode].on('connect', () => {
+            winston.log('info', productCode + ': Subscribed to event ' + topic + '.');
+
+            // Store received messages to cache on receive.
+            sockets[productCode].on(topic, async (message) => {
+                let template = cache.getDoc('templates', config.template);
+                try {
+                    const result = cache.getDoc('messages', productCode) || {};
+                    // Replace resource path.
+                    const path = template.generalConfig.hardwareId.dataObjectProperty;
+                    let id;
+                    if (Object.hasOwnProperty.call(message, path)) {
+                        id = message[path];
+                    } else {
+                        id = topic;
+                    }
+                    result[id] = message;
+                    cache.setDoc('messages', productCode, result);
+                } catch (err) {
+                    winston.log('error', err.message);
+                }
+
+                // Handle data and stream.
+                try {
+                    template = await connector.resolvePlugins(template);
+                    if (template.plugins.filter(p => !!p.stream).length > 0) {
                         // Replace resource path.
                         const path = template.generalConfig.hardwareId.dataObjectProperty;
                         let id;
@@ -165,52 +199,39 @@ const callback = async (config, productCode) => {
                         } else {
                             id = topic;
                         }
-                        result[id] = message;
-                        cache.setDoc('messages', productCode, result);
-                    } catch (err) {
-                        winston.log('error', err.message);
+                        template.authConfig.path = [id];
                     }
 
-                    // Handle data and stream.
-                    try {
-                        template = await connector.resolvePlugins(template);
-                        if (template.plugins.filter(p => !!p.stream).length > 0) {
-                            // Replace resource path.
-                            const path = template.generalConfig.hardwareId.dataObjectProperty;
-                            let id;
-                            if (Object.hasOwnProperty.call(message, path)) {
-                                id = message[path];
-                            } else {
-                                id = topic;
-                            }
-                            template.authConfig.path = [id];
+                    // Execute stream plugin function.
+                    for (let i = 0; i < template.plugins.length; i++) {
+                        if (template.plugins[i].stream) {
+                            // Compose plugin config, which has plugin specific options.
+                            const pluginConfig = (config.plugins ? config.plugins[template.plugins[i].name] || {} : {});
+                            await composeDataObject({
+                                ...template,
+                                ...pluginConfig,
+                                productCode,
+                                config,
+                            },
+                            template.plugins[i].stream,
+                            );
                         }
-
-                        // Execute stream plugin function.
-                        for (let i = 0; i < template.plugins.length; i++) {
-                            if (template.plugins[i].stream) {
-                                // Compose plugin config, which has plugin specific options.
-                                const pluginConfig = (config.plugins ? config.plugins[template.plugins[i].name] || {} : {});
-                                await composeDataObject({
-                                    ...template,
-                                    ...pluginConfig,
-                                    productCode,
-                                    config,
-                                },
-                                template.plugins[i].stream,
-                                );
-                            }
-                        }
-                    } catch (err) {
-                        winston.log('error', err.message);
                     }
-                });
-
-                sockets[productCode].on('disconnect', function () {
-                    winston.log('info', productCode + ' disconnected from websocket event ' + topic + '.');
-                });
+                } catch (err) {
+                    winston.log('error', err.message);
+                }
             });
-        }
+
+            sockets[productCode].on('disconnect', function () {
+                winston.log('info', productCode + ': Disconnected from websocket event ' + topic + '.');
+            });
+
+            sockets[productCode].on('reconnect', function () {
+                winston.log('info', productCode + ': Reconnected websocket connection.');
+            });
+        }).on('error', (err) => {
+            winston.log('error', err.message);
+        });
     } catch (err) {
         winston.log('error', err.message);
     }

@@ -80,10 +80,9 @@ function handleFile (collection, file, data) {
             if (Object.hasOwnProperty.call(object.static, 'topic')) {
                 protocols['mqtt'].connect(object, file);
             }
-            if (Object.hasOwnProperty.call(object.static, 'event')) {
+            if (Object.hasOwnProperty.call(object.static, 'event') && Object.hasOwnProperty.call(object.static, 'query')) {
                 protocols['websocket'].connect(object, file);
-            }
-            if (Object.hasOwnProperty.call(object.static, 'event')) {
+            } else if (Object.hasOwnProperty.call(object.static, 'event')) {
                 protocols['rpc-ws'].connect(object, file);
             }
             if (Object.hasOwnProperty.call(object.static, 'fromPath') && Object.hasOwnProperty.call(object.static, 'toPath')) {
