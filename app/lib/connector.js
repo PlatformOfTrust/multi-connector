@@ -77,20 +77,21 @@ function handleFile (collection, file, data) {
         object = JSON.parse(data);
         // If config has protocol mqtt or websocket, connect to the broker/server.
         if (Object.hasOwnProperty.call(object, 'static')) {
-            if (Object.hasOwnProperty.call(object.static, 'topic')) {
-                protocols['mqtt'].connect(object, file);
-            }
-            if (Object.hasOwnProperty.call(object.static, 'event') && Object.hasOwnProperty.call(object.static, 'query')) {
-                protocols['websocket'].connect(object, file);
-            } else if (Object.hasOwnProperty.call(object.static, 'event')) {
-                protocols['rpc-ws'].connect(object, file);
-            }
             if (Object.hasOwnProperty.call(object.static, 'fromPath') && Object.hasOwnProperty.call(object.static, 'toPath')) {
                 if (Object.hasOwnProperty.call(object, 'plugins')) {
                     if (Object.hasOwnProperty.call(object.plugins, 'sftp-server')) {
                         protocols['sftp'].connect(object, file);
                     }
                 }
+            }
+        }
+        // Check for hooks and protocols which require connect on start.
+        if (collection === 'configs') {
+            const template = cache.getDoc('templates', object.template) || {};
+            if (template.protocol === 'hook') {
+                emitter.emit('collections', {configs: {[file]: object}});
+            } else if (typeof protocols[template.protocol].connect === 'function') {
+                protocols[template.protocol].connect(object, file);
             }
         }
         // Attach scheduler plugin.

@@ -140,7 +140,23 @@ const callback = async (config, productCode) => {
             options.password = config.static.password;
         }
 
+        // Close previous connection.
+        if (Object.hasOwnProperty.call(clients, productCode)) {
+            winston.log('info', `${productCode}: Closing existing connection.`);
+            try {
+                clients[productCode].end(() => {
+                    winston.log('info', `${productCode}: MQTT client connection closed.`);
+                });
+                await wait(2000);
+                delete clients[productCode];
+            } catch (err) {
+                delete clients[productCode];
+                winston.log('error', err.message);
+            }
+        }
+
         // Connect to broker.
+        winston.log('info', `${productCode}: Initialize MQTT connection.`);
         clients[productCode] = mqtt.connect(url, options);
 
         // Subscribe to defined topic/-s on connect.

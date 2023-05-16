@@ -128,7 +128,7 @@ const handler = async (productCode, config, topic, message) => {
     }
     // Handle data and stream.
     try {
-        let template = cache.getDoc('templates', config.template);
+        let template = typeof config.template === 'string' ? cache.getDoc('templates', config.template) : config.template;
         template = await connector.resolvePlugins(template);
         if (template.plugins.filter(p => !!p.stream).length > 0) {
             // Replace resource path.

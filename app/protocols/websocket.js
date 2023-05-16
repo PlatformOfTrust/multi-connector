@@ -149,9 +149,7 @@ const callback = async (config, productCode) => {
         if (Object.hasOwnProperty.call(sockets, productCode)) {
             winston.log('info', `${productCode}: Closing existing connection.`);
             try {
-                if (typeof (sockets[productCode] || {}).close === 'function' && sockets[productCode].socket !== undefined) {
-                    sockets[productCode].close();
-                }
+                sockets[productCode].close();
                 await wait(2000);
                 delete sockets[productCode];
             } catch (err) {

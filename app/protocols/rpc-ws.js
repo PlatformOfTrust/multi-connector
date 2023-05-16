@@ -167,11 +167,9 @@ const callback = async (config, productCode) => {
 
         // Close previous connection.
         if (Object.hasOwnProperty.call(sockets, productCode)) {
-            winston.log('info', `${productCode}: Closing existing connection.`);
+            winston.log('info', `${productCode}: Closing existing JSON-RPC connection.`);
             try {
-                if (typeof (sockets[productCode] || {}).close === 'function' && sockets[productCode].socket !== undefined) {
-                    sockets[productCode].close();
-                }
+                sockets[productCode].close();
                 await wait(2000);
                 delete sockets[productCode];
             } catch (err) {
@@ -180,10 +178,10 @@ const callback = async (config, productCode) => {
             }
         }
 
-        winston.log('info', `${productCode}: Initialize websocket connection.`);
+        winston.log('info', `${productCode}: Initialize JSON-RPC websocket connection.`);
         sockets[productCode] = new io(url, options);
         sockets[productCode].on('open', async () => {
-            winston.log('info', `${productCode}: Websocket connection open.`);
+            winston.log('info', `${productCode}: JSON-RPC websocket connection open.`);
             await sockets[productCode].call('LogIn', options).then(async () => {
                 winston.log('info', `${productCode}: JSON-RPC logged in.`);
                 /*
@@ -233,7 +231,7 @@ const callback = async (config, productCode) => {
             });
         });
         sockets[productCode].on('close', () => {
-            winston.log('info', `${productCode}: Websocket connection closed.`);
+            winston.log('info', `${productCode}: JSON-RPC websocket connection closed.`);
         });
     } catch (err) {
         winston.log('error', err.message);
