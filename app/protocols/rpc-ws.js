@@ -164,11 +164,26 @@ const callback = async (config, productCode) => {
 
         const topic = options.event || 'message';
 
-        if (!Object.hasOwnProperty.call(sockets, productCode)) {
-            sockets[productCode] = new io(url, options);
-            sockets[productCode].on('open', async () => {
-                await sockets[productCode].call('LogIn', options).then(async () => {
-                    /*
+        // Close previous connection.
+        if (Object.hasOwnProperty.call(sockets, productCode)) {
+            winston.log('info', `${productCode}: Closing existing connection.`);
+            try {
+                if (typeof (sockets[productCode] || {}).close === 'function' && sockets[productCode].socket !== undefined) {
+                    sockets[productCode].close();
+                }
+            } catch (err) {
+                delete sockets[productCode];
+                winston.log('error', err.message);
+            }
+        }
+
+        winston.log('info', `${productCode}: Initialize websocket connection.`);
+        sockets[productCode] = new io(url, options);
+        sockets[productCode].on('open', async () => {
+            winston.log('info', `${productCode}: Websocket connection open.`);
+            await sockets[productCode].call('LogIn', options).then(async () => {
+                winston.log('info', `${productCode}: JSON-RPC logged in.`);
+                /*
                     // Get gateway id.
                     await sockets[productCode].call('Read', {}).then(function (result) {
                         return sockets[productCode].call('Read', {
@@ -202,18 +217,21 @@ const callback = async (config, productCode) => {
                     });
                     */
 
-                    (Array.isArray(topic) ? topic : [topic]).forEach(t => {
-                        winston.log('info', productCode + ' subscribed to event ' + t + '.');
-                        sockets[productCode].on(t, async (message) => {
-                            await handleData(config, productCode, t, message);
-                            console.log(t, message);
-                        });
+                (Array.isArray(topic) ? topic : [topic]).forEach(t => {
+                    winston.log('info', productCode + ' subscribed to event ' + t + '.');
+                    sockets[productCode].on(t, async (message) => {
+                        await handleData(config, productCode, t, message);
                     });
-                }).catch((err) => {
-                    console.log('error', err.message);
                 });
+            }).catch((err) => {
+                // Remove failed connection.
+                delete sockets[productCode];
+                winston.log('error', err.message);
             });
-        }
+        });
+        sockets[productCode].on('close', () => {
+            winston.log('info', `${productCode}: Websocket connection closed.`);
+        });
     } catch (err) {
         winston.log('error', err.message);
     }
