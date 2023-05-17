@@ -249,14 +249,32 @@ const handleData = async (config, id, data, index) => {
                 value.updated = new Date().toISOString();
                 value.Jobs = (value.Jobs || []).map(j => {
                     switch (j.StateId) {
+                        case 10:
+                            j.State = 'Not Scheduled';
+                            break;
+                        case 15:
+                            j.State = 'Late';
+                            break;
+                        case 20:
+                            j.State = 'Ongoing'; // Late
+                            break;
+                        case 30:
+                            j.State = 'Ongoing'; // Job has StartDate
+                            break;
+                        case 40:
+                            j.State = 'Inactive';
+                            break;
                         case 60:
                             j.State = 'New'; // Job doesnt have StartDate
+                            break;
+                        case 80:
+                            j.State = 'Completed'; // Late
                             break;
                         case 90:
                             j.State = 'Completed'; // Job has DoneDate
                             break;
-                        case 30:
-                            j.State = 'Ongoing'; // Job has StartDate
+                        case 100:
+                            j.State = 'Dismissed';
                             break;
                     }
                     j.TaskDate = value.Task.TaskDate;
@@ -266,14 +284,32 @@ const handleData = async (config, id, data, index) => {
                     return {...j, Mission: value.Mission};
                 });
                 switch (value.Task.StateId) {
+                    case 10:
+                        value.Task.State = 'Not Scheduled';
+                        break;
+                    case 15:
+                        value.Task.State = 'Late';
+                        break;
+                    case 20:
+                        value.Task.State = 'Ongoing'; // Late
+                        break;
+                    case 30:
+                        value.Task.State = 'Ongoing'; // Job has StartDate
+                        break;
+                    case 40:
+                        value.Task.State = 'Inactive';
+                        break;
                     case 60:
                         value.Task.State = 'New'; // Job doesnt have StartDate
+                        break;
+                    case 80:
+                        value.Task.State = 'Completed'; // Late
                         break;
                     case 90:
                         value.Task.State = 'Completed'; // Job has DoneDate
                         break;
-                    case 30:
-                        value.Task.State = 'Ongoing'; // Job has StartDate
+                    case 100:
+                        value.Task.State = 'Dismissed';
                         break;
                 }
                 value.CodedObject = (value.Jobs || []).map(j => j.CodedObject);

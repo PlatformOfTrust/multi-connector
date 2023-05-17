@@ -472,7 +472,8 @@ const resolvePlugins = async (template) => {
         const templatePlugins = template.plugins.map(p => _.isObject(p) ? p.name : p);
         const found = Object.keys(plugins).filter(p => templatePlugins.includes(p));
         const missing = templatePlugins.filter(p => !found.includes(p));
-        if (missing.length > 0) {
+        const schedulerMissing = missing.length === 1 && missing.includes('scheduler');
+        if (missing.length > 0 && !schedulerMissing) {
             return rest.promiseRejectWithError(500, 'Missing required plugins: ' + missing);
         }
         template.plugins = found.map(n => plugins[n]);
