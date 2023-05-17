@@ -64,7 +64,7 @@ const upload = async (id, name, content, metadata = {attempts: '0'}) => {
         return Promise.resolve(result);
     } else {
         winston.log('info', `Failed to update ${filename}`);
-        return Promise.reject();
+        return Promise.reject(new Error(`Failed to send file to container ${container}`));
     }
 };
 
