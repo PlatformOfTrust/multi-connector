@@ -2,8 +2,9 @@
 /**
  * Module dependencies.
  */
+const {promises} = require('fs');
 const {timingSafeEqual} = require('crypto');
-const {readFileSync, lstatSync, unlinkSync, promises, constants} = require('fs');
+const SftpServer = require('../../app/lib/sftp-server');
 const winston = require('../../logger.js');
 
 /**
@@ -13,9 +14,7 @@ const winston = require('../../logger.js');
 const {
     Server,
     utils: {
-        sftp: {
-            STATUS_CODE,
-        },
+        sftp,
     },
 } = require('ssh2');
 const storagePath = process.env.STORAGE_PATH || './';
@@ -32,8 +31,10 @@ const checkDir = async (filepath) => {
             filepath = filepath.replace(/\\/g, '/');
         }
         let dst = filepath.split('/');
-        // Remove filename part.
-        dst.pop();
+        if (dst[dst.length - 1].includes('.')) {
+            // Remove filename part.
+            dst.pop();
+        }
         dst = dst.join('/');
         await promises.access(dst).then(() => true).catch(async () => await promises.mkdir(dst, {recursive: true}));
     } catch (e) {
@@ -65,167 +66,50 @@ const connect = async (config, options, _callback) => {
     try {
         const allowedUser = Buffer.from(options.username);
         const allowedPassword = Buffer.from(options.password);
+        const basePath = DOWNLOAD_DIR + options.productCode + (options.fromPath || '');
+        await checkDir(basePath);
 
         server = new Server({
             hostKeys: [Buffer.from(options.privateKey, 'base64')],
-        }, (client) => {
-            try {
-                winston.log('info', `${config.productCode}: Started SFTP server.`);
-                client.on('authentication', (ctx) => {
-                    try {
-                        let allowed = true;
-                        if (!checkValue(Buffer.from(ctx.username), allowedUser))
-                            allowed = false;
+        }, function (client) {
+            client.on('authentication', function (ctx) {
+                try {
+                    let allowed = true;
+                    if (!checkValue(Buffer.from(ctx.username), allowedUser))
+                        allowed = false;
 
-                        switch (ctx.method) {
-                            case 'password':
-                                if (!checkValue(Buffer.from(ctx.password), allowedPassword))
-                                    return ctx.reject();
-                                break;
-                            default:
-                                return ctx.reject(['password']);
-                        }
+                    switch (ctx.method) {
+                        case 'password':
+                            if (!checkValue(Buffer.from(ctx.password), allowedPassword))
+                                return ctx.reject();
+                            break;
+                        default:
+                            return ctx.reject(['password']);
+                    }
 
-                        if (allowed)
-                            ctx.accept();
-                        else
-                            ctx.reject();
-                    } catch (err) {
+                    if (allowed)
+                        ctx.accept();
+                    else
                         ctx.reject();
-                    }
-                }).on('ready', () => {
-                    try {
-                        client.on('session', (accept, _reject) => {
-                            try {
-                                const session = accept();
-                                session.on('sftp', (accept, _reject) => {
-                                    try {
-                                        const sftp = accept();
-                                        let paths = [];
-                                        sftp.on('OPEN', async (reqid, filename, _flags, _attrs) => {
-                                            try {
-                                                const path = DOWNLOAD_DIR + options.productCode + (options.fromPath || '') + filename;
-                                                paths.push(path);
-                                                sftp.handle(reqid, Buffer.from(path));
-                                            } catch (err) {
-                                                winston.log('error', err.message);
-                                                sftp.status(reqid, STATUS_CODE.FAILURE);
-                                            }
-                                        }).on('READ', async (reqid, handle, _offset, _length) => {
-                                            try {
-                                                const path = handle.toString('utf8');
-                                                await checkDir(path);
-                                                const file = await lstatSync(path).isFile() ? await readFileSync(path) :  null;
-                                                if (paths.includes(path) && file) {
-                                                    sftp.data(reqid, file);
-                                                    paths = paths.filter(p => p !== path);
-                                                } else if (!paths.includes(path)) {
-                                                    sftp.status(reqid, STATUS_CODE.EOF);
-                                                } else {
-                                                    sftp.status(reqid, STATUS_CODE.OK);
-                                                }
-                                            } catch (err) {
-                                                winston.log('error', err.message);
-                                                sftp.status(reqid, STATUS_CODE.FAILURE);
-                                            }
-                                        }).on('WRITE', async (reqid, handle, offset, data) => {
-                                            try {
-                                                const path = Buffer.from(handle).toString('utf8');
-                                                await checkDir(path);
-                                                await promises.writeFile(path, data, 'binary');
-                                                sftp.status(reqid, STATUS_CODE.OK);
-                                            } catch (err) {
-                                                winston.log('error', err.message);
-                                                sftp.status(reqid, STATUS_CODE.FAILURE);
-                                            }
-                                        }).on('REMOVE', async (reqid, handle, _offset, _data) => {
-                                            try {
-                                                const path = Buffer.from(handle).toString('utf8');
-                                                const from = DOWNLOAD_DIR + options.productCode + (options.fromPath || '') + path;
-                                                await checkDir(from);
-                                                await unlinkSync(from);
-                                                sftp.status(reqid, STATUS_CODE.OK);
-                                            } catch (err) {
-                                                winston.log('error', err.message);
-                                                sftp.status(reqid, STATUS_CODE.FAILURE);
-                                            }
-                                        }).on('CLOSE', (reqid, _handle) => {
-                                            try {
-                                                sftp.status(reqid, STATUS_CODE.OK);
-                                            } catch (err) {
-                                                winston.log('error', err.message);
-                                                sftp.status(reqid, STATUS_CODE.FAILURE);
-                                            }
-                                        }).on('READDIR', async (reqid, handle) => {
-                                            try {
-                                                const path = handle.toString('utf8');
-                                                const from = DOWNLOAD_DIR + options.productCode + (options.fromPath || '') + path;
-                                                await checkDir(from);
-                                                const dirents = await promises.readdir(from, {withFileTypes: true});
-                                                const name = dirents.map(dirent => {
-                                                    return {
-                                                        filename: dirent.name,
-                                                        longname: dirent.isDirectory() ? 'drwxr-xr-x' : '-rw-r--r--',
-                                                        uid: 1000,
-                                                        gid: 1000,
-                                                        attrs: {
-                                                            mtime: new Date().getTime(),
-                                                            atime: new Date().getTime(),
-
-                                                        },
-                                                        stats: {
-                                                            isDirectory: () => dirent.isDirectory(),
-                                                            isFile: () => dirent.isFile(),
-                                                        },
-                                                    };
-                                                });
-                                                if (!paths.includes(path)) {
-                                                    sftp.status(reqid, STATUS_CODE.EOF);
-                                                } else {
-                                                    sftp.name(reqid, name);
-                                                    paths = paths.filter(p => p !== path);
-                                                }
-                                            } catch (err) {
-                                                winston.log('error', err.message);
-                                                sftp.status(reqid, STATUS_CODE.FAILURE);
-                                            }
-                                        }).on('OPENDIR', async (reqid, path) => {
-                                            try {
-                                                paths.push(path);
-                                                sftp.handle(reqid, Buffer.from(path));
-                                            } catch (err) {
-                                                winston.log('error', err.message);
-                                                sftp.status(reqid, STATUS_CODE.FAILURE);
-                                            }
-                                        }).on('REALPATH', async (reqid, path) => {
-                                            try {
-                                                sftp.name(reqid, {name: path});
-                                            } catch (err) {
-                                                winston.log('error', err.message);
-                                                sftp.status(reqid, STATUS_CODE.FAILURE);
-                                            }
-                                        }).on('SETSTAT', async (reqid, _path) => {
-                                            sftp.status(reqid, STATUS_CODE.OK);
-                                        });
-                                    } catch (err) {
-                                        winston.log('error', err.message);
-                                    }
-                                });
-                            } catch (err) {
-                                winston.log('error', err.message);
-                            }
+                } catch (err) {
+                    ctx.reject();
+                }
+            }).on('ready', () => {
+                client.on('session', accept => {
+                    const session = accept();
+                    session.on('sftp', accept => {
+                        const sftpStream = accept();
+                        new SftpServer(sftpStream, {
+                            sftp,
+                            basePath,
                         });
-                    } catch (err) {
-                        winston.log('error', err.message);
-                    }
-                }).on('close', () => {
-                    // console.log('Client disconnected');
+                    });
                 }).on('error', err => {
                     winston.log('error', err.message);
                 });
-            } catch (err) {
+            }).on('error', err => {
                 winston.log('error', err.message);
-            }
+            });
         }).listen(options.port || 0, '0.0.0.0', function () {
             winston.log('info', `${options.productCode}: SFTP server listening on port ${this.address().port}`);
         }).on('error', err => {
