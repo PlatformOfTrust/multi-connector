@@ -70,15 +70,16 @@ if (!fs.existsSync(configsDir)) fs.mkdirSync(configsDir);
  * @param {String} collection
  * @param {Object} file
  * @param {String} data
+ * @param {Boolean} skipEmit
  */
-function handleFile (collection, file, data) {
+function handleFile (collection, file, data, skipEmit) {
     let object;
     try {
         object = JSON.parse(data);
         // Check for hooks and protocols which require connect on start.
         if (collection === 'configs') {
             const template = cache.getDoc('templates', object.template) || {};
-            if (template.protocol === 'hook') {
+            if (template.protocol === 'hook' && !skipEmit) {
                 emitter.emit('collections', {configs: {[file]: object}});
             } else if (typeof protocols[template.protocol].connect === 'function') {
                 protocols[template.protocol].connect(object, file);
@@ -118,7 +119,7 @@ function readFile (dir, ext, collection, file) {
                 switch (ext) {
                     /** JSON. */
                     case '.json':
-                        handleFile(collection, file.split('.').slice(0, -1).join('.'), data);
+                        handleFile(collection, file.split('.').slice(0, -1).join('.'), data, true);
                         break;
                     /** JavaScript. */
                     case '.js':
@@ -126,7 +127,7 @@ function readFile (dir, ext, collection, file) {
                         break;
                     /** Resources. */
                     case '.*':
-                        handleFile(collection, file, data);
+                        handleFile(collection, file, data, true);
                         break;
                 }
                 winston.log('info', 'Loaded ' + dir + '/' + file + '.');
@@ -180,7 +181,7 @@ function loadJSON (collection, string) {
         const object = JSON.parse(Buffer.from(string, 'base64').toString('utf8'));
         for (let i = 0; i < Object.keys(object).length; i++) {
             const filename = Object.keys(object)[i];
-            handleFile(collection, filename, collection === 'resources' ? Buffer.from(object[filename], 'base64').toString('utf8') : JSON.stringify(object[filename]));
+            handleFile(collection, filename, collection === 'resources' ? Buffer.from(object[filename], 'base64').toString('utf8') : JSON.stringify(object[filename]), true);
             winston.log('info', 'Loaded from environment ' + collection + '/' + filename + '.');
         }
     } catch (err) {

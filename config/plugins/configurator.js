@@ -423,7 +423,7 @@ const updateConfigs = async (dataProducts, blacklist = []) => {
                     connector.handleFile('configs', productCode, JSON.stringify({
                         template,
                         ...config,
-                    }));
+                    }), false);
                     result.push({
                         productCode,
                         name: items[i].name,
