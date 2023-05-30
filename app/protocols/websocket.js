@@ -141,7 +141,7 @@ const callback = async (config, productCode) => {
 
         if (Object.hasOwnProperty.call(config.static, 'scope')) {
             const requestOptions = await oauth2.request({authConfig}, {});
-            console.log(options.accessToken = requestOptions.headers.Authorization);
+            options.accessToken = requestOptions.headers.Authorization;
         }
 
         // Close previous connection.
