@@ -1,0 +1,21 @@
+{
+  "template": "socket-io-generic",
+  "static": {
+      "url": "wss://<url>",
+      "authUrl" : "https://<url>",
+      "authPath" : "/api/v2/oauth2/token",
+      "clientAuth": "header",
+      "event": "<event>",
+      "clientId": "<client-id>",
+      "clientSecret": "<client-secret>",
+      "scope": "<scope>"
+  },
+  "dynamic": {
+    "authConfig.path": "ids"
+  },
+  "request": {
+    "ids": [
+      "<source-id>"
+    ]
+  }
+}

@@ -1,9 +1,7 @@
 {
   "plugins": [
-    "data-convert",
-    "streamer"
   ],
-  "protocol": "socket-io",
+  "protocol": "websocket",
   "authConfig": {
     "url": "${url}",
     "path": "${id}",

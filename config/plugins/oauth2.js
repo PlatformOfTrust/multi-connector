@@ -98,7 +98,7 @@ function getTokenWithPassword (authConfig) {
     if (onlyClientAuth) {
         delete options.form.username;
         delete options.form.password;
-        delete options.form.scope;
+        // delete options.form.scope;
         options.form.grant_type = 'client_credentials';
     }
 

@@ -1,11 +1,14 @@
 {
   "plugins": [
-    "data-convert",
-    "streamer"
+      "oauth2"
   ],
-  "protocol": "socket-io",
+  "protocol": "websocket",
   "authConfig": {
     "url": "${url}",
+    "username": "${username}",
+    "password": "${password}",
+    "grant_type": "${grant_type}",
+    "scope": "${scope}",
     "path": "${id}",
     "event": "${event}"
   },

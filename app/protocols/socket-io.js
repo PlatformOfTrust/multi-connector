@@ -4,9 +4,8 @@
  */
 const connector = require('../lib/connector');
 const response = require('../lib/response');
-const oauth2 = require('../../config/plugins/oauth2');
 const winston = require('../../logger.js');
-const WebSocket  = require('ws');
+const io = require('socket.io-client');
 const {wait} = require('../lib/utils');
 const cache = require('../cache');
 const _ = require('lodash');
@@ -111,6 +110,18 @@ const composeDataObject = async (template, callback) => {
 };
 
 /**
+ * Generates random UUIDv4.
+ *
+ * @return {String}
+ */
+const uuidv4 = () => {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        const r = Math.random() * 16 | 0; const v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+};
+
+/**
  * Connects to broker and listens for updates.
  *
  * @param {Object} config
@@ -120,29 +131,19 @@ const callback = async (config, productCode) => {
     try {
         const url = config.static.url;
         const options = {};
+        let query = {};
 
         if (Object.hasOwnProperty.call(config.static, 'event')) {
             options.event = config.static.event;
         }
 
-        const authConfig = {
-            productCode,
-            url: config.static.authUrl,
-            authPath: config.static.authPath,
-            clientAuth: config.static.clientAuth,
-            grantType: config.static.grantType,
-            accessToken: config.static.accessToken,
-            username: config.static.username,
-            password: config.static.password,
-            clientId: config.static.clientId,
-            clientSecret: config.static.clientSecret,
-            scope: config.static.scope,
-        };
-
-        if (Object.hasOwnProperty.call(config.static, 'scope')) {
-            const requestOptions = await oauth2.request({authConfig}, {});
-            console.log(options.accessToken = requestOptions.headers.Authorization);
+        if (Object.hasOwnProperty.call(config.static, 'query')) {
+            query = config.static.query;
         }
+
+        query.client_id = uuidv4();
+
+        const topic = options.event || 'message';
 
         // Close previous connection.
         if (Object.hasOwnProperty.call(sockets, productCode)) {
@@ -158,9 +159,15 @@ const callback = async (config, productCode) => {
         }
 
         winston.log('info', `${productCode}: Initialize websocket connection.`);
-        sockets[productCode] = new WebSocket(`${url}?accessToken=${options.accessToken}`, 'koneapi');
-        sockets[productCode].on('open', () => {
-            sockets[productCode].on(options.event, async message => {
+        sockets[productCode] = io(url, {
+            query,
+        });
+
+        sockets[productCode].on('connect', () => {
+            winston.log('info', productCode + ': Subscribed to event ' + topic + '.');
+
+            // Store received messages to cache on receive.
+            sockets[productCode].on(topic, async (message) => {
                 let template = cache.getDoc('templates', config.template);
                 try {
                     const result = cache.getDoc('messages', productCode) || {};
@@ -170,7 +177,7 @@ const callback = async (config, productCode) => {
                     if (Object.hasOwnProperty.call(message, path)) {
                         id = message[path];
                     } else {
-                        id = options.event;
+                        id = topic;
                     }
                     result[id] = message;
                     cache.setDoc('messages', productCode, result);
@@ -188,7 +195,7 @@ const callback = async (config, productCode) => {
                         if (Object.hasOwnProperty.call(message, path)) {
                             id = message[path];
                         } else {
-                            id = options.event;
+                            id = topic;
                         }
                         template.authConfig.path = [id];
                     }
@@ -211,6 +218,14 @@ const callback = async (config, productCode) => {
                 } catch (err) {
                     winston.log('error', err.message);
                 }
+            });
+
+            sockets[productCode].on('disconnect', function () {
+                winston.log('info', productCode + ': Disconnected from websocket event ' + topic + '.');
+            });
+
+            sockets[productCode].on('reconnect', function () {
+                winston.log('info', productCode + ': Reconnected websocket connection.');
             });
         }).on('error', (err) => {
             winston.log('error', err.message);
