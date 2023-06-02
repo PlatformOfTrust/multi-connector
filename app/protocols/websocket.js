@@ -179,10 +179,13 @@ const callback = async (config, productCode) => {
         sockets[productCode] = new WebSocket(`${url}?accessToken=${options.accessToken}`, 'koneapi');
         sockets[productCode].on('open', () => {
             sockets[productCode].on('message', (data) => {
-                const message = JSON.parse(data);
-                console.log('message', message);
-                if (message.data) {
-                    cacheMessage(productCode, message.data.request_id, message);
+                try {
+                    const message = JSON.parse(data);
+                    if (message.data || message.status) {
+                        cacheMessage(productCode, (message.data || {}).request_id || message.requestId, message);
+                    }
+                } catch (err) {
+                    winston.log('error', err.message);
                 }
             });
             sockets[productCode].on(options.event, async message => {
@@ -295,9 +298,9 @@ const sendData = async (config= {}, pathArray) => {
             client.send(JSON.stringify(pathArray[p].data));
             const item = await Promise.race([
                 waitForMessage(config.productCode, pathArray[p].id),
-                wait(30000),
+                wait(35000),
             ]);
-            items.push(item ? item : {data: {request_id: pathArray[p].id, success: false}});
+            items.push((item || {}).data ? item : {data: {request_id: pathArray[p].id, success: false, error: item.status}});
         } catch (err) {
             winston.log('error', err.message);
         }

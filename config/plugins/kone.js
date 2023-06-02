@@ -49,6 +49,7 @@ const template = async (config, template) => {
             template.dataObjects = [''];
             template.dataPropertyMappings = {
                 Status: 'data.success',
+                Error: 'data.error',
             };
         } else {
             // TODO: Presence query.
