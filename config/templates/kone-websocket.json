@@ -1,6 +1,7 @@
 {
   "plugins": [
-      "oauth2"
+      "oauth2",
+      "kone"
   ],
   "protocol": "websocket",
   "authConfig": {

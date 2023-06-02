@@ -12,6 +12,7 @@ const cache = require('../cache');
 const _ = require('lodash');
 
 const sockets = {};
+const messages = {};
 
 /**
  * Queries messages cache.
@@ -111,6 +112,23 @@ const composeDataObject = async (template, callback) => {
 };
 
 /**
+ * Caches data.
+ *
+ * @param {Object} productCode
+ * @param {Object} sessionId
+ * @param {Object} data
+ */
+const cacheMessage = (productCode, sessionId, data) => {
+    if (!Object.hasOwnProperty.call(messages, productCode)) {
+        messages[productCode] = {};
+    }
+    messages[productCode][sessionId] = data;
+    setTimeout(() => {
+        delete messages[productCode][sessionId];
+    }, 15000);
+};
+
+/**
  * Connects to broker and listens for updates.
  *
  * @param {Object} config
@@ -160,6 +178,13 @@ const callback = async (config, productCode) => {
         winston.log('info', `${productCode}: Initialize websocket connection.`);
         sockets[productCode] = new WebSocket(`${url}?accessToken=${options.accessToken}`, 'koneapi');
         sockets[productCode].on('open', () => {
+            sockets[productCode].on('message', (data) => {
+                const message = JSON.parse(data);
+                console.log('message', message);
+                if (message.data) {
+                    cacheMessage(productCode, message.data.request_id, message);
+                }
+            });
             sockets[productCode].on(options.event, async message => {
                 let template = cache.getDoc('templates', config.template);
                 try {
@@ -236,9 +261,56 @@ const connect = async (config, productCode) => {
 };
 
 /**
+ * Wait for message.
+ *
+ * @param {String} productCode
+ * @param {String} id
+ */
+function waitForMessage (productCode, id) {
+    function waitFor () {
+        if ((messages[productCode] || {})[id]) {
+            const result = messages[productCode][id];
+            delete messages[productCode][id];
+            return result;
+        }
+        return new Promise((resolve) => setTimeout(resolve, 1000))
+            .then(() => waitFor());
+    }
+    return waitFor();
+}
+
+/**
+ * Handles request to send data FROM connector (to websocket server).
+ *
+ * @param {Object} config
+ * @param {Array} pathArray
+ * @return {Promise}
+ */
+const sendData = async (config= {}, pathArray) => {
+    const client = sockets[config.productCode];
+    const items = [];
+
+    for (let p = 0; p < pathArray.length; p++) {
+        try {
+            client.send(JSON.stringify(pathArray[p].data));
+            const item = await Promise.race([
+                waitForMessage(config.productCode, pathArray[p].id),
+                wait(30000),
+            ]);
+            items.push(item ? item : {data: {request_id: pathArray[p].id, success: false}});
+        } catch (err) {
+            winston.log('error', err.message);
+        }
+    }
+
+    return items;
+};
+
+/**
  * Expose library functions.
  */
 module.exports = {
     connect,
     getData,
+    sendData,
 };
