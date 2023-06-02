@@ -128,6 +128,24 @@ const cacheMessage = (productCode, sessionId, data) => {
     }, 15000);
 };
 
+const waitForOpenConnection = (socket) => {
+    return new Promise((resolve, reject) => {
+        const maxNumberOfAttempts = 10;
+        const intervalTime = 200; //ms
+        let currentAttempt = 0;
+        const interval = setInterval(() => {
+            if (currentAttempt > maxNumberOfAttempts - 1) {
+                clearInterval(interval);
+                reject(new Error('Maximum number of attempts exceeded'));
+            } else if (socket.readyState === socket.OPEN) {
+                clearInterval(interval);
+                resolve();
+            }
+            currentAttempt++;
+        }, intervalTime);
+    });
+};
+
 /**
  * Connects to broker and listens for updates.
  *
@@ -136,28 +154,23 @@ const cacheMessage = (productCode, sessionId, data) => {
  */
 const callback = async (config, productCode) => {
     try {
-        const url = config.static.url;
-        const options = {};
-
-        if (Object.hasOwnProperty.call(config.static, 'event')) {
-            options.event = config.static.event;
-        }
-
+        const url = (config.static || config.authConfig).url;
+        const options = config.static || config.authConfig;
         const authConfig = {
             productCode,
-            url: config.static.authUrl,
-            authPath: config.static.authPath,
-            clientAuth: config.static.clientAuth,
-            grantType: config.static.grantType,
-            accessToken: config.static.accessToken,
-            username: config.static.username,
-            password: config.static.password,
-            clientId: config.static.clientId,
-            clientSecret: config.static.clientSecret,
-            scope: config.static.scope,
+            url: options.authUrl,
+            authPath: options.authPath,
+            clientAuth: options.clientAuth,
+            grantType: options.grantType,
+            accessToken: options.accessToken,
+            username: options.username,
+            password: options.password,
+            clientId: options.clientId,
+            clientSecret: options.clientSecret,
+            scope: options.scope,
         };
 
-        if (Object.hasOwnProperty.call(config.static, 'scope')) {
+        if (Object.hasOwnProperty.call(options, 'scope')) {
             const requestOptions = await oauth2.request({authConfig}, {});
             options.accessToken = requestOptions.headers.Authorization;
         }
@@ -178,6 +191,7 @@ const callback = async (config, productCode) => {
         winston.log('info', `${productCode}: Initialize websocket connection.`);
         sockets[productCode] = new WebSocket(`${url}?accessToken=${options.accessToken}`, 'koneapi');
         sockets[productCode].on('open', () => {
+            winston.log('info', `${productCode}: Websocket connection opened.`);
             sockets[productCode].on('message', (data) => {
                 try {
                     const message = JSON.parse(data);
@@ -243,6 +257,7 @@ const callback = async (config, productCode) => {
         }).on('error', (err) => {
             winston.log('error', err.message);
         });
+        return await waitForOpenConnection(sockets[productCode]);
     } catch (err) {
         winston.log('error', err.message);
     }
@@ -290,8 +305,9 @@ function waitForMessage (productCode, id) {
  * @return {Promise}
  */
 const sendData = async (config= {}, pathArray) => {
-    const client = sockets[config.productCode];
-    const items = [];
+    let client = sockets[config.productCode];
+    const items = {};
+    let attempts = 0;
 
     for (let p = 0; p < pathArray.length; p++) {
         try {
@@ -300,13 +316,22 @@ const sendData = async (config= {}, pathArray) => {
                 waitForMessage(config.productCode, pathArray[p].id),
                 wait(35000),
             ]);
-            items.push((item || {}).data ? item : {data: {request_id: pathArray[p].id, success: false, error: item.status}});
+            items[p] = (item || {}).data ? item : {data: {request_id: pathArray[p].id, success: false, error: item.status}};
         } catch (err) {
-            winston.log('error', err.message);
+            items[p] = {data: {request_id: pathArray[p].id, success: false, error: err.message}};
+            winston.log('error', `500 | kone | ${config.productCode ? `productCode=${config.productCode} | ` : ''}${err.message}`);
+            if (err.message === 'not opened') {
+                await callback(config, config.productCode);
+                client = sockets[config.productCode];
+                attempts++;
+                if (attempts < 2) {
+                    p--;
+                }
+            }
         }
     }
 
-    return items;
+    return Object.values(items);
 };
 
 /**
