@@ -19,8 +19,20 @@ const websocket = require('../../app/protocols/websocket');
  */
 const template = async (config, template) => {
     try {
-        if (Object.hasOwnProperty.call(template.parameters, 'action') && Object.hasOwnProperty.call(template.parameters, 'destination')) {
-            // Elevator call.
+        if (Object.hasOwnProperty.call(template.parameters, 'action')) {
+            // Elevator call
+            //
+            // Action: 2 - destination call
+            // - area = source floor area id
+            // - destination = destination floor area id
+            //
+            // Action: 2002 - landing call
+            // - area = source floor area id
+            //
+            // Action: 5000 - car call
+            // - area = lift deck area id
+            // - destination = destination floor area id
+
             const request_id = parseInt(uuidv4(), 16);
             const call = {
                 action: template.parameters.action,
