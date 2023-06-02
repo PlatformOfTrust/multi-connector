@@ -63,6 +63,7 @@ const template = async (config, template) => {
                 Status: 'data.success',
                 Error: 'data.error',
             };
+            template.schema = 'process-v4_kone';
         } else {
             // TODO: Presence query.
         }
