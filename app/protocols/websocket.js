@@ -158,16 +158,17 @@ const callback = async (config, productCode) => {
         const options = config.static || config.authConfig;
         const authConfig = {
             productCode,
-            url: options.authUrl,
-            authPath: options.authPath,
-            clientAuth: options.clientAuth,
-            grantType: options.grantType,
-            accessToken: options.accessToken,
-            username: options.username,
-            password: options.password,
-            clientId: options.clientId,
-            clientSecret: options.clientSecret,
-            scope: options.scope,
+            url: options.url,
+            authUrl: options.authUrl === '${authUrl}' ? undefined : options.authUrl,
+            authPath: options.authPath === '${authPath}' ? undefined : options.authPath,
+            clientAuth: options.clientAuth === '${clientAuth}' ? undefined : options.clientAuth,
+            grantType: options.grantType === '${grantType}' ? undefined : options.grantType,
+            accessToken: options.accessToken === '${accessToken}' ? undefined : options.accessToken,
+            username: options.username === '${username}' ? undefined : options.username,
+            password: options.password === '${password}' ? undefined : options.password,
+            clientId: options.clientId === '${clientId}' ? undefined : options.clientId,
+            clientSecret: options.clientSecret === '${clientSecret}' ? undefined : options.clientSecret,
+            scope: options.scope === '${scope}' ? undefined : options.scope,
         };
 
         if (Object.hasOwnProperty.call(options, 'scope')) {
@@ -254,8 +255,16 @@ const callback = async (config, productCode) => {
                     winston.log('error', err.message);
                 }
             });
-        }).on('error', (err) => {
-            winston.log('error', err.message);
+        }).on('error', async (err) => {
+            try {
+                if ((err.message || '').includes('401')) {
+                    cache.delDoc('grants', productCode);
+                    err.statusCode = 401;
+                }
+                winston.log('error', err.message);
+            } catch (err) {
+                winston.log('error', err.message);
+            }
         });
         return await waitForOpenConnection(sockets[productCode]);
     } catch (err) {
@@ -321,10 +330,11 @@ const sendData = async (config= {}, pathArray) => {
             items[p] = {data: {request_id: pathArray[p].id, success: false, error: err.message}};
             winston.log('error', `500 | kone | ${config.productCode ? `productCode=${config.productCode} | ` : ''}${err.message}`);
             if (err.message === 'not opened') {
+                delete config.authConfig.accessToken;
                 await callback(config, config.productCode);
                 client = sockets[config.productCode];
                 attempts++;
-                if (attempts < 2) {
+                if (attempts < 3) {
                     p--;
                 }
             }
