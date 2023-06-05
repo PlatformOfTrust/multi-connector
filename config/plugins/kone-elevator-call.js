@@ -7,7 +7,7 @@ const {uuidv4} = require('../../app/lib/utils');
 const websocket = require('../../app/protocols/websocket');
 
 /**
- * Kone plugin.
+ * Kone elevator call plugin.
  */
 
 /**

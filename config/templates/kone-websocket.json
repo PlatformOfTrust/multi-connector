@@ -1,7 +1,7 @@
 {
   "plugins": [
       "oauth2",
-      "kone"
+      "kone-elevator-call"
   ],
   "protocol": "websocket",
   "authConfig": {
