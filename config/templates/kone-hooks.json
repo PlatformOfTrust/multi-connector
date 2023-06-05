@@ -19,7 +19,7 @@
     ""
   ],
   "dataPropertyMappings": {
-    "MeasureOccupancy": ""
+    "MeasureOccupancy": "value"
   },
   "generalConfig": {
     "hardwareId": {
