@@ -81,7 +81,8 @@ function handleFile (collection, file, data, skipEmit) {
             const template = cache.getDoc('templates', object.template) || {};
             if (template.protocol === 'hook' && !skipEmit) {
                 emitter.emit('collections', {configs: {[file]: object}});
-            } else if (typeof protocols[template.protocol].connect === 'function') {
+            }
+            if (typeof protocols[template.protocol].connect === 'function') {
                 protocols[template.protocol].connect(object, file);
             } else if (Object.hasOwnProperty.call(object, 'static')) {
                 if (Object.hasOwnProperty.call(object.static, 'fromPath') && Object.hasOwnProperty.call(object.static, 'toPath')) {
