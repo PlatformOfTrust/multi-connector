@@ -12,6 +12,51 @@ const fetch = require('../../app/lib/request');
  */
 
 /**
+ * Check for matching query ids within deck data.
+ *
+ * @param {Array} array
+ * @param {Array} ids
+ * @return {Object}
+ */
+const hasMatchingIds = (array, ids) => array
+    .filter(d => ids.includes(d.startFloor.floorIndex) || ids.includes(d.stopFloor.floorIndex))
+    .length > 0;
+
+/**
+ * Picks query ids within deck data.
+ *
+ * @param {Array} array
+ * @return {Object}
+ */
+const pickQueryIds = (array) => array
+    .map(d => [(d.startFloor || {}).floorIndex || null, (d.stopFloor || {}).floorIndex || null])
+    .flat().filter(id => id !== null);
+
+/**
+ * Removes old data from cache.
+ *
+ * @param {String} productCode
+ * @return {Object}
+ */
+const latestData = (productCode) => {
+    // Clear old data from cache.
+    const data = cache.getDoc('messages', productCode) || {};
+    const queryIds = _.uniq(Object.entries(data).map(([_key, value]) => pickQueryIds((value.data || {}).decks || [])).flat());
+    const latestData = Object.fromEntries(queryIds.map(id => {
+        return Object.values(Object.entries(data).filter(([_key, value]) => {
+            try {
+                return hasMatchingIds((value.data || {}).decks || [], [id]);
+            } catch (err) {
+                winston.log('error', `500 | kone-elevator-movement | ${productCode ? `productCode=${productCode} | ` : ''}${err.message}`);
+            }
+            return false;
+        })).sort((a, b) => new Date(a.time) - new Date(b.time))[0];
+    }));
+    cache.setDoc('messages', productCode, latestData);
+    return latestData;
+};
+
+/**
  * Switch querying to Data Storage.
  *
  * @param {Object} config
@@ -20,20 +65,22 @@ const fetch = require('../../app/lib/request');
  */
 const template = async (config, template) => {
     try {
-        // convert ids.
+        // Convert ids.
         const ids = (_.get(template, 'parameters.ids') || []).map(object => object.id || object.idLocal).flat();
-        const data = cache.getDoc('messages', config.productCode) || {};
+        const data = latestData(config.productCode);
+
+        // Convert query ids.
         template.authConfig.path = ids.length > 0 ? Object.entries(data).filter(([_key, value]) => {
             try {
-                return value.data.decks.filter(d => ids.includes(d.startFloor.floorIndex) || ids.includes(d.stopFloor.floorIndex)).length > 0;
+                return hasMatchingIds((value.data || {}).decks || [], ids);
             } catch (err) {
-                winston.log('error', `500 | kone-elevator-movement | ${template.productCode ? `productCode=${template.productCode} | ` : ''}${err.message}`);
+                winston.log('error', `500 | kone-elevator-movement | ${config.productCode ? `productCode=${config.productCode} | ` : ''}${err.message}`);
             }
             return false;
         }).map(([key, _value]) => key) : Object.keys(data);
         return template;
     } catch (err) {
-        winston.log('error', `500 | kone-elevator-movement | ${template.productCode ? `productCode=${template.productCode} | ` : ''}${err.message}`);
+        winston.log('error', `500 | kone-elevator-movement | ${config.productCode ? `productCode=${config.productCode} | ` : ''}${err.message}`);
         return template;
     }
 };
@@ -64,6 +111,7 @@ const response = async (config, response) => {
         })));
         // Filter result.
         const ids = (_.get(config, 'parameters.ids') || []).map(object => object.id || object.idLocal).flat();
+        // TODO: Filter only latest values.
         return items.filter(i => ids.includes(i.id) || ids.length === 0);
     } catch (e) {
         return items;
