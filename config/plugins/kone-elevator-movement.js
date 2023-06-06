@@ -2,6 +2,8 @@
 /**
  * Module dependencies.
  */
+const _ = require('lodash');
+const cache = require('../../app/cache');
 const winston = require('../../logger.js');
 const fetch = require('../../app/lib/request');
 
@@ -18,9 +20,20 @@ const fetch = require('../../app/lib/request');
  */
 const template = async (config, template) => {
     try {
+        // convert ids.
+        const ids = (_.get(template, 'parameters.ids') || []).map(object => object.id || object.idLocal).flat();
+        const data = cache.getDoc('messages', config.productCode) || {};
+        template.authConfig.path = ids.length > 0 ? Object.entries(data).filter(([_key, value]) => {
+            try {
+                return value.data.decks.filter(d => ids.includes(d.startFloor.floorIndex) || ids.includes(d.stopFloor.floorIndex)).length > 0;
+            } catch (err) {
+                winston.log('error', `500 | kone-elevator-movement | ${template.productCode ? `productCode=${template.productCode} | ` : ''}${err.message}`);
+            }
+            return false;
+        }).map(([key, _value]) => key) : Object.keys(data);
         return template;
     } catch (err) {
-        winston.log('error', `500 | kone | ${template.productCode ? `productCode=${template.productCode} | ` : ''}${err.message}`);
+        winston.log('error', `500 | kone-elevator-movement | ${template.productCode ? `productCode=${template.productCode} | ` : ''}${err.message}`);
         return template;
     }
 };
@@ -49,7 +62,9 @@ const response = async (config, response) => {
             id: d.stopFloor.floorIndex,
             value: 'OCCUPIED',
         })));
-        return items;
+        // Filter result.
+        const ids = (_.get(config, 'parameters.ids') || []).map(object => object.id || object.idLocal).flat();
+        return items.filter(i => ids.includes(i.id) || ids.length === 0);
     } catch (e) {
         return items;
     }
@@ -78,12 +93,6 @@ module.exports = {
         return options;
     },
     response,
-    stream: (template, data) => {
-        // console.log('Stream');
-        // console.log(template);
-        // console.log(data);
-        return [];
-    },
     connect: async (config) => {
         try {
             const oauth2 = config.template.plugins.find(p => p.name === 'oauth2');
@@ -108,6 +117,8 @@ module.exports = {
                 const create = await fetch('post',`${template.authConfig.url}/api/v1/application/self/webhooks`, requestOptions.headers, body);
                 winston.log('info', `${config.productCode}: Created webhook with id ${create.id}.`);
             } else {
+                // const enable = await fetch('patch',`${template.authConfig.url}/api/v1/application/self/webhooks/${myHooks[0].id}`, requestOptions.headers, {status: 'ENABLED'});
+                // console.log(enable);
                 // const disable = await fetch('patch',`${template.authConfig.url}/api/v1/application/self/webhooks/${myHooks[0].id}`, requestOptions.headers, {status: 'DISABLED'});
                 // console.log(disable);
                 // const remove = await fetch('delete',`${template.authConfig.url}/api/v1/application/self/webhooks/${myHooks[0].id}`, requestOptions.headers);

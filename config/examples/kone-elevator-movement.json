@@ -12,6 +12,11 @@
   "dynamic": {
     "authConfig.path": "ids"
   },
+  "plugins" : {
+    "streamer": {
+      "url": "<url>"
+    }
+  },
   "request": {
     "ids": [
       "<source-id>"

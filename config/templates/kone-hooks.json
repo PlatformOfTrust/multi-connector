@@ -1,36 +1,36 @@
 {
-  "plugins": [
-      "oauth2",
-      "kone-elevator-movement"
-  ],
-  "protocol": "hook",
-  "authConfig": {
-    "url": "${url}",
-    "authPath" : "${authPath}",
-    "clientId": "${clientId}",
-    "clientSecret": "${clientSecret}",
-    "clientAuth": "${clientAuth}",
-    "grantType": "${grantType}",
-    "scope": "${scope}",
-    "path": "/api/v2/equipment/search/movement",
-    "method": "POST"
-  },
-  "dataObjects": [
-    ""
-  ],
-  "dataPropertyMappings": {
-    "MeasureOccupancy": "value"
-  },
-  "generalConfig": {
-    "hardwareId": {
-      "dataObjectProperty": "id"
+    "plugins": [
+        "oauth2",
+        "kone-elevator-movement",
+        "streamer"
+    ],
+    "protocol": "hook",
+    "authConfig": {
+        "url": "${url}",
+        "authPath": "${authPath}",
+        "clientId": "${clientId}",
+        "clientSecret": "${clientSecret}",
+        "clientAuth": "${clientAuth}",
+        "grantType": "${grantType}",
+        "scope": "${scope}",
+        "path": "${id}"
     },
-    "timestamp": {
-      "dataObjectProperty": "time"
+    "dataObjects": [
+        ""
+    ],
+    "dataPropertyMappings": {
+        "MeasureOccupancy": "value"
+    },
+    "generalConfig": {
+        "hardwareId": {
+            "dataObjectProperty": "id"
+        },
+        "timestamp": {
+            "dataObjectProperty": "time"
+        }
+    },
+    "output": {
+        "array": "sensors",
+        "data": "measurements"
     }
-  },
-  "output": {
-    "array": "sensors",
-    "data": "measurements"
-  }
 }
