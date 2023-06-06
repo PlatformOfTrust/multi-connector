@@ -100,14 +100,14 @@ const response = async (config, response) => {
             terminal: d.deckIndex,
             name: d.startFloor.marking,
             id: d.startFloor.floorIndex,
-            value: 'UNOCCUPIED',
+            value: false,
         })));
         // Elevator arrived.
         items.push(...response.data.decks.map(d => ({
             terminal: d.deckIndex,
             name: d.stopFloor.marking,
             id: d.stopFloor.floorIndex,
-            value: 'OCCUPIED',
+            value: true,
         })));
         // Filter result.
         const ids = (_.get(config, 'parameters.ids') || []).map(object => object.id || object.idLocal).flat();

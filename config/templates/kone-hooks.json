@@ -13,13 +13,13 @@
         "clientAuth": "${clientAuth}",
         "grantType": "${grantType}",
         "scope": "${scope}",
-        "path": "${id}"
+        "path": "${idLocal}"
     },
     "dataObjects": [
         ""
     ],
     "dataPropertyMappings": {
-        "MeasureOccupancy": "value"
+        "MeasurePresence": "value"
     },
     "generalConfig": {
         "hardwareId": {
