@@ -165,8 +165,10 @@ module.exports = {
                 const create = await fetch('post',`${template.authConfig.url}/api/v1/application/self/webhooks`, requestOptions.headers, body);
                 winston.log('info', `${config.productCode}: Created webhook with id ${create.id}.`);
             } else {
-                // const enable = await fetch('patch',`${template.authConfig.url}/api/v1/application/self/webhooks/${myHooks[0].id}`, requestOptions.headers, {status: 'ENABLED'});
-                // console.log(enable);
+                if (myHooks[0].status === 'DISABLED') {
+                    const enable = await fetch('patch',`${template.authConfig.url}/api/v1/application/self/webhooks/${myHooks[0].id}`, requestOptions.headers, {status: 'ENABLED'});
+                    winston.log('info', `${config.productCode}: Enabled webhook with id ${enable.id}.`);
+                }
                 // const disable = await fetch('patch',`${template.authConfig.url}/api/v1/application/self/webhooks/${myHooks[0].id}`, requestOptions.headers, {status: 'DISABLED'});
                 // console.log(disable);
                 // const remove = await fetch('delete',`${template.authConfig.url}/api/v1/application/self/webhooks/${myHooks[0].id}`, requestOptions.headers);
