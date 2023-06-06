@@ -96,14 +96,14 @@ const response = async (config, response) => {
     const items = [];
     try {
         // Elevator left.
-        items.push(...response.data.decks.map(d => ({
+        items.push(...((response.data || {}).decks || []).map(d => ({
             terminal: d.deckIndex,
             name: d.startFloor.marking,
             id: d.startFloor.floorIndex,
             value: false,
         })));
         // Elevator arrived.
-        items.push(...response.data.decks.map(d => ({
+        items.push(...((response.data || {}).decks || []).map(d => ({
             terminal: d.deckIndex,
             name: d.stopFloor.marking,
             id: d.stopFloor.floorIndex,

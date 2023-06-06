@@ -22,15 +22,12 @@
     ""
   ],
   "dataPropertyMappings": {
-    "MeasureAirTemperatureCelsiusDegree": "data.temp",
-    "MeasureAirHumidityPercentage": "data.humidity",
-    "MeasureAirCO2LevelPPM": "data.co2",
-    "MeasureWaterConsumptionLitre": "data.water",
-    "MeasureEnergyConsumptionKilowattHour": "data.energy"
+    "Status": "data.success",
+    "Error": "data.error"
   },
   "generalConfig": {
     "hardwareId": {
-      "dataObjectProperty": "source_id"
+      "dataObjectProperty": "id"
     },
     "timestamp": {
       "dataObjectProperty": "timestamp"

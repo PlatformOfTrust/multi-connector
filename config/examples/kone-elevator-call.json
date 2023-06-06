@@ -5,7 +5,6 @@
         "authUrl" : "https://dev.kone.com",
         "authPath" : "/api/v2/oauth2/token",
         "clientAuth": "header",
-        "event": "<event>",
         "clientId": "<client-id>",
         "clientSecret": "<client-secret>",
         "grantType": "client_credentials",

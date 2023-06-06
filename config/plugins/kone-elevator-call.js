@@ -58,11 +58,6 @@ const template = async (config, template) => {
             }
             template.authConfig.path = (Array.isArray(result) ? result : []);
             template.protocol = 'custom';
-            template.dataObjects = [''];
-            template.dataPropertyMappings = {
-                Status: 'data.success',
-                Error: 'data.error',
-            };
             template.schema = 'process-v4_kone';
         } else {
             // TODO: Presence query.
