@@ -325,7 +325,7 @@ const sendData = async (config= {}, pathArray) => {
                 waitForMessage(config.productCode, pathArray[p].id),
                 wait(35000),
             ]);
-            items[p] = (item || {}).data ? item : {data: {request_id: pathArray[p].id, success: false, error: item.status}};
+            items[p] = (item || {}).data ? item : {data: {request_id: pathArray[p].id, success: false, error: (item || {}).status}};
         } catch (err) {
             items[p] = {data: {request_id: pathArray[p].id, success: false, error: err.message}};
             winston.log('error', `500 | kone | ${config.productCode ? `productCode=${config.productCode} | ` : ''}${err.message}`);
