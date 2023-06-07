@@ -316,25 +316,28 @@ function waitForMessage (productCode, id) {
 const sendData = async (config= {}, pathArray) => {
     let client = sockets[config.productCode];
     const items = {};
-    let attempts = 0;
+    const attempts = Array(pathArray.length || 0).fill(0);
 
     for (let p = 0; p < pathArray.length; p++) {
         try {
+            if (attempts > 0) {
+                winston.log('info', `${config.productCode}: Retry attempt ${attempts} for session ${pathArray[p].id}.`);
+            }
             client.send(JSON.stringify(pathArray[p].data));
             const item = await Promise.race([
                 waitForMessage(config.productCode, pathArray[p].id),
-                wait(35000, () => ({status: 'Websocket timeout'})),
+                wait(40000, () => Promise.reject(new Error('websocket timeout'))),
             ]);
             items[p] = (item || {}).data ? item : {data: {request_id: pathArray[p].id, success: false, error: (item || {}).status}};
         } catch (err) {
             items[p] = {data: {request_id: pathArray[p].id, success: false, error: err.message}};
             winston.log('error', `500 | kone | ${config.productCode ? `productCode=${config.productCode} | ` : ''}${err.message}`);
-            if (err.message === 'not opened') {
+            if (err.message === 'not opened' || err.message === 'websocket timeout') {
                 delete config.authConfig.accessToken;
                 await callback(config, config.productCode);
                 client = sockets[config.productCode];
-                attempts++;
-                if (attempts < 3) {
+                attempts[p]++;
+                if (attempts[p] < 3) {
                     p--;
                 }
             }
