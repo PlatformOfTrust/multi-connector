@@ -186,9 +186,10 @@ const uuidv4 = () => {
  * Waits for given time.
  *
  * @param {Number} ms
+ * @param {Function} [callback]
  * @return {Promise}
  */
-const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const wait = (ms, callback = () => undefined) => new Promise(resolve => setTimeout(() => resolve(callback()), ms));
 
 /**
  * Expose library functions.
