@@ -323,7 +323,7 @@ const sendData = async (config= {}, pathArray) => {
             client.send(JSON.stringify(pathArray[p].data));
             const item = await Promise.race([
                 waitForMessage(config.productCode, pathArray[p].id),
-                wait(35000),
+                wait(35000, () => ({status: 'Websocket timeout'})),
             ]);
             items[p] = (item || {}).data ? item : {data: {request_id: pathArray[p].id, success: false, error: (item || {}).status}};
         } catch (err) {
