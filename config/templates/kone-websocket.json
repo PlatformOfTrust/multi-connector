@@ -23,7 +23,8 @@
   ],
   "dataPropertyMappings": {
     "Status": "data.success",
-    "Error": "data.error"
+    "Error": "data.error",
+    "Message": "data.message"
   },
   "generalConfig": {
     "hardwareId": {

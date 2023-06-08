@@ -134,7 +134,7 @@ const authConfig = template => ({
  * Expose plugin methods.
  */
 module.exports = {
-    name: 'kone',
+    name: 'kone-elevator-movement',
     template,
     request: (template, options) => {
         template.authConfig = authConfig(template);
@@ -175,7 +175,7 @@ module.exports = {
                 // console.log(remove);
             }
         } catch (err) {
-            winston.log('error', `500 | kone | ${config.productCode ? `productCode=${config.productCode} | ` : ''}${err.message}`);
+            winston.log('error', `500 | kone-elevator-movement | ${config.productCode ? `productCode=${config.productCode} | ` : ''}${err.message}`);
         }
     },
 };

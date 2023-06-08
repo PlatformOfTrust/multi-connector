@@ -53,8 +53,21 @@ const template = async (config, template) => {
             }));
             const result = [];
             for (let i = 0; i < messages.length; i++) {
-                const response = await websocket.sendData(template, [{id: request_id, data: messages[i]}]);
-                result.push(...(Array.isArray(result) ? response : [response]));
+                let items = [];
+                try {
+                    // By default, the connection is closed after the client is not expecting any more state events from the call.
+                    await websocket.connect(template, template.productCode);
+                    const response = await websocket.sendData(template, [{id: request_id, data: messages[i]}]);
+                    items = Array.isArray(result) ? response : [response];
+                } catch (err) {
+                    winston.log('error', `500 | kone-elevator-call | ${template.productCode ? `productCode=${template.productCode} | ` : ''}${err.message}`);
+                }
+                try {
+                    items = items.map(item => (item.data || {}).success ? {...item, data: {...item.data, message: 'Action completed.'}} : item);
+                } catch (err) {
+                    winston.log('error', `500 | kone-elevator-call | ${template.productCode ? `productCode=${template.productCode} | ` : ''}${err.message}`);
+                }
+                result.push(...items);
             }
             template.authConfig.path = (Array.isArray(result) ? result : []);
             template.protocol = 'custom';
@@ -64,7 +77,7 @@ const template = async (config, template) => {
         }
         return template;
     } catch (err) {
-        winston.log('error', `500 | kone | ${template.productCode ? `productCode=${template.productCode} | ` : ''}${err.message}`);
+        winston.log('error', `500 | kone-elevator-call | ${template.productCode ? `productCode=${template.productCode} | ` : ''}${err.message}`);
         return template;
     }
 };
@@ -73,6 +86,6 @@ const template = async (config, template) => {
  * Expose plugin methods.
  */
 module.exports = {
-    name: 'kone',
+    name: 'kone-elevator-call',
     template,
 };
