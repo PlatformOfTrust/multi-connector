@@ -1250,11 +1250,11 @@ const errorResponse = async (req, res, err) => {
  * @param {String} productCode
  * @param {Object} config
  * @param {String} idLocal
- * @param {Boolean} retry
+ * @param {Boolean} isRetry
  * @return
  *   The connector response.
  */
-const getData = async (productCode, config, idLocal, retry) => {
+const getData = async (productCode, config, idLocal, isRetry) => {
     // Compose triggered local connector request.
     const triggeredReq = {
         body: {
@@ -1263,7 +1263,7 @@ const getData = async (productCode, config, idLocal, retry) => {
             parameters: {
                 targetObject: {
                     idLocal,
-                    retry: retry ? true : undefined,
+                    retry: isRetry ? true : undefined,
                 },
             },
         },
