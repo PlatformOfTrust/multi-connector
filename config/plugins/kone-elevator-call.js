@@ -33,30 +33,61 @@ const template = async (config, template) => {
             // - area = lift deck area id
             // - destination = destination floor area id
 
-            const request_id = parseInt(uuidv4(), 16);
+            /** Testing */
+
+            /*
+            const configMessages = template.parameters.ids.map(id => ({
+                type: 'common-api',
+                requestId: parseInt(uuidv4(), 16).toString(),
+                buildingId: id.buildingId,
+                callType: 'config',
+                groupId: (id.groupId || '').toString(),
+            }));
+
+            const elevatorConfigs = await Promise.all(configMessages.map(async (c) => await websocket.sendData(template, [{id: c.requestId, data: c}])));
+
+            const actionMessages = template.parameters.ids.map(id => ({
+                type: 'common-api',
+                requestId: parseInt(uuidv4(), 16).toString(),
+                buildingId: id.buildingId,
+                callType: 'actions',
+                groupId: (id.groupId || '').toString(),
+            }));
+
+            const elevatorActions = await Promise.all(actionMessages.map(async (c) => await websocket.sendData(template, [{id: c.requestId, data: c}])));
+            */
+
+            // Generate request ids.
+            template.parameters.ids = template.parameters.ids.map(id => ({...id, requestId: parseInt(uuidv4(), 16).toString()}));
+
+            // Initialize call.
             const call = {
                 action: template.parameters.action,
                 destination: template.parameters.destination,
             };
+
+            // Compose messages.
             const messages = template.parameters.ids.map(id => ({
                 type: 'lift-call-api-v2',
                 buildingId: id.buildingId,
                 callType: 'action',
                 groupId: (id.groupId || '').toString(),
                 payload: {
-                    request_id,
+                    request_id: id.requestId,
                     area: id.idLocal,
                     time: new Date().toISOString(),
                     terminal: id.terminal,
                     call,
                 },
             }));
+
             const result = [];
             for (let i = 0; i < messages.length; i++) {
                 let items = [];
                 try {
                     // By default, the connection is closed after the client is not expecting any more state events from the call.
                     await websocket.connect(template, template.productCode);
+                    const request_id = messages[i].payload.request_id;
                     const response = await websocket.sendData(template, [{id: request_id, data: messages[i]}]);
                     items = Array.isArray(result) ? response : [response];
                 } catch (err) {
@@ -72,8 +103,6 @@ const template = async (config, template) => {
             template.authConfig.path = (Array.isArray(result) ? result : []);
             template.protocol = 'custom';
             template.schema = 'process-v4_kone';
-        } else {
-            // TODO: Presence query.
         }
         return template;
     } catch (err) {
