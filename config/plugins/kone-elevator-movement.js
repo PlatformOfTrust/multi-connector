@@ -132,6 +132,15 @@ const authConfig = template => ({
 module.exports = {
     name: 'kone-elevator-movement',
     template,
+    output: async (config, output) => {
+        // Filter out empty data.
+        try {
+            output.data.sensors = output.data.sensors.filter(s => !!s);
+        } catch (err) {
+            return output;
+        }
+        return output;
+    },
     request: (template, options) => {
         template.authConfig = authConfig(template);
         return options;
