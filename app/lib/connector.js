@@ -683,10 +683,7 @@ const getData = async (req) => {
 
     // Get data product config template.
     let template = cache.getDoc('templates', config.template);
-    if (!template && typeof template === 'string') return rest.promiseRejectWithError(404, `Data product config template ${config.template} not found.`);
-    if (!template && _.isObject(config.template)) {
-        template = {...config.template};
-    }
+    if (!template) return rest.promiseRejectWithError(404, `Data product config template ${config.template} not found.`);
 
     // Attach data product credentials.
     config = await getCredentials(config, productCode, req.authInfo) || config;
