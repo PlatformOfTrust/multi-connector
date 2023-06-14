@@ -41,9 +41,10 @@ const handlePlugins = async (config) => {
  *
  * @param {Array} entry
  */
-const configureHook = async ([productCode, config]) => {
+const configureHook = async ([productCode, originalConfig]) => {
     try {
-        if (Object.hasOwnProperty.call(templates, config.template)) {
+        if (Object.hasOwnProperty.call(templates, originalConfig.template)) {
+            const config = JSON.parse(JSON.stringify(originalConfig));
             config.template = templates[config.template];
             const hookRequired = config.template.protocol === 'hook';
             if (hookRequired) {
@@ -52,7 +53,7 @@ const configureHook = async ([productCode, config]) => {
                 await handlePlugins(config);
             }
         } else {
-            winston.log('error', 'Template ' + config.template + ' not found.');
+            winston.log('error', 'Template ' + originalConfig.template + ' not found.');
         }
         routesSet = false;
     } catch (err) {
