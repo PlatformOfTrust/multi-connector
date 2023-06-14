@@ -97,16 +97,12 @@ const response = async (config, response) => {
     try {
         // Elevator left.
         items.push(...((response.data || {}).decks || []).map(d => ({
-            terminal: d.deckIndex,
-            name: d.startFloor.marking,
-            id: d.startFloor.floorIndex,
+            id: `deckIndex:${d.deckIndex}/floorIndex:${d.startFloor.floorIndex}/marking:${d.startFloor.marking}`,
             value: false,
         })));
         // Elevator arrived.
         items.push(...((response.data || {}).decks || []).map(d => ({
-            terminal: d.deckIndex,
-            name: d.stopFloor.marking,
-            id: d.stopFloor.floorIndex,
+            id: `deckIndex:${d.deckIndex}/floorIndex:${d.stopFloor.floorIndex}/marking:${d.stopFloor.marking}`,
             value: true,
         })));
         // Filter result.
