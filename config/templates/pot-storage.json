@@ -1,0 +1,42 @@
+{
+    "protocol": "rest",
+    "authConfig": {
+        "url": "${url}",
+        "path": "/api/${operation}",
+        "method": "POST",
+        "body": {
+          "@context": "${@context}",
+          "parameters": "${}"
+      }
+    },
+    "generalConfig": {
+        "query": {
+          "properties": [
+            {
+              "code": "${functionCode}"
+            }
+          ]
+        },
+        "skipSpecificResponseParsing": true
+    },
+    "dataObjects": [
+      "data"
+    ],
+    "dataPropertyMappings": {
+      "@type": "@type",
+      "executor": "executor",
+      "location": "location",
+      "processTarget": "processTarget",
+      "physicalProperty": "physicalProperty",
+      "processValue": "processValue"
+    },
+    "input": {
+        "required": [
+            "parameters.targetObject"
+        ]
+    },
+    "output": {
+        "contextValue": "https://standards-ontotest.oftrust.net/v2/Context/DataProductOutput/Process/Measure/WaterMeterReading/?v=4.0",
+        "array": "process"
+    }
+}
