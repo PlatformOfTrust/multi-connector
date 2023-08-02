@@ -663,6 +663,7 @@ const getCredentials = async (config, productCode, authInfo = {}) => {
  */
 const getData = async (req) => {
     const reqBody = req.body;
+    winston.log('info', JSON.stringify(reqBody))
     console.log(reqBody)
     /** Default request validation */
     let validation = validator.validate(reqBody, supportedParameters);
