@@ -1,5 +1,7 @@
 'use strict';
 const crypto = require('crypto');
+const cache = require('../cache');
+const winston = require('../../logger');
 
 /**
  * Module dependencies.
@@ -192,6 +194,62 @@ const uuidv4 = () => {
 const wait = (ms, callback = () => undefined) => new Promise(resolve => setTimeout(() => resolve(callback()), ms));
 
 /**
+ * Returns next free port by product code.
+ *
+ * @param {String} [id]
+ * @param {Object} [defaultPort]
+ * @param {Object} [config]
+ * @param {String} [productCode]
+ * @return {Number}
+ */
+const getPort = (id, defaultPort = null, config, productCode) => {
+    let port;
+    const ports = cache.getKeysAndDocs('ports');
+    const usedPorts = Object.values(ports);
+    if (productCode) {
+        if (Object.hasOwnProperty.call(ports, productCode)) {
+            return ports[productCode];
+        }
+    }
+    if (!defaultPort) {
+        return null;
+    }
+    try {
+        let next = defaultPort;
+        while (!port) {
+            if (!usedPorts.includes(next)) {
+                port = next;
+            } else {
+                next++;
+            }
+        }
+        if (Object.hasOwnProperty.call(config.plugins[id], 'port')) {
+            const configuredPort = Number.parseInt(config.plugins[id].port);
+            if (!usedPorts.includes(configuredPort) && configuredPort !== 0) {
+                port = configuredPort;
+            }
+        }
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+    return port;
+};
+
+/**
+ * Sets or deletes port by product code.
+ *
+ * @param {String} productCode
+ * @param {Number} [port]
+ */
+const setPort = (productCode, port) => {
+    if (port === undefined || port === null) {
+        cache.delDoc('ports', productCode);
+    } else {
+        cache.setDoc('ports', productCode, port, 0);
+    }
+};
+
+/**
  * Expose library functions.
  */
 module.exports = {
@@ -202,4 +260,6 @@ module.exports = {
     decrypt,
     convertFinnishDateToISOString,
     wait,
+    getPort,
+    setPort,
 };
