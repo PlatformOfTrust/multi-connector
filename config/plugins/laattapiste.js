@@ -24,7 +24,7 @@ const storagePath = process.env.STORAGE_PATH || './';
 const DOWNLOAD_DIR = `${storagePath}temp/`;
 const orderNumberToCALSId = {};
 const productCodeToCALSId = {};
-const LOGFILE = true;
+const LOGFILE = false;
 
 // Source mapping.
 const orderConfirmationSchema = {
