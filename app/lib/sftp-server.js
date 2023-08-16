@@ -103,7 +103,7 @@ class SFTP {
         const filepath = pathRemoteToLocal(remotepath);
         logger.debug('SETSTAT', {filepath, remotepath, offset});
         try {
-            fs.utimesSync(filepath, offset.atime, offset.mtime);
+            fs.utimesSync(filepath, offset.atime || new Date(), offset.mtime || new Date());
         } catch (err) {
             logger.error(err);
             return this.sftpStream.status(reqid, errorCode(err.code));
