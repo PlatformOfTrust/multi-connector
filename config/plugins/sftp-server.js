@@ -2,9 +2,11 @@
 /**
  * Module dependencies.
  */
+const crypto = require('crypto');
 const {promises} = require('fs');
 const {timingSafeEqual} = require('crypto');
 const SftpServer = require('../../app/lib/sftp-server');
+const {getPrivateKey} = require('../../app/lib/rsa');
 const winston = require('../../logger.js');
 
 /**
@@ -68,6 +70,12 @@ const connect = async (config, options, _callback) => {
         const allowedPassword = Buffer.from(options.password);
         const basePath = DOWNLOAD_DIR + options.productCode + (options.fromPath || '');
         await checkDir(basePath);
+
+        if (!options.privateKey) {
+            // Use private key from env.
+            const privateKeyObject = crypto.createPrivateKey({format: 'pem', key: getPrivateKey(), type: 'pkcs8'});
+            options.privateKey = Buffer.from(privateKeyObject.export({format: 'pem', type: 'pkcs1'})).toString('base64');
+        }
 
         server = new Server({
             hostKeys: [Buffer.from(options.privateKey, 'base64')],

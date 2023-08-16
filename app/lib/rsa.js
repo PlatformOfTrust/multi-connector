@@ -102,6 +102,16 @@ const getPublicKey = function () {
 };
 
 /**
+ * Returns current private key.
+ *
+ * @return {String}
+ *   Public key.
+ */
+const getPrivateKey = function () {
+    return privateKey;
+};
+
+/**
  * Sorts object recursively.
  *
  * @param {Object} object
@@ -302,6 +312,7 @@ module.exports = {
     verifySignature,
     sendPublicKey,
     getPublicKey,
+    getPrivateKey,
     encrypt,
     decrypt,
 };

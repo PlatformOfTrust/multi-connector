@@ -14,7 +14,7 @@ function pathRemoteToLocal (remotepath) {
     const parts = remotepath.split('/');
     const count = parts.filter(p => p === '..').length;
     const path = count > 0 ? parts.slice(0, -count).join('/') : parts.join('/');
-    return `${basePath}${path === '.' ? '/' : path}`;
+    return `${basePath}${path === '.' ? '/' : (path[path.length - 1] === '.' ? '/' : path)}`;
 }
 
 const logger = {
