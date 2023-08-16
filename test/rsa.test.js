@@ -2,8 +2,11 @@ const expect = require('chai').expect;
 const rsa = require('../app/lib/rsa');
 const _ = require('lodash');
 
+// Load environment variables.
+require('dotenv').config();
+
 /** Test data. */
-const privateKey =
+let privateKey =
 	'-----BEGIN PRIVATE KEY-----\n' +
 	'MIIJRAIBADANBgkqhkiG9w0BAQEFAASCCS4wggkqAgEAAoICAQDlNelw4RhinmHH\n' +
 	'D0l54ZcQdqmbT11AHEDAgkqqxKLKQNl094zhIvkdaiGgOlcVArQvcSnJ94oxLdsC\n' +
@@ -57,7 +60,7 @@ const privateKey =
 	'bY2PRTudHQsJMiS6h0xyX1YlQSGoYnjl\n' +
 	'-----END PRIVATE KEY-----';
 
-const publicKey =
+let publicKey =
 	'-----BEGIN PUBLIC KEY-----\n' +
 	'MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA5TXpcOEYYp5hxw9JeeGX\n' +
 	'EHapm09dQBxAwIJKqsSiykDZdPeM4SL5HWohoDpXFQK0L3EpyfeKMS3bAkK8WIw8\n' +
@@ -72,6 +75,10 @@ const publicKey =
 	'pox95QzICy2MXucMIlFLu5yjAbyhfVJup/2yg9gj7WkMpCRL1XVbl9h6gdpaFgCg\n' +
 	'5mAdZv6QdVA6/agqkruugR0CAwEAAQ==\n' +
 	'-----END PUBLIC KEY-----';
+
+/** Optional environment variables. */
+privateKey = (process.env.PRIVATE_KEY || privateKey).toString().replace(/\\n/g, '\n');
+publicKey = (process.env.PUBLIC_KEY || publicKey).toString().replace(/\\n/g, '\n');
 
 /** Unsorted test body object. */
 const body = {
