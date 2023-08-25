@@ -922,7 +922,7 @@ const OrderInformationSchema = {
     },
 };
 
-const json2xml = (input = {}) => {
+const json2xml = (input = {}, productCode) => {
     input.externalMessageType = 'ORDERS';
     input.externalVersionType = '2x20R5B';
     input.externalDocType = 'ORD';
@@ -981,13 +981,17 @@ const json2xml = (input = {}) => {
         return o;
     });
 
-    input.additionalInformation = [
-        {value: input.vendor.customer.idLocal || ''},
-        {value: ''},
-        {value: ''},
-        {value: ''},
-        {value: ''},
-    ];
+    try {
+        input.additionalInformation = [
+            {value: input.vendor.customer.idLocal || ''},
+            {value: ''},
+            {value: ''},
+            {value: ''},
+            {value: ''},
+        ];
+    } catch (err) {
+        winston.log('error', `500 | stark | ${productCode ? `productCode=${productCode} | ` : ''}Missing information for H_Freetext_Delivery`);
+    }
 
     let output;
     let xml;
@@ -1049,7 +1053,7 @@ const template = async (config, template) => {
                 // winston.log('info', 'orderNumberToCALSId: ' + JSON.stringify(orderNumberToCALSId));
                 // winston.log('info', 'productCodeToCALSId: ' + JSON.stringify(productCodeToCALSId));
 
-                const xml = json2xml(result[id]);
+                const xml = json2xml(result[id], template.productCode);
                 if (xml instanceof Error) {
                     xml.message = 'Failed to write XML file with error "' + xml.message + '"';
                     return Promise.reject(xml);
@@ -1122,17 +1126,19 @@ const handleData = function (config, id, data) {
 
                     // Handle timestamps.
                     try {
-                        for (let i = 0; i < value.data.Batch.Msg[0].Row.length; i++) {
-                            const row = value.data.Batch.Msg[0].Row[i];
-                            try {
-                                value.data.Batch.Msg[0].Row[i] = {
-                                    ...row,
-                                    R_Date_Time_Delivery: [
-                                        convertFinnishDateToISOString(new Date(`${row.R_Date_Delivery[0]}T${DEFAULT_DELIVERY_TIME}:00.000Z`)),
-                                    ],
-                                };
-                            } catch (err) {
-                                console.log(err.message);
+                        if (Object.hasOwnProperty.call(value.data, 'Batch')) {
+                            for (let i = 0; i < value.data.Batch.Msg[0].Row.length; i++) {
+                                const row = value.data.Batch.Msg[0].Row[i];
+                                try {
+                                    value.data.Batch.Msg[0].Row[i] = {
+                                        ...row,
+                                        R_Date_Time_Delivery: [
+                                            convertFinnishDateToISOString(new Date(`${row.R_Date_Delivery[0]}T${DEFAULT_DELIVERY_TIME}:00.000Z`)),
+                                        ],
+                                    };
+                                } catch (err) {
+                                    console.log(err.message);
+                                }
                             }
                         }
                     } catch (e) {
