@@ -1,0 +1,42 @@
+{
+  "plugins": [
+      "oauth2"
+  ],
+  "protocol": "websocket",
+  "authConfig": {
+    "url": "${url}",
+    "authUrl" : "${authUrl}",
+    "authPath" : "${authPath}",
+    "username": "${username}",
+    "password": "${password}",
+    "clientId": "${clientId}",
+    "clientSecret": "${clientSecret}",
+    "clientAuth": "${clientAuth}",
+    "grantType": "${grantType}",
+    "scope": "${scope}",
+    "path": "${id}",
+    "event": "${event}"
+  },
+  "dataObjects": [
+    ""
+  ],
+  "dataPropertyMappings": {
+    "MeasureAirTemperatureCelsiusDegree": "data.temp",
+    "MeasureAirHumidityPercentage": "data.humidity",
+    "MeasureAirCO2LevelPPM": "data.co2",
+    "MeasureWaterConsumptionLitre": "data.water",
+    "MeasureEnergyConsumptionKilowattHour": "data.energy"
+  },
+  "generalConfig": {
+    "hardwareId": {
+      "dataObjectProperty": "source_id"
+    },
+    "timestamp": {
+      "dataObjectProperty": "timestamp"
+    }
+  },
+  "output": {
+    "array": "sensors",
+    "data": "measurements"
+  }
+}

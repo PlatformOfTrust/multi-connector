@@ -70,18 +70,28 @@ if (!fs.existsSync(configsDir)) fs.mkdirSync(configsDir);
  * @param {String} collection
  * @param {Object} file
  * @param {String} data
+ * @param {Boolean} skipEmit
  */
-function handleFile (collection, file, data) {
+function handleFile (collection, file, data, skipEmit) {
     let object;
     try {
         object = JSON.parse(data);
-        // If config has protocol mqtt or websocket, connect to the broker/server.
-        if (Object.hasOwnProperty.call(object, 'static')) {
-            if (Object.hasOwnProperty.call(object.static, 'topic')) {
-                protocols['mqtt'].connect(object, file);
+        // Check for hooks and protocols which require connect on start.
+        if (collection === 'configs') {
+            const template = cache.getDoc('templates', object.template) || {};
+            if (template.protocol === 'hook' && !skipEmit) {
+                emitter.emit('collections', {configs: {[file]: object}});
             }
-            if (Object.hasOwnProperty.call(object.static, 'event')) {
-                protocols['websocket'].connect(object, file);
+            if (typeof protocols[template.protocol].connect === 'function') {
+                protocols[template.protocol].connect(object, file);
+            } else if (Object.hasOwnProperty.call(object, 'static')) {
+                if (Object.hasOwnProperty.call(object.static, 'fromPath') && Object.hasOwnProperty.call(object.static, 'toPath')) {
+                    if (Object.hasOwnProperty.call(object, 'plugins')) {
+                        if (Object.hasOwnProperty.call(object.plugins, 'sftp-server')) {
+                            protocols['sftp'].connect(object, file);
+                        }
+                    }
+                }
             }
         }
         // Attach scheduler plugin.
@@ -110,7 +120,7 @@ function readFile (dir, ext, collection, file) {
                 switch (ext) {
                     /** JSON. */
                     case '.json':
-                        handleFile(collection, file.split('.').slice(0, -1).join('.'), data);
+                        handleFile(collection, file.split('.').slice(0, -1).join('.'), data, true);
                         break;
                     /** JavaScript. */
                     case '.js':
@@ -118,7 +128,7 @@ function readFile (dir, ext, collection, file) {
                         break;
                     /** Resources. */
                     case '.*':
-                        handleFile(collection, file, data);
+                        handleFile(collection, file, data, true);
                         break;
                 }
                 winston.log('info', 'Loaded ' + dir + '/' + file + '.');
@@ -172,7 +182,7 @@ function loadJSON (collection, string) {
         const object = JSON.parse(Buffer.from(string, 'base64').toString('utf8'));
         for (let i = 0; i < Object.keys(object).length; i++) {
             const filename = Object.keys(object)[i];
-            handleFile(collection, filename, collection === 'resources' ? Buffer.from(object[filename], 'base64').toString('utf8') : JSON.stringify(object[filename]));
+            handleFile(collection, filename, collection === 'resources' ? Buffer.from(object[filename], 'base64').toString('utf8') : JSON.stringify(object[filename]), true);
             winston.log('info', 'Loaded from environment ' + collection + '/' + filename + '.');
         }
     } catch (err) {
@@ -421,6 +431,7 @@ const interpretMode = function (config, parameters) {
     } else {
         // Include default range.
         parameters.start = new Date(config.timestamp.getTime() - defaultTimeRange);
+        parameters.defaultStart = true;
     }
 
     // Detect prediction request from end time and client's current local time.
@@ -458,9 +469,11 @@ const interpretMode = function (config, parameters) {
 const resolvePlugins = async (template) => {
     // Attach plugins.
     if (Object.hasOwnProperty.call(template, 'plugins')) {
-        const found = Object.keys(plugins).filter(p => template.plugins.includes(p));
-        const missing = template.plugins.filter(p => !found.includes(p));
-        if (missing.length > 0) {
+        const templatePlugins = template.plugins.map(p => _.isObject(p) ? p.name : p);
+        const found = Object.keys(plugins).filter(p => templatePlugins.includes(p));
+        const missing = templatePlugins.filter(p => !found.includes(p));
+        const schedulerMissing = missing.length === 1 && missing.includes('scheduler');
+        if (missing.length > 0 && !schedulerMissing) {
             return rest.promiseRejectWithError(500, 'Missing required plugins: ' + missing);
         }
         template.plugins = found.map(n => plugins[n]);
@@ -670,7 +683,7 @@ const getData = async (req) => {
 
     // Get data product config template.
     let template = cache.getDoc('templates', config.template);
-    if (!template) return rest.promiseRejectWithError(404, 'Data product config template not found.');
+    if (!template) return rest.promiseRejectWithError(404, `Data product config template ${config.template} not found.`);
 
     // Attach data product credentials.
     config = await getCredentials(config, productCode, req.authInfo) || config;
@@ -805,5 +818,7 @@ module.exports = {
     getData,
     resolvePlugins,
     composeOutput,
+    replacePlaceholders,
     emitter,
+    handleFile,
 };

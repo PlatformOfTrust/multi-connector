@@ -2,8 +2,11 @@ const expect = require('chai').expect;
 const rsa = require('../app/lib/rsa');
 const _ = require('lodash');
 
+// Load environment variables.
+require('dotenv').config();
+
 /** Test data. */
-const privateKey =
+let privateKey =
 	'-----BEGIN PRIVATE KEY-----\n' +
 	'MIIJRAIBADANBgkqhkiG9w0BAQEFAASCCS4wggkqAgEAAoICAQDlNelw4RhinmHH\n' +
 	'D0l54ZcQdqmbT11AHEDAgkqqxKLKQNl094zhIvkdaiGgOlcVArQvcSnJ94oxLdsC\n' +
@@ -57,7 +60,7 @@ const privateKey =
 	'bY2PRTudHQsJMiS6h0xyX1YlQSGoYnjl\n' +
 	'-----END PRIVATE KEY-----';
 
-const publicKey =
+let publicKey =
 	'-----BEGIN PUBLIC KEY-----\n' +
 	'MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA5TXpcOEYYp5hxw9JeeGX\n' +
 	'EHapm09dQBxAwIJKqsSiykDZdPeM4SL5HWohoDpXFQK0L3EpyfeKMS3bAkK8WIw8\n' +
@@ -72,6 +75,10 @@ const publicKey =
 	'pox95QzICy2MXucMIlFLu5yjAbyhfVJup/2yg9gj7WkMpCRL1XVbl9h6gdpaFgCg\n' +
 	'5mAdZv6QdVA6/agqkruugR0CAwEAAQ==\n' +
 	'-----END PUBLIC KEY-----';
+
+/** Optional environment variables. */
+privateKey = (process.env.PRIVATE_KEY || privateKey).toString().replace(/\\n/g, '\n');
+publicKey = (process.env.PUBLIC_KEY || publicKey).toString().replace(/\\n/g, '\n');
 
 /** Unsorted test body object. */
 const body = {
@@ -125,13 +132,13 @@ const stringifyBodyTestHelper = (fn, oldImplementation = false) => {
             expect: '{"test": "! \\\\\\"$#%&\'()*,+-./:;<=>?[]{}~|_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"}',
         },
         {
-            name: 'should succeed with non ascii charracters',
+            name: 'should succeed with non ascii characters',
             in: {test: 'hello & foo € bar'},
             // double escape to check that the charracter actually gets escaped.
             expect: '{"test": "hello & foo \\u20ac bar"}',
         },
         {
-            name: 'should succeed with non ascii charracters 2',
+            name: 'should succeed with non ascii characters 2',
             in: {test: 'äöuyåÅ'},
             // double escape to check that the charracter actually gets escaped.
             expect: '{"test": "\\u00e4\\u00f6uy\\u00e5\\u00c5"}',
@@ -147,6 +154,22 @@ const stringifyBodyTestHelper = (fn, oldImplementation = false) => {
             in: 'hello',
             expect: '"hello"',
             shouldFailOnOldImplementation: true,
+        },
+        {
+            name: 'should succeed with undefined and fail with the old implementation',
+            in: undefined,
+            expect: '',
+        },
+        {
+            name: 'should succeed with big data and fail with the old 2 implementation',
+            in: {
+                b: 'test',
+                c: [
+                    {embedded: 'x'.repeat(100000000)},
+                ],
+                a: {z: 'value', x: 'data'},
+            },
+            expect: `{"a": {"x": "data","z": "value"},"b": "test","c": [{"embedded": "${'x'.repeat(100000000)}"}]}`,
         },
     ];
 
@@ -194,12 +217,57 @@ const stringifyBodyOld = function (body) {
         .trim();
 };
 
+const stringifyBodyOld2 = function (body) {
+    // Stringify sorted object.
+    const json = JSON.stringify(rsa.sortObject(body));
+    let res = '';
+    let isEscaped = false;
+    let isValue = false;
+
+    for (let i = 0; i < (json || '').length; i++) {
+        let b = json[i];
+
+        // Escape non ASCII characters
+        const charCode = b.charCodeAt(0);
+        if (charCode > 127) {
+            b = '\\u' + ('0000' + charCode.toString(16)).substr(-4);
+        }
+        res += b;
+
+        // specify the start of the JSON value
+        if (!isEscaped && charCode === 34) {
+            isValue = !isValue;
+        }
+        // specify if the value separator is outside of a value declaration
+        if (charCode === 58 && !isValue) {
+            res += ' ';
+        }
+
+        // mark the next character as escaped if there's a leading backward
+        // slash and it's not escaped
+        if (charCode === 92 && !isEscaped) {
+            isEscaped = true;
+            continue;
+        }
+        // if the character was escaped turn of escaping for the next one
+        if (isEscaped) {
+            isEscaped = false;
+        }
+    }
+
+    return res;
+};
+
 describe('stringifyBody tests', async () => {
     stringifyBodyTestHelper(rsa.stringifyBody);
 });
 
 describe('stringifyBodyOld tests', async () => {
     stringifyBodyTestHelper(stringifyBodyOld, true);
+});
+
+describe('stringifyBodyOld2 tests', async () => {
+    stringifyBodyTestHelper(stringifyBodyOld2, true);
 });
 
 describe('sortObject old vs new implementation', async () => {

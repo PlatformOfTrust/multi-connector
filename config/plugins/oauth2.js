@@ -16,6 +16,22 @@ const _ = require('lodash');
 const failures = {};
 
 /**
+ * Picks URL from authConfig.
+ *
+ * @param {Object} authConfig
+ * @return {String}
+ */
+const url = (authConfig) => {
+    if (Object.hasOwnProperty.call(authConfig, 'authUrl')) {
+        return authConfig.authUrl !== '${authUrl}' && authConfig.authUrl !== ''
+            ? authConfig.authUrl
+            : authConfig.url;
+    } else {
+        return authConfig.url;
+    }
+};
+
+/**
  * Returns promise reject with error.
  *
  * @param {Number} [code]
@@ -52,13 +68,13 @@ const updateToken = async (authConfig, refresh) => {
     // Limit the number of attempts after error to 3 times.
     if (authConfig.attempt) {
         if (authConfig.attempt > 3) {
-            return promiseRejectWithError(500, 'Authentication failed.');
+            return promiseRejectWithError(500, 'Authentication failed. Too many attempts.');
         }
     }
 
     // Request new token with selected grant type.
     const grant = refresh ? await requestToken(authConfig, true) : await requestToken(authConfig);
-    if (!grant) return promiseRejectWithError(500, 'Authentication failed.');
+    if (!grant) return promiseRejectWithError(500, 'Authentication failed. Could not acquire token.');
     return Promise.resolve();
 };
 
@@ -81,7 +97,7 @@ function getTokenWithPassword (authConfig) {
 
     const options = {
         method: 'POST',
-        url: authConfig.url + authConfig.authPath,
+        url: url(authConfig) + authConfig.authPath,
         headers: {'content-type': 'application/x-www-form-urlencoded'},
         form:
             {
@@ -98,7 +114,7 @@ function getTokenWithPassword (authConfig) {
     if (onlyClientAuth) {
         delete options.form.username;
         delete options.form.password;
-        delete options.form.scope;
+        // delete options.form.scope;
         options.form.grant_type = 'client_credentials';
     }
 
@@ -144,12 +160,12 @@ function getTokenWithPassword (authConfig) {
  * @return {Promise}
  */
 function getTokenWithRefreshToken (authConfig, refreshToken) {
-    if (!authConfig.url && !authConfig.authPath) {
+    if (!url(authConfig) && !authConfig.authPath) {
         return promiseRejectWithError(500, 'No url or authPath found in authConfig.');
     } else {
         const options = {
             method: 'POST',
-            url: authConfig.url + authConfig.authPath + '/token',
+            url: url(authConfig) + authConfig.authPath + '/token',
             headers:
                 {
                     'content-type': 'application/x-www-form-urlencoded',
@@ -165,7 +181,7 @@ function getTokenWithRefreshToken (authConfig, refreshToken) {
         };
 
         /** Philips HUE specific refresh. */
-        if (authConfig.url === 'https://api.meethue.com') {
+        if (url(authConfig) === 'https://api.meethue.com') {
             delete options.form.grant_type;
             delete options.form.client_id;
             delete options.form.client_secret;
@@ -173,7 +189,7 @@ function getTokenWithRefreshToken (authConfig, refreshToken) {
                 Authorization: 'Basic '
                     + Buffer.from(authConfig.clientId + ':' + authConfig.clientSecret).toString('base64'),
             };
-            options.url = authConfig.url + authConfig.authPath + '/refresh?grant_type=refresh_token';
+            options.url = url(authConfig) + authConfig.authPath + '/refresh?grant_type=refresh_token';
         }
 
         return rp(options).then(function (result) {
@@ -210,7 +226,7 @@ const getTokenWithCode = async (authConfig) => {
 
     const options = {
         method: 'POST',
-        url: authConfig.url + authConfig.authPath + '/token',
+        url: url(authConfig) + authConfig.authPath + '/token',
         headers:
             {
                 'cache-control': 'no-cache',
@@ -263,13 +279,17 @@ const requestToken = async (authConfig, refresh, store = true) => {
         let body;
         if (result) {
             if (Object.hasOwnProperty.call(result, 'body')) {
+                let ttl;
                 try {
                     body = result.body;
                     body = JSON.parse(result.body);
+                    if (typeof body === 'object') {
+                        ttl = body.expires_in;
+                    }
                 } catch (err) {
                     console.log(err.message);
                 }
-                if (store) cache.setDoc('grants', authConfig.productCode, body);
+                if (store) cache.setDoc('grants', authConfig.productCode, body, ttl);
             } else {
                 body = result;
             }
@@ -305,7 +325,7 @@ const onerror = async (config, err) => {
         /** 401 - Unauthorized. */
         case 401:
             /** Philips HUE specific response handling. */
-            if (config.authConfig.url === 'https://api.meethue.com') {
+            if (url(config.authConfig) === 'https://api.meethue.com') {
                 return updateToken(config.authConfig, true);
             } else {
                 return updateToken(config.authConfig, false);
@@ -315,9 +335,10 @@ const onerror = async (config, err) => {
             return updateToken(config.authConfig, true);
         /** 400 - Invalid credentials / Access token is missing */
         case 400:
-            return promiseRejectWithError(err.statusCode, 'Authentication failed.');
+            return promiseRejectWithError(err.statusCode, 'Authentication failed. Invalid credentials or token.');
     }
-    return promiseRejectWithError(err.statusCode, 'Authentication failed.');
+
+    return promiseRejectWithError(err.statusCode, 'Authentication failed. Unexpected error.');
 };
 
 const getConfig = function (req, res, next) {
@@ -429,7 +450,7 @@ const getState = () => {
 const generateAuthorizationUrl = (req, state= getState()) => {
     const redirectUrl = req.connectorUrl + '/translator/v1/plugins/oauth2/' + req.authConfig.productCode + '/redirect';
     // Generate link to authorization page.
-    return req.authConfig.url + req.authConfig.authPath + '/authorize'
+    return url(req.authConfig) + req.authConfig.authPath + '/authorize'
         + '?client_id=' + req.authConfig.clientId
         + '&response_type=code'
         + '&redirect_uri=' + redirectUrl
@@ -590,7 +611,7 @@ module.exports = {
     name: 'oauth2',
     request: async (config, options) => {
         // Check for necessary information.
-        if (!config.authConfig.authPath || !config.authConfig.url) {
+        if (!config.authConfig.authPath || !url(config.authConfig)) {
             return promiseRejectWithError(500, 'Insufficient authentication configurations.');
         }
 
@@ -612,7 +633,7 @@ module.exports = {
                     grant.access_token = true;
                 }
             }
-            if (!grant.access_token && !grant.token) return promiseRejectWithError(500, 'Authentication failed.');
+            if (!grant.access_token && !grant.token) return promiseRejectWithError(500, 'Authentication failed. Malformed token response.');
         }
 
         // Initialize headers if required.

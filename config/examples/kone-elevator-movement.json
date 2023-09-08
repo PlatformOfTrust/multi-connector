@@ -1,0 +1,25 @@
+{
+  "template": "kone-hooks",
+  "static": {
+    "url": "https://dev.kone.com",
+    "authPath" : "/api/v2/oauth2/token",
+    "clientAuth": "header",
+    "clientId": "<client-id>",
+    "clientSecret": "<client-secret>",
+    "grantType": "client_credentials",
+    "scope": "application/inventory callgiving/* equipmentstatus/* application/subscriptions"
+  },
+  "dynamic": {
+    "authConfig.path": "ids"
+  },
+  "plugins" : {
+    "streamer": {
+      "url": "<url>"
+    }
+  },
+  "request": {
+    "ids": [
+      "<source-id>"
+    ]
+  }
+}

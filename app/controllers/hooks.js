@@ -16,6 +16,51 @@ const routers = {};
 let templates = {};
 let routesSet = false;
 
+/**
+ * Call connect method.
+ *
+ * @param {Object} config
+ */
+const handlePlugins = async (config) => {
+    try {
+        const plugins = (await connector.resolvePlugins(config.template)).plugins.filter(p => typeof p.connect === 'function');
+        for (let i = 0; i < plugins.length; i++) {
+            try {
+                await plugins[i].connect(config);
+            } catch (err) {
+                winston.log('error', err.message);
+            }
+        }
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+};
+
+/**
+ * Configures hook by config.
+ *
+ * @param {Array} entry
+ */
+const configureHook = async ([productCode, originalConfig]) => {
+    try {
+        if (Object.hasOwnProperty.call(templates, originalConfig.template)) {
+            const config = JSON.parse(JSON.stringify(originalConfig));
+            config.template = templates[config.template];
+            const hookRequired = config.template.protocol === 'hook';
+            if (hookRequired) {
+                routers[productCode] = hook.endpoints;
+                config.productCode = productCode;
+                await handlePlugins(config);
+            }
+        } else {
+            winston.log('error', 'Template ' + originalConfig.template + ' not found.');
+        }
+        routesSet = false;
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+};
+
 // Set listener for completion of loading.
 connector.emitter.on('collections',
     async (collections) => {
@@ -28,20 +73,7 @@ connector.emitter.on('collections',
             if (Object.keys(collections)[i] === 'configs') {
                 const configs = Object.values(collections)[i];
                 for (let j = 0; j < Object.entries(configs).length; j++) {
-                    const entry = Object.entries(configs)[j];
-                    const productCode = entry[0];
-                    const config = entry[1];
-                    try {
-                        if (Object.hasOwnProperty.call(templates, config.template)) {
-                            config.template = templates[config.template];
-                            const hookRequired = config.template.protocol === 'hook';
-                            if (hookRequired) routers[productCode] = hook.endpoints;
-                        } else {
-                            winston.log('error', 'Template ' + config.template + ' not found.');
-                        }
-                    } catch (err) {
-                        winston.log('error', err.message);
-                    }
+                    await configureHook(Object.entries(configs)[j]);
                 }
             }
         }
@@ -57,8 +89,9 @@ const setRoutes = function (passport) {
         try {
             // Define paths for hook endpoints.
             router.use('/' + Object.keys(routers)[i] + '/', Object.values(routers)[i](passport));
+            winston.log('info', 'Update hooks (' + Object.keys(routers).length + ')');
         } catch (err) {
-            console.log(err.message);
+            winston.log('error', err.message);
         }
     }
 };

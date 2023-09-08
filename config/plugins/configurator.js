@@ -269,7 +269,7 @@ const fetchPublicKeys = async (URLs, count = 0) => {
                 url: URLs[j],
                 env: process.env.NODE_ENV || 'development',
                 key: replaceAll(body.toString(), '\\n', '\n'),
-            });
+            }, 0);
         }
     }
 };
@@ -328,9 +328,9 @@ connector.emitter.on('collections',
         try {
             // Sleep for 5s to allow system URLs to be fetch first.
             await new Promise(resolve => setTimeout(resolve, 5000));
-
             // Find all configs, which utilize the configurator.
-            const configuratorConfigs = Object.entries(collections['configs']).filter(c => (c[1].template.plugins || []).includes('configurator'));
+            const configs = Object.entries(collections['configs'])
+            const configuratorConfigs = configs.filter(c => (c[1].template || '').includes('configurator') || (c[1].template || []).includes('configurator'));
             let count = cache.getDocs('publicKeys').length;
             for (let i = 0; i < configuratorConfigs.length; i++) {
                 const URLs = configuratorConfigs[i][1].static.publicKeyURLs || [];
@@ -420,10 +420,10 @@ const updateConfigs = async (dataProducts, blacklist = []) => {
                         : errors.push(productCode + ' - Missing required field: template');
                 } else {
                     winston.log('info', 'Update ' + productCode);
-                    cache.setDoc('configs', productCode, {
+                    connector.handleFile('configs', productCode, JSON.stringify({
                         template,
                         ...config,
-                    });
+                    }), false);
                     result.push({
                         productCode,
                         name: items[i].name,

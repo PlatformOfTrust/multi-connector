@@ -4,12 +4,15 @@
  */
 const connector = require('../lib/connector');
 const response = require('../lib/response');
+const oauth2 = require('../../config/plugins/oauth2');
 const winston = require('../../logger.js');
-const io = require('socket.io-client');
+const WebSocket  = require('ws');
+const {wait} = require('../lib/utils');
 const cache = require('../cache');
 const _ = require('lodash');
 
 const sockets = {};
+const messages = {};
 
 /**
  * Queries messages cache.
@@ -109,14 +112,37 @@ const composeDataObject = async (template, callback) => {
 };
 
 /**
- * Generates random UUIDv4.
+ * Caches data.
  *
- * @return {String}
+ * @param {Object} productCode
+ * @param {Object} sessionId
+ * @param {Object} data
  */
-const uuidv4 = () => {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        const r = Math.random() * 16 | 0; const v = c == 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
+const cacheMessage = (productCode, sessionId, data) => {
+    if (!Object.hasOwnProperty.call(messages, productCode)) {
+        messages[productCode] = {};
+    }
+    messages[productCode][sessionId] = data;
+    setTimeout(() => {
+        delete messages[productCode][sessionId];
+    }, 15000);
+};
+
+const waitForOpenConnection = (socket) => {
+    return new Promise((resolve, reject) => {
+        const maxNumberOfAttempts = 10;
+        const intervalTime = 200; //ms
+        let currentAttempt = 0;
+        const interval = setInterval(() => {
+            if (currentAttempt > maxNumberOfAttempts - 1) {
+                clearInterval(interval);
+                reject(new Error('Maximum number of attempts exceeded'));
+            } else if (socket.readyState === socket.OPEN) {
+                clearInterval(interval);
+                resolve();
+            }
+            currentAttempt++;
+        }, intervalTime);
     });
 };
 
@@ -128,89 +154,119 @@ const uuidv4 = () => {
  */
 const callback = async (config, productCode) => {
     try {
-        const url = config.static.url;
-        const options = {};
-        let query = {};
+        const url = (config.static || config.authConfig).url;
+        const options = config.static || config.authConfig;
+        const authConfig = {
+            productCode,
+            url: options.url,
+            authUrl: options.authUrl === '${authUrl}' ? undefined : options.authUrl,
+            authPath: options.authPath === '${authPath}' ? undefined : options.authPath,
+            clientAuth: options.clientAuth === '${clientAuth}' ? undefined : options.clientAuth,
+            grantType: options.grantType === '${grantType}' ? undefined : options.grantType,
+            accessToken: options.accessToken === '${accessToken}' ? undefined : options.accessToken,
+            username: options.username === '${username}' ? undefined : options.username,
+            password: options.password === '${password}' ? undefined : options.password,
+            clientId: options.clientId === '${clientId}' ? undefined : options.clientId,
+            clientSecret: options.clientSecret === '${clientSecret}' ? undefined : options.clientSecret,
+            scope: options.scope === '${scope}' ? undefined : options.scope,
+        };
 
-        if (Object.hasOwnProperty.call(config.static, 'event')) {
-            options.event = config.static.event;
+        if (Object.hasOwnProperty.call(options, 'scope')) {
+            const requestOptions = await oauth2.request({authConfig}, {});
+            options.accessToken = requestOptions.headers.Authorization;
         }
 
-        if (Object.hasOwnProperty.call(config.static, 'query')) {
-            query = config.static.query;
+        // Close previous connection.
+        if (Object.hasOwnProperty.call(sockets, productCode)) {
+            winston.log('info', `${productCode}: Closing existing connection.`);
+            try {
+                sockets[productCode].close();
+                await wait(2000);
+                delete sockets[productCode];
+            } catch (err) {
+                delete sockets[productCode];
+                winston.log('error', err.message);
+            }
         }
 
-        query.client_id = uuidv4();
-
-        const topic = options.event || 'message';
-
-        if (!Object.hasOwnProperty.call(sockets, productCode)) {
-            sockets[productCode] = io(url, {
-                query,
+        winston.log('info', `${productCode}: Initialize websocket connection.`);
+        sockets[productCode] = new WebSocket(`${url}?accessToken=${options.accessToken}`, 'koneapi');
+        sockets[productCode].on('open', () => {
+            winston.log('info', `${productCode}: Websocket connection opened.`);
+            sockets[productCode].on('message', (data) => {
+                try {
+                    const message = JSON.parse(data);
+                    if (message.data || message.status) {
+                        cacheMessage(productCode, (message.data || {}).request_id || message.requestId, message);
+                    }
+                } catch (err) {
+                    winston.log('error', err.message);
+                }
             });
+            sockets[productCode].on(options.event, async message => {
+                let template = cache.getDoc('templates', config.template);
+                try {
+                    const result = cache.getDoc('messages', productCode) || {};
+                    // Replace resource path.
+                    const path = template.generalConfig.hardwareId.dataObjectProperty;
+                    let id;
+                    if (Object.hasOwnProperty.call(message, path)) {
+                        id = message[path];
+                    } else {
+                        id = options.event;
+                    }
+                    result[id] = message;
+                    cache.setDoc('messages', productCode, result);
+                } catch (err) {
+                    winston.log('error', err.message);
+                }
 
-            sockets[productCode].on('connect', function () {
-                winston.log('info', productCode + ' subscribed to event ' + topic + '.');
-
-                // Store received messages to cache on receive.
-                sockets[productCode].on(topic, async (message) => {
-                    let template = cache.getDoc('templates', config.template);
-                    try {
-                        const result = cache.getDoc('messages', productCode) || {};
+                // Handle data and stream.
+                try {
+                    template = await connector.resolvePlugins(template);
+                    if (template.plugins.filter(p => !!p.stream).length > 0) {
                         // Replace resource path.
                         const path = template.generalConfig.hardwareId.dataObjectProperty;
                         let id;
                         if (Object.hasOwnProperty.call(message, path)) {
                             id = message[path];
                         } else {
-                            id = topic;
+                            id = options.event;
                         }
-                        result[id] = message;
-                        cache.setDoc('messages', productCode, result);
-                    } catch (err) {
-                        winston.log('error', err.message);
+                        template.authConfig.path = [id];
                     }
 
-                    // Handle data and stream.
-                    try {
-                        template = await connector.resolvePlugins(template);
-                        if (template.plugins.filter(p => !!p.stream).length > 0) {
-                            // Replace resource path.
-                            const path = template.generalConfig.hardwareId.dataObjectProperty;
-                            let id;
-                            if (Object.hasOwnProperty.call(message, path)) {
-                                id = message[path];
-                            } else {
-                                id = topic;
-                            }
-                            template.authConfig.path = [id];
+                    // Execute stream plugin function.
+                    for (let i = 0; i < template.plugins.length; i++) {
+                        if (template.plugins[i].stream) {
+                            // Compose plugin config, which has plugin specific options.
+                            const pluginConfig = (config.plugins ? config.plugins[template.plugins[i].name] || {} : {});
+                            await composeDataObject({
+                                ...template,
+                                ...pluginConfig,
+                                productCode,
+                                config,
+                            },
+                            template.plugins[i].stream,
+                            );
                         }
-
-                        // Execute stream plugin function.
-                        for (let i = 0; i < template.plugins.length; i++) {
-                            if (template.plugins[i].stream) {
-                                // Compose plugin config, which has plugin specific options.
-                                const pluginConfig = (config.plugins ? config.plugins[template.plugins[i].name] || {} : {});
-                                await composeDataObject({
-                                    ...template,
-                                    ...pluginConfig,
-                                    productCode,
-                                    config,
-                                },
-                                template.plugins[i].stream,
-                                );
-                            }
-                        }
-                    } catch (err) {
-                        winston.log('error', err.message);
                     }
-                });
-
-                sockets[productCode].on('disconnect', function () {
-                    winston.log('info', productCode + ' disconnected from websocket event ' + topic + '.');
-                });
+                } catch (err) {
+                    winston.log('error', err.message);
+                }
             });
-        }
+        }).on('error', async (err) => {
+            try {
+                if ((err.message || '').includes('401')) {
+                    cache.delDoc('grants', productCode);
+                    err.statusCode = 401;
+                }
+                winston.log('error', err.message);
+            } catch (err) {
+                winston.log('error', err.message);
+            }
+        });
+        return await waitForOpenConnection(sockets[productCode]);
     } catch (err) {
         winston.log('error', err.message);
     }
@@ -232,9 +288,70 @@ const connect = async (config, productCode) => {
 };
 
 /**
+ * Wait for message.
+ *
+ * @param {String} productCode
+ * @param {String} id
+ */
+function waitForMessage (productCode, id) {
+    function waitFor () {
+        if ((messages[productCode] || {})[id]) {
+            const result = messages[productCode][id];
+            delete messages[productCode][id];
+            return result;
+        }
+        return new Promise((resolve) => setTimeout(resolve, 1000))
+            .then(() => waitFor());
+    }
+    return waitFor();
+}
+
+/**
+ * Handles request to send data FROM connector (to websocket server).
+ *
+ * @param {Object} config
+ * @param {Array} pathArray
+ * @return {Promise}
+ */
+const sendData = async (config= {}, pathArray) => {
+    let client = sockets[config.productCode];
+    const items = {};
+    const attempts = Array(pathArray.length || 0).fill(0);
+
+    for (let p = 0; p < pathArray.length; p++) {
+        try {
+            if (attempts > 0) {
+                winston.log('info', `${config.productCode}: Retry attempt ${attempts} for session ${pathArray[p].id}.`);
+            }
+            client.send(JSON.stringify(pathArray[p].data));
+            const item = await Promise.race([
+                waitForMessage(config.productCode, pathArray[p].id),
+                wait(40000, () => Promise.reject(new Error('websocket timeout'))),
+            ]);
+            items[p] = (item || {}).data ? item : {data: {request_id: pathArray[p].id, success: false, error: (item || {}).status}};
+        } catch (err) {
+            items[p] = {data: {request_id: pathArray[p].id, success: false, error: err.message}};
+            winston.log('error', `500 | kone | ${config.productCode ? `productCode=${config.productCode} | ` : ''}${err.message}`);
+            if (err.message === 'not opened' || err.message === 'websocket timeout') {
+                delete config.authConfig.accessToken;
+                await callback(config, config.productCode);
+                client = sockets[config.productCode];
+                attempts[p]++;
+                if (attempts[p] < 3) {
+                    p--;
+                }
+            }
+        }
+    }
+
+    return Object.values(items);
+};
+
+/**
  * Expose library functions.
  */
 module.exports = {
     connect,
     getData,
+    sendData,
 };

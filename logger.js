@@ -4,7 +4,7 @@
  */
 const fs = require('fs');
 const env = process.env.NODE_ENV || 'development';
-const colorize = process.env.COLORIZE_LOGS === 'true';
+const colorize = process.env.COLORIZE_LOGS === '1';
 const storagePath = process.env.STORAGE_PATH || '';
 const {createLogger, format, transports} = require('winston');
 const {timestamp, printf} = format;

@@ -3,8 +3,9 @@
  * Module dependencies.
  */
 const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
 const cache = require('../cache');
-const { replaceAll } = require('../lib/utils');
+const {replaceAll} = require('../lib/utils');
 const rp = require('request-promise');
 const winston = require('../../logger.js');
 
@@ -21,8 +22,8 @@ const {
 } = require('../../config/definitions/pot');
 
 /** Optional environment variables. */
-let privateKey = process.env.PRIVATE_KEY;
-let publicKey = process.env.PUBLIC_KEY;
+let privateKey = (process.env.PRIVATE_KEY || '').toString().replace(/\\n/g, '\n');
+let publicKey = (process.env.PUBLIC_KEY || '').toString().replace(/\\n/g, '\n');
 
 if (!privateKey || !publicKey) {
     // If RSA keys are not provided by environment variables,
@@ -101,6 +102,16 @@ const getPublicKey = function () {
 };
 
 /**
+ * Returns current private key.
+ *
+ * @return {String}
+ *   Public key.
+ */
+const getPrivateKey = function () {
+    return privateKey;
+};
+
+/**
  * Sorts object recursively.
  *
  * @param {Object} object
@@ -127,76 +138,77 @@ const sortObject = function (object) {
 };
 
 /**
- * Stringifies body object.
+ * Stringifies object leaving spaces between keys and values.
  *
- * @param {Object} body
+ * @param {Object} object
  * @return {String}
- *   Stringified body.
+ *   Stringified object.
  */
-const stringifyBody = function (body) {
-    // Stringify sorted object.
-    const json = JSON.stringify(sortObject(body));
-    let res = '';
-    let isEscaped = false;
-    let isValue = false;
-
-    for (let i = 0; i < (json || '').length; i++) {
-        let b = json[i];
-
-        // Escape non ASCII characters
-        const charCode = b.charCodeAt(0);
-        if (charCode > 127) {
-            b = '\\u' + ('0000' + charCode.toString(16)).substr(-4);
-        }
-        res += b;
-
-        // specify the start of the JSON value
-        if (!isEscaped && charCode === 34) {
-            isValue = !isValue;
-        }
-        // specify if the value separator is outside of a value declaration
-        if (charCode === 58 && !isValue) {
-            res += ' ';
-        }
-
-        // mark the next character as escaped if there's a leading backward
-        // slash and it's not escaped
-        if (charCode === 92 && !isEscaped) {
-            isEscaped = true;
-            continue;
-        }
-        // if the character was escaped turn of escaping for the next one
-        if (isEscaped) {
-            isEscaped = false;
-        }
-    }
-
-    return res;
+const stringifyWithSpaces = (object) => {
+    // Stringify with line-breaks and indents.
+    let result = JSON.stringify(object, null, 1) || '';
+    // Remove all but the first space for each line.
+    result = result.replace(/^ +/gm, '');
+    // Remove line-breaks.
+    result = result.replace(/\n/g, '');
+    return result;
 };
 
 /**
- * Generates signature object for given payload.
+ * Stringifies body object.
  *
  * @param {Object} body
+ * @param {Boolean} [sort]
+ * @return {String}
+ *   Stringified body.
+ */
+const stringifyBody = function (body, sort = true) {
+    // Stringify sorted object.
+    return stringifyWithSpaces(sort ? sortObject(body) : body).replace(/[\u007F-\uFFFF]/g, chr => '\\u' + ('0000' + chr.charCodeAt(0)
+        .toString(16)).substr(-4));
+};
+
+/**
+ * Generates signature for given payload.
+ *
+ * @param {Object/String} body
  *   The payload to sign.
  * @param {String} [key]
  *   Private key used for signing.
+ * @param {Boolean} [sort]
+ *   Sort body.
+ *  @param {String} [type]
+ *   Signature, HMAC or JWT.
+ *  @param {String} [algorithm]
+ *   Algorithm used for signing.
+ *  @param {String} [encoding]
+ *   Algorithm used for signing.
  * @return {String}
  *   The signature value.
  */
-const generateSignature = function (body, key) {
+const generateSignature = function (body, key, sort = true, type = 'rsa', algorithm = 'sha256', encoding = 'base64') {
     // Use local private key, if not given.
-    if (!key) key = privateKey;
+    if (!key) { key = privateKey; }
 
     // Initialize signature value.
     let signatureValue;
 
-    // Create SHA256 signature in base64 encoded format.
     try {
-        signatureValue = crypto
-            .createSign('sha256')
-            .update(stringifyBody(body))
-            .sign(key.toString(), 'base64');
+        const data = typeof body === 'string' && type !== 'jwt' ? body : (sort ? stringifyBody(body) : replaceAll(JSON.stringify(body), ' ', ''));
+        switch (type) {
+            /** Create a signature. */
+            case 'rsa':
+                signatureValue = crypto.createSign(algorithm).update(data).sign(key.toString(), encoding);
+                break;
+            /** Create a hash. */
+            case 'hmac':
+                signatureValue = crypto.createHmac(algorithm, key).update(data).digest(encoding);
+                break;
+            /** Create a token. */
+            case 'jwt':
+                signatureValue = jwt.sign(data, key, key === privateKey ? {algorithm: 'RS256'} : {});
+                break;
+        }
     } catch (err) {
         winston.log('error', err.message);
     }
@@ -215,21 +227,47 @@ const generateSignature = function (body, key) {
  *   Public key used for validation.
  * @param {Boolean} [sort]
  *   Sort body.
+ *  @param {String} [type]
+ *   Signature, HMAC or JWT.
+ *  @param {String} [algorithm]
+ *   Algorithm used for signing.
+ *  @param {String} [encoding]
+ *   Algorithm used for signing.
  * @return {Boolean}
  *   True if signature is valid, false otherwise.
  */
-const verifySignature = function (body, signature, key, sort = true) {
+const verifySignature = function (body, signature, key, sort = true, type = 'rsa', algorithm = 'sha256', encoding = 'base64') {
     // Use local public key, if not given.
     if (!key) key = publicKey;
 
-    // Initialize verifier.
-    const verifier = crypto.createVerify('sha256');
+    // Initialize verification result.
+    let verificationResult = false;
 
-    // Update verifier.
-    verifier.update(sort ? stringifyBody(body) : replaceAll(JSON.stringify(body), ' ', ''));
+    const data = typeof body === 'string' && type !== 'jwt' ? body : (sort ? stringifyBody(body) : replaceAll(JSON.stringify(body), ' ', ''));
+    let verifier;
+    switch (type) {
+        /** Verify signature. */
+        case 'rsa':
+            // Initialize verifier.
+            verifier = crypto.createVerify(algorithm);
 
-    // Verify base64 encoded SHA256 signature.
-    return verifier.verify(key, signature, 'base64');
+            // Update verifier.
+            verifier.update(data);
+
+            // Verify base64 encoded SHA256 signature.
+            verificationResult = verifier.verify(key, signature, encoding);
+            break;
+        /** Verify hash. */
+        case 'hmac':
+            verificationResult = crypto.createHmac(algorithm, key).update(data).digest(encoding) === signature;
+            break;
+        /** Verify token. */
+        case 'jwt':
+            verificationResult = jwt.verify(signature, key, key === publicKey ? {algorithm: 'RS256'} : {}) === JSON.stringify(body);
+            break;
+    }
+
+    return verificationResult;
 };
 
 /**
@@ -274,6 +312,7 @@ module.exports = {
     verifySignature,
     sendPublicKey,
     getPublicKey,
+    getPrivateKey,
     encrypt,
     decrypt,
 };

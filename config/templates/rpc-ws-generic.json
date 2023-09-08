@@ -1,0 +1,29 @@
+{
+  "plugins": [
+      "dsaas"
+  ],
+  "protocol": "rpc-ws",
+  "authConfig": {
+    "url": "${url}",
+    "path": "${targetObject.idLocal}",
+    "event": "${event}"
+  },
+  "dataObjects": [
+    ""
+  ],
+  "dataPropertyMappings": {
+    "${type}": "value"
+  },
+  "generalConfig": {
+    "sourceName": {
+      "dataObjectProperty": "attribute"
+    },
+    "hardwareId": {
+      "dataObjectProperty": "id"
+    }
+  },
+  "output": {
+    "array": "sensors",
+    "data": "measurements"
+  }
+}

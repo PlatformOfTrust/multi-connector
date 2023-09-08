@@ -5,12 +5,12 @@
   ],
   "protocol": "rest",
   "authConfig": {
-    "url": "https://www.sahkonumerot.fi/application/api/web",
+    "url": "${url}",
     "authPath": "/login/logins",
     "authContentType": "application/json",
     "username": "${username}",
     "password": "${password}",
-    "path": "/package/basic-data?${property}=${codeProductCatalog}"
+    "path": "${path}?${property}=${codeProductCatalog}"
   },
   "dataObjects": [
     ""
@@ -36,7 +36,7 @@
   },
   "output": {
     "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/ProductCatalog/",
-    "array": "products",
+    "array": "product",
     "data": "data"
   }
 }

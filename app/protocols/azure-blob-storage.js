@@ -77,9 +77,10 @@ const createClient = async (config = {}) => {
  *
  * @param {Object} config
  * @param {Array} pathArray
+ * @param {Boolean} meta
  * @return {Promise}
  */
-const getData = async (config = {authConfig: {}}, pathArray) => {
+const getData = async (config = {authConfig: {}}, pathArray, meta = false) => {
     const items = [];
     const containerClient = await createClient(config);
 
@@ -88,10 +89,17 @@ const getData = async (config = {authConfig: {}}, pathArray) => {
         if (JSON.stringify(pathArray) === '[""]' || JSON.stringify(pathArray) === '["/"]') {
             for await (const blob of containerClient.listBlobsFlat()) {
                 const blockBlobClient = containerClient.getBlockBlobClient(blob.name);
+                let metadata = {};
+                try {
+                    const properties = await blockBlobClient.getProperties();
+                    metadata = properties.metadata;
+                } catch (err) {
+                    metadata = {};
+                }
                 try {
                     const downloadBlockBlobResponse = await blockBlobClient.download(0);
                     const data = (await streamToBuffer(downloadBlockBlobResponse.readableStreamBody)).toString('base64');
-                    const item = await response.handleData(config, blob.name, 0, {data, id: blob.name});
+                    const item = await response.handleData(config, blob.name, 0, {data, id: blob.name, metadata});
                     if (item) items.push(item);
                 } catch (e) {
                     // Blob was not found.
@@ -99,35 +107,62 @@ const getData = async (config = {authConfig: {}}, pathArray) => {
             }
         } else {
             for (let p = 0; p < pathArray.length; p++) {
-                // Detect produced content.
-                try {
-                    if (config.parameters.targetObject.content || config.parameters.targetObject.url) {
-                        const doc = config.parameters.targetObject;
-
-                        // Fetch content.
-                        const url = doc.url;
-                        const response = url ? await rp({method: 'GET', url, resolveWithFullResponse: true, encoding: null}) : {body: doc.content};
-                        const content = response.body;
-                        const filename = pathArray[p].split('/')[0] === '' && pathArray[p][0] === '/' ? pathArray[p].substring(1) : pathArray[p];
-                        const {data} = await file({}, {id: filename, data: Buffer.from(content).toString('base64')});
-
-                        data.metadata = {};
-                        data.tags = {};
-
-                        // Upload file to blob storage.
-                        await sendData(config, [data]);
+                if (pathArray[p].slice(-1) === '/' || pathArray[p] === '') {
+                    for await (const blob of containerClient.listBlobsFlat()) {
+                        const blockBlobClient = containerClient.getBlockBlobClient(blob.name);
+                        let metadata = {};
+                        try {
+                            const properties = await blockBlobClient.getProperties();
+                            metadata = properties.metadata;
+                        } catch (err) {
+                            metadata = {};
+                        }
+                        try {
+                            const downloadBlockBlobResponse = await blockBlobClient.download(0);
+                            const data = (await streamToBuffer(downloadBlockBlobResponse.readableStreamBody)).toString('base64');
+                            if (data && blob.name.startsWith(pathArray[p])) { items.push(meta ? {id: blob.name, data, metadata} : data); }
+                        } catch (e) {
+                            // Blob was not found.
+                        }
                     }
-                } catch (err) {
-                    console.log(err.message);
-                }
-                const blockBlobClient = containerClient.getBlockBlobClient(pathArray[p]);
-                try {
-                    const downloadBlockBlobResponse = await blockBlobClient.download(0);
-                    const data = (await streamToBuffer(downloadBlockBlobResponse.readableStreamBody)).toString('base64');
-                    const item = await response.handleData(config, pathArray[p], p, {data, id: pathArray[p]});
-                    if (item) items.push(item);
-                } catch (e) {
-                    // Blob was not found.
+                } else {
+                    // Detect produced content.
+                    try {
+                        if (config.parameters.targetObject.content || config.parameters.targetObject.url) {
+                            const doc = config.parameters.targetObject;
+
+                            // Fetch content.
+                            const url = doc.url;
+                            const response = url ? await rp({method: 'GET', url, resolveWithFullResponse: true, encoding: null}) : {body: doc.content};
+                            const content = response.body;
+                            const filename = pathArray[p].split('/')[0] === '' && pathArray[p][0] === '/' ? pathArray[p].substring(1) : pathArray[p];
+                            const {data} = await file({}, {id: filename, data: Buffer.from(content).toString('base64')});
+
+                            data.metadata = {};
+                            data.tags = {};
+
+                            // Upload file to blob storage.
+                            await sendData(config, [data]);
+                        }
+                    } catch (err) {
+                        console.log(err.message);
+                    }
+                    const blockBlobClient = containerClient.getBlockBlobClient(pathArray[p]);
+                    try {
+                        const downloadBlockBlobResponse = await blockBlobClient.download(0);
+                        let metadata = {};
+                        try {
+                            const properties = await blockBlobClient.getProperties();
+                            metadata = properties.metadata;
+                        } catch (err) {
+                            metadata = {};
+                        }
+                        const data = (await streamToBuffer(downloadBlockBlobResponse.readableStreamBody)).toString('base64');
+                        if (data) items.push(meta ? {id: pathArray[p], data, metadata} : await response.handleData(config, pathArray[p], p, {data, id: pathArray[p]}));
+                    } catch (e) {
+                        console.log(e.message);
+                        // Blob was not found.
+                    }
                 }
             }
         }
@@ -140,24 +175,82 @@ const getData = async (config = {authConfig: {}}, pathArray) => {
  *
  * @param {Object} config
  * @param {Array} pathArray
+ * @param {Boolean} meta
  * @return {Promise}
  */
-const sendData = async (config = {}, pathArray) => {
+const sendData = async (config = {}, pathArray, meta = false) => {
     const items = [];
     const containerClient = await createClient(config);
 
     if (containerClient) {
         for (let p = 0; p < pathArray.length; p++) {
-            const stream = new Readable();
-            stream.push(pathArray[p].encoding === 'base64' ? Buffer.from(pathArray[p].content, 'base64') : pathArray[p].content);
-            stream.push(null);
-            const blockBlobClient = containerClient.getBlockBlobClient(pathArray[p].filename);
-            const data = await blockBlobClient.uploadStream(stream,
-                uploadOptions.bufferSize, uploadOptions.maxBuffers,
-                {blobHTTPHeaders: {blobContentType: pathArray[p].mimetype}, metadata: pathArray[p].metadata, tags: pathArray[p].tags});
-            if (data) { items.push(pathArray[p]); }
+            if (meta) {
+                // Create blob client from container client
+                const blockBlobClient = await containerClient.getBlockBlobClient(pathArray[p].filename);
+                let existingMetadata = {};
+                try {
+                    const properties = await blockBlobClient.getProperties();
+                    existingMetadata = properties.metadata;
+                } catch (err) {
+                    existingMetadata = {};
+                }
+                const metadata = {...existingMetadata, ...(pathArray[p].metadata || {})};
+                // Upload buffer
+                const data = await blockBlobClient.uploadData(pathArray[p].content, {...uploadOptions, metadata});
+                if (data) { items.push({filename: pathArray[p].filename, content: pathArray[p].content, metadata}); }
+            } else {
+                const stream = new Readable();
+                stream.push(pathArray[p].encoding === 'base64' ? Buffer.from(pathArray[p].content, 'base64') : pathArray[p].content);
+                stream.push(null);
+                const blockBlobClient = containerClient.getBlockBlobClient(pathArray[p].filename);
+                const data = await blockBlobClient.uploadStream(stream,
+                    uploadOptions.bufferSize, uploadOptions.maxBuffers,
+                    {
+                        blobHTTPHeaders: {blobContentType: pathArray[p].mimetype},
+                        metadata: pathArray[p].metadata,
+                        tags: pathArray[p].tags,
+                    });
+                if (data) {
+                    items.push(pathArray[p]);
+                }
+            }
         }
     }
+    return items;
+};
+
+/**
+ * Removes file at Blob Storage.
+ *
+ * @param {Object} config
+ * @param {Array} pathArray
+ * @return {Promise}
+ */
+const remove = async (config = {}, pathArray) => {
+    const items = [];
+    const containerClient = await createClient(config);
+
+    if (containerClient) {
+        for (let p = 0; p < pathArray.length; p++) {
+            let item;
+            const name = pathArray[p];
+            // Create blob client from container client
+            const blockBlobClient = await containerClient.getBlockBlobClient(pathArray[p]);
+            try {
+                const options = {
+                    deleteSnapshots: 'include',
+                };
+                item = await blockBlobClient.delete(options);
+            } catch (err) {
+                // Blob was not found or deleted.
+                item = null;
+            }
+            if (item) {
+                items.push({name});
+            }
+        }
+    }
+
     return items;
 };
 
@@ -167,4 +260,5 @@ const sendData = async (config = {}, pathArray) => {
 module.exports = {
     getData,
     sendData,
+    remove,
 };

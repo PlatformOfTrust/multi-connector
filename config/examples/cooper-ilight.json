@@ -1,0 +1,24 @@
+{
+  "template": "rpc-ws-generic",
+  "static": {
+    "url": "wss://<ip-address>/eg",
+    "event": ["AttributeChangeAlert", "Occurrence", "Recurrence"],
+    "username": "<username>",
+    "password": "<password>",
+    "type": "MeasurePresence"
+  },
+  "dynamic": {
+    "authConfig.path": "ids"
+  },
+  "plugins": {
+    "dsaas": {
+      "url": "<url>",
+      "functionCode": "<code>"
+    }
+  },
+  "request": {
+    "ids": [
+      "<id>"
+    ]
+  }
+}

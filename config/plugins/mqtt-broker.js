@@ -30,7 +30,8 @@ const connect = async (config, options, callback) => {
             options.cert = fs.readFileSync('./greenlock.d/live/' + process.env.GREENLOCK_DOMAIN + '/cert.pem');
             options.ca = fs.readFileSync('./greenlock.d/live/' + process.env.GREENLOCK_DOMAIN + '/chain.pem');
         } catch (err) {
-            winston.log('error', 'Failed to set up MQTT over TLS. ' + err.message);
+            winston.log('error', options.productCode
+                + ': Failed to set up MQTT over TLS. ' + err.message);
         }
     }
 
@@ -68,7 +69,7 @@ const connect = async (config, options, callback) => {
             ws.createServer({server}, instance.handle);
             server.listen(port, function () {
                 winston.log('info', options.productCode
-                    + ' MQTT-WS broker started and listening on port ' + port);
+                    + ': MQTT-WS broker started and listening on port ' + port);
             });
         } catch (err) {
             console.log(err.message);
@@ -79,7 +80,7 @@ const connect = async (config, options, callback) => {
             const port = options.port || 8881;
             server.listen(port, function () {
                 winston.log('info', options.productCode
-                    + ' MQTT broker started and listening on port ' + port);
+                    + ': MQTT broker started and listening on port ' + port);
                 if (callback) callback(config, options.productCode);
             });
         } catch (err) {

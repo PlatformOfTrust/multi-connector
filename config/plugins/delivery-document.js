@@ -3,6 +3,8 @@
  * Module dependencies.
  */
 const transformer = require('../../app/lib/transformer');
+const {add, get, retry} = require('../../app/lib/retry');
+const commonResponse = require('../../app/lib/response');
 const connector = require('../../app/lib/connector');
 const validator = require('../../app/lib/validator');
 const sftp = require('../../app/protocols/sftp');
@@ -20,12 +22,16 @@ const FileType = require('file-type');
 
 const CSVToJSON = require('csvtojson');
 
+// Helper function to handle timestamps.
+const {convertFinnishDateToISOString} = require('../../app/lib/utils');
+
 /**
  * C4 CALS multi-purpose plugin for CALS and vendor connectors.
  */
 
 const PLUGIN_NAME = 'delivery-document';
-const DOWNLOAD_DIR = './temp/';
+const storagePath = process.env.STORAGE_PATH || './';
+const DOWNLOAD_DIR = `${storagePath}temp/`;
 const PRIMARY_PRODUCT_CODE = 'C1EC2973-8A0B-4858-BF1E-3A0D0CEFE33A';
 const orderNumberToCALSId = {};
 const productCodeToCALSId = {};
@@ -810,6 +816,11 @@ const documentSchema = {
                                 'title': 'Update time',
                                 'description': 'Last update time.',
                             },
+                            metadata: {
+                                $id: '#/properties/data/properties/document/items/properties/metadata',
+                                source: 'metadata',
+                                type: 'object',
+                            },
                             'created': {
                                 '$id': '#/properties/data/properties/document/items/properties/created',
                                 'source': null,
@@ -1127,6 +1138,7 @@ const response = async (config, response) => {
                     data: {
                         filename: response.id,
                         content: response.data,
+                        metadata: response.metadata,
                         extension: fileType.ext,
                         mimetype: fileType.mime,
                         encoding: 'base64',
@@ -1136,6 +1148,7 @@ const response = async (config, response) => {
         } else {
             response = {data: response};
         }
+        console.log('response 2', JSON.stringify(response));
         return response;
     } catch (e) {
         console.log(e.message);
@@ -1162,6 +1175,18 @@ const output = async (config, output) => {
     // Hand over data objects to transformer.
     try {
         const array = output.data[config.output.array];
+
+        // Find files from blob storage.
+        if (array.length === 0 && config.parameters.targetObject.retry) {
+            const dirs = Array.isArray(config.authConfig.toPath) ? config.authConfig.toPath : [config.authConfig.toPath];
+            await Promise.all(dirs.map(async toPath => {
+                const getFromStorage = await get(config.productCode + toPath + '/' + config.parameters.targetObject.idLocal);
+                if (getFromStorage[0]) {
+                    array.push(...(await commonResponse.handleData(config, config.output.id, 0, getFromStorage[0])));
+                }
+            }));
+        }
+
         for (let i = 0; i < array.length; i++) {
             result[config.output.object][config.output.array].push(
                 handleData(
@@ -1225,10 +1250,11 @@ const errorResponse = async (req, res, err) => {
  * @param {String} productCode
  * @param {Object} config
  * @param {String} idLocal
+ * @param {Boolean} isRetry
  * @return
  *   The connector response.
  */
-const getData = async (productCode, config, idLocal) => {
+const getData = async (productCode, config, idLocal, isRetry) => {
     // Compose triggered local connector request.
     const triggeredReq = {
         body: {
@@ -1237,6 +1263,7 @@ const getData = async (productCode, config, idLocal) => {
             parameters: {
                 targetObject: {
                     idLocal,
+                    retry: isRetry ? true : undefined,
                 },
             },
         },
@@ -1245,42 +1272,6 @@ const getData = async (productCode, config, idLocal) => {
     };
     winston.log('info', '1. Query self with path ${targetObject.idLocal} as ' + idLocal);
     return await connector.getData(triggeredReq);
-};
-
-Date.prototype.stdTimezoneOffset = function () {
-    const jan = new Date(this.getFullYear(), 0, 1);
-    const jul = new Date(this.getFullYear(), 6, 1);
-    return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
-};
-
-Date.prototype.isDstObserved = function () {
-    return this.getTimezoneOffset() < this.stdTimezoneOffset();
-};
-
-/**
- * Converts date object which has finnish UTC(+2 OR +3) as UTC0 to valid date object and vice versa.
- *
- * @param {Date} input
- * @param {Boolean} [reverse]
- * @param {Boolean} [convert]
- * @return {String}
- */
-const convertFinnishDateToISOString = (input, reverse = false, convert = false) => {
-    // Examples.
-    // Finnish UTC +2 or +3.
-    // new Date(1610031289498); -2
-    // new Date(1631092909080); -3 (Daylight Saving Time)
-    let output;
-    if (typeof input === 'string' && convert) {
-        input = input.replace(' ', 'T');
-    }
-    input = convert ? new Date(input) : input;
-    if (input.isDstObserved()) {
-        output = new Date(input.setHours(input.getHours() - (reverse ? 3 : -3)));
-    } else {
-        output = new Date(input.setHours(input.getHours() - (reverse ? 2 : -2)));
-    }
-    return output.toISOString();
 };
 
 /**
@@ -1675,20 +1666,29 @@ const DEFAULT_TIMEZONE = 'Europe/Helsinki';
 const runJob = async (productCode) => {
     try {
         const config = cache.getDoc('configs', productCode);
-        // Download files.
-        const docs = await sftp.getData({
-            productCode,
-            plugins: [],
-            authConfig: config.static,
-            parameters: {targetObject: {}},
-        }, [''], true);
+        const template = cache.getDoc('templates', config.template) || {};
+        let docs = [];
+
+        try {
+            // Download files.
+            docs = await sftp.getData({
+                productCode,
+                plugins: [],
+                authConfig: config.static,
+                parameters: {targetObject: {}},
+            }, [''], true);
+        } catch (err) {
+            winston.log('error', err.message);
+        }
+
         // Send new files and move to archive.
         for (let i = 0; i < docs.length; i++) {
-            const d = docs[i];
-            winston.log('info', 'Send file ' + d.path);
+            const input = docs[i];
+            winston.log('info', 'Send file ' + input.path);
             // 2. Trigger file sending to receivers.
             try {
-                const parts = d.path.split('/');
+                const parts = input.path.split('/');
+                const toPath = parts.slice(0, -1).join('/');
                 const result = await getData(productCode, config, parts[parts.length - 1]);
                 // Merge delivery information lines with same idLocal together.
                 const documents = {};
@@ -1711,12 +1711,27 @@ const runJob = async (productCode) => {
                     filename: parts[parts.length - 1],
                     isTest: false,
                 };
-                const template = cache.getDoc('templates', config.template) || {};
                 const send = await sendData(null, null, productCode, config, template, result, options);
                 if (Object.hasOwnProperty.call(send, 'error')) {
+                    // Retry logic.
+                    await add(productCode, input, async () => {
+                        // Move moved file.
+                        try {
+                            const items = await sftp.move({
+                                productCode: config.productCode,
+                                authConfig: {...config.static, toPath},
+                            }, [input.name], config.productCode, toPath + '/Archive');
+                            if (items.length > 0) {
+                                winston.log('info', items.toString());
+                            }
+                        } catch (err) {
+                            winston.log('error', `Callback: ${err.message}`);
+                        }
+                    });
+
                     const lineLimit = 10;
                     const path = '/error.log';
-                    const logFilePath = parts.slice(0, -1).join('/') + '/Log';
+                    const logFilePath = toPath + '/Log';
                     // Get log.
                     const logs = await sftp.getData({
                         productCode,
@@ -1748,6 +1763,46 @@ const runJob = async (productCode) => {
                 winston.log('error', err.message);
             }
         }
+
+        // Attempt to process files that failed previously.
+        await retry(productCode, async (input, callback) => {
+            try {
+                const parts = input.id.split('/');
+                const res = await getData(productCode, config, parts[parts.length - 1], true);
+                // Merge delivery information lines with same idLocal together.
+                const documents = {};
+                (Array.isArray(res.output.data.order) ? res.output.data.order : [res.output.data.order]).forEach(item => {
+                    if (Object.hasOwnProperty.call(item, 'deliveryLine') && Object.hasOwnProperty.call(item, 'delivery')) {
+                        if (Object.hasOwnProperty.call(item.delivery, 'idLocal')) {
+                            const deliveryId = item.delivery.idLocal;
+                            if (Object.hasOwnProperty.call(documents, deliveryId)) {
+                                documents[deliveryId].deliveryLine = Array.isArray(documents[deliveryId].deliveryLine) ? documents[deliveryId].deliveryLine : [documents[deliveryId].deliveryLine];
+                                item.deliveryLine = Array.isArray(item.deliveryLine) ? item.deliveryLine : [item.deliveryLine];
+                                documents[deliveryId].deliveryLine.push(...item.deliveryLine);
+                            } else {
+                                documents[deliveryId] = item;
+                            }
+                        }
+                    }
+                });
+                res.output.data.order = Object.values(documents).length > 0 ? Object.values(documents) : res.output.data.order;
+                const options = {
+                    filename: parts[parts.length - 1],
+                    isTest: false,
+                };
+                if (res.output.data.order.length > 0 || Object.values(documents).length > 0) {
+                    const attempt = await sendData(null, null, productCode, config, template, res, options);
+                    callback(Object.hasOwnProperty.call(attempt, 'error') ? attempt.error : null, attempt);
+                } else {
+                    winston.log('error', 'Retry callback: Empty confirmation.');
+                    callback('Retry callback: Empty confirmation.', null);
+                }
+            } catch (err) {
+                winston.log('error', err.message);
+                callback(err.message, null);
+            }
+        });
+
     } catch (err) {
         winston.log('error', err.message);
     }

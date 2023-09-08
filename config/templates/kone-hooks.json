@@ -1,0 +1,36 @@
+{
+    "plugins": [
+        "oauth2",
+        "kone-elevator-movement",
+        "streamer"
+    ],
+    "protocol": "hook",
+    "authConfig": {
+        "url": "${url}",
+        "authPath": "${authPath}",
+        "clientId": "${clientId}",
+        "clientSecret": "${clientSecret}",
+        "clientAuth": "${clientAuth}",
+        "grantType": "${grantType}",
+        "scope": "${scope}",
+        "path": "${idLocal}"
+    },
+    "dataObjects": [
+        ""
+    ],
+    "dataPropertyMappings": {
+        "MeasurePresence": "value"
+    },
+    "generalConfig": {
+        "hardwareId": {
+            "dataObjectProperty": "id"
+        },
+        "timestamp": {
+            "dataObjectProperty": "time"
+        }
+    },
+    "output": {
+        "array": "sensors",
+        "data": "measurements"
+    }
+}

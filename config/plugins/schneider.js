@@ -69,12 +69,25 @@ const output = async (config, output) => {
             // Handle hot and cold water categorization.
             output.data.process = output.data.process.map(a => ({...a, measurements: a.measurements.map(b => ({
                 ...b,
-                '@type':  a.id.includes('lämmin') ? 'MeasureWaterHotConsumptionLitre' : b['@type'],
+                '@type':  a.id.toLowerCase().includes('lämmin') ? 'MeasureWaterHotConsumptionLitre' : b['@type'],
             }))}));
         }
         return output;
     } catch (err) {
         return output;
+    }
+};
+
+/**
+ * Call endpoint without waiting for the response.
+ *
+ * @param {Object} options
+ */
+const fireAndForget = async (options) => {
+    try {
+        await request(options.method, options.url, options.headers);
+    } catch (err) {
+        //
     }
 };
 
@@ -109,43 +122,58 @@ const template = async (config, template) => {
             return Promise.reject();
         }
 
-        const options = await oauth2.request(template, {});
-        const domain = template.authConfig.url;
-
-        // Create subscription.
-        const createSubscriptionBodyUrl = domain + '/Subscriptions/Create';
-        const SubscriptionBody = {
-            SubscriptionType: 'ValueItemChanged',
-            Ids: ids,
-        };
-        const createdSubscription = await request('POST', createSubscriptionBodyUrl, options.headers, SubscriptionBody);
-
-        // Create notification.
-        const createNotificationUrl = domain + '/Notifications/Create';
-        const notificationBody = {
-            SubscriptionId: createdSubscription.body.Id,
-            ChangesOnly: false,
-        };
-        const createdNotification = await request('POST', createNotificationUrl, options.headers, notificationBody);
-
-        // Get notification.
-        const getNotificationUrl = domain + '/Notifications/' + createdNotification.body.Id + '/Items';
-        const {body} = await request('GET', getNotificationUrl, options.headers);
-
-        // Delete notification.
-        const deleteNotificationUrl = domain + '/Notifications/' + createdNotification.body.Id + '/Delete';
-        await request('DELETE', deleteNotificationUrl, options.headers);
-
-        // Delete subscription.
-        const deleteSubscriptionUrl = domain + '/Subscriptions/' + createdSubscription.body.Id + '/Delete';
-        await request('DELETE', deleteSubscriptionUrl, options.headers);
-
         template.generalConfig.hardwareId = {dataObjectProperty: 'ChangedItemId'};
         template.generalConfig.timestamp = {dataObjectProperty: 'ChangedAt'};
-        template.authConfig.path = body;
         template.protocol = 'custom';
+
+        const options = await oauth2.request(template, {});
+        const domain = template.authConfig.url;
+        const chunkSize = 200;
+
+        // Initialize data array.
+        template.authConfig.path = [];
+
+        for (let i = 0; i < ids.length; i += chunkSize) {
+            try {
+                const chunk = ids.slice(i, i + chunkSize);
+                // Create subscription.
+                const createSubscriptionBodyUrl = domain + '/Subscriptions/Create';
+                const SubscriptionBody = {
+                    SubscriptionType: 'ValueItemChanged',
+                    Ids: chunk,
+                };
+                const createdSubscription = await request('POST', createSubscriptionBodyUrl, options.headers, SubscriptionBody);
+
+                // Create notification.
+                const createNotificationUrl = domain + '/Notifications/Create';
+                const notificationBody = {
+                    SubscriptionId: createdSubscription.body.Id,
+                    ChangesOnly: false,
+                };
+                const createdNotification = await request('POST', createNotificationUrl, options.headers, notificationBody);
+
+                // Get notification.
+                const getNotificationUrl = domain + '/Notifications/' + createdNotification.body.Id + '/Items';
+                const {body} = await request('GET', getNotificationUrl, options.headers);
+
+                template.authConfig.path = [...template.authConfig.path, ...(Array.isArray(body) ? body : [])];
+
+                fireAndForget({
+                    method: 'DELETE',
+                    url: `${domain}/Notifications/${((createdNotification || {}).body|| {}).Id}/Delete`,
+                    headers: options.headers,
+                });
+                fireAndForget({
+                    method: 'DELETE',
+                    url: `${domain}/Subscriptions/${((createdSubscription || {}).body|| {}).Id}/Delete`,
+                    headers: options.headers,
+                });
+            } catch (err) {
+                winston.log('error', `${config.productCode ? `${config.productCode} | ` : ''}${err.message}`);
+            }
+        }
     } catch (err) {
-        winston.log('error', err.message);
+        winston.log('error', `${config.productCode ? `${config.productCode} | ` : ''}${err.message}`);
         return template;
     }
     return template;

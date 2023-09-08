@@ -153,17 +153,28 @@ const transform = function (source, schema) {
             switch (type) {
                 case 'object':
                     value = {};
-                    Object.entries(schema.properties || {})
-                        .forEach(entry => {
-                            let result;
-                            if (Object.hasOwnProperty.call(schema, 'function')) {
-                                result = transform(handle(source, schema.function), entry[1]);
-                            } else {
-                                result = transform(source, entry[1]);
-                            }
-                            if (result !== undefined) value[entry[0]] = result;
-                        });
-                    if (_.isEmpty(value)) value = undefined;
+                    if (!Object.hasOwnProperty.call(schema, 'properties')) {
+                        if (Object.hasOwnProperty.call(schema, 'value')) {
+                            value = replacePlaceholders(source, schema.value);
+                        } else if (Object.hasOwnProperty.call(schema, 'source')) {
+                            value = schema.source ? _.get(source, schema.source) : source;
+                        }
+                        if (Object.hasOwnProperty.call(schema, 'function')) {
+                            value = handle(value, schema.function);
+                        }
+                    } else {
+                        Object.entries(schema.properties || {})
+                            .forEach(entry => {
+                                let result;
+                                if (Object.hasOwnProperty.call(schema, 'function')) {
+                                    result = transform(handle(source, schema.function), entry[1]);
+                                } else {
+                                    result = transform(source, entry[1]);
+                                }
+                                if (result !== undefined) value[entry[0]] = result;
+                            });
+                        if (_.isEmpty(value)) value = undefined;
+                    }
                     break;
                 case 'array':
                     value = [];

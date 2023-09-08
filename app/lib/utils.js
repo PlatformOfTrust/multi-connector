@@ -1,5 +1,7 @@
 'use strict';
 const crypto = require('crypto');
+const cache = require('../cache');
+const winston = require('../../logger');
 
 /**
  * Module dependencies.
@@ -134,12 +136,130 @@ const decrypt = (value = {}) => {
     }
 };
 
+Date.prototype.stdTimezoneOffset = function () {
+    const jan = new Date(this.getFullYear(), 0, 1);
+    const jul = new Date(this.getFullYear(), 6, 1);
+    return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+};
+
+Date.prototype.isDstObserved = function () {
+    return this.getTimezoneOffset() < this.stdTimezoneOffset();
+};
+
+/**
+ * Converts date object which has finnish UTC(+2 OR +3) as UTC0 to valid date object and vice versa.
+ *
+ * @param {Date} input
+ * @param {Boolean} [reverse]
+ * @param {Boolean} [convert]
+ * @return {String}
+ */
+const convertFinnishDateToISOString = (input, reverse = false, convert = false) => {
+    // Examples.
+    // Finnish UTC +2 or +3.
+    // new Date(1610031289498); -2
+    // new Date(1631092909080); -3 (Daylight Saving Time)
+    let output;
+    if (typeof input === 'string' && convert) {
+        input = input.replace(' ', 'T');
+    }
+    input = convert ? new Date(input) : input;
+    if (input.isDstObserved()) {
+        output = new Date(input.setHours(input.getHours() - (reverse ? -3 : 3)));
+    } else {
+        output = new Date(input.setHours(input.getHours() - (reverse ? -2 : 2)));
+    }
+    return output.toISOString();
+};
+
+/**
+ * Generates random UUIDv4.
+ *
+ * @return {String}
+ */
+const uuidv4 = () => {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        const r = Math.random() * 16 | 0; const v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+};
+
+/**
+ * Waits for given time.
+ *
+ * @param {Number} ms
+ * @param {Function} [callback]
+ * @return {Promise}
+ */
+const wait = (ms, callback = () => undefined) => new Promise(resolve => setTimeout(() => resolve(callback()), ms));
+
+/**
+ * Returns next free port by product code.
+ *
+ * @param {String} [id]
+ * @param {Object} [defaultPort]
+ * @param {Object} [config]
+ * @param {String} [productCode]
+ * @return {Number}
+ */
+const getPort = (id, defaultPort = null, config, productCode) => {
+    let port;
+    const ports = cache.getKeysAndDocs('ports');
+    const usedPorts = Object.values(ports);
+    if (productCode) {
+        if (Object.hasOwnProperty.call(ports, productCode)) {
+            return ports[productCode];
+        }
+    }
+    if (!defaultPort) {
+        return null;
+    }
+    try {
+        let next = defaultPort;
+        while (!port) {
+            if (!usedPorts.includes(next)) {
+                port = next;
+            } else {
+                next++;
+            }
+        }
+        if (Object.hasOwnProperty.call(config.plugins[id], 'port')) {
+            const configuredPort = Number.parseInt(config.plugins[id].port);
+            if (!usedPorts.includes(configuredPort) && configuredPort !== 0) {
+                port = configuredPort;
+            }
+        }
+    } catch (err) {
+        winston.log('error', err.message);
+    }
+    return port;
+};
+
+/**
+ * Sets or deletes port by product code.
+ *
+ * @param {String} productCode
+ * @param {Number} [port]
+ */
+const setPort = (productCode, port) => {
+    if (port === undefined || port === null) {
+        cache.delDoc('ports', productCode);
+    } else {
+        cache.setDoc('ports', productCode, port, 0);
+    }
+};
+
 /**
  * Expose library functions.
  */
 module.exports = {
+    uuidv4,
     replaceAll,
     replacer,
     encrypt,
     decrypt,
+    convertFinnishDateToISOString,
+    wait,
+    getPort,
+    setPort,
 };

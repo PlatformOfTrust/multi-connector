@@ -25,8 +25,11 @@ module.exports.app = function (app, passport) {
 
     /** Default endpoint. */
     router.use('', (req, res) => {
-        return res.json({
-            message: 'Hello there!',
+        return res.status(404).json({
+            error: {
+                status: 404,
+                message: 'Not Found',
+            },
         });
     });
 

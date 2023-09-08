@@ -1,0 +1,16 @@
+{
+    "template": "kone-websocket",
+    "static": {
+        "url": "wss://dev.kone.com/stream-v2",
+        "authUrl" : "https://dev.kone.com",
+        "authPath" : "/api/v2/oauth2/token",
+        "clientAuth": "header",
+        "clientId": "<client-id>",
+        "clientSecret": "<client-secret>",
+        "grantType": "client_credentials",
+        "scope": "application/inventory callgiving/* equipmentstatus/*"
+    },
+    "dynamic": {
+        "authConfig.path": "ids"
+    }
+}

@@ -3,7 +3,7 @@
     "data-convert",
     "streamer"
   ],
-  "protocol": "websocket",
+  "protocol": "socket-io",
   "authConfig": {
     "url": "${url}",
     "path": "${id}",

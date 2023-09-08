@@ -3,6 +3,8 @@
  * Module dependencies.
  */
 const transformer = require('../../app/lib/transformer');
+const {add, get, retry} = require('../../app/lib/retry');
+const commonResponse = require('../../app/lib/response');
 const validator = require('../../app/lib/validator');
 const connector = require('../../app/lib/connector');
 const sftp = require('../../app/protocols/sftp');
@@ -18,9 +20,11 @@ const fs = require('fs').promises;
 const FileType = require('file-type');
 
 const PLUGIN_NAME = 'laattapiste';
-const DOWNLOAD_DIR = './temp/';
+const storagePath = process.env.STORAGE_PATH || './';
+const DOWNLOAD_DIR = `${storagePath}temp/`;
 const orderNumberToCALSId = {};
 const productCodeToCALSId = {};
+const LOGFILE = false;
 
 // Source mapping.
 const orderConfirmationSchema = {
@@ -1020,6 +1024,18 @@ const output = async (config, output) => {
     // Hand over data objects to transformer.
     try {
         const array = output.data[config.output.array];
+
+        // Find files from blob storage.
+        if (array.length === 0 && config.parameters.targetObject.retry) {
+            const dirs = Array.isArray(config.authConfig.toPath) ? config.authConfig.toPath : [config.authConfig.toPath];
+            await Promise.all(dirs.map(async toPath => {
+                const getFromStorage = await get(config.productCode + toPath + '/' + config.parameters.targetObject.idLocal);
+                if (getFromStorage[0]) {
+                    array.push(...(await commonResponse.handleData(config, config.output.id, 0, getFromStorage[0])));
+                }
+            }));
+        }
+
         for (let i = 0; i < array.length; i++) {
             result[config.output.object][config.output.array].push(
                 handleData(
@@ -1056,10 +1072,11 @@ const DEFAULT_TIMEZONE = 'Europe/Helsinki';
  * @param {String} productCode
  * @param {Object} config
  * @param {String} idLocal
+ * @param {Boolean} isRetry
  * @return
  *   The connector response.
  */
-const getData = async (productCode, config, idLocal) => {
+const getData = async (productCode, config, idLocal, isRetry) => {
     // Compose triggered local connector request.
     const triggeredReq = {
         body: {
@@ -1068,6 +1085,7 @@ const getData = async (productCode, config, idLocal) => {
             parameters: {
                 targetObject: {
                     idLocal,
+                    retry: isRetry ? true : undefined,
                 },
             },
         },
@@ -1124,6 +1142,7 @@ const errorResponse = async (req, res, err) => {
  */
 const sendData = async (req, res, productCode, config, template, result, options) => {
     let receiverProductCode;
+    let sent = false;
     try {
         // Fallback.
         receiverProductCode = 'purchase-order-from-cals';
@@ -1146,6 +1165,7 @@ const sendData = async (req, res, productCode, config, template, result, options
             const noData = new Error();
             noData.httpStatusCode = 404;
             noData.message = 'Not found.';
+            noData.productCode = productCode;
             return errorResponse(req, res, noData);
         }
 
@@ -1206,6 +1226,7 @@ const sendData = async (req, res, productCode, config, template, result, options
 
             winston.log('info', '2. Send received data to receiver data product ' + config.static.productCode + ', isTest=' + options.isTest);
             await template.plugins.find(p => p.name === 'broker').stream(template, result.output);
+            sent = true;
         }
     } catch (err) {
         winston.log('error', err.message);
@@ -1214,11 +1235,13 @@ const sendData = async (req, res, productCode, config, template, result, options
 
     // Detect if order confirmation was sent.
     try {
-        if (Object.hasOwnProperty.call(result.output, 'data')) {
+        if (Object.hasOwnProperty.call(result.output, 'data') && sent) {
             if (Object.hasOwnProperty.call(result.output.data, 'order')) {
                 if (Object.hasOwnProperty.call(result.output.data.order, 'orderLine')) {
                     const filename = options.filename;
-                    const logFilename = options.filename.slice(0, -4) + '.log';
+                    const parts = filename.split('.');
+                    const ext = parts[parts.length - 1];
+                    const logFilename = options.filename.slice(0, -ext.length - 1) + '.log';
                     const dirs = Array.isArray(config.static.toPath) ? config.static.toPath : [config.static.toPath];
                     for (let i = 0; i < dirs.length; i++) {
                         let removed = false;
@@ -1373,67 +1396,108 @@ const controller = async (req, res) => {
 const runJob = async (productCode) => {
     try {
         const config = cache.getDoc('configs', productCode);
-        // Download files.
-        const docs = (await sftp.getData({
-            productCode,
-            plugins: [],
-            authConfig: config.static,
-            parameters: {targetObject: {}},
-        }, [''], true)).filter(doc => ((doc || {}).path || '').slice(-4) !== '.log');
+        const template = cache.getDoc('templates', config.template) || {};
+        let docs = [];
+
+        try {
+            // Download files.
+            docs = (await sftp.getData({
+                productCode,
+                plugins: [],
+                authConfig: config.static,
+                parameters: {targetObject: {}},
+            }, [''], true)).filter(doc => ((doc || {}).path || '').slice(-4) !== '.log');
+        } catch (err) {
+            winston.log('error', err.message);
+        }
 
         // Send new files and move to archive.
         for (let i = 0; i < docs.length; i++) {
-            const d = docs[i];
-            winston.log('info', 'Send file ' + d.path);
+            const input = docs[i];
+            winston.log('info', 'Send file ' + input.path);
 
             // 2. Trigger file sending to receivers.
             try {
-                const parts = d.path.split('/');
-                const result = await getData(productCode, config, parts[parts.length - 1]);
+                const parts = input.path.split('/');
+                const toPath = parts.slice(0, -1).join('/');
+                const result = await getData(productCode, config, parts[parts.length - 1], false);
                 const options = {
                     filename: parts[parts.length - 1],
                     isTest: false,
                 };
-                const template = cache.getDoc('templates', config.template) || {};
                 const send = await sendData(null, null, productCode, config, template, result, options);
                 if (Object.hasOwnProperty.call(send, 'error')) {
-                    const lineLimit = 10;
-                    const filename = `${options.filename.split('.').slice(0, -1).join('.')}.log`;
-                    const path = `/${filename}`;
-                    const logFilePath = parts.slice(0, -1).join('/');
+                    winston.log('error', send.error);
+                    if (LOGFILE) {
+                        const lineLimit = 10;
+                        const filename = `${options.filename.split('.').slice(0, -1).join('.')}.log`;
+                        const path = `/${filename}`;
 
-                    // Get log.
-                    const logs = await sftp.getData({
-                        productCode,
-                        plugins: [],
-                        authConfig: {...config.static, toPath: logFilePath},
-                        parameters: {targetObject: {}},
-                    }, [path], true);
+                        // Get log.
+                        const logs = await sftp.getData({
+                            productCode,
+                            plugins: [],
+                            authConfig: {...config.static, toPath},
+                            parameters: {targetObject: {}},
+                        }, [path], true);
 
-                    // Insert new line.
-                    let log = '';
-                    const file = logs.find(f => f.name === filename);
-                    if (file) {
-                        log = Buffer.from(file.data, 'base64').toString('utf-8') + '\n';
+                        // Insert new line.
+                        let log = '';
+                        const file = logs.find(f => f.name === filename);
+                        if (file) {
+                            log = Buffer.from(file.data, 'base64').toString('utf-8') + '\n';
+                        }
+                        log += new Date().toISOString() + ': ' + parts[parts.length - 1] + ', ' + JSON.stringify(send.error);
+                        const content = log.split('\n').slice(-lineLimit).join('\n');
+
+                        // Upload log.
+                        const to = DOWNLOAD_DIR + productCode + toPath + path;
+                        await sftp.checkDir(to);
+                        await fs.writeFile(to, content);
+                        await sftp.sendData({
+                            productCode,
+                            plugins: [],
+                            authConfig: {...config.static, fromPath: toPath},
+                            parameters: {targetObject: {}},
+                        }, [path]);
                     }
-                    log += new Date().toISOString() + ': ' + parts[parts.length - 1] + ', ' + JSON.stringify(send.error);
-                    const content = log.split('\n').slice(-lineLimit).join('\n');
-
-                    // Upload log.
-                    const to = DOWNLOAD_DIR + productCode + logFilePath + path;
-                    await sftp.checkDir(to);
-                    await fs.writeFile(to, content);
-                    await sftp.sendData({
-                        productCode,
-                        plugins: [],
-                        authConfig: {...config.static, fromPath: logFilePath},
-                        parameters: {targetObject: {}},
-                    }, [path]);
+                    // Retry logic.
+                    await add(productCode, input, async () => {
+                        // Remove moved file.
+                        try {
+                            const items = await sftp.remove({
+                                productCode: config.productCode,
+                                authConfig: {...config.static, toPath},
+                            }, [input.name], config.productCode);
+                            if (items.length > 0) {
+                                winston.log('info', items.toString());
+                            }
+                        } catch (err) {
+                            winston.log('error', err.message);
+                        }
+                    });
                 }
             } catch (err) {
                 winston.log('error', err.message);
             }
         }
+
+        // Attempt to process files that failed previously.
+        await retry(productCode, async (input, callback) => {
+            try {
+                const parts = input.id.split('/');
+                const output = await getData(productCode, config, parts[parts.length - 1], true);
+                const options = {
+                    filename: parts[parts.length - 1],
+                    isTest: false,
+                };
+                const attempt = await sendData(null, null, productCode, config, template, output, options);
+                callback(Object.hasOwnProperty.call(attempt, 'error') ? attempt.error : null, attempt);
+            } catch (err) {
+                winston.log('error', err.message);
+                callback(err.message, null);
+            }
+        });
     } catch (err) {
         winston.log('error', err.message);
     }
@@ -1574,6 +1638,7 @@ const response = async (config, response) => {
                     data: {
                         filename: response.id,
                         content: response.data,
+                        metadata: response.metadata,
                         extension: fileType.ext,
                         mimetype: fileType.mime,
                         encoding: 'base64',

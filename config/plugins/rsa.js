@@ -87,7 +87,7 @@ module.exports = {
             let signatureValue;
             try {
                 signatureValue = crypto
-                    .createHmac('sha256', Buffer.from(clientSecret, 'utf8'))
+                    .createHmac('sha256', Buffer.from(clientSecret !== undefined ? clientSecret : '', 'utf8'))
                     .update(rsa.stringifyBody(options.body)).digest('base64');
             } catch (err) {
                 console.log(err.message);
