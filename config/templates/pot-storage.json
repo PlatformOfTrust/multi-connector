@@ -20,7 +20,7 @@
         "skipSpecificResponseParsing": true
     },
     "dataObjects": [
-      "data.process"
+      "${dataObjects}"
     ],
     "dataPropertyMappings": {
       "@type": "@type",
