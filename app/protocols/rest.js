@@ -209,17 +209,21 @@ const requestData = async (config, path, index) => {
     if (_.isObject(options.body)) {
         options.body = JSON.stringify(options.body);
     }
+    console.log('options', options)
 
     /** First attempt */
     return getDataByOptions(config.authConfig, options, path).then(function (result) {
         // Handle received data.
         if (result !== null) return response.handleData(config, path, index, parseResBody(result));
+        console.log('result good', parseResBody(result))
         // Handle connection timed out.
         return promiseRejectWithError(522, 'Connection timed out.');
     }).then(function (result) {
         // Return received data.
+        console.log('result', result)
         return Promise.resolve(result);
     }).catch(function (err) {
+        console.log('err', err)
         if (Object.hasOwnProperty.call(err, 'statusCode')) {
             if (err.statusCode === 404) {
                 return Promise.resolve([]);

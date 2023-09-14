@@ -33,6 +33,7 @@ module.exports.fetch = async (req, res) => {
     try {
         // Set custom timeout.
         req.setTimeout(1000 * 60 * 5);
+        console.log(req)
 
         // Fetch data.
         result = await connector.getData(req);
