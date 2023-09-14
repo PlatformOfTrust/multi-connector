@@ -28,7 +28,8 @@
       "location": "location",
       "processTarget": "processTarget",
       "physicalProperty": "physicalProperty",
-      "processValue": "processValue"
+      "processValue": "processValue",
+      "measurements": "measurements"
     },
     "input": {
         "required": [
