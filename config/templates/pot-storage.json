@@ -29,7 +29,8 @@
       "processTarget": "processTarget",
       "physicalProperty": "physicalProperty",
       "processValue": "processValue",
-      "measurements": "measurements"
+      "measurements": "measurements",
+      "id": "id"
     },
     "input": {
         "required": [
@@ -37,7 +38,7 @@
         ]
     },
     "output": {
-        "contextValue": "https://standards-ontotest.oftrust.net/v2/Context/DataProductOutput/Process/Measure/WaterMeterReading/?v=4.0",
-        "array": "process"
+        "contextValue": "${contextValue}",
+        "array": "${outputArray}"
     }
 }
