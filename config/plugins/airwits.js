@@ -24,6 +24,9 @@ const response = async (config, response) => {
             case 8:
                 output.header = response.data.substring(0, 2);
                 output.temp = parseInt(response.data.substring(2, 6), 16) / 10 - 40;
+                if (output.temp < 0) {
+                    output.temp += 40;
+                }
                 output.humidity = parseInt(response.data.substring(6, 8), 16);
         }
 
