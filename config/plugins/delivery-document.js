@@ -1881,7 +1881,7 @@ const destroyTask = (productCode) => {
 };
 
 // Get related configs and set schedules.
-setTimeout(() => {
+const setPolling = () => {
     Object.entries(cache.getKeysAndDocs('configs') || [])
         .filter(([_key, value]) => Object.entries(value.plugins || {})
             .filter(([key, _value]) => key === PLUGIN_NAME).length > 0)
@@ -1898,6 +1898,10 @@ setTimeout(() => {
                 projects[productCode] = config.plugins[PLUGIN_NAME].project;
             }
         });
+};
+
+setTimeout(() => {
+    setPolling();
 }, 5000);
 
 /**
@@ -1991,4 +1995,8 @@ module.exports = {
     template,
     output,
     response,
+    connect: async (config) => {
+        winston.log('info', config.productCode + ' set polling.');
+        setPolling();
+    },
 };

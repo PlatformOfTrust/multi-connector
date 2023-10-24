@@ -19,6 +19,11 @@
             },
             "clientSecret_disabled": "<client-secret>",
             "appAccessToken_disabled": "<app-token>"
+        },
+        "delivery-document": {
+            "schedule": "* * * * *",
+            "timezone": "Europe/Helsinki",
+            "project": "<project>"
         }
     },
     "request": {
