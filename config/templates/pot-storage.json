@@ -20,7 +20,7 @@
         "skipSpecificResponseParsing": true
     },
     "dataObjects": [
-      "data.process"
+      "${dataObjects}"
     ],
     "dataPropertyMappings": {
       "@type": "@type",
@@ -28,7 +28,9 @@
       "location": "location",
       "processTarget": "processTarget",
       "physicalProperty": "physicalProperty",
-      "processValue": "processValue"
+      "processValue": "processValue",
+      "measurements": "measurements",
+      "id": "id"
     },
     "input": {
         "required": [
@@ -36,7 +38,7 @@
         ]
     },
     "output": {
-        "contextValue": "https://standards-ontotest.oftrust.net/v2/Context/DataProductOutput/Process/Measure/WaterMeterReading/?v=4.0",
-        "array": "process"
+        "contextValue": "${contextValue}",
+        "array": "${outputArray}"
     }
 }

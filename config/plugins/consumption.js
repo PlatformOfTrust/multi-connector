@@ -66,6 +66,11 @@ function findStartEnd (items) {
             if (result[type].value > 10 * averageValue / averageTime * interval && value > 0) {
                 result[type].value = value;
             }
+
+            // Adjust end value.
+            if (result[type].endValue === 0) {
+                result[type].endValue = Number.parseFloat((result[type].data.filter(item => Number.parseFloat(item.value) !== 0).pop() || {value: '0'}).value);
+            }
         } catch (err) {
             console.log('Failed to validate consumption.');
         }

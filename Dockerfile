@@ -1,5 +1,5 @@
 # Specify where to get the base image and create a new container
-FROM node:12
+FROM node:12-alpine
 
 # Create app directory
 WORKDIR /usr/src/app

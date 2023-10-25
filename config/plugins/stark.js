@@ -1514,6 +1514,14 @@ const getData = async (productCode, config, idLocal, isRetry) => {
 const runJob = async (productCode) => {
     try {
         const config = cache.getDoc('configs', productCode);
+        // Stop task if it has been removed.
+        if (!config) {
+            // Detach stopping from the execution to be able to stop the job externally.
+            setTimeout(() => {
+                stopTask(productCode);
+            }, 1000);
+            return;
+        }
         const template = cache.getDoc('templates', config.template) || {};
         let docs = [];
 
@@ -1631,7 +1639,6 @@ const runJob = async (productCode) => {
 const restartTask = (productCode, schedule = DEFAULT_SCHEDULE, timezone = DEFAULT_TIMEZONE) => {
     try {
         stopTask(productCode);
-        destroyTask(productCode);
         return startTask(productCode, schedule, timezone);
     } catch (err) {
         winston.log('error', err.message);
@@ -1667,26 +1674,11 @@ const startTask = async (productCode, schedule = DEFAULT_SCHEDULE, timezone = 'E
 const stopTask = (productCode) => {
     try {
         if (Object.hasOwnProperty.call(tasks, productCode)) {
-            if (Object.hasOwnProperty.call(tasks[productCode], 'stop')) {
+            if (typeof tasks[productCode].stop === 'function') {
+                winston.log('info', `Stop a job with id ${productCode}`);
                 tasks[productCode].stop();
             }
-        }
-    } catch (err) {
-        winston.log('error', err.message);
-    }
-};
-
-/**
- * Destroys a cron task by product code.
- *
- * @param {String} productCode
- */
-const destroyTask = (productCode) => {
-    try {
-        if (Object.hasOwnProperty.call(tasks, productCode)) {
-            if (Object.hasOwnProperty.call(tasks[productCode], 'destroy')) {
-                tasks[productCode].destroy();
-            }
+            delete tasks[productCode];
         }
     } catch (err) {
         winston.log('error', err.message);
@@ -1694,7 +1686,7 @@ const destroyTask = (productCode) => {
 };
 
 // Get related configs and set schedules.
-setTimeout(() => {
+const setPolling = () => {
     Object.entries(cache.getKeysAndDocs('configs') || [])
         .filter(([_key, value]) => Object.entries(value.plugins || {})
             .filter(([key, _value]) => key === PLUGIN_NAME).length > 0)
@@ -1708,6 +1700,10 @@ setTimeout(() => {
                 }
             }
         });
+};
+
+setTimeout(() => {
+    setPolling();
 }, 5000);
 
 module.exports = {
@@ -1715,4 +1711,9 @@ module.exports = {
     template,
     output,
     response,
+    connect: async (config) => {
+        winston.log('info', config.productCode + ' set polling.');
+        // Trigger polling after config has been stored to cache.
+        setTimeout(() => setPolling(), 5000);
+    },
 };

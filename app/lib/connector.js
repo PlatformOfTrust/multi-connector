@@ -82,16 +82,45 @@ function handleFile (collection, file, data, skipEmit) {
             if (template.protocol === 'hook' && !skipEmit) {
                 emitter.emit('collections', {configs: {[file]: object}});
             }
-            if (typeof protocols[template.protocol].connect === 'function') {
-                protocols[template.protocol].connect(object, file);
-            } else if (Object.hasOwnProperty.call(object, 'static')) {
-                if (Object.hasOwnProperty.call(object.static, 'fromPath') && Object.hasOwnProperty.call(object.static, 'toPath')) {
-                    if (Object.hasOwnProperty.call(object, 'plugins')) {
-                        if (Object.hasOwnProperty.call(object.plugins, 'sftp-server')) {
-                            protocols['sftp'].connect(object, file);
+            try {
+                const selected = Array.isArray(template.protocol) ? template.protocol : [template.protocol];
+                const protocolsWithConnect = selected.filter(p => typeof protocols[p].connect === 'function');
+                if (protocolsWithConnect.length > 0) {
+                    protocolsWithConnect.forEach(pc => {
+                        try {
+                            protocols[pc].connect(object, file);
+                        } catch (err) {
+                            winston.log('error', err.message);
+                        }
+                    });
+                } else if (Object.hasOwn(object, 'static')) {
+                    if (Object.hasOwn(object.static, 'fromPath') && Object.hasOwn(object.static, 'toPath')) {
+                        if (Object.hasOwn(object, 'plugins')) {
+                            if (Object.hasOwn(object.plugins, 'sftp-server')) {
+                                protocols['sftp'].connect(object, file);
+                            }
                         }
                     }
                 }
+            } catch (err) {
+                winston.log('error', err.message);
+            }
+
+            // Start custom polling.
+            try {
+                if (Object.hasOwn(object, 'plugins')) {
+                    const customPolling = Object.entries((object || {}).plugins)
+                        .filter(([_pluginName, pluginConfig]) => _.isObject(pluginConfig)
+                            ? Object.hasOwn(pluginConfig, 'schedule') && Object.hasOwn(pluginConfig, 'timezone')
+                            : false);
+                    for (let i = 0; i < customPolling.length; i++) {
+                        if (typeof plugins[customPolling[i][0]].connect === 'function') {
+                            plugins[customPolling[i][0]].connect({productCode: file, ...object});
+                        }
+                    }
+                }
+            } catch (err) {
+                winston.log('error', err.message);
             }
         }
         // Attach scheduler plugin.
