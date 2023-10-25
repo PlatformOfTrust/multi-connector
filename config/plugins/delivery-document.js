@@ -1997,6 +1997,7 @@ module.exports = {
     response,
     connect: async (config) => {
         winston.log('info', config.productCode + ' set polling.');
-        setPolling();
+        // Trigger polling after config has been stored to cache.
+        setTimeout(() => setPolling(), 5000);
     },
 };
