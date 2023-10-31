@@ -111,7 +111,7 @@ function handleFile (collection, file, data, skipEmit) {
                 if (Object.hasOwnProperty.call(object, 'plugins')) {
                     const customPolling = Object.entries((object || {}).plugins)
                         .filter(([_pluginName, pluginConfig]) => _.isObject(pluginConfig)
-                            ? Object.hasOwnProperty.call(pluginConfig, 'schedule') && Object.hasOwn(pluginConfig, 'timezone')
+                            ? Object.hasOwnProperty.call(pluginConfig, 'schedule') && Object.hasOwnProperty.call(pluginConfig, 'timezone')
                             : false);
                     for (let i = 0; i < customPolling.length; i++) {
                         if (typeof plugins[customPolling[i][0]].connect === 'function') {
