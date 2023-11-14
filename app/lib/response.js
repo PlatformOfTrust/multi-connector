@@ -100,6 +100,7 @@ const handleData = async (config, path, index, data) => {
         timestamp: _.get(config, 'output.timestamp') || 'timestamp',
         data: _.get(config, 'output.data') || 'measurements',
         value: _.get(config, 'output.value') || 'value',
+        name: _.get(config, 'output.name') || 'name',
         type: _.get(config, 'output.type') || 'type',
         id: _.get(config, 'output.id') || 'id',
     };
@@ -128,6 +129,9 @@ const handleData = async (config, path, index, data) => {
 
             // Look for hardwareId.
             let hardwareId = getValueFromResponse(config.generalConfig, path, dataObjects[j], 'hardwareId');
+
+            // Look for source name.
+            let name = getValueFromResponse(config.generalConfig, path, dataObjects[j], 'sourceName');
 
             // Look for timestamp.
             let timestamp = getValueFromResponse(config.generalConfig, path, dataObjects[j], 'timestamp');
@@ -208,6 +212,7 @@ const handleData = async (config, path, index, data) => {
 
             const item = {
                 [keys.id]: hardwareId,
+                [keys.name]: name,
                 [keys.data]: [],
             };
 
