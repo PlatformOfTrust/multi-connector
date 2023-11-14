@@ -34,7 +34,7 @@ const response = async (config, response) => {
             config['dataObjects'].forEach((path) => {
                 // Filter latest data.
                 if (Object.hasOwnProperty.call(response, path)) {
-                    response[path] = ids.map(id => response[path]
+                    response[path] = ids.map(id => (response[path] || [])
                         .sort(sortByDateTimeString(timestampKey))
                         .filter(c => idKey ? c[idKey] === id : ids[config.index] === id).pop()).flat();
                 }

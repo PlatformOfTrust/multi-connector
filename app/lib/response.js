@@ -131,7 +131,7 @@ const handleData = async (config, path, index, data) => {
             let hardwareId = getValueFromResponse(config.generalConfig, path, dataObjects[j], 'hardwareId');
 
             // Look for source name.
-            let name = getValueFromResponse(config.generalConfig, path, dataObjects[j], 'sourceName');
+            const name = getValueFromResponse(config.generalConfig, path, dataObjects[j], 'sourceName');
 
             // Look for timestamp.
             let timestamp = getValueFromResponse(config.generalConfig, path, dataObjects[j], 'timestamp');

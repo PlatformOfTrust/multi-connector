@@ -1,0 +1,19 @@
+{
+  "template": "granlund-metrix",
+  "static": {
+    "url": "<url>",
+    "authUrl": "<authUrl>",
+    "username": "<username>",
+    "password": "<password>",
+    "clientId": "<client-id>",
+    "clientSecret": "<client-secret>",
+    "type": "temp",
+    "objectId": "<object-id>",
+    "headers": {
+      "Accept-Language": "fi"
+    }
+  },
+  "dynamic": {
+    "authConfig.path": "ids"
+  }
+}
