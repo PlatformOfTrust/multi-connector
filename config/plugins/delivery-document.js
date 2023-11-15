@@ -1148,7 +1148,7 @@ const response = async (config, response) => {
         } else {
             response = {data: response};
         }
-        console.log('response 2', JSON.stringify(response));
+        // console.log('response 2', JSON.stringify(response));
         return response;
     } catch (e) {
         console.log(e.message);
