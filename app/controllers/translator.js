@@ -41,7 +41,6 @@ module.exports.fetch = async (req, res) => {
         winston.log('info', [
             200,
             req.originalUrl,
-            `productCode=${result.error.productCode}, appId=${result.error.appId}`,
             'Handled broker request successfully',
         ].join(' | '));
 
