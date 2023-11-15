@@ -1965,6 +1965,7 @@ const template = async (config, template) => {
 
                 winston.log('info', '3. Send data to URL ' + to);
                 await sftp.sendData(template, [path]);
+                winston.log('info', '4. Successfully sent data');
 
                 template.protocol = 'hook';
                 template.authConfig.path = id;

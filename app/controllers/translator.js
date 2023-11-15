@@ -37,6 +37,14 @@ module.exports.fetch = async (req, res) => {
         // Fetch data.
         result = await connector.getData(req);
 
+        // Log successful data fetch.
+        winston.log('info', [
+            200,
+            req.originalUrl,
+            `productCode=${result.error.productCode}, appId=${result.error.appId}`,
+            'Handled broker request successfully',
+        ].join(' | '));
+
         // Initialize signature object.
         const signature = {
             type: 'RsaSignature2018',

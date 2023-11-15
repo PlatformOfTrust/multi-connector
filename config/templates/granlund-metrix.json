@@ -1,0 +1,43 @@
+{
+  "plugins": [
+    "oauth2",
+    "granlund-metrix",
+    "latest"
+  ],
+  "protocol": "rest",
+  "authConfig": {
+    "url": "${authUrl}",
+    "authPath": "/connect/token",
+    "clientId": "${clientId}",
+    "clientSecret": "${clientSecret}",
+    "username": "${username}",
+    "password": "${password}",
+    "scope": "api1",
+    "headers": "${headers}",
+    "path": "${url}/api/v1/objects/${objectId}/measure-points/${id}/measurements"
+  },
+  "dataObjects": [
+      "Measurements"
+  ],
+  "dataPropertyMappings": {
+    "${type}": "Value"
+  },
+  "generalConfig": {
+    "query": {
+      "end": "EndDate",
+      "start": "StartDate"
+    },
+    "timestamp": {
+      "dataObjectProperty": "MeasureTime"
+    },
+    "sourceName": {
+      "dataObjectProperty": "LogPointID"
+    },
+    "hardwareId": {
+      "dataObjectProperty": "MeasurePointId"
+    }
+  },
+  "output": {
+    "contextValue": "https://standards.oftrust.net/v2/Context/DataProductOutput/ServiceRequest/?v=2.0"
+  }
+}
