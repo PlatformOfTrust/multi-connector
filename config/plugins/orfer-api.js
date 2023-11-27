@@ -12,8 +12,8 @@ const {queue, isQueued} = require('../../app/lib/queue');
  */
 
 const name = 'orfer-api';
-const UPDATE_TIME = 10 * 60 * 1000;
-const STORAGE_TIME = 5 * 24 * 60 * 60 * 1000;
+const UPDATE_TIME = 10 * 60 * 1000; // 10 min
+const STORAGE_TIME = 24 * 60 * 60 * 1000; // 1 day
 
 /**
  * Returns a hash code from a string
