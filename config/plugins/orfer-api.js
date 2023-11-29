@@ -53,11 +53,20 @@ const request = async (method, url, headers, body, query = {}, returnOnError, sk
         headers,
     };
 
+    const keys = cache.getKeys('messages').filter(key => key.slice(0, name.length) === name);
+
+    // Limit cache key amount to 5000.
+    if (keys.length > 5000) {
+        // Delete first 1000 keys from the beginning.
+        const remove = keys.slice(0, 1000);
+        remove.forEach(key => cache.delDoc('messages', key));
+    }
+
     const hash = hashCode(JSON.stringify(options)).toString();
-    const result = cache.getDoc('messages', hash);
+    const result = cache.getDoc('messages', `${name}-${hash}`);
 
     if (_.isObject(result) ? Object.hasOwnProperty.call(result, 'body') && !skip : null) {
-        const ttl = cache.getTtl('messages', hash) || 0;
+        const ttl = cache.getTtl('messages', `${name}-${hash}`) || 0;
         const expiration = ttl - STORAGE_TIME + UPDATE_TIME;
         if (new Date().getTime() > expiration && !skip) {
             try {
@@ -71,7 +80,7 @@ const request = async (method, url, headers, body, query = {}, returnOnError, sk
         return Promise.resolve(result);
     } else {
         return rp(options).then(result => {
-            cache.setDoc('messages', hash, {body: result.body}, STORAGE_TIME / 1000);
+            cache.setDoc('messages', `${name}-${hash}`, {body: result.body}, STORAGE_TIME / 1000);
             return Promise.resolve(result);
         }).catch((error) => {
             return returnOnError ? Promise.resolve(returnOnError) : Promise.resolve(error);
