@@ -485,6 +485,7 @@ const output = async (config, output) => {
         try {
             const count = {};
             const completed = {};
+            const categorizationLocal = {};
             result[config.output.object][config.output.array] = result[config.output.object][config.output.array].map((t) => {
                 if (Object.hasOwnProperty.call(t, 'maintenanceInformation') || Object.hasOwnProperty.call(t, 'note') || Object.hasOwnProperty.call(t, 'serviceRequest')) {
                     const keyName = Object.hasOwnProperty.call(t, 'maintenanceInformation') ? 'maintenanceInformation' : Object.hasOwnProperty.call(t, 'note') ? 'note' : 'serviceRequest';
@@ -495,6 +496,18 @@ const output = async (config, output) => {
                             const targetId = target.idLocal2 || target.idLocal;
                             count[targetId] = !Object.hasOwnProperty.call(count, targetId) ? 1 : count[targetId] + 1;
                             completed[targetId] = !Object.hasOwnProperty.call(completed, targetId) ? (done ? 1 : 0) : completed[targetId] + (done ? 1 : 0);
+                            if (Object.hasOwnProperty.call(m, 'categorizationLocal')) {
+                                if (typeof m.categorizationLocal === 'string') {
+                                    if (Object.hasOwnProperty.call(categorizationLocal, targetId)) {
+                                        categorizationLocal[targetId][m.categorizationLocal] = !Object.hasOwnProperty.call(categorizationLocal[targetId], m.categorizationLocal) ? {count: 1, completed: 0} : {count: categorizationLocal[targetId][m.categorizationLocal].count + 1, completed: 0};
+                                    } else {
+                                        categorizationLocal[targetId] = {[m.categorizationLocal]: {count: 1, completed: 0}};
+                                    }
+                                    if (done) {
+                                        categorizationLocal[targetId][m.categorizationLocal].completed = !Object.hasOwnProperty.call(categorizationLocal[targetId][m.categorizationLocal], 'completed') ? 1 : categorizationLocal[targetId][m.categorizationLocal].completed + 1;
+                                    }
+                                }
+                            }
                         }
                     });
                     t[keyName] = t[keyName].map(m => {
@@ -504,6 +517,9 @@ const output = async (config, output) => {
                             if (Object.hasOwnProperty.call(count, targetId)) {
                                 m.count = count[targetId];
                                 m.completed = completed[targetId];
+                                m.categories = Object.entries(categorizationLocal[targetId] || {}).map(([objectKey, objectValue]) => ({name: objectKey, value: objectValue.completed === 0 || objectValue.count === 0 ? 0 : Math.round(objectValue.completed / objectValue.count * 100), ...objectValue})).sort(function(a, b) {
+                                    return a.value - b.value;
+                                });
                                 m.value =  m.completed === 0 || m.count === 0 ? 0 : Math.round(m.completed / m.count * 100);
                                 // delete count[m.processTarget[0].idLocal];
                             }
