@@ -517,7 +517,9 @@ const output = async (config, output) => {
                             if (Object.hasOwnProperty.call(count, targetId)) {
                                 m.count = count[targetId];
                                 m.completed = completed[targetId];
-                                m.categories = Object.entries(categorizationLocal[targetId] || {}).map(([objectKey, objectValue]) => ({name: objectKey, value: objectValue.completed === 0 || objectValue.count === 0 ? 0 : Math.round(objectValue.completed / objectValue.count * 100), ...objectValue}));
+                                m.categories = Object.entries(categorizationLocal[targetId] || {}).map(([objectKey, objectValue]) => ({name: objectKey, value: objectValue.completed === 0 || objectValue.count === 0 ? 0 : Math.round(objectValue.completed / objectValue.count * 100), ...objectValue})).sort(function(a, b) {
+                                    return a.value - b.value;
+                                });
                                 m.value =  m.completed === 0 || m.count === 0 ? 0 : Math.round(m.completed / m.count * 100);
                                 // delete count[m.processTarget[0].idLocal];
                             }
