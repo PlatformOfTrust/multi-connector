@@ -77,7 +77,7 @@
                                 "$id": "#/properties/data/properties/note/items/properties/actionRequired",
                                 "source": null,
                                 "type": "string",
-                                "title": "Desriptions of actions",
+                                "title": "Descriptions of actions",
                                 "description": "Actions or activities required or planned to be taken."
                             },
                             "completionRequired": {

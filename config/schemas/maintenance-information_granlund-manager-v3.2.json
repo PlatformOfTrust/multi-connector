@@ -59,6 +59,13 @@
                                 "title": "Name",
                                 "description": "Name."
                             },
+                            "categorizationLocal": {
+                                "$id": "#/properties/data/properties/maintenanceInformation/items/properties/categorizationLocal",
+                                "type": "string",
+                                "title": "Local category",
+                                "description": "Categorisation name given locally.",
+                                "source": "Package.Title"
+                            },
                             "descriptionGeneral": {
                                 "$id": "#/properties/data/properties/maintenanceInformation/items/properties/descriptionDescription",
                                 "source": "Mission.Name",
