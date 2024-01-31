@@ -111,7 +111,7 @@ const stream = async (template, data) => {
                 const accessToken = process.env.POT_ACCESS_TOKEN || appAccessToken;
 
                 /** Validate PoT credentials */
-                if (!clientSecret || !appAccessToken) {
+                if ((!clientSecret && version !== 'v2') || !appAccessToken) {
                     const err = new Error('Unauthorized to send broker request. Application credentials not configured properly.');
                     err.httpStatusCode = 500;
                     return Promise.reject(err);
@@ -163,6 +163,7 @@ const stream = async (template, data) => {
 
                     // Set request headers
                     const headers = {
+                        Authorization: version === 'v2' ? `Bearer ${appAccessToken}` : undefined,
                         'X-Pot-Signature': signatureValue,
                         'X-App-Token': appAccessToken,
                         'X-User-Token': accessToken,
