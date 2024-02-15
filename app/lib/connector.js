@@ -125,7 +125,7 @@ function handleFile (collection, file, data, skipEmit) {
         }
         // Attach scheduler plugin.
         if (process.env.SCHEDULER === 'true' && collection === 'templates') {
-            object.plugins = _.uniq(['scheduler', ...object.plugins]);
+            object.plugins = _.uniq(['scheduler', ...(object.plugins || [])]);
         }
     } catch (err) {
         /** File is not a valid JSON. */
