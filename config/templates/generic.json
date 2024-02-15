@@ -1,0 +1,28 @@
+{
+  "protocol": "rest",
+  "authConfig": {
+    "url": "${url}",
+    "path": "${path}"
+  },
+  "dataObjects": [
+    "${dataObjects}"
+  ],
+  "dataPropertyMappings": {
+    "${type}": "${value}"
+  },
+  "generalConfig": {
+    "query": {
+      "end": "${end}",
+      "start": "${start}"
+    },
+    "sourceName": {
+      "dataObjectProperty": "${sourceName}"
+    },
+    "hardwareId": {
+      "dataObjectProperty": "${hardwareId}"
+    },
+    "timestamp": {
+      "dataObjectProperty": "${timestamp}"
+    }
+  }
+}
