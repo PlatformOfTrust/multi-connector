@@ -9,8 +9,8 @@ const cache = require('../../app/cache');
 const {queue} = require('../../app/lib/queue');
 const winston = require('../../logger.js');
 const transformer = require('../../app/lib/transformer');
-const noteSchema = require('../schemas/note_granlund-manager-v4.0.json');
-const serviceRequestSchema = require('../schemas/service-request_granlund-manager-v2.1.json');
+const noteSchema = require('../schemas/note_granlund-manager-v4.1.json');
+const serviceRequestSchema = require('../schemas/service-request_granlund-manager-v2.2.json');
 const maintenanceInformationSchema = require('../schemas/maintenance-information_granlund-manager-v3.2.json');
 
 /**
@@ -78,6 +78,54 @@ const getNotes = async (config, url, skip = false) => {
         }
     } catch (e) {
         return null;
+    }
+};
+
+/**
+ * Resolve history items by object.
+ *
+ * @param {Object} config
+ * @param {String} id
+ * @return {Object}
+ */
+const getHistoryItems = async (config, id) => {
+    try {
+        const oauth2 = config.plugins.find(p => p.name === 'oauth2');
+        const options = await oauth2.request(config, {});
+        const baseUrlParts = (Array.isArray(config.authConfig.path) ? config.authConfig.path[0] : config.authConfig.path).split('/');
+        const url = `${baseUrlParts.slice(0, 5).join('/')}/${baseUrlParts.pop()}/${id}/history`;
+        let {body} = await request('GET', url, {...options.headers, 'Content-Type': 'application/json'});
+
+        if (Array.isArray(body)) {
+            body = body.map(value => {
+                switch (value.Phase) {
+                    case 'New':
+                        value.Phase = 'New';
+                        value.PhaseValue = 1;
+                        break;
+                    case 'Undefined':
+                        value.Phase = 'New';
+                        value.PhaseValue = 1;
+                        break;
+                    case 'Defined':
+                        value.Phase = 'Completed';
+                        value.PhaseValue = 3;
+                        break;
+                    case 'Finished':
+                        value.Phase = 'Completed';
+                        value.PhaseValue = 3;
+                        break;
+                    case 'UnderProgress':
+                        value.Phase = 'Ongoing';
+                        value.PhaseValue = 2;
+                        break;
+                }
+                return value;
+            });
+        }
+        return body;
+    } catch (e) {
+        return [];
     }
 };
 
@@ -180,6 +228,16 @@ const handleData = async (config, id, data, index) => {
                     getNote(config, value);
                 }
 
+                try {
+                    const populate = Object.hasOwnProperty.call(config.parameters, 'populate') ? config.parameters.populate || [] : [];
+                    // Populate history.
+                    if (populate.includes(value.MaintenanceNoteId.toString()) || populate.includes(value.MaintenanceNoteId) || data.length < 10) {
+                        value.HistoryItems = await getHistoryItems(config, value.Id);
+                    }
+                } catch (err) {
+                    console.log(err.message);
+                }
+
                 result = transformer.transform(value, noteSchema.properties.data);
             } else if (data[j]['@type'] === 'Case' || data[j]['@type'] === '${type}') {
                 key = Object.keys(serviceRequestSchema.properties.data.properties)[0];
@@ -225,6 +283,16 @@ const handleData = async (config, id, data, index) => {
                         }
                         value.CodedObject.Name2 = name.join(' ');
                         value.CodedObject.DisplayName2 = `${value.CodedObject.Id2}${value.CodedObject.Name2 !== value.CodedObject.Id2 ? ' ' + value.CodedObject.Name2 : ''}`;
+                    }
+                } catch (err) {
+                    console.log(err.message);
+                }
+
+                try {
+                    // Populate history.
+                    const populate = Object.hasOwnProperty.call(config.parameters, 'populate') ? config.parameters.populate || [] : [];
+                    if (populate.includes(value.Id.toString()) || populate.includes(value.Id) || data.length < 10) {
+                        value.HistoryItems = await getHistoryItems(config, value.Id);
                     }
                 } catch (err) {
                     console.log(err.message);
@@ -517,7 +585,7 @@ const output = async (config, output) => {
                             if (Object.hasOwnProperty.call(count, targetId)) {
                                 m.count = count[targetId];
                                 m.completed = completed[targetId];
-                                m.categories = Object.entries(categorizationLocal[targetId] || {}).map(([objectKey, objectValue]) => ({name: objectKey, value: objectValue.completed === 0 || objectValue.count === 0 ? 0 : Math.round(objectValue.completed / objectValue.count * 100), ...objectValue})).sort(function(a, b) {
+                                m.categories = Object.entries(categorizationLocal[targetId] || {}).map(([objectKey, objectValue]) => ({name: objectKey, value: objectValue.completed === 0 || objectValue.count === 0 ? 0 : Math.round(objectValue.completed / objectValue.count * 100), ...objectValue})).sort(function (a, b) {
                                     return a.value - b.value;
                                 });
                                 m.value =  m.completed === 0 || m.count === 0 ? 0 : Math.round(m.completed / m.count * 100);
