@@ -567,12 +567,9 @@ const output = async (config, output) => {
                             if (Object.hasOwnProperty.call(m, 'categorizationLocal')) {
                                 if (typeof m.categorizationLocal === 'string') {
                                     if (Object.hasOwnProperty.call(categorizationLocal, targetId)) {
-                                        categorizationLocal[targetId][m.categorizationLocal] = !Object.hasOwnProperty.call(categorizationLocal[targetId], m.categorizationLocal) ? {count: 1, completed: 0} : {count: categorizationLocal[targetId][m.categorizationLocal].count + 1, completed: 0};
+                                        categorizationLocal[targetId][m.categorizationLocal] = !Object.hasOwnProperty.call(categorizationLocal[targetId], m.categorizationLocal) ? {count: 1, completed: done ? 1 : 0} : {count: categorizationLocal[targetId][m.categorizationLocal].count + 1, completed: categorizationLocal[targetId][m.categorizationLocal].completed + (done ? 1 : 0)};
                                     } else {
-                                        categorizationLocal[targetId] = {[m.categorizationLocal]: {count: 1, completed: 0}};
-                                    }
-                                    if (done) {
-                                        categorizationLocal[targetId][m.categorizationLocal].completed = !Object.hasOwnProperty.call(categorizationLocal[targetId][m.categorizationLocal], 'completed') ? 1 : categorizationLocal[targetId][m.categorizationLocal].completed + 1;
+                                        categorizationLocal[targetId] = {[m.categorizationLocal]: {count: 1, completed: done ? 1 : 0}};
                                     }
                                 }
                             }
